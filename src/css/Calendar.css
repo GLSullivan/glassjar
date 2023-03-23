@@ -1,23 +1,24 @@
-.container {
+.calendar__container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.navigation {
+.calendar__navigation {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  width: 100%;
 }
 
-.calendar {
+.calendar__calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
 }
 
-.day {
+.calendar__day {
   width: 40px;
   height: 40px;
   display: flex;
@@ -27,6 +28,11 @@
   background-color: #fff;
 }
 
-.other-month-day {
+.calendar__day.calendar__day--other-month {
   color: #aaa;
+}
+
+.calendar__day.calendar__day--today {
+  background-color: #f0f0f0;
+  font-weight: bold;
 }
