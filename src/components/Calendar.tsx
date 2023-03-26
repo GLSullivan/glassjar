@@ -53,6 +53,12 @@ const Calendar: React.FC<CalendarProps> = ({ onSelectDate }) => {
     );
   };
 
+  function chunk<T>(array: T[], size: number): T[][] {
+    return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
+      array.slice(i * size, i * size + size)
+    );
+  }
+
   return (
     <div className='calendar__container'>
       <div className='calendar__navigation'>
@@ -67,17 +73,19 @@ const Calendar: React.FC<CalendarProps> = ({ onSelectDate }) => {
         </button>
       </div>
       <div className="calendar__calendar">
-        {days.map((day, index) => (
-          <button
-            key={day.toISOString()}
-            onClick={() => onSelectDate(day.toISOString().split('T')[0])}
-            className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''
-              }${isToday(day) ? ' calendar__day--today' : ''}`}
-            style={{ visibility: weekVisibility[Math.floor(index / 7)] ? 'visible' : 'hidden' }}
-          >
-            {day.getDate()}
+      {chunk(days, 7).map((week: Date[], weekIndex: number) => (
+          <div key={weekIndex} className="calendar__week">
+            {week.map((day: Date) => (
+              <button
+  key={day.toISOString()}
+  onClick={() => onSelectDate(day.toISOString().split('T')[0])}
+  className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''}${isToday(day) ? ' calendar__day--today' : ''}`}
+>
+  {day.getDate()}
           </button>
-        ))}
+      ))}
+      </div>
+    ))}
       </div>
     </div>
   );

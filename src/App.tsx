@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { AccountList } from './components/AccountList';
-import  Calendar from './components/Calendar';
-import { TransactionForm } from './components/TransactionForm';
-import { TransactionList } from './components/TransactionList';
-import { ProjectedBalances } from './components/ProjectedBalances';
-import { AppContextProvider, useAppContext } from './contexts/AppContext';
-import { Account } from './models/Account'
-import { Transaction } from './models/Transaction';
+import React, { useState }                      from 'react';
+import { AccountList }                          from './components/AccountList';
+import  Calendar                                from './components/Calendar';
+import { TransactionForm }                      from './components/TransactionForm';
+import { TransactionList }                      from './components/TransactionList';
+import { ProjectedBalances }                    from './components/ProjectedBalances';
+import { AppContextProvider, useAppContext }    from './contexts/AppContext';
+import { Account }                              from './models/Account'
+import { Transaction }                          from './models/Transaction';
 
 
 const AppContent: React.FC = () => {
@@ -50,7 +50,7 @@ const AppContent: React.FC = () => {
   // Add filtering and balance projection logic here
 
   return (
-    <div>
+    <div className='glassjar__root'>
       <AccountList accounts={accounts} />
       <TransactionForm onSubmit={addTransaction} />
       <Calendar onSelectDate={setSelectedDate} />

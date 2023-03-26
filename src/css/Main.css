@@ -1,0 +1,17 @@
+/* 
+____ _                   _            
+/ ___| | __ _ ___ ___    | | __ _ _ __ 
+| |  _| |/ _` / __/ __|_  | |/ _` | '__|
+| |_| | | (_| \__ \__ \ |_| | (_| | |   
+ \____|_|\__,_|___/___/\___/ \__,_|_|    
+
+© 2024 Greg Sullivan
+
+*/
+
+.glassjar__root {
+    font-family: 'Space Grotesk', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
