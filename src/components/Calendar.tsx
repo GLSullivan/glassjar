@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch }   from 'react-redux'
+
+import { RootState }                  from './../redux/store';
+import { setActiveDate }              from './../redux/slices/activedate'
+
 import './../css/Calendar.css';
 
-interface CalendarProps {
-  onSelectDate: (date: string) => void;
-}
-
-const Calendar: React.FC<CalendarProps> = ({ onSelectDate }) => {
+const Calendar: React.FC = () => {
+  const activeDate = useSelector((state: RootState) => state.activeDate.value)
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const generateDaysArray = (month: Date) => {
@@ -41,15 +43,14 @@ const Calendar: React.FC<CalendarProps> = ({ onSelectDate }) => {
     const totalWeeks = Math.ceil(totalDays / 7);
     return Array.from({ length: 6 }, (_, i) => i < totalWeeks);
   };
-  
+
   const weekVisibility = weeksVisibility(currentMonth);
-  
-  const isToday = (date: Date) => {
-    const today = new Date();
+  const dispatch = useDispatch()
+  const isSameDay = (date1: Date, date2: Date) => {
     return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
     );
   };
 
@@ -73,19 +74,19 @@ const Calendar: React.FC<CalendarProps> = ({ onSelectDate }) => {
         </button>
       </div>
       <div className="calendar__calendar">
-      {chunk(days, 7).map((week: Date[], weekIndex: number) => (
+        {chunk(days, 7).map((week: Date[], weekIndex: number) => (
           <div key={weekIndex} className="calendar__week">
             {week.map((day: Date) => (
               <button
-  key={day.toISOString()}
-  onClick={() => onSelectDate(day.toISOString().split('T')[0])}
-  className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''}${isToday(day) ? ' calendar__day--today' : ''}`}
->
-  {day.getDate()}
-          </button>
-      ))}
-      </div>
-    ))}
+                key={day.toISOString()}
+                onClick={() => dispatch(setActiveDate(day.toISOString()))}
+                className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''}${isSameDay(day,new Date()) ? ' calendar__day--today' : ''}${isSameDay(day,new Date(activeDate)) ? ' calendar__day--active' : ''}`}
+              >
+                {day.getDate()}
+              </button>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );

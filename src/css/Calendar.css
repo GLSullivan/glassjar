@@ -1,6 +1,6 @@
 /* 
-____ _                   _            
-/ ___| | __ _ ___ ___    | | __ _ _ __ 
+  ____ _                   _            
+ / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
 | |_| | | (_| \__ \__ \ |_| | (_| | |   
  \____|_|\__,_|___/___/\___/ \__,_|_|    
@@ -10,16 +10,16 @@ ____ _                   _
 */
 
 .calendar__container {
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  display: flex;
   flex: 2;
+  flex-direction: column;
 }
 
 .calendar__navigation {
+  align-items: center;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 1rem;
   width: 100%;
 }
@@ -27,23 +27,24 @@ ____ _                   _
 .calendar__calendar {
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100%;
+  width: 100%;
 }
 
 .calendar__week {
-  flex: 2;
   display: flex;
+  flex: 2;
 }
 
 .calendar__day {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
   background-color: #fff;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
 }
 
 .calendar__day.calendar__day--other-month {
@@ -53,4 +54,8 @@ ____ _                   _
 .calendar__day.calendar__day--today {
   background-color: #f0f0f0;
   font-weight: bold;
+}
+
+.calendar__day.calendar__day--active {
+  border: 1px solid black;
 }

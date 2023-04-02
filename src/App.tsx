@@ -1,21 +1,25 @@
 import React, { useState }                      from 'react';
 import { AccountList }                          from './components/AccountList';
-import  Calendar                                from './components/Calendar';
-import { TransactionForm }                      from './components/TransactionForm';
+import Calendar                                 from './components/Calendar';
+import TransactionForm                          from './components/forms/TransactionForm';
 import { TransactionList }                      from './components/TransactionList';
 import { ProjectedBalances }                    from './components/ProjectedBalances';
-import { AppContextProvider, useAppContext }    from './contexts/AppContext';
+// import { AppContextProvider, useAppContext }    from './contexts/AppContext';
 import { Account }                              from './models/Account'
 import { Transaction }                          from './models/Transaction';
 
 
 const AppContent: React.FC = () => {
-  const { accounts, transactions, addTransaction } = useAppContext();
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+  // const { accounts, transactions, addTransaction } = useAppContext();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [transactionForm, setTransactionForm] = useState(false);
+  // const filteredTransactions = transactions.filter(
+  //   (transaction) => transaction.date === selectedDate
+  // );
 
-  const filteredTransactions = transactions.filter(
-    (transaction) => transaction.date === selectedDate
-  );
+  const dateSelected = () => {
+
+  }
   
   const calculateProjectedBalances = (
     accounts: Account[],
@@ -45,26 +49,24 @@ const AppContent: React.FC = () => {
   };
   
   
-  const projectedAccounts = calculateProjectedBalances(accounts, transactions, selectedDate);
+  // const projectedAccounts = calculateProjectedBalances(accounts, transactions, selectedDate);
   
   // Add filtering and balance projection logic here
 
   return (
     <div className='glassjar__root'>
-      <AccountList accounts={accounts} />
-      <TransactionForm onSubmit={addTransaction} />
-      <Calendar onSelectDate={setSelectedDate} />
-      <TransactionList transactions={filteredTransactions} />
-      <ProjectedBalances accounts={projectedAccounts} date={selectedDate} />
+      <AccountList />
+      {transactionForm && <TransactionForm onClose={() => setTransactionForm(false)} />}
+      <Calendar />
+      <TransactionList/>
+      {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
     </div>
   );
 };
 
 const App: React.FC = () => {
   return (
-    <AppContextProvider>
       <AppContent />
-    </AppContextProvider>
   );
 };
 

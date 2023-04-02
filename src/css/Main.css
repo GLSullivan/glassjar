@@ -1,6 +1,6 @@
 /* 
-____ _                   _            
-/ ___| | __ _ ___ ___    | | __ _ _ __ 
+  ____ _                   _            
+ / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
 | |_| | | (_| \__ \__ \ |_| | (_| | |   
  \____|_|\__,_|___/___/\___/ \__,_|_|    
@@ -10,8 +10,10 @@ ____ _                   _
 */
 
 .glassjar__root {
-    font-family: 'Space Grotesk', sans-serif;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Space Grotesk', sans-serif;
+  height: 100vh;
+  padding: 1rem;
 }

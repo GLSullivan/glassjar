@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 
 interface TransactionFormProps {
   onClose: () => void;
-  onSubmitTransaction: (transactionData: {
-    date: string;
-    type: string;
-    amount: number;
-    fromAccount: string;
-    toAccount: string;
-    description: string;
-  }) => void;
+  // onSubmitTransaction: (transactionData: {
+  //   date: string;
+  //   type: string;
+  //   amount: number;
+  //   fromAccount: string;
+  //   toAccount: string;
+  //   description: string;
+  // }) => void;
   initialDate?: string;
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onClose,
-  onSubmitTransaction,
+  // onSubmitTransaction,
   initialDate,
 }) => {
   const [date, setDate] = useState(initialDate || '');
@@ -27,7 +27,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmitTransaction({ date, type, amount, fromAccount, toAccount, description });
+    // onSubmitTransaction({ date, type, amount, fromAccount, toAccount, description });
     onClose();
   };
 

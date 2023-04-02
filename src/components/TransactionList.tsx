@@ -1,21 +1,20 @@
-import React from 'react';
-import { Transaction } from '../models/Transaction';
+import React                          from 'react';
+import { useSelector, useDispatch }   from 'react-redux'
 
-interface TransactionListProps {
-  transactions: Transaction[];
-}
+import { RootState }                  from '../redux/store';
 
-export const TransactionList: React.FC<TransactionListProps> = ({ transactions }) => {
+export const TransactionList: React.FC = () => {
+
+  const activeDate = useSelector((state: RootState) => state.activeDate.value)
+  
   return (
     <div>
-      <h3>Transactions</h3>
-      <ul>
-        {transactions.map((transaction) => (
-          <li key={transaction.id}>
-            {/* Add transaction details here */}
-          </li>
-        ))}
-      </ul>
+      <h3>Transactions {new Date(activeDate).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })}</h3>
+      <button>Add Transaction</button>
     </div>
   );
 };

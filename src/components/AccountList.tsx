@@ -5,17 +5,17 @@ interface AccountListProps {
   accounts: Account[];
 }
 
-export const AccountList: React.FC<AccountListProps> = ({ accounts }) => {
+export const AccountList: React.FC = () => {
   return (
     <div>
       <h3>Accounts</h3>
-      <ul>
+      {/* <ul>
         {accounts.map((account) => (
           <li key={account.id}>
             {account.name} - Balance: ${account.balance.toFixed(2)}
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
