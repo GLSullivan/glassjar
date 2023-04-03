@@ -1,22 +1,22 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice }          from '@reduxjs/toolkit'
+import type { PayloadAction }   from '@reduxjs/toolkit'
 
 export interface ActiveDate {
-    value: string
+  value: string
 }
 
 const initialState: ActiveDate = {
-    value: (new Date().toISOString())
+  value: (new Date().toISOString())
 }
 
 export const activeDate = createSlice({
-    name: 'activeDate',
-    initialState,
-    reducers: {
-        setActiveDate: (state, action: PayloadAction<string>) => {
-            state.value = action.payload
-        },
+  name: 'activeDate',
+  initialState,
+  reducers: {
+    setActiveDate: (state, action: PayloadAction<string>) => {
+      state.value = action.payload
     },
+  },
 })
 
 export const { setActiveDate } = activeDate.actions

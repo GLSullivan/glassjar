@@ -7,6 +7,7 @@ import { ProjectedBalances }                    from './components/ProjectedBala
 // import { AppContextProvider, useAppContext }    from './contexts/AppContext';
 import { Account }                              from './models/Account'
 import { Transaction }                          from './models/Transaction';
+import Modal                                    from './components/Modal';
 
 
 const AppContent: React.FC = () => {
@@ -66,7 +67,10 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
+    <>
+      <Modal />
       <AppContent />
+    </>
   );
 };
 

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import activedate         from './slices/activedate'
+import modalstate         from './slices/modal'
 
 export const store = configureStore({
     reducer: {
-        activeDate: activedate
+        activeDate: activedate,
+        modalState: modalstate,
     }
 })
 
