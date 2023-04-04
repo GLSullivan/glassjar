@@ -1,4 +1,5 @@
 export interface Transaction {
+    transactionName: string;
     id: number;
     accountId: string;
     type: 'deposit' | 'withdrawal';
@@ -7,5 +8,7 @@ export interface Transaction {
     description: string;
     isRecurring: boolean;
     recurrenceFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+    fromAccount: string;
+    toAccount: string;
   }
   

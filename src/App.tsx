@@ -21,33 +21,33 @@ const AppContent: React.FC = () => {
   const closeTheModal = () => {
     dispatch(closeTransactionModal())
   }
-  const calculateProjectedBalances = (
-    accounts: Account[],
-    transactions: Transaction[],
-    date: string
-  ): Account[] => {
-    const projectedAccounts = accounts.map((account) => ({ ...account }));
-  
-    transactions.forEach((transaction) => {
-      if (transaction.date <= date) {
-        const accountIndex = projectedAccounts.findIndex((account) => account.id === transaction.accountId);
-  
-        if (accountIndex !== -1) {
 
-          const transactionAmount = (transaction.amount); // Add this line
+  // const calculateProjectedBalances = (
+  //   accounts: Account[],
+  //   transactions: Transaction[],
+  //   date: string
+  // ): Account[] => {
+  //   const projectedAccounts = accounts.map((account) => ({ ...account }));
+  
+  //   transactions.forEach((transaction) => {
+  //     if (transaction.date <= date) {
+  //       const accountIndex = projectedAccounts.findIndex((account) => account.id === transaction.accountId);
+  
+  //       if (accountIndex !== -1) {
 
-          if (transaction.type === 'deposit') {
-            projectedAccounts[accountIndex].balance += transactionAmount; // Update this line
-          } else {
-            projectedAccounts[accountIndex].balance -= transactionAmount; // Update this line
-          }
-        }
-      }
-    });
+  //         const transactionAmount = (transaction.amount); // Add this line
+
+  //         if (transaction.type === 'deposit') {
+  //           projectedAccounts[accountIndex].balance += transactionAmount; // Update this line
+  //         } else {
+  //           projectedAccounts[accountIndex].balance -= transactionAmount; // Update this line
+  //         }
+  //       }
+  //     }
+  //   });
   
-    return projectedAccounts;
-  };
-  
+  //   return projectedAccounts;
+  // };
   
   // const projectedAccounts = calculateProjectedBalances(accounts, transactions, selectedDate);
   
