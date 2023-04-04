@@ -37,12 +37,14 @@
   z-index: 9998;
 }
 
-.glassjar__modal__content {
+.glassjar__modal__body {
   position: relative;
   background: white;
   border: 1px solid black;
   box-shadow: 0 10px 10px rgb(0 0 0 / 20%);
   box-sizing: border-box;
+  max-width: 90vw;
+  max-height: 90vh;
   padding: 1rem;
   z-index: 9999;
 }

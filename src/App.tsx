@@ -1,27 +1,26 @@
 import React, { useState }                      from 'react';
 import { AccountList }                          from './components/AccountList';
 import Calendar                                 from './components/Calendar';
-import TransactionForm                          from './components/forms/TransactionForm';
 import { TransactionList }                      from './components/TransactionList';
 import { ProjectedBalances }                    from './components/ProjectedBalances';
 // import { AppContextProvider, useAppContext }    from './contexts/AppContext';
+import Modal                                    from './components/Modal';
+import TransactionForm                          from './components/forms/TransactionForm';
 import { Account }                              from './models/Account'
 import { Transaction }                          from './models/Transaction';
-import Modal                                    from './components/Modal';
-
+import { useSelector, useDispatch }             from 'react-redux';
+import { RootState }                            from './redux/store';        
+import { closeTransactionModal }                from './redux/slices/modals'
 
 const AppContent: React.FC = () => {
-  // const { accounts, transactions, addTransaction } = useAppContext();
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [transactionForm, setTransactionForm] = useState(false);
-  // const filteredTransactions = transactions.filter(
-  //   (transaction) => transaction.date === selectedDate
-  // );
+  const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
+  const activeDate = useSelector((state: RootState) => state.activeDate.activeDate)
 
-  const dateSelected = () => {
-
-  }
+  const dispatch = useDispatch()
   
+  const closeTheModal = () => {
+    dispatch(closeTransactionModal())
+  }
   const calculateProjectedBalances = (
     accounts: Account[],
     transactions: Transaction[],
@@ -56,8 +55,10 @@ const AppContent: React.FC = () => {
 
   return (
     <div className='glassjar__root'>
+      <Modal isOpen={transactionOpen} onClose={closeTheModal}>
+        <TransactionForm initialDate={ activeDate } onClose={closeTheModal}/>
+      </Modal>
       <AccountList />
-      {transactionForm && <TransactionForm onClose={() => setTransactionForm(false)} />}
       <Calendar />
       <TransactionList/>
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
@@ -67,10 +68,7 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <>
-      <Modal />
-      <AppContent />
-    </>
+    <AppContent />
   );
 };
 

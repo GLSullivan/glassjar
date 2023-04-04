@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import './../../css/Forms.css'
 interface TransactionFormProps {
   onClose: () => void;
   // onSubmitTransaction: (transactionData: {
@@ -14,7 +14,7 @@ interface TransactionFormProps {
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
-  onClose,
+ onClose,
   // onSubmitTransaction,
   initialDate,
 }) => {
@@ -28,29 +28,34 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // onSubmitTransaction({ date, type, amount, fromAccount, toAccount, description });
-    onClose();
+    // onClose();
   };
 
   return (
-    <div className="transaction-form-modal">
-      <div className="transaction-form-modal__content">
-        <h2>Create Transaction</h2>
-        <form onSubmit={handleSubmit}>
+    <div className='glassjar__transaction-form'>
+      <h2>New Transaction</h2>
+      <form onSubmit={handleSubmit}>
+        
+        <div>
           <label htmlFor="date">Date:</label>
           <input
             type="date"
             id="date"
-            value={date}
+            value={new Date(date).toISOString().split('T')[0]}
             onChange={(e) => setDate(e.target.value)}
           />
+        </div>
 
+        <div>
           <label htmlFor="type">Transaction Type:</label>
           <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="Expense">Expense</option>
             <option value="Income">Income</option>
             <option value="Transfer">Transfer</option>
           </select>
+        </div>
 
+        <div>
           <label htmlFor="amount">Amount:</label>
           <input
             type="number"
@@ -58,9 +63,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             value={amount}
             onChange={(e) => setAmount(parseFloat(e.target.value))}
           />
+        </div>
 
           {(type === 'Expense' || type === 'Transfer') && (
-            <>
+            <div>
               <label htmlFor="fromAccount">From Account:</label>
               <input
                 type="text"
@@ -68,11 +74,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 value={fromAccount}
                 onChange={(e) => setFromAccount(e.target.value)}
               />
-            </>
+            </div>
           )}
 
           {(type === 'Income' || type === 'Transfer') && (
-            <>
+            <div>
               <label htmlFor="toAccount">To Account:</label>
               <input
                 type="text"
@@ -80,9 +86,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 value={toAccount}
                 onChange={(e) => setToAccount(e.target.value)}
               />
-            </>
+            </div>
           )}
 
+        <div>
           <label htmlFor="description">Description (optional):</label>
           <input
             type="text"
@@ -90,11 +97,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-
-          <button type="submit">Submit</button>
-          <button onClick={onClose}>Close</button>
-        </form>
-      </div>
+        </div>
+        <button type="submit">Submit</button>
+        <button onClick={onClose}>Close</button>
+      </form>
     </div>
   );
 };

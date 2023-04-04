@@ -7,7 +7,7 @@ import { setActiveDate }              from './../redux/slices/activedate'
 import './../css/Calendar.css';
 
 const Calendar: React.FC = () => {
-  const activeDate = useSelector((state: RootState) => state.activeDate.value)
+  const activeDate = useSelector((state: RootState) => state.activeDate.activeDate)
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const generateDaysArray = (month: Date) => {

@@ -2,11 +2,11 @@ import { createSlice }          from '@reduxjs/toolkit'
 import type { PayloadAction }   from '@reduxjs/toolkit'
 
 export interface ActiveDate {
-  value: string
+  activeDate: string
 }
 
 const initialState: ActiveDate = {
-  value: (new Date().toISOString())
+  activeDate: (new Date().toISOString())
 }
 
 export const activeDate = createSlice({
@@ -14,7 +14,7 @@ export const activeDate = createSlice({
   initialState,
   reducers: {
     setActiveDate: (state, action: PayloadAction<string>) => {
-      state.value = action.payload
+      state.activeDate = action.payload
     },
   },
 })
