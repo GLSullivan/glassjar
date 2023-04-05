@@ -21,6 +21,9 @@ export const projectionsSlice = createSlice({
       const { transactions, farDate } = action.payload;
       const farDateObj = new Date(farDate);
 
+      state.byDate = {};
+      state.hasTransaction = {};
+
       transactions.forEach((transaction) => {
         const transactionDate = new Date(transaction.date);
         const transactionEndDate = transaction.isRecurring

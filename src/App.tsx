@@ -14,9 +14,9 @@ import { recalculateProjections }               from './redux/slices/projections
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
-  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate)
-  const farDate = useSelector((state: RootState) => state.activeDates.farDate);
-  const transactions = useSelector((state: RootState) => state.transactions.transactions);
+  const activeDate      = useSelector((state: RootState) => state.activeDates.activeDate)
+  const farDate         = useSelector((state: RootState) => state.activeDates.farDate);
+  const transactions    = useSelector((state: RootState) => state.transactions.transactions);
 
   const dispatch = useDispatch()
 
