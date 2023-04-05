@@ -59,3 +59,18 @@
 .calendar__day.calendar__day--active {
   border: 1px solid black;
 }
+
+.calendar__header-row {
+  display: flex;
+}
+
+.calendar__header-day {
+  flex: 1;
+  text-align: center;
+  padding: 4px;
+  font-weight: bold;
+}
+
+.calendar__day--has-transaction {
+  background-color: #f0ad4e;
+}

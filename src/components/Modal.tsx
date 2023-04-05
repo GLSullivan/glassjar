@@ -21,8 +21,7 @@ function Modal(props: { children?: any; onClose: any; isOpen: boolean }) {
                   {child}
                 </div>
               )
-            }
-            )}
+            })}
           </div>
         </div>
       </div>

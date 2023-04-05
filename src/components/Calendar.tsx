@@ -1,51 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch }   from 'react-redux'
-
 import { RootState }                  from './../redux/store';
-import { setActiveDate }              from './../redux/slices/activedate'
+import { setActiveDate }              from './../redux/slices/activedates'
 
 import './../css/Calendar.css';
 
 const Calendar: React.FC = () => {
-  const activeDate = useSelector((state: RootState) => state.activeDate.activeDate)
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 
-  const generateDaysArray = (month: Date) => {
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate)
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const rotatedDayNames = dayNames.slice(startDayOfWeek).concat(dayNames.slice(0, startDayOfWeek));
+  const hasTransactionByDate = useSelector((state: RootState) => state.projections.hasTransaction);
+
+  const generateDaysArray = (month: Date, startDay: number) => {
     const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
     const firstDayOfGrid = new Date(firstDayOfMonth);
-    firstDayOfGrid.setDate(firstDayOfGrid.getDate() - firstDayOfGrid.getDay());
-
+    const offset = (firstDayOfMonth.getDay() - startDay + 7) % 7 || 7;
+    firstDayOfGrid.setDate(firstDayOfGrid.getDate() - offset - 1);
+    
     const daysArray: Date[] = [];
-
+    
     for (let i = 0; i < 42; i++) {
       daysArray.push(new Date(firstDayOfGrid.setDate(firstDayOfGrid.getDate() + 1)));
     }
-
+    
     return daysArray;
   };
 
-  const [days, setDays] = useState<Date[]>(generateDaysArray(currentMonth));
-
+  const [days, setDays] = useState<Date[]>(generateDaysArray(currentMonth, startDayOfWeek));
+  
   useEffect(() => {
-    setDays(generateDaysArray(currentMonth));
-  }, [currentMonth]);
+    setDays(generateDaysArray(currentMonth, startDayOfWeek));
+  }, [currentMonth, startDayOfWeek]);
 
   const isCurrentMonth = (day: Date) => {
     return day.getMonth() === currentMonth.getMonth() && day.getFullYear() === currentMonth.getFullYear();
   };
 
-  const weeksVisibility = (month: Date) => {
-    const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
-    const lastDayOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
-    const firstDayOfWeek = firstDayOfMonth.getDay();
-    const lastDayOfWeek = lastDayOfMonth.getDay();
-    const totalDays = lastDayOfMonth.getDate() + firstDayOfWeek + (lastDayOfWeek !== 6 ? (6 - lastDayOfWeek) : 0);
-    const totalWeeks = Math.ceil(totalDays / 7);
-    return Array.from({ length: 6 }, (_, i) => i < totalWeeks);
-  };
-
-  const weekVisibility = weeksVisibility(currentMonth);
   const dispatch = useDispatch()
+
   const isSameDay = (date1: Date, date2: Date) => {
     return (
       date1.getDate() === date2.getDate() &&
@@ -74,13 +69,20 @@ const Calendar: React.FC = () => {
         </button>
       </div>
       <div className="calendar__calendar">
+      <div className="calendar__header-row">
+          {rotatedDayNames.map((dayName, index) => (
+            <div key={index} className="calendar__header-day">
+              {dayName}
+            </div>
+          ))}
+        </div>
         {chunk(days, 7).map((week: Date[], weekIndex: number) => (
           <div key={weekIndex} className="calendar__week">
             {week.map((day: Date) => (
               <button
                 key={day.toISOString()}
                 onClick={() => dispatch(setActiveDate(day.toISOString()))}
-                className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''}${isSameDay(day,new Date()) ? ' calendar__day--today' : ''}${isSameDay(day,new Date(activeDate)) ? ' calendar__day--active' : ''}`}
+                className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''}${isSameDay(day,new Date()) ? ' calendar__day--today' : ''}${isSameDay(day,new Date(activeDate)) ? ' calendar__day--active' : ''}${hasTransactionByDate[day.toISOString().split("T")[0]] ? ' calendar__day--has-transaction' : ''}`} 
               >
                 {day.getDate()}
               </button>

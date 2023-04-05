@@ -1,9 +1,8 @@
-import React, { useState }                      from 'react';
+import React, { useEffect, useState }           from 'react';
 import { AccountList }                          from './components/AccountList';
 import Calendar                                 from './components/Calendar';
 import { TransactionList }                      from './components/TransactionList';
 import { ProjectedBalances }                    from './components/ProjectedBalances';
-// import { AppContextProvider, useAppContext }    from './contexts/AppContext';
 import Modal                                    from './components/Modal';
 import TransactionForm                          from './components/forms/TransactionForm';
 import { Account }                              from './models/Account'
@@ -11,14 +10,21 @@ import { Transaction }                          from './models/Transaction';
 import { useSelector, useDispatch }             from 'react-redux';
 import { RootState }                            from './redux/store';        
 import { closeTransactionModal }                from './redux/slices/modals'
+import { recalculateProjections }               from './redux/slices/projections';
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
-  const activeDate = useSelector((state: RootState) => state.activeDate.activeDate)
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate)
+  const farDate = useSelector((state: RootState) => state.activeDates.farDate);
+  const transactions = useSelector((state: RootState) => state.transactions.transactions);
 
   const dispatch = useDispatch()
-  
-  const closeTheModal = () => {
+
+  useEffect(() => {
+    dispatch(recalculateProjections({ transactions, farDate }));
+  }, [transactions, farDate, dispatch]);
+
+    const closeTheModal = () => {
     dispatch(closeTransactionModal())
   }
 

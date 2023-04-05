@@ -14,3 +14,8 @@ form > div {
   flex-direction: column;
   margin-bottom: 0.5rem;
 }
+
+.glassjar__transaction-form__check-group {
+  display: flex;
+  flex-direction: row;
+}

@@ -3,11 +3,13 @@ import type { PayloadAction }   from '@reduxjs/toolkit'
 import { Transaction }          from './../../models/Transaction'
 
 export interface Transactions {
-  transactions: Transaction[]
+  transactions: Transaction[];
+  activeTransaction: Transaction | null;
 }
 
 const initialState: Transactions = {
-  transactions: []
+  transactions: [],
+  activeTransaction: null
 }
 
 const transactionsSlice = createSlice({
@@ -30,13 +32,17 @@ const transactionsSlice = createSlice({
         (transaction) => transaction.id !== action.payload
       );
     },
+    setActiveTransaction: (state, action: PayloadAction<Transaction | null>) => {
+      state.activeTransaction = action.payload;
+    },    
   },
 });
 
 export const { 
   addTransaction, 
   updateTransaction, 
-  deleteTransaction 
+  deleteTransaction,
+  setActiveTransaction 
   } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;
