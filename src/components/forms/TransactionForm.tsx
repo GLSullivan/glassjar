@@ -1,8 +1,8 @@
-import React, { useState }                    from 'react';
-import { useDispatch, useSelector }           from 'react-redux';
-import { Transaction }                        from './../../models/Transaction';
-import { addTransaction, updateTransaction }  from './../../redux/slices/transactions';
-import { RootState }                          from './../../redux/store'; 
+import React, { useState }                                        from 'react';
+import { useDispatch, useSelector }                               from 'react-redux';
+import { Transaction }                                            from './../../models/Transaction';
+import { addTransaction, updateTransaction, deleteTransaction }   from './../../redux/slices/transactions';
+import { RootState }                                              from './../../redux/store'; 
 
 import './../../css/Forms.css'
 interface TransactionFormProps {
@@ -17,7 +17,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
 
   const [transactionName, setTransactionName] = useState(activeTransaction?.transactionName || '');
-  const [date, setDate] = useState(activeTransaction?.date || initialDate || '');
+  const [date, setDate] = useState(
+    activeTransaction?.date
+      ? new Date(activeTransaction.date).toISOString().split('T')[0]
+      : initialDate || ''
+  );
   const [type, setType] = useState(activeTransaction?.type === 'deposit' ? 'Income' : 'Expense');
   const [amount, setAmount] = useState(activeTransaction?.amount || 0);
   const [fromAccount, setFromAccount] = useState(activeTransaction?.fromAccount || '');
@@ -66,7 +70,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   return (
     <div className='glassjar__transaction-form'>
-      <h2>New Transaction</h2>
+      <h2>
+        {activeTransaction ? `${activeTransaction.transactionName}` : "New Transaction"}
+      </h2>
       <form onSubmit={handleSubmit}>
 
         <div>
@@ -187,8 +193,18 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
         <button type="submit">Submit</button>
         <button onClick={onClose}>Close</button>
-
       </form>
+      {activeTransaction && (
+  <button
+    type="button"
+    onClick={() => {
+      dispatch(deleteTransaction(activeTransaction.id));
+      onClose();
+    }}
+  >
+    Delete
+  </button>
+)}
     </div>
   );
 };
