@@ -25,16 +25,19 @@ export const projectionsSlice = createSlice({
       state.hasTransaction = {};
 
       transactions.forEach((transaction) => {
-        const transactionDate = new Date(transaction.date);
-        const transactionEndDate = transaction.isRecurring
+        const maxIterations: number = 1000;
+        let   count: number         = 0;
+        const transactionDate       = new Date(transaction.date);
+        const transactionEndDate    = transaction.isRecurring
           ? (transaction.endDate
               ? new Date(Math.min(farDateObj.getTime(), new Date(transaction.endDate).getTime()))
               : farDateObj)
           : transactionDate;
 
-        while (transactionDate <= transactionEndDate) {
+        while (transactionDate <= transactionEndDate && count < maxIterations) {
+          count ++
           const dateString = transactionDate.toISOString().split("T")[0];
-
+console.log(count, transaction.recurrenceFrequency,transactionDate)
           if (!state.byDate[dateString]) {
             state.byDate[dateString] = [];
           }
