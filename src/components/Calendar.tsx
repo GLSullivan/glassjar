@@ -3,43 +3,56 @@ import { useSelector, useDispatch }   from 'react-redux'
 import { RootState }                  from './../redux/store';
 import { setActiveDate }              from './../redux/slices/activedates'
 
-import './../css/Calendar.css';
+import "./../css/Calendar.css";
 
 const Calendar: React.FC = () => {
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
   const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 
-  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate)
+  const activeDate = useSelector(
+    (state: RootState) => state.activeDates.activeDate
+  );
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const rotatedDayNames = dayNames.slice(startDayOfWeek).concat(dayNames.slice(0, startDayOfWeek));
-  const hasTransactionByDate = useSelector((state: RootState) => state.projections.hasTransaction);
+  const rotatedDayNames = dayNames
+    .slice(startDayOfWeek)
+    .concat(dayNames.slice(0, startDayOfWeek));
+  const hasTransactionByDate = useSelector(
+    (state: RootState) => state.projections.hasTransaction
+  );
 
   const generateDaysArray = (month: Date, startDay: number) => {
     const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
     const firstDayOfGrid = new Date(firstDayOfMonth);
     const offset = (firstDayOfMonth.getDay() - startDay + 7) % 7 || 7;
     firstDayOfGrid.setDate(firstDayOfGrid.getDate() - offset - 1);
-    
+
     const daysArray: Date[] = [];
-    
+
     for (let i = 0; i < 42; i++) {
-      daysArray.push(new Date(firstDayOfGrid.setDate(firstDayOfGrid.getDate() + 1)));
+      daysArray.push(
+        new Date(firstDayOfGrid.setDate(firstDayOfGrid.getDate() + 1))
+      );
     }
-    
+
     return daysArray;
   };
 
-  const [days, setDays] = useState<Date[]>(generateDaysArray(currentMonth, startDayOfWeek));
-  
+  const [days, setDays] = useState<Date[]>(
+    generateDaysArray(currentMonth, startDayOfWeek)
+  );
+
   useEffect(() => {
     setDays(generateDaysArray(currentMonth, startDayOfWeek));
   }, [currentMonth, startDayOfWeek]);
 
   const isCurrentMonth = (day: Date) => {
-    return day.getMonth() === currentMonth.getMonth() && day.getFullYear() === currentMonth.getFullYear();
+    return (
+      day.getMonth() === currentMonth.getMonth() &&
+      day.getFullYear() === currentMonth.getFullYear()
+    );
   };
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const isSameDay = (date1: Date, date2: Date) => {
     return (
@@ -56,20 +69,36 @@ const Calendar: React.FC = () => {
   }
 
   return (
-    <div className='calendar__container'>
-      <div className='calendar__navigation'>
-        <button onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}>
-          Previous
+    <div className="calendar__container">
+      <div className="calendar__navigation">
+        <button
+          onClick={() =>
+            setCurrentMonth(
+              new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+            )
+          }
+        >
+          <i className="fa-regular fa-chevron-left" />
         </button>
-        <h2 className="calendar__month" onClick={() => setCurrentMonth(new Date())}>
-          {currentMonth.toLocaleString('default', { month: 'long' })} {currentMonth.getFullYear()}
+        <h2
+          className="calendar__month"
+          onClick={() => setCurrentMonth(new Date())}
+        >
+          {currentMonth.toLocaleString("default", { month: "long" })}{" "}
+          {currentMonth.getFullYear()}
         </h2>
-        <button onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}>
-          Next
+        <button
+          onClick={() =>
+            setCurrentMonth(
+              new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+            )
+          }
+        >
+        <i className="fa-regular fa-chevron-right" />
         </button>
       </div>
       <div className="calendar__calendar">
-      <div className="calendar__header-row">
+        <div className="calendar__header-row">
           {rotatedDayNames.map((dayName, index) => (
             <div key={index} className="calendar__header-day">
               {dayName}
@@ -82,9 +111,22 @@ const Calendar: React.FC = () => {
               <button
                 key={day.toISOString()}
                 onClick={() => dispatch(setActiveDate(day.toISOString()))}
-                className={`calendar__day${!isCurrentMonth(day) ? ' calendar__day--other-month' : ''}${isSameDay(day,new Date()) ? ' calendar__day--today' : ''}${isSameDay(day,new Date(activeDate)) ? ' calendar__day--active' : ''}${hasTransactionByDate[day.toISOString().split("T")[0]] ? ' calendar__day--has-transaction' : ''}`} 
+                className={`calendar__day${
+                  !isCurrentMonth(day) ? " calendar__day--other-month" : ""
+                }${isSameDay(day, new Date()) ? " calendar__day--today" : ""}${
+                  isSameDay(day, new Date(activeDate))
+                    ? " calendar__day--active"
+                    : ""
+                }${
+                  hasTransactionByDate[day.toISOString().split("T")[0]]
+                    ? " calendar__day--has-transaction"
+                    : ""
+                }`}
               >
-                {day.getDate()}
+                <div>
+                  {day.getDate()}
+                  {hasTransactionByDate[day.toISOString().split("T")[0]] && <div className='calendar__day__marker'></div>}
+                </div>
               </button>
             ))}
           </div>

@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Transaction } from '../../models/Transaction';
-import { RootState } from './../store';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Transaction }                from "../../models/Transaction";
+import { RootState }                  from "./../store";
 
 interface ProjectionsState {
   byDate: { [date: string]: Transaction[] };
@@ -13,11 +13,13 @@ const initialState: ProjectionsState = {
 };
 
 export const projectionsSlice = createSlice({
-  name: 'projections',
+  name: "projections",
   initialState,
   reducers: {
-
-    recalculateProjections: (state, action: PayloadAction<{ transactions: Transaction[]; farDate: string }>) => {
+    recalculateProjections: (
+      state,
+      action: PayloadAction<{ transactions: Transaction[]; farDate: string }>
+    ) => {
       const { transactions, farDate } = action.payload;
       const farDateObj = new Date(farDate);
 
@@ -26,18 +28,22 @@ export const projectionsSlice = createSlice({
 
       transactions.forEach((transaction) => {
         const maxIterations: number = 1000;
-        let   count: number         = 0;
-        const transactionDate       = new Date(transaction.date);
-        const transactionEndDate    = transaction.isRecurring
-          ? (transaction.endDate
-              ? new Date(Math.min(farDateObj.getTime(), new Date(transaction.endDate).getTime()))
-              : farDateObj)
+        let count: number = 0;
+        const transactionDate = new Date(transaction.date);
+        const transactionEndDate = transaction.isRecurring
+          ? transaction.endDate
+            ? new Date(
+                Math.min(
+                  farDateObj.getTime(),
+                  new Date(transaction.endDate).getTime()
+                )
+              )
+            : farDateObj
           : transactionDate;
 
         while (transactionDate <= transactionEndDate && count < maxIterations) {
-          count ++
+          count++;
           const dateString = transactionDate.toISOString().split("T")[0];
-console.log(count, transaction.recurrenceFrequency,transactionDate)
           if (!state.byDate[dateString]) {
             state.byDate[dateString] = [];
           }
@@ -48,16 +54,16 @@ console.log(count, transaction.recurrenceFrequency,transactionDate)
           if (transaction.isRecurring) {
             // Increase date based on recurrence interval
             switch (transaction.recurrenceFrequency) {
-              case 'monthly':
+              case "monthly":
                 transactionDate.setMonth(transactionDate.getMonth() + 1);
                 break;
-              case 'weekly':
+              case "weekly":
                 transactionDate.setDate(transactionDate.getDate() + 7);
                 break;
-              case 'daily':
+              case "daily":
                 transactionDate.setDate(transactionDate.getDate() + 1);
                 break;
-              case 'yearly':
+              case "yearly":
                 transactionDate.setFullYear(transactionDate.getFullYear() + 1);
                 break;
               default:
@@ -74,7 +80,11 @@ console.log(count, transaction.recurrenceFrequency,transactionDate)
 
 export const { recalculateProjections } = projectionsSlice.actions;
 
-export const selectTransactionsByDate = (state: RootState, activeDate: string) => state.projections.byDate[activeDate] || [];
-export const selectHasTransactionByDate = (state: RootState, date: string) => state.projections.hasTransaction[date] || false;
+export const selectTransactionsByDate = (
+  state: RootState,
+  activeDate: string
+) => state.projections.byDate[activeDate] || [];
+export const selectHasTransactionByDate = (state: RootState, date: string) =>
+  state.projections.hasTransaction[date] || false;
 
 export default projectionsSlice.reducer;
