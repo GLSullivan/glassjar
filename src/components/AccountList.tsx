@@ -1,21 +1,37 @@
 import React from 'react';
-import { Account } from '../models/Account';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState }                from './../redux/store';
+import { openAccountForm }         from './../redux/slices/modals';
+import { setActiveAccount }         from './../redux/slices/accounts';
 
-interface AccountListProps {
-  accounts: Account[];
-}
+// import './../css/AccountList.css';
 
 export const AccountList: React.FC = () => {
+  const accounts = useSelector((state: RootState) => state.accounts.accounts);
+  const dispatch = useDispatch();
+
   return (
-    <div>
+    <div className="glassjar__account-list">
       <h3>Accounts</h3>
-      {/* <ul>
-        {accounts.map((account) => (
-          <li key={account.id}>
-            {account.name} - Balance: ${account.balance.toFixed(2)}
-          </li>
-        ))}
-      </ul> */}
+      {accounts.map((account) => (
+        <h5
+          onClick={() => {
+            dispatch(setActiveAccount(account));
+            dispatch(openAccountForm());
+          }}
+          key={account.id}
+        >
+          {account.name} | {account.type} | ${account.currentBalance}
+        </h5>
+      ))}
+      <button
+        onClick={() => {
+          dispatch(setActiveAccount(null));
+          dispatch(openAccountForm());
+        }}
+      >
+        Add Account
+      </button>
     </div>
   );
 };

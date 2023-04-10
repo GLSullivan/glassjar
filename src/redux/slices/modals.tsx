@@ -3,11 +3,13 @@ import { createSlice }          from '@reduxjs/toolkit'
 export interface ModalState {
   transactionFormOpen: boolean,
   accountFormOpen: boolean,
+  accountListOpen: boolean,
 }
 
 const initialState: ModalState = {
   transactionFormOpen: false,
   accountFormOpen: false,
+  accountListOpen: false,
 }
 
 export const modalState = createSlice({
@@ -20,10 +22,16 @@ export const modalState = createSlice({
     openTransactionModal: (state) => {
       state.transactionFormOpen = true;
     },
-    closeAccountModal: (state) => {
+    closeAccountList: (state) => {
+      state.accountListOpen = false
+    },    
+    openAccountList: (state) => {
+      state.accountListOpen = true;
+    },
+    closeAccountForm: (state) => {
       state.accountFormOpen = false
     },    
-    openAccountModal: (state) => {
+    openAccountForm: (state) => {
       state.accountFormOpen = true;
     },
   },
@@ -32,8 +40,10 @@ export const modalState = createSlice({
 export const { 
   closeTransactionModal, 
   openTransactionModal, 
-  closeAccountModal, 
-  openAccountModal 
+  closeAccountList, 
+  openAccountList, 
+  closeAccountForm, 
+  openAccountForm, 
 } = modalState.actions
 
 export default modalState.reducer

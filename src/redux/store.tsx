@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import activedates        from './slices/activedates'
 import modalstate         from './slices/modals'
 import transactions       from './slices/transactions'
+import accounts           from './slices/accounts'
 import projectionsReducer from './slices/projections'; 
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
         activeDates: activedates,
         modalState: modalstate,
         transactions: transactions,
+        accounts: accounts,
         projections: projectionsReducer,
     }
 })

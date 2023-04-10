@@ -4,6 +4,7 @@ import { Transaction }                                            from './../../
 import { addTransaction, updateTransaction, deleteTransaction }   from './../../redux/slices/transactions';
 import { RootState }                                              from './../../redux/store';
 import { stripTime, addZoneOffset }                               from '../../utils/dateUtils';
+import { Account }                                                from './../../models/Account';
 
 import './../../css/Forms.css';
 interface TransactionFormProps {
@@ -13,6 +14,7 @@ interface TransactionFormProps {
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate }) => {
   const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
+  const accounts          = useSelector((state: RootState) => state.accounts.accounts);
 
   const [transactionName, setTransactionName] = useState(activeTransaction?.transactionName || '');
   const [date, setDate] = useState(() => {
@@ -145,26 +147,34 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
         {(type === "withdrawal" || type === "transfer") && (
           <div className="glassjar__form__input-group">
             <label htmlFor="fromAccount">From Account:</label>
-            <input
-              placeholder='From Account'
-              type="text"
+            <select
               id="fromAccount"
               value={fromAccount}
               onChange={(e) => setFromAccount(e.target.value)}
-            />
+            >
+              {accounts.map((account: Account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
         {(type === "deposit" || type === "transfer") && (
           <div className="glassjar__form__input-group">
             <label htmlFor="toAccount">To Account:</label>
-            <input
-              placeholder='To Account'
-              type="text"
+            <select
               id="toAccount"
               value={toAccount}
               onChange={(e) => setToAccount(e.target.value)}
-            />
+            >
+              {accounts.map((account: Account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 

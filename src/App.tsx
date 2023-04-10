@@ -1,22 +1,32 @@
-import React, { useEffect, useState }           from 'react';
-import { AccountList }                          from './components/AccountList';
-import Calendar                                 from './components/Calendar';
-import { TransactionList }                      from './components/TransactionList';
-import { ProjectedBalances }                    from './components/ProjectedBalances';
-import Modal                                    from './components/Modal';
-import TransactionForm                          from './components/forms/TransactionForm';
-import { Account }                              from './models/Account'
-import { Transaction }                          from './models/Transaction';
-import { useSelector, useDispatch }             from 'react-redux';
-import { RootState }                            from './redux/store';        
-import { closeTransactionModal }                from './redux/slices/modals'
-import { recalculateProjections }               from './redux/slices/projections';
+import { useSelector, useDispatch }                     from 'react-redux';
+import React, { useEffect, useState }                   from 'react';
+
+import { RootState }                                    from './redux/store';        
+import { AccountList }                                  from './components/AccountList';
+import Calendar                                         from './components/Calendar';
+import { TransactionList }                              from './components/TransactionList';
+import Modal                                            from './components/Modal';
+import TransactionForm                                  from './components/forms/TransactionForm';
+import { ProjectedBalances }                            from './components/ProjectedBalances';
+import { Account }                                      from './models/Account'
+import { Transaction }                                  from './models/Transaction';
+import { closeTransactionModal, 
+        closeAccountForm,
+        closeAccountList,
+        openAccountList,
+        openAccountForm }                               from './redux/slices/modals'
+import { recalculateProjections }                       from './redux/slices/projections';
+import { AccountForm }                                  from './components/forms/AccountForm';
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
+  const accountListOpen = useSelector((state: RootState) => state.modalState.accountListOpen)
+  const accountFormOpen = useSelector((state: RootState) => state.modalState.accountFormOpen)
   const activeDate      = useSelector((state: RootState) => state.activeDates.activeDate)
   const farDate         = useSelector((state: RootState) => state.activeDates.farDate);
   const transactions    = useSelector((state: RootState) => state.transactions.transactions);
+
+  const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
   const dispatch = useDispatch()
 
@@ -24,49 +34,46 @@ const AppContent: React.FC = () => {
     dispatch(recalculateProjections({ transactions, farDate }));
   }, [transactions, farDate, dispatch]);
 
-    const closeTheModal = () => {
+  const closeTheTransactionModal = () => {
     dispatch(closeTransactionModal())
   }
 
-  // const calculateProjectedBalances = (
-  //   accounts: Account[],
-  //   transactions: Transaction[],
-  //   date: string
-  // ): Account[] => {
-  //   const projectedAccounts = accounts.map((account) => ({ ...account }));
-  
-  //   transactions.forEach((transaction) => {
-  //     if (transaction.date <= date) {
-  //       const accountIndex = projectedAccounts.findIndex((account) => account.id === transaction.accountId);
-  
-  //       if (accountIndex !== -1) {
+  const closeTheAccountList = () => {
+    dispatch(closeAccountList())
+  }
 
-  //         const transactionAmount = (transaction.amount); // Add this line
+  const closeTheAccountForm = () => {
+    dispatch(closeAccountForm())
+  }
 
-  //         if (transaction.type === 'deposit') {
-  //           projectedAccounts[accountIndex].balance += transactionAmount; // Update this line
-  //         } else {
-  //           projectedAccounts[accountIndex].balance -= transactionAmount; // Update this line
-  //         }
-  //       }
-  //     }
-  //   });
-  
-  //   return projectedAccounts;
-  // };
-  
-  // const projectedAccounts = calculateProjectedBalances(accounts, transactions, selectedDate);
-  
-  // Add filtering and balance projection logic here
+  if (accounts.length < 1) {
+    dispatch(openAccountForm()); //Half-assed initial setup. 
+  }
 
   return (
-    <div className='glassjar__root'>
-      <Modal isOpen={transactionOpen} onClose={closeTheModal}>
-        <TransactionForm initialDate={ activeDate } onClose={closeTheModal}/>
+    <div className="glassjar__root">
+      <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
+        <AccountList />
       </Modal>
-      <AccountList />
+      <Modal isOpen={accountFormOpen} onClose={closeTheAccountForm}>
+        {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
+        <AccountForm />
+      </Modal>
+      <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>
+        <TransactionForm
+          initialDate={activeDate}
+          onClose={closeTheTransactionModal}
+        />
+      </Modal>
+      <button
+        onClick={() => {
+          dispatch(openAccountList());
+        }}
+      >
+        Accounts
+      </button> 
       <Calendar />
-      <TransactionList/>
+      <TransactionList />
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
     </div>
   );
