@@ -55,7 +55,7 @@ const AppContent: React.FC = () => {
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
       </Modal>
-      <Modal isOpen={accountFormOpen} onClose={closeTheAccountForm}>
+      <Modal isOpen={accountFormOpen} onClose={closeTheAccountForm} hideClose={accounts.length < 1}>
         {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
         <AccountForm />
       </Modal>
