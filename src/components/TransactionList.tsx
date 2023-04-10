@@ -37,6 +37,7 @@ export const TransactionList: React.FC = () => {
         >{transaction.type == 'deposit'    && <i className="fa-solid fa-plus" />}
          {transaction.type == 'withdrawal' && <i className="fa-solid fa-minus" />}
          {transaction.type == 'transfer'   && <i className="fa-regular fa-money-bill-transfer" />}
+         {transaction.type == 'event'   && <i className="fa-regular fa-calendar" />}
          {" | "}
           {transaction.transactionName}{" | "}{transaction.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}{transaction.isRecurring && <> | <i className="fa-solid fa-repeat" /></>}
         </h5>

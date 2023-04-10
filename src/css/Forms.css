@@ -1,4 +1,4 @@
-/* 
+  /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -8,14 +8,90 @@
 © 2024 Greg Sullivan
 
 */
-
-form > div {
-  display: flex;
+form {
+  display       : flex;
   flex-direction: column;
-  margin-bottom: 0.5rem;
+  gap           : 1rem;
 }
 
-.glassjar__transaction-form__check-group {
-  display: flex;
+.glassjar__form h2 {
+  background   : var(--color-brand);
+  border-radius: 0.5rem;
+  color        : var(--color-bright);
+  margin-top   : 0;
+  padding      : 1rem;
+  text-align   : center;
+}
+
+.glassjar__form__input-group label {
+  display: none;
+}
+
+.glassjar__form__input-group {
+  position: relative;
+  width   : 100%;
+}
+
+.glassjar__form__input-group input {
+  background   : var(--color-inverse);
+  border       : none;
+  border-radius: 0.5rem;
+  font-weight  : 500;
+  outline      : none;
+  padding      : 1rem;
+  width        : 100%;
+  box-sizing   : border-box;
+}
+
+.glassjar__form__input-group select {
+  appearance      : none;
+  background      : var(--color-inverse);
+  background-image: none;
+  border          : none;
+  border-radius   : 0.5rem;
+  outline         : none;
+  padding         : 1rem;
+  position        : relative;
+  width           : 100%;
+}
+
+.glassjar__form__input-group.glassjar__form__input-group--drop label::after {
+  content               : "\f078";
+  display               : block;
+  font                  : var(--fa-font-solid);
+  -webkit-font-smoothing: antialiased;
+  font-weight           : 900;
+  right                 : 1.1rem;
+  pointer-events        : none;
+  position              : absolute;
+  text-rendering        : auto;
+  top                   : 50%;
+  transform             : translateY(-50%);
+}
+
+.glassjar__form__input-group.glassjar__form__input-group--drop label {
+  display: block;
+}
+
+.glassjar__form__input-group.glassjar__form__input-group--check {
+  display       : flex;
   flex-direction: row;
+  gap: 1rem;
+}
+
+.glassjar__form__input-group.glassjar__form__input-group--check input {
+  width        : unset;
+  height: 1rem;
+}
+
+.glassjar__form__input-group.glassjar__form__input-group--check label{
+  display       : inline-block;
+}
+
+  /* Override form defaults */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px var(--color-inverse) inset !important;
 }

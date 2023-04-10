@@ -1,4 +1,4 @@
-  /* 
+    /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -10,15 +10,15 @@
 */
 
 :root {
-  /* --primary: #7B9F90ff; */
+    /* --primary: #7B9F90ff; */
   --color-bright   : #ffffff;
-  --color-inverse  : #E7E6E4;
+  --color-inverse  : #f0f5f3;
   --color-secondary: #D19F84;
   --color-brand    : #54816F;
-  --color-tertiary : #638d7c; 
+  --color-tertiary : #638d7c;
   --color-primary  : #122420;
 
-  --gradient-brand : linear-gradient(160deg, #DFF3E5, #6E9C88, #6E9C88, #3A6454);
+  --gradient-brand    : linear-gradient(160deg, #DFF3E5, #6E9C88, #6E9C88, #3A6454);
   --gradient-secondary: linear-gradient(160deg, #BF8975ff, #B6806Cff, #B6806Cff, #7A4A3Fff);
 }
 
@@ -29,8 +29,18 @@
   font-family   : 'Space Grotesk', sans-serif;
   height        : 100vh;
   padding       : 0rem;
-  background: var(--color-inverse);
-  background: linear-gradient(135deg, #EDEDEDff, #D2D0CCff, #BEBCBBff);;
+  background    : var(--color-inverse);
+  background    : linear-gradient(135deg, #EDEDEDff, #D2D0CCff, #BEBCBBff);;
   background    : linear-gradient(160deg, #E0F4E6, #568371, #568371, #568371, #568371);
-  align-items: center;
+  align-items   : center;
+}
+
+.glassjar__flex {
+  display: flex;
+  gap: 1rem;
+}
+
+
+.glassjar__flex.glassjar__flex--justify-center {
+  justify-content: center;
 }
