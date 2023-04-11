@@ -27,7 +27,7 @@
 }
 
 .calendar__calendar {
-  aspect-ratio  : 0.8;
+  /* aspect-ratio  : 0.8; */
   display       : flex;
   flex-direction: column;
   max-height    : 80vh;
