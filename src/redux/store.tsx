@@ -54,8 +54,3 @@ export function saveStateToLocalStorage() {
 store.subscribe(() => {
   saveStateToLocalStorage();
 });
-
-export function clearLocalStorage() {
-  localStorage.removeItem('accounts');
-  localStorage.removeItem('transactions');
-}

@@ -1,9 +1,11 @@
 import React, { useState }                                        from 'react';
 import { useDispatch, useSelector }                               from 'react-redux';
+import CurrencyInput                                              from 'react-currency-input-field';
+
 import { Transaction }                                            from './../../models/Transaction';
 import { addTransaction, updateTransaction, deleteTransaction }   from './../../redux/slices/transactions';
 import { RootState }                                              from './../../redux/store';
-import { stripTime, addZoneOffset }                               from '../../utils/dateUtils';
+import { stripTime, addZoneOffset }                               from './../../utils/dateUtils';
 import { Account }                                                from './../../models/Account';
 
 import './../../css/Forms.css';
@@ -65,13 +67,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       showInCalendar: true
     };
 
-    if (type === 'withdrawal' || type === 'transfer') {
-      transactionData.fromAccount = fromAccount;
-    }
+    // if (type === 'withdrawal' || type === 'transfer') {
+    //   transactionData.fromAccount = fromAccount;
+    // }
 
-    if (type === 'deposit' || type === 'transfer') {
-      transactionData.toAccount = toAccount;
-    }
+    // if (type === 'deposit' || type === 'transfer') {
+    //   transactionData.toAccount = toAccount;
+    // }
 
     if (activeTransaction) {
       dispatch(updateTransaction(transactionData));
@@ -91,7 +93,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="glassjar__form__input-group">
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name">Transaction Name:</label>
           <input
             placeholder='Transaction Name'
             type="text"
@@ -112,7 +114,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
         </div>
 
         <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-          <label htmlFor="type"></label>
+          <label htmlFor="type">Type:</label>
           <select
             id="type"
             value={type}
@@ -135,22 +137,25 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
 
         <div className="glassjar__form__input-group">
           <label htmlFor="amount">Amount:</label>
-          <input
-            placeholder='Amount'
-            type="number"
-            id="amount"
-            value={Number(amount).toString()}
-            onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
-          />
+          <CurrencyInput
+            id            = "amount"
+            prefix        = "$"
+            name          = "amount"
+            placeholder   = "Transaction Amount:"
+            defaultValue  = {amount}
+            decimalsLimit = {0}
+            onValueChange = {(value) => setAmount(value ? parseInt(value) : 0)}
+            />
         </div>
 
         {(type === "withdrawal" || type === "transfer") && (
-          <div className="glassjar__form__input-group">
+          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
             <label htmlFor="fromAccount">From Account:</label>
             <select
               id="fromAccount"
               value={fromAccount}
-              onChange={(e) => setFromAccount(e.target.value)}
+              onChange={(e) => {setFromAccount(e.target.value)}}
+              
             >
               {accounts.map((account: Account) => (
                 <option key={account.id} value={account.id}>
@@ -162,7 +167,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
         )}
 
         {(type === "deposit" || type === "transfer") && (
-          <div className="glassjar__form__input-group">
+          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
             <label htmlFor="toAccount">To Account:</label>
             <select
               id="toAccount"

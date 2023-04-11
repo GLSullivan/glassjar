@@ -27,7 +27,7 @@
   display       : flex;
   flex-direction: column;
   font-family   : 'Space Grotesk', sans-serif;
-  height        : 100vh;
+  min-height    : 100vh;
   padding       : 0rem;
   background    : var(--color-inverse);
   background    : linear-gradient(135deg, #EDEDEDff, #D2D0CCff, #BEBCBBff);;
@@ -40,7 +40,19 @@
   gap: 1rem;
 }
 
-
 .glassjar__flex.glassjar__flex--justify-center {
   justify-content: center;
+}
+
+button {
+  border: none;
+  outline: none;
+  padding: .5rem 2rem;
+  border-radius: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--color-bright);
+  background: var(--color-secondary);
+  align-self: center;
 }

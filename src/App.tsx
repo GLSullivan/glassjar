@@ -50,13 +50,19 @@ const AppContent: React.FC = () => {
     dispatch(openAccountForm()); //Half-assed initial setup. 
   }
 
+  
+function clearLocalStorage() {
+  localStorage.removeItem('accounts');
+  localStorage.removeItem('transactions');
+}
+
+
   return (
     <div className="glassjar__root">
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
       </Modal>
       <Modal isOpen={accountFormOpen} onClose={closeTheAccountForm} hideClose={accounts.length < 1}>
-        {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
         <AccountForm />
       </Modal>
       <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>
@@ -65,13 +71,16 @@ const AppContent: React.FC = () => {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-      <button
-        onClick={() => {
-          dispatch(openAccountList());
-        }}
-      >
-        Accounts
-      </button> 
+      <div className="glassjar__flex">
+        <button
+          onClick={() => {
+            dispatch(openAccountList());
+          }}
+        >
+          Accounts
+        </button> 
+        <button onClick={() => clearLocalStorage()}>Clear Local Storage</button>
+      </div>
       <Calendar />
       <TransactionList />
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}

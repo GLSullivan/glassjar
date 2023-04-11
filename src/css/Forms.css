@@ -16,16 +16,17 @@ form {
 }
 
 .glassjar__form h2 {
-  background   : var(--color-brand);
-  border-radius: 0.5rem;
-  color        : var(--color-bright);
+  color        : var(--color-brand);
   margin-top   : 0;
-  padding      : 1rem;
   text-align   : center;
 }
 
+.glassjar__form h3 {
+  margin-top   : 0;
+}
+
 .glassjar__form__input-group label {
-  display: none;
+  color: var(--color-tertiary);
 }
 
 .glassjar__form__input-group {
@@ -44,12 +45,17 @@ form {
   box-sizing   : border-box;
 }
 
+.glassjar__form__input-group input::placeholder {
+  color: #cdcdcd;
+}
+
 .glassjar__form__input-group select {
   appearance      : none;
   background      : var(--color-inverse);
   background-image: none;
   border          : none;
   border-radius   : 0.5rem;
+  font-weight     : 500 ;
   outline         : none;
   padding         : 1rem;
   position        : relative;
@@ -57,6 +63,7 @@ form {
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--drop label::after {
+  bottom                : 0.6rem;
   content               : "\f078";
   display               : block;
   font                  : var(--fa-font-solid);
@@ -66,8 +73,8 @@ form {
   pointer-events        : none;
   position              : absolute;
   text-rendering        : auto;
-  top                   : 50%;
   transform             : translateY(-50%);
+  z-index               : 1;
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--drop label {
