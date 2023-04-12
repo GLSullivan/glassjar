@@ -37,8 +37,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [endDate, setEndDate]                         = useState(activeTransaction?.endDate || '');
   const [recurrenceFrequency, setRecurrenceFrequency] = useState(activeTransaction?.recurrenceFrequency || undefined);
 
-  console.log('date',date)
-
   const dispatch = useDispatch();
 
   const handleSubmit = (e: React.FormEvent) => {

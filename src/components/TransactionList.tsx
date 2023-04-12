@@ -1,33 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch }   from 'react-redux';
-import { RootState }                  from './../redux/store';
-import { openTransactionModal }       from './../redux/slices/modals';
-import { setActiveTransaction }       from './../redux/slices/transactions';
-import { selectTransactionsByDate,
-         calculateFutureBalances }    from './../redux/slices/projections';
-import { localDateValue }             from './../utils/dateUtils'
-import { Account }                    from "./../models/Account";
-import { selectAllAccounts } from "./../redux/slices/accounts";
+import React, { useState, useEffect, useMemo }    from "react";
+import { useSelector, useDispatch }               from "react-redux";
+import { RootState }                              from "./../redux/store";
+import { openTransactionModal }                   from "./../redux/slices/modals";
+import { setActiveTransaction }                   from "./../redux/slices/transactions";
+import {
+  selectTransactionsByDate,
+  selectBalanceByDateAndAccount 
+}                                                 from "./../redux/slices/projections";
+import { Account }                                from "./../models/Account";
+import { selectAllAccounts }                      from "./../redux/slices/accounts";
 
 import "./../css/TransactionList.css";
-const getUpdatedBalances = (
-  transactionsByDate: ReturnType<typeof selectTransactionsByDate>,
-  accounts: Account[],
-  activeDate: string
-) => {
-  const { futureBalances, aggregateBalances } = calculateFutureBalances(
-    transactionsByDate,
-    accounts,
-    1,
-    activeDate
-  );
-
-  return { futureBalances, aggregateBalances };
-};
 
 export const TransactionList: React.FC = () => {
-  const accounts = useSelector(selectAllAccounts);
+  const state = useSelector((state: RootState) => state);
 
+  const accounts   = useSelector(selectAllAccounts);
   const activeDate = useSelector(
     (state: RootState) => state.activeDates.activeDate
   );
@@ -38,73 +26,69 @@ export const TransactionList: React.FC = () => {
     selectTransactionsByDate(state, activeDateFormatted)
   );
 
-  const [balances, setBalances] = useState(() =>
-    getUpdatedBalances(transactionsByDate, accounts, activeDateFormatted)
-  );
-
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setBalances(
-      getUpdatedBalances(transactionsByDate, accounts, activeDateFormatted)
-    );
-  }, [activeDateFormatted, transactionsByDate, accounts]);
+  const balances = useMemo(() => {
+    const newBalances: { [id: string]: number } = {};
+    accounts.forEach((account) => {
+      newBalances[account.id] = selectBalanceByDateAndAccount(
+        state,
+        activeDateFormatted,
+        account
+      );
+    });
+    return newBalances;
+  }, [state, activeDateFormatted, accounts]);
 
   return (
-    <div className="glassjar__transaction-list">
+    <div className = "glassjar__transaction-list">
       <h3>
         {new Date(activeDate).toLocaleDateString("en-US", {
           month: "short",
-          day: "numeric",
+          day  : "numeric",
         })}
       </h3>
-      <h4>
+      <div className = "account-balances">
+        <h4>Account Balances: </h4>
         {accounts.map((account) => (
-          <div key={account.id}>
-            {account.name}:{" "}
-            {balances.futureBalances[account.id][0].toLocaleString("en-US", {
-              style: "currency",
+          <p key = {account.id}>
+            {account.name}: {" "}
+            {balances[account.id]?.toLocaleString("en-US", {
+              style   : "currency",
               currency: "USD",
             })}
-          </div>
+          </p>
         ))}
-        <div>
-          Aggregate:{" "}
-          {balances.aggregateBalances[0].toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })}
-        </div>
-      </h4>
+      </div>{" "}
       {transactionsByDate.map((transaction) => (
         <h5
           onClick={() => {
             dispatch(setActiveTransaction(transaction));
             dispatch(openTransactionModal());
           }}
-          key={transaction.id}
+          key = {transaction.id}
         >
           {transaction.type == "deposit" && <i className="fa-solid fa-plus" />}
           {transaction.type == "withdrawal" && (
-            <i className="fa-solid fa-minus" />
+            <i className = "fa-solid fa-minus" />
           )}
           {transaction.type == "transfer" && (
-            <i className="fa-regular fa-money-bill-transfer" />
+            <i className = "fa-regular fa-money-bill-transfer" />
           )}
           {transaction.type == "event" && (
-            <i className="fa-regular fa-calendar" />
+            <i className = "fa-regular fa-calendar" />
           )}
           {" | "}
           {transaction.transactionName}
           {" | "}
           {transaction.amount.toLocaleString("en-US", {
-            style: "currency",
+            style   : "currency",
             currency: "USD",
           })}
           {transaction.isRecurring && (
             <>
               {" "}
-              | <i className="fa-solid fa-repeat" />
+              | <i className = "fa-solid fa-repeat" />
             </>
           )}
         </h5>
