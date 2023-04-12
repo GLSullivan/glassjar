@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Account }                    from '../../models/Account';
+import { RootState }                  from '../store';
 
 interface AccountsState {
   accounts: Account[];
@@ -32,7 +33,7 @@ export const accountsSlice = createSlice({
   },
 });
 
-export const { addAccount, updateAccount, setActiveAccount } =
-  accountsSlice.actions;
-
 export default accountsSlice.reducer;
+
+export const { addAccount, updateAccount, setActiveAccount } = accountsSlice.actions;
+export const selectAllAccounts = (state: RootState) => state.accounts.accounts;

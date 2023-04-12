@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Transaction }                from "../../models/Transaction";
+import { Account }                    from "../../models/Account";
 import { RootState }                  from "./../store";
 
 interface ProjectionsState {
@@ -88,3 +89,82 @@ export const selectHasTransactionByDate = (state: RootState, date: string) =>
   state.projections.hasTransaction[date] || false;
 
 export default projectionsSlice.reducer;
+
+export const calculateFutureBalances = (
+  transactions: Transaction[],
+  accounts: Account[],
+  daysOut: number,
+  activeDate: string
+): {
+  futureBalances: { [id: string]: number[] };
+  aggregateBalances: number[];
+} => {
+  const futureBalances: { [accountId: string]: number[] } = {};
+  const aggregateBalances: number[] = new Array(daysOut).fill(0);
+  const currentDate = new Date();
+  const dayInMilliseconds = 24 * 60 * 60 * 1000;
+
+  accounts.forEach((account) => {
+    futureBalances[account.id] = new Array(daysOut).fill(
+      account.currentBalance
+    );
+  });
+
+  transactions.forEach((transaction) => {
+    const transactionDate = new Date(transaction.date);
+    const daysDiff = Math.floor(
+      (transactionDate.getTime() - currentDate.getTime()) / dayInMilliseconds
+    );
+
+    if (daysDiff >= 0 && daysDiff < daysOut) {
+      if (transaction.type === "transfer") {
+        const fromAccount = accounts.find(
+          (acc) => acc.id === transaction.fromAccount
+        );
+        const toAccount = accounts.find(
+          (acc) => acc.id === transaction.toAccount
+        );
+
+        if (fromAccount && toAccount) {
+          if (!transaction.allowOverpayment) {
+            const amountToTransfer = Math.min(
+              transaction.amount,
+              futureBalances[fromAccount.id][daysDiff]
+            );
+            futureBalances[fromAccount.id][daysDiff] -= amountToTransfer;
+            futureBalances[toAccount.id][daysDiff] += amountToTransfer;
+          } else {
+            futureBalances[fromAccount.id][daysDiff] -= transaction.amount;
+            futureBalances[toAccount.id][daysDiff] += transaction.amount;
+          }
+        }
+      } else {
+        const account = accounts.find(
+          (acc) => acc.id === transaction.accountId
+        );
+
+        if (account) {
+          if (transaction.type === "deposit") {
+            futureBalances[account.id][daysDiff] += transaction.amount;
+          } else if (transaction.type === "withdrawal") {
+            futureBalances[account.id][daysDiff] -= transaction.amount;
+          }
+        }
+      }
+    }
+  });
+
+  accounts.forEach((account) => {
+    for (let i = 1; i < daysOut; i++) {
+      const previousBalance = futureBalances[account.id][i - 1];
+      const interestRate = account.interestRate || 0;
+      const dailyInterest = 1 + interestRate / 365;
+
+      futureBalances[account.id][i] =
+        futureBalances[account.id][i - 1] * dailyInterest;
+      aggregateBalances[i] += futureBalances[account.id][i];
+    }
+  });
+
+  return { futureBalances, aggregateBalances };
+};
