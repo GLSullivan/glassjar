@@ -2,14 +2,18 @@ import { createSlice }          from '@reduxjs/toolkit'
 import type { PayloadAction }   from '@reduxjs/toolkit'
 
 export interface ActiveDate {
+  today: string;
   activeDate: string;
   farDate: string
 }
 
 const initialState: ActiveDate = {
-  activeDate: (new Date().toISOString()),
-  farDate: ((new Date(new Date().getFullYear() + 1, new Date().getMonth(), 0)).toISOString())
+  today:      (new Date(new Date().setHours(0, 0, 0, 0)).toISOString().slice(0, 10)),
+  activeDate: (new Date(new Date().setHours(0, 0, 0, 0)).toISOString().slice(0, 10)),
+  farDate:    ((new Date(new Date().getFullYear() + 1, new Date().getMonth(), 0)).toISOString().slice(0, 10) + 'T00:00:00.000Z')
 }
+
+// const activeDate = new Date(new Date().setHours(0, 0, 0, 0)).toISOString().slice(0, 10);
 
 export const activeDate = createSlice({
   name: 'activeDate',
