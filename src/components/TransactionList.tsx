@@ -33,7 +33,6 @@ export const TransactionList: React.FC = () => {
     accounts.forEach((account) => {
       newBalances[account.id] = selectBalanceByDateAndAccount(
         state,
-        activeDateFormatted,
         account
       );
     });

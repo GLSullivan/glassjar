@@ -93,67 +93,45 @@ export default projectionsSlice.reducer;
 
 export const selectBalanceByDateAndAccount = (
   state: RootState,
-  activeDate: string,
   account: Account
 ): number => {
-  
   let balance = account.currentBalance;
 
-  console.log("---- Account:",account.name,"activeDate:",activeDate,"balance:",balance)
-console.log("state.activeDates.activeDate",state.activeDates.activeDate)
-    const today = new Date();
-    const maxIterations = 1095; // 3 years
-  
-    const days: Date[] = [today]; // Start with today as the first day
-  
-    let currentDay = new Date(today);
-  
-    let iterations = 0;
-    // while (currentDay.getTime() <= activeDate.getTime() && iterations < maxIterations) {
-    //   currentDay.setDate(currentDay.getDate() + 1); // Move to the next day
-    //   days.push(new Date(currentDay)); // Add the new day to the array
-    //   iterations++;
-    // }
-  
+  const today = new Date(state.activeDates.today);
+  const activeDate = new Date(state.activeDates.activeDate);
+  const maxIterations = 3650; // 5 years for now. Should be user definable.
 
+  const days: Date[] = [today];
 
-console.log(activeDate,balance)
+  let currentDay = new Date(today);
+  let iterations = 0;
+  while (currentDay <= activeDate && iterations < maxIterations) {
+    if (
+      selectHasTransactionByDate(state, currentDay.toISOString().split("T")[0])
+    ) {
+      state.projections.byDate[currentDay.toISOString().split("T")[0]].forEach(
+        (transaction) => {
+          if (transaction.fromAccount === account.id) {
+            if (
+              transaction.type === "withdrawal" ||
+              transaction.type === "transfer"
+            ) {
+              balance -= transaction.amount;
+            }
+          } else if (transaction.toAccount === account.id) {
+            if (
+              transaction.type === "deposit" ||
+              transaction.type === "transfer"
+            ) {
+              balance += transaction.amount;
+            }
+          }
+        }
+      );
+    }
+    currentDay.setDate(currentDay.getDate() + 1);
+    iterations++;
+  }
+
   return balance;
-
-  // Loop through all the dates up to the active date
-  // for (const date in state.projections.byDate) {
-  //   console.log("Starting with dates for:",account.name,date,activeDate)
-  //   if (date <= activeDate) {
-  //     // Loop through transactions on this date
-  //     state.projections.byDate[date].forEach((transaction) => {
-  //       // Check if the transaction involves the given account
-  //       console.log("?",transaction.accountId," and account ID = ",account.id)
-  //       if (transaction.accountId === account.id) {
-  //         console.log("***",transaction.transactionName,transaction.type,transaction.amount)
-  //         switch (transaction.type) {
-  //           case "deposit":
-  //             balance += transaction.amount;
-  //             break;
-  //           case "withdrawal":
-  //           case "event":
-  //             balance -= transaction.amount;
-  //             break;
-  //           case "transfer":
-  //             if (transaction.fromAccount === account.id) {
-  //               balance -= transaction.amount;
-  //             } else if (transaction.toAccount === account.id) {
-  //               balance += transaction.amount;
-  //             }
-  //             break;
-  //           default:
-  //             break;
-  //         }
-  //       }
-  //     });
-  //   } else {
-  //     // No need to process further dates
-  //     break;
-  //   }
-  // }
-
 };

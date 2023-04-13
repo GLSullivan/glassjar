@@ -1,32 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch }   from 'react-redux'
 import { RootState }                  from './../redux/store';
-import { setActiveDate }              from './../redux/slices/activedates'
+import { setActiveDate, setFarDate }  from './../redux/slices/activedates'
 
 import "./../css/Calendar.css";
+interface CalendarDayProps {
+  day           : Date;
+  isCurrentMonth: boolean;
+  isToday       : boolean;
+  isActive      : boolean;
+  hasTransaction: boolean;
+}
+
+const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
+const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
+
+const CalendarDay: React.FC<CalendarDayProps> = React.memo(
+  ({ day, isCurrentMonth, isToday, isActive, hasTransaction }) => {
+    const dispatch = useDispatch();
+    const className = [
+      "calendar__day",
+      !isCurrentMonth ? "calendar__day--other-month"    : "",
+      isToday         ? "calendar__day--today"          : "",
+      isActive        ? "calendar__day--active"         : "",
+      hasTransaction  ? "calendar__day--has-transaction": "",
+    ]
+      .join(" ")
+      .replace(/\s{2,}/g, " ");
+
+    return (
+      <button
+        key={day.toISOString()}
+        onClick={() => dispatch(setActiveDate(day.toISOString()))}
+        className={className}
+      >
+        <div>
+          {day.getDate()}
+          {hasTransaction && <div className="calendar__day__marker"></div>}
+        </div>
+      </button>
+    );
+  }
+);
 
 const Calendar: React.FC = () => {
-  const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
-  const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
-
-  const activeDate = useSelector(
-    (state: RootState) => state.activeDates.activeDate
-  );
-  const today = useSelector(
-    (state: RootState) => state.activeDates.today
-  );
-  console.log("!",activeDate)
-  
+  const dispatch = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const rotatedDayNames = dayNames
+
+  const activeDate           = useSelector((state: RootState) => state.activeDates.activeDate);
+  const today                = useSelector((state: RootState) => state.activeDates.today);
+  const farDate              = useSelector((state: RootState) => state.activeDates.farDate);
+  const hasTransactionByDate = useSelector((state: RootState) => state.projections.hasTransaction);
+
+  const rotatedDayNames = dayNames // ToDo: allow users to choose first day of week.
     .slice(startDayOfWeek)
     .concat(dayNames.slice(0, startDayOfWeek));
-  const hasTransactionByDate = useSelector(
-    (state: RootState) => state.projections.hasTransaction
-  );
+
 
   const generateDaysArray = (month: Date, startDay: number) => {
-    const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1, 0, 0, 0, 0);
+    const firstDayOfMonth = new Date(month.getFullYear(),month.getMonth(), 1,0,0,0,0);
     const firstDayOfGrid  = new Date(firstDayOfMonth);
     const offset          = (firstDayOfMonth.getDay() - startDay + 7) % 7 || 7;
     firstDayOfGrid.setDate(firstDayOfGrid.getDate() - offset - 1);
@@ -46,24 +78,11 @@ const Calendar: React.FC = () => {
     generateDaysArray(currentMonth, startDayOfWeek)
   );
 
-  useEffect(() => {
-    setDays(generateDaysArray(currentMonth, startDayOfWeek));
-    console.log(hasTransactionByDate)
-  }, [currentMonth, startDayOfWeek]);
-
-  const isCurrentMonth = (day: Date) => {
+  const isSameDay = (date1: Date, date2: Date) => {
     return (
-      day.getMonth()    === currentMonth.getMonth() &&
-      day.getFullYear() === currentMonth.getFullYear()
+      date1.toISOString().slice(0, 10) === date2.toISOString().slice(0, 10)
     );
   };
-
-  const dispatch = useDispatch();
-  
-  const isSameDay = (date1: Date, date2: Date) => {
-    return date1.toISOString().slice(0, 10) === date2.toISOString().slice(0, 10);
-  };
-  
 
   function chunk<T>(array: T[], size: number): T[][] {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
@@ -71,15 +90,19 @@ const Calendar: React.FC = () => {
     );
   }
 
+  useEffect(() => {
+    setDays(generateDaysArray(currentMonth, startDayOfWeek));
+  }, [currentMonth, startDayOfWeek]);
+
   return (
     <div className="calendar__container">
       <div className="calendar__navigation">
         <button
-          onClick={() =>
+          onClick={() => {
             setCurrentMonth(
               new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
-            )
-          }
+            );
+          }}
         >
           <i className="fa-regular fa-chevron-left" />
         </button>
@@ -91,13 +114,22 @@ const Calendar: React.FC = () => {
           {currentMonth.getFullYear()}
         </h2>
         <button
-          onClick={() =>
-            setCurrentMonth(
-              new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
-            )
-          }
+          onClick={() => {
+            let newMonth = new Date(
+              currentMonth.setMonth(currentMonth.getMonth() + 1)
+            );
+            let farDateMinusTwoMonths = new Date(
+              new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
+            );
+            if (newMonth > farDateMinusTwoMonths) {
+              let futureMonth = new Date(newMonth);
+              futureMonth.setMonth(futureMonth.getMonth() + 2);
+              dispatch(setFarDate(futureMonth.toISOString()));
+            }
+            setCurrentMonth(newMonth);
+          }}
         >
-        <i className="fa-regular fa-chevron-right" />
+          <i className="fa-regular fa-chevron-right" />
         </button>
       </div>
       <div className="calendar__calendar">
@@ -111,26 +143,16 @@ const Calendar: React.FC = () => {
         {chunk(days, 7).map((week: Date[], weekIndex: number) => (
           <div key={weekIndex} className="calendar__week">
             {week.map((day: Date) => (
-              <button
+              <CalendarDay
                 key={day.toISOString()}
-                onClick={() => dispatch(setActiveDate(day.toISOString()))}
-                className={`calendar__day${
-                  !isCurrentMonth(day) ? " calendar__day--other-month" : ""
-                }${isSameDay(day, new Date(today)) ? " calendar__day--today" : ""}${
-                  isSameDay(day, new Date(activeDate))
-                    ? " calendar__day--active"
-                    : ""
-                }${
-                  hasTransactionByDate[day.toISOString().split("T")[0]]
-                    ? " calendar__day--has-transaction"
-                    : ""
-                }`}
-              >
-                <div>
-                  {day.getDate()}
-                  {hasTransactionByDate[day.toISOString().split("T")[0]] && <div className='calendar__day__marker'></div>}
-                </div>
-              </button>
+                day={day}
+                isCurrentMonth={day.getMonth() === currentMonth.getMonth()}
+                isToday={isSameDay(day, new Date(today))}
+                isActive={isSameDay(day, new Date(activeDate))}
+                hasTransaction={
+                  hasTransactionByDate[day.toISOString().slice(0, 10)]
+                }
+              />
             ))}
           </div>
         ))}

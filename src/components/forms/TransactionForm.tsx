@@ -1,4 +1,4 @@
-import React, { useState }                                        from 'react';
+import React, { useEffect, useState }                             from 'react';
 import { useDispatch, useSelector }                               from 'react-redux';
 import CurrencyInput                                              from 'react-currency-input-field';
 
@@ -57,21 +57,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       fromAccount,
       toAccount,
       id: activeTransaction ? activeTransaction.id : new Date().getTime(),
-      accountId: activeTransaction ? activeTransaction.accountId : '',
       isRecurring,
       endDate: isoEndDate,
       recurrenceFrequency,
       allowOverpayment: false,
       showInCalendar: true
     };
-
-    // if (type === 'withdrawal' || type === 'transfer') {
-    //   transactionData.fromAccount = fromAccount;
-    // }
-
-    // if (type === 'deposit' || type === 'transfer') {
-    //   transactionData.toAccount = toAccount;
-    // }
 
     if (activeTransaction) {
       dispatch(updateTransaction(transactionData));
@@ -81,6 +72,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
 
     onClose();
   };
+
+  useEffect(() => {
+    if (!activeTransaction && accounts.length > 0) {
+      setFromAccount(accounts[0].id);
+      setToAccount(accounts[0].id);
+    }
+  }, [activeTransaction, accounts]);
 
   return (
     <div className="glassjar__form">
@@ -111,75 +109,79 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
           />
         </div>
 
-        <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-          <label htmlFor="type">Type:</label>
-          <select
-            id="type"
-            value={type}
-            onChange={(e) =>
-              setType(
-                e.target.value as
-                  | "deposit"
-                  | "withdrawal"
-                  | "transfer"
-                  | "event"
-              )
-            }
-          >
-            <option value = "deposit">Income</option>
-            <option value = "withdrawal">Expense</option>
-            <option value = "transfer">Transfer</option>
-            <option value = "event">Event</option>
-          </select>
-        </div>
-
-        <div className="glassjar__form__input-group">
-          <label htmlFor="amount">Amount:</label>
-          <CurrencyInput
-            id            = "amount"
-            prefix        = "$"
-            name          = "amount"
-            placeholder   = "Transaction Amount:"
-            defaultValue  = {amount}
-            decimalsLimit = {0}
-            onValueChange = {(value) => setAmount(value ? parseInt(value) : 0)}
-            />
-        </div>
-
-        {(type === "withdrawal" || type === "transfer") && (
+        <div className='glassjar__flex'> 
           <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="fromAccount">From Account:</label>
+            <label htmlFor="type">Type:</label>
             <select
-              id="fromAccount"
-              value={fromAccount}
-              onChange={(e) => {setFromAccount(e.target.value)}}
-              
+              id="type"
+              value={type}
+              onChange={(e) =>
+                setType(
+                  e.target.value as
+                    | "deposit"
+                    | "withdrawal"
+                    | "transfer"
+                    | "event"
+                )
+              }
             >
-              {accounts.map((account: Account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
+              <option value = "deposit">Income</option>
+              <option value = "withdrawal">Expense</option>
+              <option value = "transfer">Transfer</option>
+              <option value = "event">Event</option>
             </select>
           </div>
-        )}
 
-        {(type === "deposit" || type === "transfer") && (
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="toAccount">To Account:</label>
-            <select
-              id="toAccount"
-              value={toAccount}
-              onChange={(e) => setToAccount(e.target.value)}
-            >
-              {accounts.map((account: Account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
+          <div className="glassjar__form__input-group">
+            <label htmlFor="amount">Amount:</label>
+            <CurrencyInput
+              id            = "amount"
+              prefix        = "$"
+              name          = "amount"
+              placeholder   = "Transaction Amount:"
+              defaultValue  = {amount}
+              decimalsLimit = {0}
+              onValueChange = {(value) => setAmount(value ? parseInt(value) : 0)}
+              />
           </div>
-        )}
+        </div>
+
+        <div className='glassjar__flex'> 
+          {(type === "withdrawal" || type === "transfer") && (
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="fromAccount">From Account:</label>
+              <select
+                id="fromAccount"
+                value={fromAccount}
+                onChange={(e) => {setFromAccount(e.target.value)}}
+                
+              >
+                {accounts.map((account: Account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {(type === "deposit" || type === "transfer") && (
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="toAccount">To Account:</label>
+              <select
+                id="toAccount"
+                value={toAccount}
+                onChange={(e) => setToAccount(e.target.value)}
+              >
+                {accounts.map((account: Account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
 
         <div className="glassjar__form__input-group">
           <label htmlFor="description">Description (optional):</label>
@@ -203,19 +205,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
         </div>
 
         {isRecurring && (
-          <>
-            <div className="glassjar__form__input-group">
-              <label htmlFor="endDate">End Date (optional):</label>
-              <input
-                type="date"
-                id="endDate"
-                value={endDate ? stripTime(endDate) : ""}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-
+          <div className='glassjar__flex'>
             <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-              <label htmlFor="recurrenceFrequency"></label>
+              <label htmlFor="recurrenceFrequency">Repeats:</label>
               <select
                 id="recurrenceFrequency"
                 value={recurrenceFrequency}
@@ -232,7 +224,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 <option value="yearly">Yearly</option>
               </select>
             </div>
-          </>
+
+            <div className="glassjar__form__input-group">
+              <label htmlFor="endDate">End Date (optional):</label>
+              <input
+                type="date"
+                id="endDate"
+                value={endDate ? stripTime(endDate) : ""}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+          </div>
         )}
 
         <div className="glassjar__flex glassjar__flex--justify-center">
