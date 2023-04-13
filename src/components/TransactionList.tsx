@@ -5,7 +5,8 @@ import { openTransactionModal }                   from "./../redux/slices/modals
 import { setActiveTransaction }                   from "./../redux/slices/transactions";
 import {
   selectTransactionsByDate,
-  selectBalanceByDateAndAccount 
+  selectBalanceByDateAndAccount,
+  getBalanceArrayForDateRange
 }                                                 from "./../redux/slices/projections";
 import { Account }                                from "./../models/Account";
 import { selectAllAccounts }                      from "./../redux/slices/accounts";
@@ -16,9 +17,8 @@ export const TransactionList: React.FC = () => {
   const state = useSelector((state: RootState) => state);
 
   const accounts   = useSelector(selectAllAccounts);
-  const activeDate = useSelector(
-    (state: RootState) => state.activeDates.activeDate
-  );
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);  
+  const farDate    = useSelector((state: RootState) => state.activeDates.farDate);
 
   const activeDateFormatted = new Date(activeDate).toISOString().split("T")[0];
 
@@ -39,6 +39,37 @@ export const TransactionList: React.FC = () => {
     return newBalances;
   }, [state, activeDateFormatted, accounts]);
 
+  const useBalancesArrayByAccounts = (
+    state: RootState,
+    accounts: Account[],
+    activeDate: Date,
+    farDate: Date
+  ): { [id: string]: number[] } => {
+    const balancesArray = useMemo(() => {
+      const newBalancesArray: { [id: string]: number[] } = {};
+      accounts.forEach((account) => {
+        const startDate = new Date(activeDate);
+        const endDate = new Date(farDate);
+        newBalancesArray[account.id] = getBalanceArrayForDateRange(
+          state,
+          account,
+          startDate,
+          endDate
+        );
+      });
+      return newBalancesArray;
+    }, [state, activeDate, farDate, accounts]);
+
+    return balancesArray;
+  };
+
+  const balancesArray = useBalancesArrayByAccounts(state, accounts, new Date(activeDate), new Date(farDate));
+
+  useEffect(() => {
+    console.log('Balances array on page load:', balancesArray);
+  }, []); // Passing an empty array as a dependency ensures the effect runs only once on mount
+
+
   return (
     <div className = "glassjar__transaction-list">
       <h3>
@@ -55,7 +86,7 @@ export const TransactionList: React.FC = () => {
             {balances[account.id]?.toLocaleString("en-US", {
               style   : "currency",
               currency: "USD",
-            })}
+            })}            
           </p>
         ))}
       </div>{" "}

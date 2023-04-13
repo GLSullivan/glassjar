@@ -135,3 +135,22 @@ export const selectBalanceByDateAndAccount = (
 
   return balance;
 };
+
+export const getBalanceArrayForDateRange = (
+  state: RootState,
+  account: Account,
+  startDate: Date,
+  endDate: Date
+): number[] => {
+  const balanceArray: number[] = [];
+  const currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const currentBalance = selectBalanceByDateAndAccount(state, account);
+    balanceArray.push(currentBalance);
+
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return balanceArray;
+};
