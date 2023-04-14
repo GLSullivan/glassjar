@@ -10,13 +10,14 @@ import TransactionForm                                  from './components/forms
 import { ProjectedBalances }                            from './components/ProjectedBalances';
 import { Account }                                      from './models/Account'
 import { Transaction }                                  from './models/Transaction';
+import { AccountForm }                                  from './components/forms/AccountForm';
+import Loader                                           from './components/Loader';
 import { closeTransactionModal, 
         closeAccountForm,
         closeAccountList,
         openAccountList,
         openAccountForm }                               from './redux/slices/modals'
 import { recalculateProjections }                       from './redux/slices/projections';
-import { AccountForm }                                  from './components/forms/AccountForm';
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
@@ -59,6 +60,7 @@ function clearLocalStorage() {
 
   return (
     <div className="glassjar__root">
+      <Loader />
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
       </Modal>

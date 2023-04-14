@@ -18,7 +18,6 @@ const transactionsSlice = createSlice({
   reducers: {
     addTransaction: (state, action: PayloadAction<Transaction>) => {
       state.transactions.push(action.payload);
-      console.log("ZZZ",action.payload)
     },
     updateTransaction: (state, action: PayloadAction<Transaction>) => {
       const index = state.transactions.findIndex(
@@ -27,7 +26,6 @@ const transactionsSlice = createSlice({
       if (index !== -1) {
         state.transactions[index] = action.payload;
       }
-      console.log("ZZZ",action.payload)
     },
     deleteTransaction: (state, action: PayloadAction<number>) => {
       state.transactions = state.transactions.filter(

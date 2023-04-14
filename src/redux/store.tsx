@@ -1,12 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit';
-import activedates from './slices/activedates';
-import modalstate from './slices/modals';
-import transactions from './slices/transactions';
-import accounts from './slices/accounts';
-import projectionsReducer from './slices/projections';
+import { configureStore }   from '@reduxjs/toolkit';
+import activedates          from './slices/activedates';
+import modalstate           from './slices/modals';
+import transactions         from './slices/transactions';
+import accounts             from './slices/accounts';
+import projectionsReducer   from './slices/projections';
+import loaderReducer        from './slices/loader';
 
-import { Account } from '../models/Account';
-import { Transaction } from '../models/Transaction';
+import { Account }          from '../models/Account';
+import { Transaction }      from '../models/Transaction';
 
 // Check if accounts data exists in localStorage
 const savedAccounts: Account[] | null = localStorage.getItem('accounts')
@@ -21,22 +22,23 @@ const savedTransactions: Transaction[] | null = localStorage.getItem('transactio
 // Preloaded state for transactions and accounts slices
 const preloadedState = {
   accounts: {
-    accounts: savedAccounts || [],
+    accounts     : savedAccounts || [],
     activeAccount: null,
   },
   transactions: {
-    transactions: savedTransactions || [],
+    transactions     : savedTransactions || [],
     activeTransaction: null,
   },
 };
 
 export const store = configureStore({
   reducer: {
-    activeDates: activedates,
-    modalState: modalstate,
+    loader      : loaderReducer,
+    activeDates : activedates,
+    modalState  : modalstate,
     transactions: transactions,
-    accounts: accounts,
-    projections: projectionsReducer,
+    accounts    : accounts,
+    projections : projectionsReducer,
   },
   preloadedState,
 });
@@ -46,7 +48,6 @@ export type AppDispatch = typeof store.dispatch;
 
 export function saveStateToLocalStorage() {
   const state = store.getState();
-
   localStorage.setItem('accounts', JSON.stringify(state.accounts.accounts));
   localStorage.setItem('transactions', JSON.stringify(state.transactions.transactions));
 }

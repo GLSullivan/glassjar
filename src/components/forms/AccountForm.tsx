@@ -35,10 +35,17 @@ export const AccountForm: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+  
+    // Ensuring the account has the correct balance
+    const updatedAccount = {
+      ...account,
+      currentBalance: parseFloat(account.currentBalance.toFixed(2)),
+    };
+  
     if (activeAccount) {
-      dispatch(updateAccount(account));
+      dispatch(updateAccount(updatedAccount));
     } else {
-      dispatch(addAccount({ ...account, id: generateUniqueId() }));
+      dispatch(addAccount({ ...updatedAccount, id: generateUniqueId() }));
     }
     dispatch(setActiveAccount(null));
     dispatch(closeAccountForm());
