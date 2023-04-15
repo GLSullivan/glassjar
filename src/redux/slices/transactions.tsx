@@ -24,6 +24,7 @@ const transactionsSlice = createSlice({
         (transaction) => transaction.id === action.payload.id
       );
       if (index !== -1) {
+        state.transactions[index] = { ...action.payload, updatedAt: Date.now() };
         state.transactions[index] = action.payload;
       }
     },

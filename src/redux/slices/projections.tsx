@@ -41,8 +41,9 @@ export const projectionsSlice = createSlice({
               )
           :  farDateObj
           :  transactionDate;
-
+          
         while (transactionDate <= transactionEndDate && count < maxIterations) {
+
           count++;
           const dateString = transactionDate.toISOString().split("T")[0];
           if (!state.byDate[dateString]) {
@@ -98,36 +99,42 @@ export default projectionsSlice.reducer;
 
 
 
-interface BalanceData {
-  balances: { [date: string]: number };
-  minDate?: Date;
-  maxDate?: Date;
-  prevAccount?: Account;
-  prevTransactions?: Transaction[];
-}
+// interface BalanceData {
+//   balances: { [date: string]: number };
+//   minDate?: Date;
+//   maxDate?: Date;
+//   prevAccount?: Account;
+//   prevTransactions?: Transaction[];
+// }
 
-const memoizedBalances: { [accountId: string]: BalanceData } = {};
+// const memoizedBalances: { [accountId: string]: BalanceData } = {};
 
-const hasAccountOrTransactionsChanged = (accountId: string, account: Account, transactions: Transaction[]): boolean => {
-  const prevAccount = memoizedBalances[accountId].prevAccount;
-  const prevTransactions = memoizedBalances[accountId].prevTransactions;
+// const hasAccountOrTransactionsChanged = (accountId: string, account: Account, transactions: Transaction[]): boolean => {
+//   const prevAccount = memoizedBalances[accountId].prevAccount;
+//   const prevTransactions = memoizedBalances[accountId].prevTransactions;
 
-  if (!prevAccount || !prevTransactions) {
-    return true;
-  }
+//   if (!prevAccount || !prevTransactions) {
+//     return true;
+//   }
 
-  if (JSON.stringify(prevAccount) !== JSON.stringify(account) || JSON.stringify(prevTransactions) !== JSON.stringify(transactions)) {
-    return true;
-  }
+//   if (JSON.stringify(prevAccount) !== JSON.stringify(account) || JSON.stringify(prevTransactions) !== JSON.stringify(transactions)) {
+//     return true;
+//   }
 
-  return false;
-};
+//   return false;
+// };
+
+
+
+
+
 
 export const selectBalanceByDateAndAccount = (
   state: RootState,
   account: Account
 ): number => {
   const startTime = performance.now();
+
   let balance = account.currentBalance;
 
   const today = new Date(state.activeDates.today);
@@ -135,68 +142,55 @@ export const selectBalanceByDateAndAccount = (
   const maxIterations = 109500;
 
   let currentDay = new Date(today);
+
+  let dayOffset = 0;
+  const daysDifference = Math.floor(
+    (activeDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
   let iterations = 0;
   const accountId = account.id;
 
-  if (!memoizedBalances[accountId]) {
-    memoizedBalances[accountId] = { balances: {} };
-  }
+  while (dayOffset <= daysDifference && iterations < maxIterations) {
+    const transactionsForCurrentDay =
+      state.projections.byDate[currentDay.toISOString().split("T")[0]] || [];
 
-  const transactions = state.transactions.transactions;
-  let shouldRunWhileLoop = false;
+    for (const transaction of transactionsForCurrentDay) {
+      console.log(
+        transaction.transactionName,
+        transaction.amount,
+        transaction.type
+      );
 
-  if (!memoizedBalances[accountId].minDate || !memoizedBalances[accountId].maxDate) {
-    shouldRunWhileLoop = true;
-  } else if (activeDate < (memoizedBalances[accountId].minDate ?? new Date(0)) || activeDate > (memoizedBalances[accountId].maxDate ?? new Date(0))) {
-    shouldRunWhileLoop = true;
-  } else if (hasAccountOrTransactionsChanged(accountId, account, transactions)) {
-    shouldRunWhileLoop = true;
-    memoizedBalances[accountId].prevAccount = { ...account };
-    memoizedBalances[accountId].prevTransactions = [...transactions];
-  } else {
-    balance = memoizedBalances[accountId].balances[activeDate.toISOString().split("T")[0]];
-  }
-
-  while (shouldRunWhileLoop && currentDay <= activeDate && iterations < maxIterations) {
-    if (iterations === 1) {console.log("While Loop Run -------------------------------------")}
-    const dateString = currentDay.toISOString().split("T")[0];
-
-    if (memoizedBalances[accountId].balances[dateString] !== undefined) {
-      balance = memoizedBalances[accountId].balances[dateString];
-    } else {
-      if (selectHasTransactionByDate(state, dateString)) {
-        state.projections.byDate[dateString].forEach((transaction) => {
-          if (transaction.fromAccount === accountId) {
-            if (
-              transaction.type === "withdrawal" ||
-              transaction.type === "transfer"
-            ) {
-              balance -= transaction.amount;
-            }
-          } else if (transaction.toAccount === accountId) {
-            if (
-              transaction.type === "deposit" ||
-              transaction.type === "transfer"
-            ) {
-              balance += transaction.amount;
-            }
-          }
-        });
+      if (transaction.fromAccount === accountId) {
+        if (
+          transaction.type === "withdrawal" ||
+          transaction.type === "transfer"
+        ) {
+          console.log(
+            transaction.amount,
+            balance
+          );
+          balance -= transaction.amount;
+        }
+      } else if (transaction.toAccount === accountId) {
+        if (transaction.type === "deposit" || transaction.type === "transfer") {
+          console.log(
+            transaction.amount,
+            balance
+          );
+          balance += transaction.amount;
+        }
       }
-      memoizedBalances[accountId].balances[dateString] = balance;
     }
 
     currentDay.setDate(currentDay.getDate() + 1);
+    dayOffset++;
     iterations++;
   }
 
-  if (shouldRunWhileLoop) {
-    memoizedBalances[accountId].minDate = new Date(today);
-    memoizedBalances[accountId].maxDate = new Date(currentDay);
-  }
-
   const endTime = performance.now();
-  console.log("Calc time:", (endTime - startTime).toFixed(2), "ms",memoizedBalances);
+  console.log("Calc time:", (endTime - startTime).toFixed(2), "ms");
 
   return balance;
 };
@@ -205,13 +199,12 @@ export const selectBalanceByDateAndAccount = (
 
 
 
-
-
-
-
-
-
-
+export const resetMemoizedBalance = (accountId: string): void => {
+  console.log("Clearing",accountId)
+  // if (memoizedBalances[accountId]) {
+  //   memoizedBalances[accountId] = { balances: {} };
+  // }
+};
 
 
 

@@ -12,4 +12,5 @@ export interface Transaction {
   toAccount?          : string;
   allowOverpayment    : false;
   showInCalendar      : true;
+  updatedAt?          : number;
 }

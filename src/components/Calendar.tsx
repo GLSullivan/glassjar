@@ -131,6 +131,24 @@ const Calendar: React.FC = () => {
         >
           <i className="fa-regular fa-chevron-right" />
         </button>
+        <button
+          onClick={() => {
+            let newMonth = new Date(
+              currentMonth.setFullYear(currentMonth.getFullYear() + 5)
+            );
+            let farDateMinusTwoMonths = new Date(
+              new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
+            );
+            if (newMonth > farDateMinusTwoMonths) {
+              let futureMonth = new Date(newMonth);
+              futureMonth.setMonth(futureMonth.getMonth() + 2);
+              dispatch(setFarDate(futureMonth.toISOString()));
+            }
+            setCurrentMonth(newMonth);
+          }}
+        >
+          + 5
+        </button>
       </div>
       <div className="calendar__calendar">
         <div className="calendar__header-row">

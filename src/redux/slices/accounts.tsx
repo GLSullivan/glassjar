@@ -24,7 +24,8 @@ export const accountsSlice = createSlice({
         (account) => account.id === action.payload.id
       );
       if (index !== -1) {
-        state.accounts[index] = action.payload;
+        // Set the updatedAt property to the current timestamp
+        state.accounts[index] = { ...action.payload, updatedAt: Date.now() };
       }
     },
     setActiveAccount: (state, action: PayloadAction<Account | null>) => {

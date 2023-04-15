@@ -5,4 +5,5 @@ export interface Account {
   type: 'checking' | 'savings' | 'credit card' | 'loan' | 'mortgage' | 'cash';
   interestRate?: number;
   lastUpdated: string;
+  updatedAt?: number;
 }

@@ -9,6 +9,7 @@ import {
 }                                       from "./../../redux/slices/accounts";
 import { Account }                      from "./../../models/Account";
 import CurrencyInput                    from 'react-currency-input-field';
+import { resetMemoizedBalance }         from './../../redux/slices/projections';
 
 export const AccountForm: React.FC = () => {
   const accounts = useSelector((state: RootState) => state.accounts.accounts);
@@ -44,6 +45,9 @@ export const AccountForm: React.FC = () => {
   
     if (activeAccount) {
       dispatch(updateAccount(updatedAccount));
+
+       // Call resetMemoizedBalance here to reset the memoized balance for the updated account
+      resetMemoizedBalance(updatedAccount.id);
     } else {
       dispatch(addAccount({ ...updatedAccount, id: generateUniqueId() }));
     }
