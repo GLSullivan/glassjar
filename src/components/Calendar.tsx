@@ -97,7 +97,7 @@ const Calendar: React.FC = () => {
         >
           <i className="fa-regular fa-chevron-right" />
         </button>
-        <button
+        {/* <button
           onClick={() => {
             let newMonth = new Date(
               currentMonth.setFullYear(currentMonth.getFullYear() + 5)
@@ -114,7 +114,7 @@ const Calendar: React.FC = () => {
           }}
         >
           + 5
-        </button>
+        </button> */}
       </div>
       <div className="calendar__calendar">
         <div className="calendar__header-row">

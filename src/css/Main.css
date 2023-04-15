@@ -50,10 +50,19 @@
 .glassjar__flex {
   display: flex;
   gap    : 1rem;
+  width  : 100%;
 }
 
 .glassjar__flex.glassjar__flex--justify-center {
   justify-content: center;
+}
+
+.glassjar__flex.glassjar__flex--justify-around {
+  justify-content: space-around;
+}
+
+.glassjar__flex.glassjar__flex--justify-between {
+  justify-content: space-between;
 }
 
 button {

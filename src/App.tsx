@@ -73,15 +73,9 @@ function clearLocalStorage() {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-      <div className="glassjar__flex">
-        <button
-          onClick={() => {
-            dispatch(openAccountList());
-          }}
-        >
-          Accounts
-        </button> 
-        <button onClick={() => clearLocalStorage()}>Clear Local Storage</button>
+      <div className="glassjar__flex glassjar__flex--justify-around">
+        <h3 onClick={() => { dispatch(openAccountList()); }}><i className="fa-solid fa-file-invoice-dollar" /></h3> 
+        <h3 onClick={() => clearLocalStorage()}><i className="fa-solid fa-floppy-disk-circle-xmark" /></h3>
       </div>
       <Calendar />
       <TransactionList />

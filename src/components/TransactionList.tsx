@@ -10,6 +10,7 @@ import {
 }                                                 from "./../redux/slices/projections";
 import { Account }                                from "./../models/Account";
 import { selectAllAccounts }                      from "./../redux/slices/accounts";
+import TransactionListItem from "./TransactionListItem"
 
 import "./../css/TransactionList.css";
 
@@ -18,7 +19,6 @@ export const TransactionList: React.FC = () => {
 
   const accounts = useSelector(selectAllAccounts);
   const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
-  const farDate = useSelector((state: RootState) => state.activeDates.farDate);
 
   const activeDateFormatted = new Date(activeDate).toISOString().split("T")[0];
 
@@ -76,38 +76,9 @@ console.log(selectBalanceByDateAndAccount(
         ))}
       </div>{" "}
       {transactionsByDate.map((transaction) => (
-        <h5
-          onClick={() => {
-            dispatch(setActiveTransaction(transaction));
-            dispatch(openTransactionModal());
-          }}
-          key = {transaction.id}
-        >
-          {transaction.type == "deposit" && <i className="fa-solid fa-plus" />}
-          {transaction.type == "withdrawal" && (
-            <i className = "fa-solid fa-minus" />
-          )}
-          {transaction.type == "transfer" && (
-            <i className = "fa-regular fa-money-bill-transfer" />
-          )}
-          {transaction.type == "event" && (
-            <i className = "fa-regular fa-calendar" />
-          )}
-          {" | "}
-          {transaction.transactionName}
-          {" | "}
-          {transaction.amount.toLocaleString("en-US", {
-            style   : "currency",
-            currency: "USD",
-          })}
-          {transaction.isRecurring && (
-            <>
-              {" "}
-              | <i className = "fa-solid fa-repeat" />
-            </>
-          )}
-        </h5>
+        <TransactionListItem transaction={transaction}/>
       ))}
+      <br />
       <button
         onClick={() => {
           dispatch(setActiveTransaction(null));

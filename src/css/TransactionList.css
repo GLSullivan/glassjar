@@ -24,3 +24,20 @@
   font-weight: 100;
   margin-top : 0;
 }
+
+.glassjar__transaction-list-item {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background: var(--color-inverse);
+  cursor: pointer;
+  padding: .5rem 1rem;
+  border-radius: .5rem;
+  box-sizing: border-box;
+  margin-bottom: .5rem;
+}
+
+.glassjar__transaction-list-item > div {
+  display: flex;
+  gap: .5rem;
+}
