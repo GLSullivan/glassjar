@@ -36,7 +36,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [description, setDescription]                 = useState(activeTransaction?.description || '');
   const [isRecurring, setIsRecurring]                 = useState(activeTransaction?.isRecurring || false);
   const [endDate, setEndDate]                         = useState(activeTransaction?.endDate || '');
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState(activeTransaction?.recurrenceFrequency || undefined);
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState(activeTransaction?.recurrenceFrequency || 'daily');
 
   const dispatch = useDispatch();
 
@@ -220,10 +220,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               <select
                 id="recurrenceFrequency"
                 value={recurrenceFrequency}
-                // Add the type for the event in the onChange handler
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onChange={(e) =>
                   setRecurrenceFrequency(
-                    e.target.value as "daily" | "weekly" | "monthly" | "yearly"
+                    e.target.value as
+                      | "daily"
+                      | "weekly"
+                      | "monthly"
+                      | "yearly"
                   )
                 }
               >

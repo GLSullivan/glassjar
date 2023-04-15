@@ -6,8 +6,7 @@ import { openTransactionModal }                   from "./../redux/slices/modals
 import { setActiveTransaction }                   from "./../redux/slices/transactions";
 import {
   selectTransactionsByDate,
-  selectBalanceByDateAndAccount,
-  getBalanceArrayForDateRange
+  selectBalanceByDateAndAccount
 }                                                 from "./../redux/slices/projections";
 import { Account }                                from "./../models/Account";
 import { selectAllAccounts }                      from "./../redux/slices/accounts";
@@ -38,14 +37,23 @@ export const TransactionList: React.FC = () => {
         newBalances[account.id] = selectBalanceByDateAndAccount(
           state,
           account
-        );
+        ) as number; 
       });
-
+  
       setBalances(newBalances);
     };
-
+  
     updateBalances();
   }, [state, activeDateFormatted, accounts]);
+  
+console.log(selectBalanceByDateAndAccount(
+  state,
+  state.accounts.accounts[0],
+  true,
+  state.activeDates.today,
+  state.activeDates.farDate
+))
+
 
   return (
     <div className="glassjar__transaction-list">

@@ -1,4 +1,4 @@
-    /* 
+  /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -13,31 +13,43 @@
     /* --primary: #7B9F90ff; */
   --color-bright   : #ffffff;
   --color-inverse  : #f0f5f3;
-  --color-secondary: #D19F84;
-  --color-brand    : #54816F;
+  --color-secondary: #d19f84;
+  --color-brand    : #54816f;
   --color-tertiary : #638d7c;
   --color-primary  : #122420;
 
-  --gradient-brand    : linear-gradient(160deg, #DFF3E5, #6E9C88, #6E9C88, #3A6454);
-  --gradient-secondary: linear-gradient(160deg, #BF8975ff, #B6806Cff, #B6806Cff, #7A4A3Fff);
+  --gradient-brand    : linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
+  --gradient-secondary: linear-gradient(
+    160deg,
+    #bf8975ff,
+    #b6806cff,
+    #b6806cff,
+    #7a4a3fff
+  );
 }
 
 .glassjar__root {
+  align-items: center;
+  background : linear-gradient(
+    160deg,
+    #e0f4e6,
+    #568371,
+    #568371,
+    #568371,
+    #568371
+  );
   box-sizing    : border-box;
   display       : flex;
   flex-direction: column;
-  font-family   : 'Space Grotesk', sans-serif;
+  font-family   : "Space Grotesk", sans-serif;
+  gap           : 0.5rem;
   min-height    : 100vh;
   padding       : 0rem;
-  background    : var(--color-inverse);
-  background    : linear-gradient(135deg, #EDEDEDff, #D2D0CCff, #BEBCBBff);;
-  background    : linear-gradient(160deg, #E0F4E6, #568371, #568371, #568371, #568371);
-  align-items   : center;
 }
 
 .glassjar__flex {
   display: flex;
-  gap: 1rem;
+  gap    : 1rem;
 }
 
 .glassjar__flex.glassjar__flex--justify-center {
@@ -45,14 +57,14 @@
 }
 
 button {
-  border: none;
-  outline: none;
-  padding: .5rem 2rem;
-  border-radius: 1rem;
-  font-weight: 900;
+  align-self    : center;
+  background    : var(--color-secondary);
+  border        : none;
+  border-radius : 1rem;
+  color         : var(--color-bright);
+  cursor        : pointer;
+  font-weight   : 900;
+  outline       : none;
+  padding       : 0.5rem 2rem;
   text-transform: uppercase;
-  cursor: pointer;
-  color: var(--color-bright);
-  background: var(--color-secondary);
-  align-self: center;
 }

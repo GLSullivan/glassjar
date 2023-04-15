@@ -55,15 +55,16 @@ export const projectionsSlice = createSlice({
 
           if (transaction.isRecurring) {
               // Increase date based on recurrence interval
+              console.log("transaction.recurrenceFrequency",transaction.recurrenceFrequency)
             switch (transaction.recurrenceFrequency) {
-              case "monthly": 
-                transactionDate.setMonth(transactionDate.getMonth() + 1);
+              case "daily": 
+                transactionDate.setDate(transactionDate.getDate() + 1);
                 break;
               case "weekly": 
                 transactionDate.setDate(transactionDate.getDate() + 7);
                 break;
-              case "daily": 
-                transactionDate.setDate(transactionDate.getDate() + 1);
+              case "monthly": 
+                transactionDate.setMonth(transactionDate.getMonth() + 1);
                 break;
               case "yearly": 
                 transactionDate.setFullYear(transactionDate.getFullYear() + 1);
@@ -99,104 +100,79 @@ export default projectionsSlice.reducer;
 
 
 
-// interface BalanceData {
-//   balances: { [date: string]: number };
-//   minDate?: Date;
-//   maxDate?: Date;
-//   prevAccount?: Account;
-//   prevTransactions?: Transaction[];
-// }
-
-// const memoizedBalances: { [accountId: string]: BalanceData } = {};
-
-// const hasAccountOrTransactionsChanged = (accountId: string, account: Account, transactions: Transaction[]): boolean => {
-//   const prevAccount = memoizedBalances[accountId].prevAccount;
-//   const prevTransactions = memoizedBalances[accountId].prevTransactions;
-
-//   if (!prevAccount || !prevTransactions) {
-//     return true;
-//   }
-
-//   if (JSON.stringify(prevAccount) !== JSON.stringify(account) || JSON.stringify(prevTransactions) !== JSON.stringify(transactions)) {
-//     return true;
-//   }
-
-//   return false;
-// };
-
-
-
-
-
-
 export const selectBalanceByDateAndAccount = (
   state: RootState,
-  account: Account
-): number => {
+  account: Account,
+  range: boolean = false,
+  startDate?: string,
+  endDate?: string
+): number | number[] => { 
   const startTime = performance.now();
+  const accountId = account.id;
 
   let balance = account.currentBalance;
+  let balanceArray: number[] = []; 
+  balanceArray.length = 0;
 
   const today = new Date(state.activeDates.today);
-  const activeDate = new Date(state.activeDates.activeDate);
   const maxIterations = 109500;
+  
+  let activeDate = new Date(state.activeDates.activeDate);
+  if (range && endDate) {
+    activeDate =  new Date(endDate)
+  } 
 
   let currentDay = new Date(today);
-
+  if (range && startDate) {
+    currentDay =  new Date(startDate)
+  } 
   let dayOffset = 0;
   const daysDifference = Math.floor(
     (activeDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
   );
 
   let iterations = 0;
-  const accountId = account.id;
 
   while (dayOffset <= daysDifference && iterations < maxIterations) {
     const transactionsForCurrentDay =
       state.projections.byDate[currentDay.toISOString().split("T")[0]] || [];
-
+    let dayBalance = 0;
     for (const transaction of transactionsForCurrentDay) {
-      console.log(
-        transaction.transactionName,
-        transaction.amount,
-        transaction.type
-      );
-
       if (transaction.fromAccount === accountId) {
         if (
           transaction.type === "withdrawal" ||
           transaction.type === "transfer"
         ) {
-          console.log(
-            transaction.amount,
-            balance
-          );
-          balance -= transaction.amount;
+          dayBalance -= transaction.amount;
         }
       } else if (transaction.toAccount === accountId) {
         if (transaction.type === "deposit" || transaction.type === "transfer") {
-          console.log(
-            transaction.amount,
-            balance
-          );
-          balance += transaction.amount;
+          dayBalance += transaction.amount;
         }
       }
     }
+    balance += dayBalance;
+
+    if (balanceArray.length > 0) {
+      dayBalance += balanceArray[balanceArray.length - 1];
+    }
+    balanceArray.push(dayBalance);
 
     currentDay.setDate(currentDay.getDate() + 1);
     dayOffset++;
     iterations++;
   }
 
+  console.log(balanceArray)
   const endTime = performance.now();
   console.log("Calc time:", (endTime - startTime).toFixed(2), "ms");
 
-  return balance;
+  if (range) {
+    return balanceArray
+  } else {
+    return balance;
+  }
 };
-
-
-
 
 
 export const resetMemoizedBalance = (accountId: string): void => {
@@ -206,27 +182,3 @@ export const resetMemoizedBalance = (accountId: string): void => {
   // }
 };
 
-
-
-
-
-
-
-export const getBalanceArrayForDateRange = (
-  state: RootState,
-  account: Account,
-  startDate: Date,
-  endDate: Date
-): number[] => {
-  const balanceArray: number[] = [];
-  const currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    const currentBalance = selectBalanceByDateAndAccount(state, account);
-    balanceArray.push(currentBalance);
-
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return balanceArray;
-};

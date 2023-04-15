@@ -2,46 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch }   from 'react-redux'
 import { RootState }                  from './../redux/store';
 import { setActiveDate, setFarDate }  from './../redux/slices/activedates'
+import CalendarDay from './CalendarDay'
 
 import "./../css/Calendar.css";
-interface CalendarDayProps {
-  day           : Date;
-  isCurrentMonth: boolean;
-  isToday       : boolean;
-  isActive      : boolean;
-  hasTransaction: boolean;
-}
 
 const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
 const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
-
-const CalendarDay: React.FC<CalendarDayProps> = React.memo(
-  ({ day, isCurrentMonth, isToday, isActive, hasTransaction }) => {
-    const dispatch = useDispatch();
-    const className = [
-      "calendar__day",
-      !isCurrentMonth ? "calendar__day--other-month"    : "",
-      isToday         ? "calendar__day--today"          : "",
-      isActive        ? "calendar__day--active"         : "",
-      hasTransaction  ? "calendar__day--has-transaction": "",
-    ]
-      .join(" ")
-      .replace(/\s{2,}/g, " ");
-
-    return (
-      <button
-        key={day.toISOString()}
-        onClick={() => dispatch(setActiveDate(day.toISOString()))}
-        className={className}
-      >
-        <div>
-          {day.getDate()}
-          {hasTransaction && <div className="calendar__day__marker"></div>}
-        </div>
-      </button>
-    );
-  }
-);
 
 const Calendar: React.FC = () => {
   const dispatch = useDispatch();
