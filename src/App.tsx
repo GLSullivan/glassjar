@@ -1,6 +1,5 @@
 import { useSelector, useDispatch }                     from 'react-redux';
-import React, { useEffect, useState }                   from 'react';
-
+import React, { useEffect, useState, PureComponent }    from 'react';
 import { RootState }                                    from './redux/store';        
 import { AccountList }                                  from './components/AccountList';
 import Calendar                                         from './components/Calendar';
@@ -17,7 +16,11 @@ import { closeTransactionModal,
         closeAccountList,
         openAccountList,
         openAccountForm }                               from './redux/slices/modals'
-import { recalculateProjections }                       from './redux/slices/projections';
+import { recalculateProjections, selectBalanceByDateAndAccount }                       from './redux/slices/projections';
+
+
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 
 
  // import Swiper JS
@@ -66,6 +69,15 @@ function clearLocalStorage() {
   localStorage.removeItem('accounts');
   localStorage.removeItem('transactions');
 }
+
+const state = useSelector((state: RootState) => state);
+
+const data: number | number[] = selectBalanceByDateAndAccount(state,state.accounts.accounts[0],true,state.activeDates.today,state.activeDates.farDate) 
+
+
+
+
+
 
 
   return (
@@ -118,6 +130,28 @@ function clearLocalStorage() {
             </h3>
           </div>
         </SwiperSlide>
+        <SwiperSlide>
+        <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          width={500}
+          height={300}
+          data={data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>
+      </ResponsiveContainer>        </SwiperSlide>
       </Swiper>
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
     </div>
