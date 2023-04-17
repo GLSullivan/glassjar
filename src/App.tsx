@@ -4,7 +4,7 @@ import React, { useEffect, useState }                   from 'react';
 import { RootState }                                    from './redux/store';        
 import { AccountList }                                  from './components/AccountList';
 import Calendar                                         from './components/Calendar';
-import { TransactionList }                              from './components/TransactionList';
+import { TransactionList }                              from './components/DayPanel';
 import Modal                                            from './components/Modal';
 import TransactionForm                                  from './components/forms/TransactionForm';
 import { ProjectedBalances }                            from './components/ProjectedBalances';
@@ -18,6 +18,16 @@ import { closeTransactionModal,
         openAccountList,
         openAccountForm }                               from './redux/slices/modals'
 import { recalculateProjections }                       from './redux/slices/projections';
+
+
+ // import Swiper JS
+ import { Swiper, SwiperSlide } from "swiper/react";
+ import { Navigation, Pagination } from "swiper";
+
+ // import Swiper styles
+ import 'swiper/css';
+ import "swiper/css/navigation";
+ import "swiper/css/pagination";
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
@@ -64,7 +74,11 @@ function clearLocalStorage() {
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
       </Modal>
-      <Modal isOpen={accountFormOpen} onClose={closeTheAccountForm} hideClose={accounts.length < 1}>
+      <Modal
+        isOpen={accountFormOpen}
+        onClose={closeTheAccountForm}
+        hideClose={accounts.length < 1}
+      >
         <AccountForm />
       </Modal>
       <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>
@@ -73,12 +87,38 @@ function clearLocalStorage() {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-      <div className="glassjar__flex glassjar__flex--justify-around">
-        <h3 onClick={() => { dispatch(openAccountList()); }}><i className="fa-solid fa-file-invoice-dollar" /></h3> 
-        <h3 onClick={() => clearLocalStorage()}><i className="fa-solid fa-floppy-disk-circle-xmark" /></h3>
-      </div>
       <Calendar />
-      <TransactionList />
+      <Swiper
+        // navigation={true}
+        // pagination={true}
+        // modules={[Navigation, Pagination]}
+        className="glassjar__swiper"
+      >
+        <SwiperSlide>
+          <div className="slide__holder">
+            <TransactionList />
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide__holder">
+            <AccountList />
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide__holder">
+            <h3
+              onClick={() => {
+                dispatch(openAccountList());
+              }}
+            >
+              <i className="fa-solid fa-file-invoice-dollar" />
+            </h3>
+            <h3 onClick={() => clearLocalStorage()}>
+              <i className="fa-solid fa-floppy-disk-circle-xmark" />
+            </h3>
+          </div>
+        </SwiperSlide>
+      </Swiper>
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
     </div>
   );

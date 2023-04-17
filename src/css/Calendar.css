@@ -23,7 +23,7 @@
   display        : flex;
   justify-content: space-between;
   margin-bottom  : 1rem;
-  padding        : 0 2rem;
+  /* padding        : 0 2rem; */
   width          : 100%;
 }
 
@@ -109,9 +109,13 @@
 
 .calendar__month {
   color     : var(--color-inverse);
-  font-size : 2rem;
-  margin    : 1rem;
+  font-size : 1.6rem;
+  font-weight: 100;
+  /* margin    : 1rem; */
   text-align: center;
+  /* white-space: nowrap; */
+  flex: 2;
+  width: 100%;
 }
 
 .calendar__day__marker {

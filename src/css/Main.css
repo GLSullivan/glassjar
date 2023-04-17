@@ -1,4 +1,4 @@
-  /* 
+      /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -10,7 +10,7 @@
 */
 
 :root {
-    /* --primary: #7B9F90ff; */
+        /* --primary: #7B9F90ff; */
   --color-bright   : #ffffff;
   --color-inverse  : #f0f5f3;
   --color-secondary: #d19f84;
@@ -63,6 +63,20 @@
 
 .glassjar__flex.glassjar__flex--justify-between {
   justify-content: space-between;
+}
+
+.glassjar__swiper {
+  background   : var(--color-bright);
+  border-radius: 1rem;
+  box-sizing   : border-box;
+  flex         : 2;
+  margin       : 1rem;
+  max-width    : 100vw;
+  width        : calc(100% - 2rem);
+}
+
+.slide__holder {
+  padding: 2rem;
 }
 
 button {
