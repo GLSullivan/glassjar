@@ -1,4 +1,4 @@
-      /* 
+            /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -15,6 +15,9 @@
   flex-direction: column;
   max-width     : 100vw;
   min-width     : 100%;
+        /* height: 60vh; */
+        /* aspect-ratio: 1; */
+        /* max-height: 50vh; */
 }
 
 .calendar__navigation {
@@ -22,16 +25,23 @@
   box-sizing     : border-box;
   display        : flex;
   justify-content: space-between;
-  margin-bottom  : 1rem;
-  /* padding        : 0 2rem; */
   width          : 100%;
+  position       : sticky;
+  top            : 0;
+  height         : 45px;
+  background     : rgb(84 129 111 / 80%);
+  z-index        : 4;
+}
+
+.calendar__navigation h2 {
+  margin: 0;
 }
 
 .calendar__calendar {
-  /* aspect-ratio  : 0.8; */
+        /* aspect-ratio  : 0.8; */
+        /* max-height    : 80vh; */
   display       : flex;
   flex-direction: column;
-  max-height    : 80vh;
   max-width     : 100vw;
   width         : 100%;
 }
@@ -39,6 +49,8 @@
 .calendar__week {
   display: flex;
   flex   : 2;
+  background: transparent;
+  transition: .5s ease;
 }
 
 .calendar__day {
@@ -93,10 +105,12 @@
 }
 
 .calendar__header-row {
-  background: linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
-  background: rgba(255, 255, 255, 0.25);
+  background: #9cb9ad;
   display   : flex;
-  padding   : 0.25rem 0;
+  position  : sticky;
+  top       : 45px;
+  height    : 32px;
+  z-index   : 3;
 }
 
 .calendar__header-day {
@@ -108,13 +122,13 @@
 }
 
 .calendar__month {
-  color     : var(--color-inverse);
-  font-size : 1.6rem;
+  color      : var(--color-inverse);
+  font-size  : 1.6rem;
   font-weight: 100;
-  /* margin    : 1rem; */
+        /* margin    : 1rem; */
   text-align: center;
-  /* white-space: nowrap; */
-  flex: 2;
+        /* white-space: nowrap; */
+  flex : 2;
   width: 100%;
 }
 
@@ -133,4 +147,11 @@
   color     : var(--color-inverse);
   font-size : 1.4rem;
   outline   : none;
+}
+
+.calendar__week.calendar__week--active {
+  position  : sticky;
+  top       : 77px;
+  background: var(--color-brand);
+  z-index   : 2;
 }

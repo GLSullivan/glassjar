@@ -7,13 +7,13 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+}                                     from "recharts";
+import { useSelector }                from "react-redux";
+import { RootState }                  from "./../redux/store";
 import {
   selectBalanceByDateAndAccount,
-} from "./../redux/slices/projections";
-import { Account } from "../models/Account";
+}                                     from "./../redux/slices/projections";
+import { Account }                    from "./../models/Account";
 
 import "./../css/Calendar.css";
 

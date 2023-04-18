@@ -50,6 +50,10 @@ const Calendar: React.FC = () => {
     );
   };
 
+  const containsActiveDate = (week: Date[], activeDate: Date) => {
+    return week.some((day) => isSameDay(day, activeDate));
+  };  
+
   function chunk<T>(array: T[], size: number): T[][] {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
       array.slice(i * size, i * size + size)
@@ -125,7 +129,10 @@ const Calendar: React.FC = () => {
           ))}
         </div>
         {chunk(days, 7).map((week: Date[], weekIndex: number) => (
-          <div key={weekIndex} className="calendar__week">
+          <div
+            key={weekIndex}
+            className={`calendar__week${containsActiveDate(week, new Date(activeDate)) ? " calendar__week--active" : ""}`}
+          >
             {week.map((day: Date) => (
               <CalendarDay
                 key={day.toISOString()}
