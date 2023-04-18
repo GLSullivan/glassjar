@@ -146,7 +146,9 @@ export const selectBalanceByDateAndAccount = (
           dayBalance -= transaction.amount;
         }
       } else if (transaction.toAccount === accountId) {
-        if (transaction.type === "deposit" || transaction.type === "transfer") {
+        if (
+          transaction.type === "deposit" || 
+          transaction.type === "transfer") {
           dayBalance += transaction.amount;
         }
       }
@@ -155,6 +157,8 @@ export const selectBalanceByDateAndAccount = (
 
     if (balanceArray.length > 0) {
       dayBalance += balanceArray[balanceArray.length - 1];
+    } else {
+      dayBalance += balance;
     }
     balanceArray.push(dayBalance);
 

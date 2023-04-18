@@ -16,10 +16,10 @@ import { closeTransactionModal,
         closeAccountList,
         openAccountList,
         openAccountForm }                               from './redux/slices/modals'
-import { recalculateProjections, selectBalanceByDateAndAccount }                       from './redux/slices/projections';
+import { recalculateProjections, 
+         selectBalanceByDateAndAccount }                from './redux/slices/projections';
+import OutlookGraph                                     from './components/OutlookGraph'
 
-
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 
 
@@ -70,12 +70,6 @@ function clearLocalStorage() {
   localStorage.removeItem('transactions');
 }
 
-const state = useSelector((state: RootState) => state);
-
-const data: number | number[] = selectBalanceByDateAndAccount(state,state.accounts.accounts[0],true,state.activeDates.today,state.activeDates.farDate) 
-
-
-
 
 
 
@@ -118,40 +112,15 @@ const data: number | number[] = selectBalanceByDateAndAccount(state,state.accoun
         </SwiperSlide>
         <SwiperSlide>
           <div className="slide__holder">
-            <h3
-              onClick={() => {
-                dispatch(openAccountList());
-              }}
-            >
-              <i className="fa-solid fa-file-invoice-dollar" />
-            </h3>
-            <h3 onClick={() => clearLocalStorage()}>
-              <i className="fa-solid fa-floppy-disk-circle-xmark" />
-            </h3>
+            <OutlookGraph />
           </div>
         </SwiperSlide>
         <SwiperSlide>
-        <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>        </SwiperSlide>
+          <div className="slide__holder">
+            <h1>Dev Tools Menu</h1>
+            <h3 onClick={() => clearLocalStorage()}>  Clear Local Storage<i className="fa-solid fa-floppy-disk-circle-xmark" /></h3>
+          </div>
+        </SwiperSlide>
       </Swiper>
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
     </div>
