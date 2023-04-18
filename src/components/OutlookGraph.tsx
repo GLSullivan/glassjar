@@ -7,13 +7,13 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-}                                     from "recharts";
-import { useSelector }                from "react-redux";
-import { RootState }                  from "./../redux/store";
+} from "recharts";
+import { useSelector } from "react-redux";
+import { RootState } from "./../redux/store";
 import {
   selectBalanceByDateAndAccount,
-}                                     from "./../redux/slices/projections";
-import { Account }                    from "./../models/Account";
+} from "./../redux/slices/projections";
+import { Account } from "./../models/Account";
 
 import "./../css/Calendar.css";
 
@@ -31,7 +31,13 @@ const OutlookGraph: React.FC = () => {
     return `${month} ${day}`;
   };
 
-  const accountBalances: number[][] = state.accounts.accounts.map((account) =>
+  const accounts = state.accounts.accounts;
+
+  if (accounts.length === 0) {
+    return <div>No accounts available. Please add an account to see the graph.</div>;
+  }
+
+  const accountBalances: number[][] = accounts.map((account) =>
     (selectBalanceByDateAndAccount(
       state,
       account,
@@ -78,32 +84,37 @@ const OutlookGraph: React.FC = () => {
     return color;
   };
 
-  const accounts = state.accounts.accounts;
+  // const combinedData = combineAccountBalances(accounts, accountBalances);
+// console.log(combinedData)
+  // const dataKeys = Object.keys(combinedData[0]).filter((key) => key !== "date");
+  const renderChart = (combinedData: CombinedData[], dataKeys: string[]) => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={combinedData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {dataKeys.map((key) => (
+            <Line
+              key={key}
+              type="monotone"
+              dataKey={key}
+              stroke={generateColor(key)}
+              activeDot={{ r: 8 }}
+              dot={false}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  };
+
   const combinedData = combineAccountBalances(accounts, accountBalances);
-console.log(combinedData)
   const dataKeys = Object.keys(combinedData[0]).filter((key) => key !== "date");
 
-  return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={combinedData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        {dataKeys.map((key) => (
-          <Line
-            key={key}
-            type="monotone"
-            dataKey={key}
-            stroke={generateColor(key)}
-            activeDot={{ r: 8 }}
-            dot={false}
-          />
-        ))}
-      </LineChart>
-    </ResponsiveContainer>
-  );
+  return renderChart(combinedData, dataKeys);
 };
 
 export default OutlookGraph;

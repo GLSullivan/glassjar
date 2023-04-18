@@ -83,7 +83,7 @@ const { dateString, ordinal } = dateWithOrdinal;
         </button>
       </div>
       {transactionsByDate.map((transaction) => (
-        <TransactionListItem transaction={transaction} />
+        <TransactionListItem key={transaction.id} transaction={transaction} />
       ))}
       <br />
     </div>
