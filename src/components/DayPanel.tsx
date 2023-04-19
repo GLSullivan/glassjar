@@ -5,8 +5,9 @@ import { showLoader, hideLoader }                 from '../redux/slices/loader';
 import { openTransactionModal }                   from "../redux/slices/modals";
 import { setActiveTransaction }                   from "../redux/slices/transactions";
 import {
-  selectTransactionsByDate,
-  selectBalanceByDateAndAccount
+  getTransactionsByDate,
+  getBalanceByDateAndAccount,
+  accountBalanceOnDate
 }                                                 from "../redux/slices/projections";
 import { Account }                                from "../models/Account";
 import { getDateWithOrdinal }                     from "./../utils/utils"
@@ -24,28 +25,28 @@ export const TransactionList: React.FC = () => {
   const activeDateFormatted = new Date(activeDate).toISOString().split("T")[0];
 
   const transactionsByDate = useSelector((state: RootState) =>
-    selectTransactionsByDate(state, activeDateFormatted)
+    getTransactionsByDate(state, activeDateFormatted)
   );
 
   const dispatch = useDispatch();
 
-  const [balances, setBalances] = useState<{ [id: string]: number }>({});
+  // const [balances, setBalances] = useState<{ [id: string]: number }>({});
 
-  useEffect(() => {
-    const updateBalances = () => {
-      const newBalances: { [id: string]: number } = {};
-      accounts.forEach((account) => {
-        newBalances[account.id] = selectBalanceByDateAndAccount(
-          state,
-          account
-        ) as number; 
-      });
+  // useEffect(() => {
+  //   const updateBalances = () => {
+  //     const newBalances: { [id: string]: number } = {};
+  //     accounts.forEach((account) => {
+  //       newBalances[account.id] = getBalanceByDateAndAccount(
+  //         state,
+  //         account
+  //       ) as number; 
+  //     });
   
-      setBalances(newBalances);
-    };
+  //     setBalances(newBalances);
+  //   };
   
-    updateBalances();
-  }, [state, activeDateFormatted, accounts]);
+  //   updateBalances();
+  // }, [state, activeDateFormatted, accounts]);
 
 const dateWithOrdinal = getDateWithOrdinal(new Date(activeDate));
 const { dateString, ordinal } = dateWithOrdinal;
@@ -60,14 +61,18 @@ const { dateString, ordinal } = dateWithOrdinal;
         <h2>Account Balances: </h2>
       </div>
       <div className="account-balances">
-        {accounts.map((account) => (
+        {accounts.map((account) => (<div key={account.id}>
           <p key={account.id}>
             {account.name}: {" "}
-            {balances[account.id]?.toLocaleString("en-US", {
+            {accountBalanceOnDate(state,
+          account.id,
+          activeDate)?.toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
             })}
           </p>
+          
+          </div>
         ))}
       </div>
       <div className="glassjar__flex glassjar__flex--justify-between">

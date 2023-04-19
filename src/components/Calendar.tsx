@@ -16,7 +16,7 @@ const Calendar: React.FC = () => {
   const activeDate           = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                = useSelector((state: RootState) => state.activeDates.today);
   const farDate              = useSelector((state: RootState) => state.activeDates.farDate);
-  const hasTransactionByDate = useSelector((state: RootState) => state.projections.hasTransaction);
+  const hasTransactionByDate = useSelector((state: RootState) => state.projections.dayHasTransaction);
 
   const rotatedDayNames = dayNames // ToDo: allow users to choose first day of week.
     .slice(startDayOfWeek)

@@ -17,7 +17,7 @@ import { closeTransactionModal,
         openAccountList,
         openAccountForm }                               from './redux/slices/modals'
 import { recalculateProjections, 
-         selectBalanceByDateAndAccount }                from './redux/slices/projections';
+         getBalanceByDateAndAccount }                from './redux/slices/projections';
 import OutlookGraph                                     from './components/OutlookGraph'
 
 
@@ -39,13 +39,12 @@ const AppContent: React.FC = () => {
   const activeDate      = useSelector((state: RootState) => state.activeDates.activeDate)
   const farDate         = useSelector((state: RootState) => state.activeDates.farDate);
   const transactions    = useSelector((state: RootState) => state.transactions.transactions);
-
-  const accounts = useSelector((state: RootState) => state.accounts.accounts);
+  const accounts        = useSelector((state: RootState) => state.accounts.accounts);
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(recalculateProjections({ transactions, farDate }));
+    dispatch(recalculateProjections({ transactions, accounts, farDate }));
   }, [transactions, farDate, dispatch]);
 
   const closeTheTransactionModal = () => {

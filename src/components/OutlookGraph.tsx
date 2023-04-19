@@ -11,7 +11,8 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "./../redux/store";
 import {
-  selectBalanceByDateAndAccount,
+  accountBalanceOnDate,
+  getBalanceByDateAndAccount,
 } from "./../redux/slices/projections";
 import { Account } from "./../models/Account";
 
@@ -38,12 +39,10 @@ const OutlookGraph: React.FC = () => {
   }
 
   const accountBalances: number[][] = accounts.map((account) =>
-    (selectBalanceByDateAndAccount(
+    (
+      getBalanceByDateAndAccount(
       state,
-      account,
-      true,
-      state.activeDates.graphNearDate,
-      state.activeDates.graphFarDate
+      account
     ) as number[])
   );
 
@@ -56,6 +55,7 @@ const OutlookGraph: React.FC = () => {
     const today = new Date(Date.parse(state.activeDates.nearDate));
 
     for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
+
       const date = new Date(today.getTime() + dayIndex * 24 * 60 * 60 * 1000);
       const dayData: CombinedData = {
         date: formatDate(date),
