@@ -3,6 +3,7 @@ import { useSelector, useDispatch }   from 'react-redux'
 import { RootState }                  from './../redux/store';
 import { setFarDate }                 from './../redux/slices/activedates'
 import CalendarDay                    from './CalendarDay'
+import { useSwipeable }               from "react-swipeable";
 
 import "./../css/Calendar.css";
 
@@ -21,7 +22,36 @@ const Calendar: React.FC = () => {
   const rotatedDayNames = dayNames // ToDo: allow users to choose first day of week.
     .slice(startDayOfWeek)
     .concat(dayNames.slice(0, startDayOfWeek));
+    
+        const changeMonth = (direction: "next" | "previous") => {
+          setTimeout(() => {
+            if (direction === "next") {
+              let newMonth = new Date(
+                currentMonth.setMonth(currentMonth.getMonth() + 1)
+              );
+              let farDateMinusTwoMonths = new Date(
+                new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
+              );
+              if (newMonth > farDateMinusTwoMonths) {
+                let futureMonth = new Date(newMonth);
+                futureMonth.setMonth(futureMonth.getMonth() + 2);
+                dispatch(setFarDate(futureMonth.toISOString()));
+              }
+              setCurrentMonth(
+                new Date(newMonth)
+              );
+            } else {
+              setCurrentMonth(
+                new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+              );
+            }
+          }, 600);
+        };
 
+    const swipeHandlers = useSwipeable({
+      onSwipedLeft: () => changeMonth("next"),
+      onSwipedRight: () => changeMonth("previous"),
+    });
 
   const generateDaysArray = (month: Date, startDay: number) => {
     const firstDayOfMonth = new Date(month.getFullYear(),month.getMonth(), 1,0,0,0,0);
@@ -65,14 +95,10 @@ const Calendar: React.FC = () => {
   }, [currentMonth, startDayOfWeek]);
 
   return (
-    <div className="calendar__container">
+    <div className="calendar__container" {...swipeHandlers}>
       <div className="calendar__navigation">
         <button
-          onClick={() => {
-            setCurrentMonth(
-              new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
-            );
-          }}
+           onClick={() => changeMonth("previous")}
         >
           <i className="fa-regular fa-chevron-left" />
         </button>
@@ -84,44 +110,15 @@ const Calendar: React.FC = () => {
           {currentMonth.getFullYear()}
         </h2>
         <button
-          onClick={() => {
-            let newMonth = new Date(
-              currentMonth.setMonth(currentMonth.getMonth() + 1)
-            );
-            let farDateMinusTwoMonths = new Date(
-              new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
-            );
-            if (newMonth > farDateMinusTwoMonths) {
-              let futureMonth = new Date(newMonth);
-              futureMonth.setMonth(futureMonth.getMonth() + 2);
-              dispatch(setFarDate(futureMonth.toISOString()));
-            }
-            setCurrentMonth(newMonth);
-          }}
+         onClick={() => changeMonth("next")}
         >
           <i className="fa-regular fa-chevron-right" />
         </button>
-        {/* <button
-          onClick={() => {
-            let newMonth = new Date(
-              currentMonth.setFullYear(currentMonth.getFullYear() + 5)
-            );
-            let farDateMinusTwoMonths = new Date(
-              new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
-            );
-            if (newMonth > farDateMinusTwoMonths) {
-              let futureMonth = new Date(newMonth);
-              futureMonth.setMonth(futureMonth.getMonth() + 2);
-              dispatch(setFarDate(futureMonth.toISOString()));
-            }
-            setCurrentMonth(newMonth);
-          }}
-        >
-          + 5
-        </button> */}
       </div>
-      <div className="calendar__calendar">
-        <div className="calendar__header-row">
+      <div
+        className="calendar__calendar"
+      >        
+      <div className="calendar__header-row">
           {rotatedDayNames.map((dayName, index) => (
             <div key={index} className="calendar__header-day">
               {dayName}
@@ -133,18 +130,21 @@ const Calendar: React.FC = () => {
             key={weekIndex}
             className={`calendar__week${containsActiveDate(week, new Date(activeDate)) ? " calendar__week--active" : ""}`}
           >
-            {week.map((day: Date) => (
-              <CalendarDay
-                key={day.toISOString()}
-                day={day}
-                isCurrentMonth={day.getMonth() === currentMonth.getMonth()}
-                isToday={isSameDay(day, new Date(today))}
-                isActive={isSameDay(day, new Date(activeDate))}
-                hasTransaction={
-                  hasTransactionByDate[day.toISOString().slice(0, 10)]
-                }
-              />
-            ))}
+           {week.map((day: Date, dayIndex: number) => {
+      const dayOfMonthIndex = weekIndex * 7 + dayIndex;
+      return (
+        <CalendarDay
+          key={day.toISOString()}
+          day={day}
+          isCurrentMonth={day.getMonth() === currentMonth.getMonth()}
+          isToday={isSameDay(day, new Date(today))}
+          isActive={isSameDay(day, new Date(activeDate))}
+          hasTransaction={
+            hasTransactionByDate[day.toISOString().slice(0, 10)]
+          }
+        />
+      );
+    })}
           </div>
         ))}
       </div>
