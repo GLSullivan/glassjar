@@ -6,7 +6,6 @@ import { openTransactionModal }                   from "../redux/slices/modals";
 import { setActiveTransaction }                   from "../redux/slices/transactions";
 import {
   getTransactionsByDate,
-  getBalanceByDateAndAccount,
   accountBalanceOnDate
 }                                                 from "../redux/slices/projections";
 import { Account }                                from "../models/Account";
@@ -29,24 +28,6 @@ export const TransactionList: React.FC = () => {
   );
 
   const dispatch = useDispatch();
-
-  // const [balances, setBalances] = useState<{ [id: string]: number }>({});
-
-  // useEffect(() => {
-  //   const updateBalances = () => {
-  //     const newBalances: { [id: string]: number } = {};
-  //     accounts.forEach((account) => {
-  //       newBalances[account.id] = getBalanceByDateAndAccount(
-  //         state,
-  //         account
-  //       ) as number; 
-  //     });
-  
-  //     setBalances(newBalances);
-  //   };
-  
-  //   updateBalances();
-  // }, [state, activeDateFormatted, accounts]);
 
 const dateWithOrdinal = getDateWithOrdinal(new Date(activeDate));
 const { dateString, ordinal } = dateWithOrdinal;

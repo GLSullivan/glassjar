@@ -5,16 +5,15 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Label,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { useSelector } from "react-redux";
-import { RootState } from "./../redux/store";
-import {
-  accountBalanceOnDate,
-  getBalanceByDateAndAccount,
-} from "./../redux/slices/projections";
-import { Account } from "./../models/Account";
+  ReferenceLine,
+}                                         from "recharts";
+import { useSelector }                    from "react-redux";
+import { RootState }                      from "./../redux/store";
+import { accountBalancesByDateRange }     from "./../redux/slices/projections";
+import { Account }                        from "./../models/Account";
 
 import "./../css/Calendar.css";
 
@@ -40,23 +39,25 @@ const OutlookGraph: React.FC = () => {
 
   const accountBalances: number[][] = accounts.map((account) =>
     (
-      getBalanceByDateAndAccount(
+      accountBalancesByDateRange (
       state,
-      account
+      account.id,
+      state.activeDates.graphNearDate,
+      state.activeDates.graphFarDate
     ) as number[])
   );
 
   const combineAccountBalances = (
-    accounts: Account[],
-    accountBalances: number[][]
-  ): CombinedData[] => {
+  accounts       : Account[],
+  accountBalances: number[][]
+  )              : CombinedData[] => {
     const combinedData: CombinedData[] = [];
 
     const today = new Date(Date.parse(state.activeDates.nearDate));
 
     for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
 
-      const date = new Date(today.getTime() + dayIndex * 24 * 60 * 60 * 1000);
+      const date                  = new Date(today.getTime() + dayIndex * 24 * 60 * 60 * 1000);
       const dayData: CombinedData = {
         date: formatDate(date),
       };
@@ -84,18 +85,19 @@ const OutlookGraph: React.FC = () => {
     return color;
   };
 
-  // const combinedData = combineAccountBalances(accounts, accountBalances);
-// console.log(combinedData)
-  // const dataKeys = Object.keys(combinedData[0]).filter((key) => key !== "date");
   const renderChart = (combinedData: CombinedData[], dataKeys: string[]) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={combinedData}>
-          <CartesianGrid strokeDasharray="3 3" />
+          {/* <CartesianGrid strokeDasharray="3 3" /> */}
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip />
           <Legend />
+          <ReferenceLine position="start" x={formatDate(new Date(state.activeDates.activeDate))} stroke="green" >
+            <Label position={"right"}>{formatDate(new Date(state.activeDates.activeDate))}</Label>
+          </ReferenceLine>
+
           {dataKeys.map((key) => (
             <Line
               key={key}

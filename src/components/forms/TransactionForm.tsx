@@ -7,7 +7,7 @@ import { addTransaction, updateTransaction, deleteTransaction }   from './../../
 import { RootState }                                              from './../../redux/store';
 import { stripTime, addZoneOffset }                               from './../../utils/dateUtils';
 import { Account }                                                from './../../models/Account';
-import { resetMemoizedBalance }                                   from './../../redux/slices/projections';
+// import { resetMemoizedBalance }                                   from './../../redux/slices/projections';
 
 import './../../css/Forms.css';
 interface TransactionFormProps {
@@ -68,12 +68,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     if (activeTransaction) {
       dispatch(updateTransaction(transactionData));
 
-      if (type === "withdrawal" || type === "transfer") {
-        resetMemoizedBalance(fromAccount);
-      }
-      if (type === "deposit" || type === "transfer") {
-        resetMemoizedBalance(toAccount);
-      }
+      // if (type === "withdrawal" || type === "transfer") {
+      //   resetMemoizedBalance(fromAccount);
+      // }
+      // if (type === "deposit" || type === "transfer") {
+      //   resetMemoizedBalance(toAccount);
+      // }
 
     } else {
       dispatch(addTransaction(transactionData));

@@ -16,12 +16,8 @@ import { closeTransactionModal,
         closeAccountList,
         openAccountList,
         openAccountForm }                               from './redux/slices/modals'
-import { recalculateProjections, 
-         getBalanceByDateAndAccount }                from './redux/slices/projections';
+import { recalculateProjections }                       from './redux/slices/projections';
 import OutlookGraph                                     from './components/OutlookGraph'
-
-
-
 
  // import Swiper JS
  import { Swiper, SwiperSlide } from "swiper/react";
@@ -31,6 +27,8 @@ import OutlookGraph                                     from './components/Outlo
  import 'swiper/css';
  import "swiper/css/navigation";
  import "swiper/css/pagination";
+
+ import './css/Nav.css'
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
@@ -45,7 +43,7 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     dispatch(recalculateProjections({ transactions, accounts, farDate }));
-  }, [transactions, farDate, dispatch]);
+  }, [transactions, accounts, farDate, dispatch]);
 
   const closeTheTransactionModal = () => {
     dispatch(closeTransactionModal())
@@ -60,7 +58,7 @@ const AppContent: React.FC = () => {
   }
 
   if (accounts.length < 1) {
-    dispatch(openAccountForm()); //Half-assed initial setup. 
+    dispatch(openAccountForm()); // Initial setup. 
   }
 
   
@@ -68,10 +66,6 @@ function clearLocalStorage() {
   localStorage.removeItem('accounts');
   localStorage.removeItem('transactions');
 }
-
-
-
-
 
   return (
     <div className="glassjar__root">
@@ -117,11 +111,21 @@ function clearLocalStorage() {
         <SwiperSlide>
           <div className="slide__holder">
             <h1>Dev Tools Menu</h1>
-            <h3 onClick={() => clearLocalStorage()}>  Clear Local Storage<i className="fa-solid fa-floppy-disk-circle-xmark" /></h3>
+            <h3 onClick={() => clearLocalStorage()}>
+              {" "}
+              Clear Local Storage
+              <i className="fa-solid fa-floppy-disk-circle-xmark" />
+            </h3>
           </div>
         </SwiperSlide>
       </Swiper>
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
+      <div className="glassjar__footer-nav">
+        <i className="fa-solid fa-jar" />
+        <i className="fa-solid fa-file-invoice" />
+        <i className="fa-solid fa-chart-line" />
+        <i className="fa-solid fa-gear" />
+      </div>
     </div>
   );
 };

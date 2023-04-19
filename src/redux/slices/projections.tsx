@@ -1,24 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Transaction }                from '../../models/Transaction';
-import { Account }                    from '../../models/Account';
+import { Transaction }                from './../../models/Transaction';
+import { Account }                    from './../../models/Account';
 import { RootState }                  from './../store';
-import { useSelector } from 'react-redux';
 
 interface ProjectionsState {
-  transactionOnDate: { [date: string]: Transaction[] };
-  dayHasTransaction: { [date: string]: boolean };
-
-// The New Stuff. 
-
+  transactionOnDate      : { [date: string]: Transaction[] };
+  dayHasTransaction      : { [date: string]: boolean };
   balanceByDateAndAccount: { [accountId: string]: { [date: string]: number } };
 }
 
 const initialState: ProjectionsState = {
-  transactionOnDate        : {},
-  dayHasTransaction: {},
-
-// The New Stuff. 
-
+  transactionOnDate      : {},
+  dayHasTransaction      : {},
   balanceByDateAndAccount: {},
 };
 
@@ -30,7 +23,7 @@ export const projectionsSlice = createSlice({
       state,
       action: PayloadAction<{ transactions: Transaction[]; accounts: Account[]; farDate: string }>
     ) => {
-
+      console.log("Recalculating Projections")
       const { transactions, accounts, farDate } = action.payload;
       const today        = (new Date(new Date().setHours(0, 0, 0, 0)).toISOString());
       const calculateThruDate                   = new Date(farDate);
@@ -67,7 +60,6 @@ export const projectionsSlice = createSlice({
 
           if (transaction.isRecurring) {
               // Increase date based on recurrence interval
-              console.log("transaction.recurrenceFrequency",transaction.recurrenceFrequency)
             switch (transaction.recurrenceFrequency) {
               case "daily": 
                 transactionDate.setDate(transactionDate.getDate() + 1);
@@ -154,84 +146,62 @@ export const projectionsSlice = createSlice({
   },
 });
 
-
+// Update the projections due to a change
 export const { recalculateProjections } = projectionsSlice.actions;
 
-export const getTransactionsByDate = (
-  state     : RootState,
-  activeDate: string
-) => state.projections.transactionOnDate[activeDate] || [];
+// Get transactions by date
+export const getTransactionsByDate = (state: RootState, activeDate: string) => {
+  return state.projections.transactionOnDate[activeDate] || [];
+};
 
-export const dateHasTransactions = (state: RootState, date: string) =>
-  state.projections.dayHasTransaction[date] || false;
+// Check if a date has transactions
+export const dateHasTransactions = (state: RootState, date: string) => {
+  return state.projections.dayHasTransaction[date] || false;
+};
 
-export const accountBalanceOnDate = (state: RootState, accountID: string, date: string) => {
-  date = new Date(date).toISOString().split("T")[0];
-  console.log(date);
-return state.projections.balanceByDateAndAccount[accountID][date] || 0;}
+  // Get account balance on a specific date
+export const accountBalanceOnDate = (
+  state    : RootState,
+  accountID: string,
+  date     : string
+) => {
+  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const accountBalance          = balanceByDateAndAccount[accountID] || {};
 
-export default projectionsSlice.reducer;
+  const today          = new Date(state.activeDates.today);
+  const inputDate      = new Date(date);
+  const todayISOString = today.toISOString().split("T")[0];
 
-
-export const getBalanceByDateAndAccount = (
-  state: RootState,
-  account: Account,
-): number | number[] => { 
-  console.log("!")
-  // const startTime = performance.now();
-  const accountId = account.id;
-  const today = new Date(state.activeDates.today);
-  const calculateTo =  new Date(state.activeDates.farDate);
-  
-  const maxIterations = 109500;
-
-  let balance = account.currentBalance;
-  let balanceArray: number[] = [];   
-  let dayOffset = 0;
-  let   currentDay  = new Date(today);
-  let iterations = 0;
-
-  while (currentDay <= calculateTo && iterations < maxIterations) {
-    const transactionsForCurrentDay =
-      state.projections.transactionOnDate[currentDay.toISOString().split("T")[0]] || [];
-    let dayBalance = 0;
-    for (const transaction of transactionsForCurrentDay) {
-      if (transaction.fromAccount === accountId) {
-        if (
-          transaction.type === "withdrawal" ||
-          transaction.type === "transfer"
-        ) {
-          dayBalance -= transaction.amount;
-        }
-      } else if (transaction.toAccount === accountId) {
-        if (
-          transaction.type === "deposit" || 
-          transaction.type === "transfer") {
-          dayBalance += transaction.amount;
-        }
-      }
-    }
-    balance += dayBalance;
-
-    if (balanceArray.length > 0) {
-      dayBalance += balanceArray[balanceArray.length - 1];
-    } else {
-      dayBalance += balance;
-    }
-    balanceArray.push(dayBalance);
-
-    currentDay.setDate(currentDay.getDate() + 1);
-    iterations++;
+  if (inputDate <= today) {
+    date = todayISOString;
+  } else {
+    date = inputDate.toISOString().split("T")[0];
   }
 
-  return balanceArray
-
+  return accountBalance[date] || 0;
 };
 
+// Get account balances for a date range
+export const accountBalancesByDateRange = (
+  state: RootState,
+  accountID: string,
+  startDate: string,
+  endDate: string
+) => {
+  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const accountBalance = balanceByDateAndAccount[accountID] || {};
 
-export const resetMemoizedBalance = (accountId: string): void => {
-  console.log("Clearing",accountId)
-  // if (memoizedBalances[accountId]) {
-  //   memoizedBalances[accountId] = { balances: {} };
-  // }
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const balances: number[] = [];
+
+  while (start <= end) {
+    const dateKey = start.toISOString().split("T")[0];
+    balances.push(accountBalance[dateKey] || 0);
+    start.setDate(start.getDate() + 1);
+  }
+
+  return balances;
 };
+
+export default projectionsSlice.reducer;
