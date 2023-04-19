@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch }   from 'react-redux'
 import { RootState }                  from './../redux/store';
-import { setActiveDate, setFarDate }  from './../redux/slices/activedates'
-import CalendarDay from './CalendarDay'
+import { setFarDate }                 from './../redux/slices/activedates'
+import CalendarDay                    from './CalendarDay'
 
 import "./../css/Calendar.css";
 

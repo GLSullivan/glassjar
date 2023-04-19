@@ -141,10 +141,10 @@ const [panelState, setPanelState] = useState(0);
       </div>}
 
       <div className="glassjar__footer-nav">
-        <i onClick={() => {setPanelState(0)}} className="fa-solid fa-jar" />
-        <i onClick={() => {setPanelState(1)}} className="fa-solid fa-file-invoice" />
-        <i onClick={() => {setPanelState(2)}} className="fa-solid fa-chart-line" />
-        <i onClick={() => {setPanelState(3)}} className="fa-solid fa-gear" />
+        <i onClick = {() => { setPanelState(0) }} className = {"glassjar__footer-nav__button fa-solid fa-jar" + (panelState === 0 ? " glassjar__footer-nav__button--active" : "")} />
+        <i onClick = {() => { setPanelState(1) }} className = {"glassjar__footer-nav__button fa-solid fa-file-invoice" + (panelState === 1 ? " glassjar__footer-nav__button--active" : "")} />
+        <i onClick = {() => { setPanelState(2) }} className = {"glassjar__footer-nav__button fa-solid fa-chart-line" + (panelState === 2 ? " glassjar__footer-nav__button--active" : "")} />
+        <i onClick = {() => { setPanelState(3) }} className = {"glassjar__footer-nav__button fa-solid fa-gear" + (panelState === 3 ? " glassjar__footer-nav__button--active" : "")} />
       </div>
     </div>
   );

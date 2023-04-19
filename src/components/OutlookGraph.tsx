@@ -87,7 +87,7 @@ const OutlookGraph: React.FC = () => {
 
   const renderChart = (combinedData: CombinedData[], dataKeys: string[]) => {
     return (
-      <div className="attempted-hack">
+      <div className="glassjar__graph-holder">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={combinedData}>
           {/* <CartesianGrid strokeDasharray="3 3" /> */}
