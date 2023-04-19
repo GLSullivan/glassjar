@@ -15,7 +15,7 @@ import { RootState }                      from "./../redux/store";
 import { accountBalancesByDateRange }     from "./../redux/slices/projections";
 import { Account }                        from "./../models/Account";
 
-import "./../css/Calendar.css";
+import "./../css/OutlookGraph.css";
 
 const OutlookGraph: React.FC = () => {
   const state = useSelector((state: RootState) => state);
@@ -87,6 +87,7 @@ const OutlookGraph: React.FC = () => {
 
   const renderChart = (combinedData: CombinedData[], dataKeys: string[]) => {
     return (
+      <div className="attempted-hack">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={combinedData}>
           {/* <CartesianGrid strokeDasharray="3 3" /> */}
@@ -110,6 +111,7 @@ const OutlookGraph: React.FC = () => {
           ))}
         </LineChart>
       </ResponsiveContainer>
+      </div>
     );
   };
 

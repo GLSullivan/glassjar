@@ -45,8 +45,8 @@
   font-family   : "Space Grotesk", sans-serif;
   min-height    : 100vh;
   padding       : 0rem;
-  /* max-height: 100vh;
-  overflow: hidden; */
+  max-height    : 100vh;
+  overflow      : hidden;
 }
 
 .glassjar__flex {

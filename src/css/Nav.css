@@ -1,4 +1,4 @@
-  /* 
+      /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -10,14 +10,43 @@
 */
 
 .glassjar__footer-nav {
-  background: var(--color-inverse);
-  width: 100%;
-  max-width: 100vw;
-  display: flex;
-  padding: 1rem;
-  box-sizing: border-box;
+  background     : var(--color-inverse);
+  border-radius  : 1rem 1rem 0 0;
+  bottom         : 0;
+  box-sizing     : border-box;
+  color          : var(--color-brand);
+  display        : flex;
+  font-size      : 1.4rem;
   justify-content: space-around;
-  font-size: 1.4rem;
-  border-radius: 1rem 1rem 0 0;
-  color: var(--color-brand);
+  left           : 0;
+  max-width      : 100vw;
+  padding        : 1rem;
+  width          : 100%;
 }
+
+    /* adjust padding for iPhone swipe icon */
+@media only screen 
+and (device-width : 375px) 
+and (device-height : 812px) 
+and (-webkit-device-pixel-ratio : 3) {
+  footer {
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+}
+
+.glassjar__panel-group {
+  background   : var(--color-bright);
+  border-radius: 1rem;
+  box-sizing   : border-box;
+  flex         : 2;
+  max-width    : calc(100vw - 2rem);
+  overflow-y   : auto;
+  padding      : 1rem;
+  position     : relative;
+  width        : 100%;
+}
+
+.glassjar__panel-group.glassjar__panel-group--no-scroll {
+  overflow-y   : unset;
+}
+

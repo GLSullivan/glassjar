@@ -67,6 +67,8 @@ function clearLocalStorage() {
   localStorage.removeItem('transactions');
 }
 
+const [panelState, setPanelState] = useState(0);
+
   return (
     <div className="glassjar__root">
       <Loader />
@@ -87,7 +89,7 @@ function clearLocalStorage() {
         />
       </Modal>
       <Calendar />
-      <Swiper
+      {/* <Swiper
         // navigation={true}
         // pagination={true}
         // modules={[Navigation, Pagination]}
@@ -118,13 +120,31 @@ function clearLocalStorage() {
             </h3>
           </div>
         </SwiperSlide>
-      </Swiper>
+      </Swiper> */}
       {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
+      {panelState === 0 && <div className="glassjar__panel-group">
+        <TransactionList />
+      </div>}
+      {panelState === 1 && <div className="glassjar__panel-group">
+        <AccountList />
+      </div>}
+      {panelState === 2 && <div className="glassjar__panel-group glassjar__panel-group--no-scroll">
+        <OutlookGraph />
+      </div>}
+      {panelState === 3 && <div className="glassjar__panel-group">
+        <h1>Dev Tools Menu</h1>
+        <h3 onClick={() => clearLocalStorage()}>
+          {" "}
+          Clear Local Storage
+          <i className="fa-solid fa-floppy-disk-circle-xmark" />
+        </h3>
+      </div>}
+
       <div className="glassjar__footer-nav">
-        <i className="fa-solid fa-jar" />
-        <i className="fa-solid fa-file-invoice" />
-        <i className="fa-solid fa-chart-line" />
-        <i className="fa-solid fa-gear" />
+        <i onClick={() => {setPanelState(0)}} className="fa-solid fa-jar" />
+        <i onClick={() => {setPanelState(1)}} className="fa-solid fa-file-invoice" />
+        <i onClick={() => {setPanelState(2)}} className="fa-solid fa-chart-line" />
+        <i onClick={() => {setPanelState(3)}} className="fa-solid fa-gear" />
       </div>
     </div>
   );
