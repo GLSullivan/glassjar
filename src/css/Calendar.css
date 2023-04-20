@@ -88,7 +88,7 @@
 }
 
 .calendar__day.calendar__day--today > div {
-  font-size  : 2rem;
+  font-size  : 1.8rem;
   font-weight: 900;
 }
 
