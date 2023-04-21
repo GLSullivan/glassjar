@@ -4,7 +4,7 @@ import { openTransactionModal }       from "./../redux/slices/modals";
 import { setActiveTransaction }       from "./../redux/slices/transactions";
 import { Transaction }                from "../models/Transaction";
 
-import "./../css/DayPanel.css";
+import "./../css/Panels.css";
 
 interface TransactionListItem {
   transaction           : Transaction;

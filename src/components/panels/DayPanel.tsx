@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo }    from "react";
 import { useSelector, useDispatch }               from "react-redux";
-import { RootState }                              from "../redux/store";
-import { showLoader, hideLoader }                 from '../redux/slices/loader';
-import { openTransactionModal }                   from "../redux/slices/modals";
-import { setActiveTransaction }                   from "../redux/slices/transactions";
+import { RootState }                              from "../../redux/store";
+import { showLoader, hideLoader }                 from '../../redux/slices/loader';
+import { openTransactionModal }                   from "../../redux/slices/modals";
+import { setActiveTransaction }                   from "../../redux/slices/transactions";
 import {
   getTransactionsByDate,
   accountBalanceOnDate
-}                                                 from "../redux/slices/projections";
-import { Account }                                from "../models/Account";
-import { getDateWithOrdinal }                     from "./../utils/utils"
-import { selectAllAccounts }                      from "../redux/slices/accounts";
-import TransactionListItem                        from "./TransactionListItem"
+}                                                 from "../../redux/slices/projections";
+import { Account }                                from "../../models/Account";
+import { getDateWithOrdinal }                     from "../../utils/utils"
+import { selectAllAccounts }                      from "../../redux/slices/accounts";
+import TransactionListItem                        from "../TransactionListItem"
 
-import "./../css/DayPanel.css";
+import "./../../css/Panels.css";
 
 export const TransactionList: React.FC = () => {
   const state = useSelector((state: RootState) => state);

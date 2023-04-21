@@ -1,0 +1,49 @@
+  /* 
+  ____ _                   _            
+ / ___| | __ _ ___ ___    | | __ _ _ __ 
+| |  _| |/ _` / __/ __|_  | |/ _` | '__|
+| |_| | | (_| \__ \__ \ |_| | (_| | |   
+ \____|_|\__,_|___/___/\___/ \__,_|_|    
+
+© 2024 Greg Sullivan
+
+*/
+
+
+.glassjar__panel-group h1 {
+  font-size  : 1.8rem;
+  font-weight: 100;
+  margin-top : 0;
+  text-align : center;
+  margin     : 0;
+}
+
+/* These need to be made generic and set into their own file.  */
+
+.glassjar__transaction-list-item {
+  display        : flex;
+  width          : 100%;
+  justify-content: space-between;
+  background     : var(--color-inverse);
+  cursor         : pointer;
+  padding        : 0.5rem 1rem;
+  border-radius  : 0.5rem;
+  box-sizing     : border-box;
+  margin-bottom  : 0.5rem;
+}
+
+.glassjar__transaction-list-item > div {
+  display: flex;
+  gap    : 0.5rem;
+}
+
+.button__new-transaction {
+  aspect-ratio   : 1;
+  border-radius  : 100rem;
+  height         : 1.8rem;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  width          : 0.8rem;
+  padding        : 1rem;
+}

@@ -45,9 +45,6 @@ export const AccountForm: React.FC = () => {
   
     if (activeAccount) {
       dispatch(updateAccount(updatedAccount));
-
-       // Call resetMemoizedBalance here to reset the memoized balance for the updated account
-      // resetMemoizedBalance(updatedAccount.id);
     } else {
       dispatch(addAccount({ ...updatedAccount, id: generateUniqueId() }));
     }
@@ -121,7 +118,7 @@ export const AccountForm: React.FC = () => {
           <option value = "cash">Cash</option>
         </select>
       </div>
-      {["loan", "mortgage", "credit card"].includes(account.type) && (
+      {["loan", "savings", "mortgage", "credit card"].includes(account.type) && (
         <div className="glassjar__form__input-group">
           <label htmlFor="interestRate">Interest Rate:</label>
           <input

@@ -1,9 +1,9 @@
 import { useSelector, useDispatch }                     from 'react-redux';
 import React, { useEffect, useState, PureComponent }    from 'react';
 import { RootState }                                    from './redux/store';        
-import { AccountList }                                  from './components/AccountList';
+import { AccountList }                                  from './components/panels/AccountPanel';
 import Calendar                                         from './components/Calendar';
-import { TransactionList }                              from './components/DayPanel';
+import { TransactionList }                              from './components/panels/DayPanel';
 import Modal                                            from './components/Modal';
 import TransactionForm                                  from './components/forms/TransactionForm';
 import { ProjectedBalances }                            from './components/ProjectedBalances';

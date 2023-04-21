@@ -84,22 +84,50 @@ export const projectionsSlice = createSlice({
 
 
       accounts.forEach((account) => {
-
-        console.log("!", account.name)
-        // const startTime = performance.now();
+        console.log("!", account.name);
         const accountId = account.id;
-
+      
         const maxIterations = 109500;
-
-        let balance                = account.currentBalance;
+      
+        let balance = account.currentBalance;
         let balanceArray: number[] = [];
-        let currentDay             = new Date(today);
-        let iterations             = 0;
-
+        let currentDay = new Date(today);
+        let iterations = 0;
+      
+        // Helper function to calculate interest based on account type and interest rate
+        const calculateInterest = (accountType: string, interestRate: number | undefined, balance: number) => {
+          let interest = 0;
+          if (interestRate) {
+            if (accountType === "credit card") {
+              // Calculate interest for credit card (assuming daily compounding)
+              interest = balance * ((interestRate * .01) / 365);
+            } else if (accountType === "mortgage") {
+              // Calculate interest for mortgage (assuming monthly compounding)
+              if (currentDay.getDate() === 1) {
+                interest = balance * ((interestRate * .01) / 12);
+              }
+            } else if (accountType === "savings") {
+              // Calculate interest for savings account (assuming daily compounding)
+              interest = balance * ((interestRate * .01) / 365);
+            }else if (accountType === "loan") {
+              // Calculate interest for loan account (assuming daily compounding)
+              interest = balance * ((interestRate * .01) / 365);
+            }
+          }
+          console.log("interest",interest)
+          return interest;
+        };
+      
         while (currentDay <= calculateThruDate && iterations < maxIterations) {
           const transactionsForCurrentDay =
             state.transactionOnDate[currentDay.toISOString().split("T")[0]] || [];
           let dayBalance = 0;
+      
+          // Calculate interest for the current day's balance
+          const interest = calculateInterest(account.type, account.interestRate, account.currentBalance);
+          console.log("??????? ",interest)
+          dayBalance += interest;
+      
           for (const transaction of transactionsForCurrentDay) {
             if (transaction.fromAccount === accountId) {
               if (
@@ -117,30 +145,28 @@ export const projectionsSlice = createSlice({
             }
           }
           balance += dayBalance;
-
+      
           if (balanceArray.length > 0) {
             dayBalance += balanceArray[balanceArray.length - 1];
           } else {
             dayBalance += balance;
           }
-
+      
           const dateKey = currentDay.toISOString().split("T")[0];
-
+      
           if (!state.balanceByDateAndAccount[accountId]) {
             state.balanceByDateAndAccount[accountId] = {};
           }
       
           state.balanceByDateAndAccount[accountId][dateKey] = dayBalance;
       
-
-
           balanceArray.push(dayBalance);
       
           currentDay.setDate(currentDay.getDate() + 1);
           iterations++;
         }
+      });
       
-      })
       console.log("><><><><",state.balanceByDateAndAccount)
     },
   },
