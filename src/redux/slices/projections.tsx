@@ -102,6 +102,7 @@ export const projectionsSlice = createSlice({
               // Calculate interest for credit card (assuming daily compounding)
               interest = balance * ((interestRate * .01) / 365);
             } else if (accountType === "mortgage") {
+              console.log("Mortgage")
               // Calculate interest for mortgage (assuming monthly compounding)
               if (currentDay.getDate() === 1) {
                 interest = balance * ((interestRate * .01) / 12);
@@ -109,12 +110,11 @@ export const projectionsSlice = createSlice({
             } else if (accountType === "savings") {
               // Calculate interest for savings account (assuming daily compounding)
               interest = balance * ((interestRate * .01) / 365);
-            }else if (accountType === "loan") {
+            } else if (accountType === "loan") {
               // Calculate interest for loan account (assuming daily compounding)
               interest = balance * ((interestRate * .01) / 365);
             }
           }
-          console.log("interest",interest)
           return interest;
         };
       
@@ -125,7 +125,6 @@ export const projectionsSlice = createSlice({
       
           // Calculate interest for the current day's balance
           const interest = calculateInterest(account.type, account.interestRate, account.currentBalance);
-          console.log("??????? ",interest)
           dayBalance += interest;
       
           for (const transaction of transactionsForCurrentDay) {
