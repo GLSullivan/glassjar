@@ -184,7 +184,7 @@ export const dateHasTransactions = (state: RootState, date: string) => {
   return state.projections.dayHasTransaction[date] || false;
 };
 
-  // Get account balance on a specific date
+// Get account balance on a specific date
 export const accountBalanceOnDate = (
   state    : RootState,
   accountID: string,
