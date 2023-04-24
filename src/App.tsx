@@ -134,8 +134,8 @@ const [panelState, setPanelState] = useState(0);
       {panelState === 3 && <div className="glassjar__panel-group">
         <h1>Dev Tools Menu</h1>
         <h3 onClick={() => clearLocalStorage()}>
-          {" "}
           Clear Local Storage
+          {" "}
           <i className="fa-solid fa-floppy-disk-circle-xmark" />
         </h3>
       </div>}

@@ -1,0 +1,26 @@
+            /* 
+  ____ _                   _            
+ / ___| | __ _ ___ ___    | | __ _ _ __ 
+| |  _| |/ _` / __/ __|_  | |/ _` | '__|
+| |_| | | (_| \__ \__ \ |_| | (_| | |   
+ \____|_|\__,_|___/___/\___/ \__,_|_|    
+
+© 2024 Greg Sullivan
+
+*/
+
+.color-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 1rem;
+}
+
+.color-picker__color {
+  border: 2px solid transparent;
+  height: 2rem;
+  transition: .5s ease;
+}
+
+.color-picker__color.color-picker__color--selected {
+  border: 2px solid var(--color-primary)
+}
