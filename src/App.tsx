@@ -1,27 +1,19 @@
 import { useSelector, useDispatch }                     from 'react-redux';
-import React, { useEffect, useState, PureComponent }    from 'react';
+import React, { useEffect, useState }                   from 'react';
 import { RootState }                                    from './redux/store';        
 import { AccountList }                                  from './components/panels/AccountPanel';
 import Calendar                                         from './components/Calendar';
-import { TransactionList }                              from './components/panels/DayPanel';
+import { DayPanel }                                     from './components/panels/DayPanel';
 import Modal                                            from './components/Modal';
 import TransactionForm                                  from './components/forms/TransactionForm';
-import { ProjectedBalances }                            from './components/ProjectedBalances';
-import { Account }                                      from './models/Account'
-import { Transaction }                                  from './models/Transaction';
 import { AccountForm }                                  from './components/forms/AccountForm';
 import Loader                                           from './components/Loader';
 import { closeTransactionModal, 
         closeAccountForm,
         closeAccountList,
-        openAccountList,
         openAccountForm }                               from './redux/slices/modals'
 import { recalculateProjections }                       from './redux/slices/projections';
 import OutlookGraph                                     from './components/OutlookGraph'
-
- // import Swiper JS
- import { Swiper, SwiperSlide } from "swiper/react";
- import { Navigation, Pagination } from "swiper";
 
  // import Swiper styles
  import 'swiper/css';
@@ -89,41 +81,8 @@ const [panelState, setPanelState] = useState(0);
         />
       </Modal>
       <Calendar />
-      {/* <Swiper
-        // navigation={true}
-        // pagination={true}
-        // modules={[Navigation, Pagination]}
-        className="glassjar__swiper"
-      >
-        <SwiperSlide>
-          <div className="slide__holder">
-            <TransactionList />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide__holder">
-            <AccountList />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide__holder">
-            <OutlookGraph />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide__holder">
-            <h1>Dev Tools Menu</h1>
-            <h3 onClick={() => clearLocalStorage()}>
-              {" "}
-              Clear Local Storage
-              <i className="fa-solid fa-floppy-disk-circle-xmark" />
-            </h3>
-          </div>
-        </SwiperSlide>
-      </Swiper> */}
-      {/* <ProjectedBalances accounts={projectedAccounts} date={selectedDate} /> */}
       {panelState === 0 && <div className="glassjar__panel-group">
-        <TransactionList />
+        <DayPanel />
       </div>}
       {panelState === 1 && <div className="glassjar__panel-group">
         <AccountList />
@@ -139,7 +98,6 @@ const [panelState, setPanelState] = useState(0);
           <i className="fa-solid fa-floppy-disk-circle-xmark" />
         </h3>
       </div>}
-
       <div className="glassjar__footer-nav">
         <i onClick = {() => { setPanelState(0) }} className = {"glassjar__footer-nav__button fa-solid fa-jar" + (panelState === 0 ? " glassjar__footer-nav__button--active" : "")} />
         <i onClick = {() => { setPanelState(1) }} className = {"glassjar__footer-nav__button fa-solid fa-file-invoice" + (panelState === 1 ? " glassjar__footer-nav__button--active" : "")} />

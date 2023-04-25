@@ -23,7 +23,9 @@ export const projectionsSlice = createSlice({
       state,
       action: PayloadAction<{ transactions: Transaction[]; accounts: Account[]; farDate: string }>
     ) => {
-      console.log("Recalculating Projections")
+      
+      const startTime = performance.now();
+
       const { transactions, accounts, farDate } = action.payload;
       const today        = (new Date(new Date().setHours(0, 0, 0, 0)).toISOString());
       const calculateThruDate                   = new Date(farDate);
@@ -84,9 +86,7 @@ export const projectionsSlice = createSlice({
 
 
       accounts.forEach((account) => {
-        console.log("!", account.name);
         const accountId = account.id;
-      
         const maxIterations = 109500;
       
         let balance = account.currentBalance;
@@ -102,7 +102,6 @@ export const projectionsSlice = createSlice({
               // Calculate interest for credit card (assuming daily compounding)
               interest = balance * ((interestRate * .01) / 365);
             } else if (accountType === "mortgage") {
-              console.log("Mortgage")
               // Calculate interest for mortgage (assuming monthly compounding)
               if (currentDay.getDate() === 1) {
                 interest = balance * ((interestRate * .01) / 12);
@@ -130,9 +129,20 @@ export const projectionsSlice = createSlice({
           for (const transaction of transactionsForCurrentDay) {
             if (transaction.fromAccount === accountId) {
               if (
-                transaction.type === "withdrawal" ||
-                transaction.type === "transfer"
-              ) {
+                transaction.type === "withdrawal" ) {
+                  if (account.isLiability) {
+                    dayBalance += transaction.amount;
+                  } else {
+                    dayBalance -= transaction.amount;
+                  }                
+                } else if (
+                  transaction.type === "deposit" ) {
+                    if (account.isLiability) {
+                      dayBalance -= transaction.amount;
+                    } else {
+                      dayBalance += transaction.amount;
+                    }                
+                  } else if ( transaction.type === "transfer" ) {
                 const toAccount = accounts.find(acc => acc.id === transaction.toAccount);
                 if (toAccount && toAccount.isLiability) {
                   const transferAmount = Math.min(toAccount.currentBalance, transaction.amount);
@@ -142,10 +152,8 @@ export const projectionsSlice = createSlice({
                 }
               }
             } else if (transaction.toAccount === accountId) {
-              if (
-                transaction.type === "deposit" || 
+              if ( 
                 transaction.type === "transfer") {
-                
                 if (account.isLiability) {
                   // Calculate the amount that can be transferred without overpayment
                   const transferAmount = Math.min(balance, transaction.amount);
@@ -178,8 +186,10 @@ export const projectionsSlice = createSlice({
           iterations++;
         }
       });
-      
-      console.log("><><><><",state.balanceByDateAndAccount)
+                
+      const endTime = performance.now();
+      console.log(`Recalculating Projections took ${(endTime - startTime).toFixed(2)} milliseconds to execute.`);
+
     },
   },
 });
@@ -217,6 +227,28 @@ export const accountBalanceOnDate = (
   }
 
   return accountBalance[date] || 0;
+};
+
+// Get transactions in range.
+export const getTransactionsByRange = (
+  state: RootState,
+  startIndex: number,
+  endIndex: number
+) => {
+  const allTransactions: { transaction: Transaction; date: string }[] = [];
+
+  // Flatten the transactionOnDate object into a single array
+  Object.entries(state.projections.transactionOnDate).forEach(([date, transactions]) => {
+    transactions.forEach(transaction => {
+      allTransactions.push({ transaction, date });
+    });
+  });
+
+  // Sort transactions by date
+  allTransactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // Return the transactions within the specified range
+  return allTransactions.slice(startIndex, endIndex);
 };
 
 // Get account balances for a date range

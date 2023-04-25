@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch }   from 'react-redux';
 import { RootState }                  from './../redux/store';
-import { setFarDate }                 from './../redux/slices/activedates';
+import { setFarDate, setNearDate }    from './../redux/slices/activedates';
 import CalendarDay                    from './CalendarDay';
 import { useSwipeable }               from 'react-swipeable';
 
@@ -46,8 +46,8 @@ const Calendar: React.FC = () => {
           futureMonth.setMonth(futureMonth.getMonth() + 2);
           dispatch(setFarDate(futureMonth.toISOString()));
         }
-
         setCurrentMonth(new Date(newMonth));
+        dispatch(setNearDate(new Date(newMonth).toISOString()));
       } else {
         setCurrentMonth(
           new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
@@ -107,7 +107,7 @@ const Calendar: React.FC = () => {
     // Update days array when the current month or start day of the week changes
   useEffect(() => {
     setDays(generateDaysArray(currentMonth, startDayOfWeek));
-  }, [currentMonth, startDayOfWeek]);
+  }, [currentMonth]);
 
   return (
     <div    className = 'calendar__container' {...swipeHandlers}>
@@ -117,7 +117,7 @@ const Calendar: React.FC = () => {
         </button>
         <h2
           className = 'calendar__month'
-          onClick   = {() => setCurrentMonth(new Date())}
+          onClick   = {() => {setCurrentMonth(new Date()); dispatch(setNearDate(new Date(new Date()).toISOString()))}}
         >
           {currentMonth.toLocaleString('default', { month: 'long' })}{' '}
           {currentMonth.getFullYear()}

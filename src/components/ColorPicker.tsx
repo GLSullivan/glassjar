@@ -28,7 +28,6 @@ const colorPalette = [
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ onSelect, selectedColor }) => {
   const handleColorSelect = (event: React.MouseEvent, color: string) => {
-    console.log(color)
     event.stopPropagation(); 
     onSelect(color);
   };

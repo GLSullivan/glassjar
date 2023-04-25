@@ -21,22 +21,17 @@ export const stripTime = (isoDate: string): string => {
 };
 
 export function addZoneOffset(dateString: string): string {
-  console.log('Started as', dateString);
 
   const date = new Date(dateString + 'T00:00:00'); // Appending 'T00:00:00' to create a Date object in the local timezone
   const timezoneOffset = -date.getTimezoneOffset();
-  console.log('timezoneOffset', timezoneOffset);
 
-  const offsetSign = timezoneOffset >= 0 ? '+' : '-';
   const padNumber = (num: number) => (num < 10 ? '0' : '') + num;
 
   const hoursOffset = Math.floor(Math.abs(timezoneOffset) / 60);
-  const minutesOffset = Math.abs(timezoneOffset) % 60;
 
   const dateWithOffset = new Date(date.getTime() + (hoursOffset)); // Adding the timezone offset
-  console.log('dateWithOffset', dateWithOffset,dateWithOffset.toISOString());
 
-  const theoutput = (
+  const theOutput = (
     dateWithOffset.getUTCFullYear() +
     '-' +
     padNumber(dateWithOffset.getUTCMonth() + 1) +
@@ -51,6 +46,9 @@ export function addZoneOffset(dateString: string): string {
     '.000Z'
   );
 
-  console.log('became', theoutput);
-  return theoutput;
+  return theOutput;
+}
+
+export function conformDate(date: string) {
+  return new Date(new Date(date).setHours(0, 0, 0, 0)).toISOString();
 }

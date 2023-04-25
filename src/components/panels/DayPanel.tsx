@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useMemo }    from "react";
+import React                                      from "react";
 import { useSelector, useDispatch }               from "react-redux";
 import { RootState }                              from "../../redux/store";
-import { showLoader, hideLoader }                 from '../../redux/slices/loader';
 import { openTransactionModal }                   from "../../redux/slices/modals";
 import { setActiveTransaction }                   from "../../redux/slices/transactions";
 import {
   getTransactionsByDate,
   accountBalanceOnDate
 }                                                 from "../../redux/slices/projections";
-import { Account }                                from "../../models/Account";
 import { getDateWithOrdinal }                     from "../../utils/utils"
 import { selectAllAccounts }                      from "../../redux/slices/accounts";
 import TransactionListItem                        from "../TransactionListItem"
+import TransactionList                            from "../TransactionList";
 
 import "./../../css/Panels.css";
 
-export const TransactionList: React.FC = () => {
+export const DayPanel: React.FC = () => {
   const state = useSelector((state: RootState) => state);
 
   const accounts = useSelector(selectAllAccounts);
@@ -72,6 +71,7 @@ const { dateString, ordinal } = dateWithOrdinal;
         <TransactionListItem key={transaction.id} transaction={transaction} />
       ))}
       <br />
+      <TransactionList />
     </div>
   );
 };

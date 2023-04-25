@@ -1,4 +1,5 @@
 import { configureStore }   from '@reduxjs/toolkit';
+
 import activedates          from './slices/activedates';
 import modalstate           from './slices/modals';
 import transactions         from './slices/transactions';

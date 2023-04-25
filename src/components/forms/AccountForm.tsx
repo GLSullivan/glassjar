@@ -72,13 +72,17 @@ export const AccountForm: React.FC = () => {
   
   const handleChange = (
     event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLInputElement
+      HTMLInputElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = event.target;
-    setAccount({ ...account, [name]: value });
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.type === "checkbox") {
+      setAccount({ ...account, [target.name]: target.checked });
+    } else {
+      setAccount({ ...account, [target.name]: target.value });
+    }
   };
-
+  
   const handleCurrencyChange = (
     value : string | undefined,
     name ?: string | undefined
@@ -151,6 +155,16 @@ export const AccountForm: React.FC = () => {
             />
           </div>
         )}
+        <div className="glassjar__form__input-group glassjar__form__input-group--check">
+          <label htmlFor="showInGraph">Show In Graph:</label>
+          <input
+            type="checkbox"
+            id="showInGraph"
+            name="showInGraph"
+            checked={account.showInGraph}
+            onChange={handleChange}
+          />
+        </div>
         <div className = 'glassjar__form__input-group'>
           <label>Select a color: </label>
           <ColorPicker onSelect={handleColorSelect} selectedColor={account.color} />
