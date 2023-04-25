@@ -3,6 +3,7 @@
         "glassjar",
         "modalstate",
         "Scroller",
-        "Swipeable"
+        "Swipeable",
+        "xmark"
     ]
 }

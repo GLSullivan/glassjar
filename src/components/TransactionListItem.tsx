@@ -16,10 +16,10 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     return (
       <div className="glassjar__transaction-list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
         <div>
-          {transaction.type == "deposit" && <i className="fa-duotone fa-plus-circle" />}
-          {transaction.type == "withdrawal" && (<i className="fa-duotone fa-minus-circle" />)}
-          {transaction.type == "transfer" && (<i className="fa-duotone  fa-money-bill-transfer" />)}
-          {transaction.type == "event" && (<i className="fa-duotone fa-calendar" />)}
+          {transaction.type === "deposit" && <i className="fa-duotone fa-plus-circle" />}
+          {transaction.type === "withdrawal" && (<i className="fa-duotone fa-minus-circle" />)}
+          {transaction.type === "transfer" && (<i className="fa-duotone  fa-money-bill-transfer" />)}
+          {transaction.type === "event" && (<i className="fa-duotone fa-calendar" />)}
           <span>{transaction.transactionName}</span>
         </div>
         <div>

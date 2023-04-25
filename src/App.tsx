@@ -1,34 +1,34 @@
 import { useSelector, useDispatch }                     from 'react-redux';
 import React, { useEffect, useState }                   from 'react';
-import { RootState }                                    from './redux/store';        
-import { AccountList }                                  from './components/panels/AccountPanel';
-import Calendar                                         from './components/Calendar';
-import { DayPanel }                                     from './components/panels/DayPanel';
-import Modal                                            from './components/Modal';
+
 import TransactionForm                                  from './components/forms/TransactionForm';
+import { AccountList }                                  from './components/panels/AccountPanel';
 import { AccountForm }                                  from './components/forms/AccountForm';
-import Loader                                           from './components/Loader';
-import { closeTransactionModal, 
-        closeAccountForm,
-        closeAccountList,
-        openAccountForm }                               from './redux/slices/modals'
+import { DayPanel }                                     from './components/panels/DayPanel';
 import { recalculateProjections }                       from './redux/slices/projections';
 import OutlookGraph                                     from './components/OutlookGraph'
+import Calendar                                         from './components/Calendar';
+import { closeTransactionModal, 
+  closeAccountForm,
+  closeAccountList,
+  openAccountForm }                                     from './redux/slices/modals'
+import Loader                                           from './components/Loader';
+import Modal                                            from './components/Modal';
+import { RootState }                                    from './redux/store';        
+  
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css';
 
- // import Swiper styles
- import 'swiper/css';
- import "swiper/css/navigation";
- import "swiper/css/pagination";
-
- import './css/Nav.css'
+import './css/Nav.css'
 
 const AppContent: React.FC = () => {
   const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
   const accountListOpen = useSelector((state: RootState) => state.modalState.accountListOpen)
   const accountFormOpen = useSelector((state: RootState) => state.modalState.accountFormOpen)
+  const transactions    = useSelector((state: RootState) => state.transactions.transactions);
   const activeDate      = useSelector((state: RootState) => state.activeDates.activeDate)
   const farDate         = useSelector((state: RootState) => state.activeDates.farDate);
-  const transactions    = useSelector((state: RootState) => state.transactions.transactions);
   const accounts        = useSelector((state: RootState) => state.accounts.accounts);
 
   const dispatch = useDispatch()
@@ -53,16 +53,15 @@ const AppContent: React.FC = () => {
     dispatch(openAccountForm()); // Initial setup. 
   }
 
-  
-function clearLocalStorage() {
-  localStorage.removeItem('accounts');
-  localStorage.removeItem('transactions');
-}
+  function clearLocalStorage() {
+    localStorage.removeItem('transactions');
+    localStorage.removeItem('accounts');
+  }
 
-const [panelState, setPanelState] = useState(0);
+  const [panelState, setPanelState] = useState(0);
 
   return (
-    <div className="glassjar__root">
+    <div className='glassjar__root'>
       <Loader />
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
@@ -81,28 +80,28 @@ const [panelState, setPanelState] = useState(0);
         />
       </Modal>
       <Calendar />
-      {panelState === 0 && <div className="glassjar__panel-group">
+      {panelState === 0 && <div className='glassjar__panel-group'>
         <DayPanel />
       </div>}
-      {panelState === 1 && <div className="glassjar__panel-group">
+      {panelState === 1 && <div className='glassjar__panel-group'>
         <AccountList />
       </div>}
-      {panelState === 2 && <div className="glassjar__panel-group glassjar__panel-group--no-scroll">
+      {panelState === 2 && <div className='glassjar__panel-group glassjar__panel-group--no-scroll'>
         <OutlookGraph />
       </div>}
-      {panelState === 3 && <div className="glassjar__panel-group">
+      {panelState === 3 && <div className='glassjar__panel-group'>
         <h1>Dev Tools Menu</h1>
         <h3 onClick={() => clearLocalStorage()}>
           Clear Local Storage
-          {" "}
-          <i className="fa-solid fa-floppy-disk-circle-xmark" />
+          {' '}
+          <i className='fa-solid fa-floppy-disk-circle-xmark' />
         </h3>
       </div>}
-      <div className="glassjar__footer-nav">
-        <i onClick = {() => { setPanelState(0) }} className = {"glassjar__footer-nav__button fa-solid fa-jar" + (panelState === 0 ? " glassjar__footer-nav__button--active" : "")} />
-        <i onClick = {() => { setPanelState(1) }} className = {"glassjar__footer-nav__button fa-solid fa-file-invoice" + (panelState === 1 ? " glassjar__footer-nav__button--active" : "")} />
-        <i onClick = {() => { setPanelState(2) }} className = {"glassjar__footer-nav__button fa-solid fa-chart-line" + (panelState === 2 ? " glassjar__footer-nav__button--active" : "")} />
-        <i onClick = {() => { setPanelState(3) }} className = {"glassjar__footer-nav__button fa-solid fa-gear" + (panelState === 3 ? " glassjar__footer-nav__button--active" : "")} />
+      <div className='glassjar__footer-nav'>
+        <i onClick = {() => { setPanelState(0) }} className = {'glassjar__footer-nav__button fa-solid fa-jar' + (panelState === 0 ? ' glassjar__footer-nav__button--active' : '')} />
+        <i onClick = {() => { setPanelState(1) }} className = {'glassjar__footer-nav__button fa-solid fa-file-invoice' + (panelState === 1 ? ' glassjar__footer-nav__button--active' : '')} />
+        <i onClick = {() => { setPanelState(2) }} className = {'glassjar__footer-nav__button fa-solid fa-chart-line' + (panelState === 2 ? ' glassjar__footer-nav__button--active' : '')} />
+        <i onClick = {() => { setPanelState(3) }} className = {'glassjar__footer-nav__button fa-solid fa-gear' + (panelState === 3 ? ' glassjar__footer-nav__button--active' : '')} />
       </div>
     </div>
   );
