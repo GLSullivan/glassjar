@@ -122,24 +122,37 @@ export const projectionsSlice = createSlice({
           const transactionsForCurrentDay =
             state.transactionOnDate[currentDay.toISOString().split("T")[0]] || [];
           let dayBalance = 0;
-      
+        
           // Calculate interest for the current day's balance
           const interest = calculateInterest(account.type, account.interestRate, account.currentBalance);
           dayBalance += interest;
-      
+        
           for (const transaction of transactionsForCurrentDay) {
             if (transaction.fromAccount === accountId) {
               if (
                 transaction.type === "withdrawal" ||
                 transaction.type === "transfer"
               ) {
-                dayBalance -= transaction.amount;
+                const toAccount = accounts.find(acc => acc.id === transaction.toAccount);
+                if (toAccount && toAccount.isLiability) {
+                  const transferAmount = Math.min(toAccount.currentBalance, transaction.amount);
+                  dayBalance -= transferAmount;
+                } else {
+                  dayBalance -= transaction.amount;
+                }
               }
             } else if (transaction.toAccount === accountId) {
               if (
                 transaction.type === "deposit" || 
                 transaction.type === "transfer") {
-                dayBalance += transaction.amount;
+                
+                if (account.isLiability) {
+                  // Calculate the amount that can be transferred without overpayment
+                  const transferAmount = Math.min(balance, transaction.amount);
+                  dayBalance -= transferAmount;
+                } else {
+                  dayBalance += transaction.amount;
+                }
               }
             }
           }
