@@ -25,7 +25,7 @@ function groupTransactionsByDate(
       existingGroup.transactions.push(transactionItem);
     } else {
       groupedTransactions.push({
-        date        : transactionItem.date,
+        date        : new Date(transactionItem.date).toLocaleDateString(undefined, {month: 'long', day: 'numeric'}),
         transactions: [transactionItem],
       });
     }
