@@ -10,13 +10,13 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-} from "recharts";
-import { useDispatch, useSelector } from "react-redux";
+}                                                   from "recharts";
+import { useDispatch, useSelector }                 from "react-redux";
 
-import { RootState } from "./../redux/store";
-import { accountBalancesByDateRange } from "./../redux/slices/projections";
-import { Account } from "./../models/Account";
-import { setGraphSpan } from "./../redux/slices/activedates";
+import { RootState }                                from "./../redux/store";
+import { accountBalancesByDateRange }               from "./../redux/slices/projections";
+import { Account }                                  from "./../models/Account";
+import { setGraphSpan }                             from "./../redux/slices/activedates";
 
 import "./../css/OutlookGraph.css";
 
@@ -134,7 +134,7 @@ const OutlookGraph: React.FC = () => {
     maxY        : number
   ) => {
     return (
-      <div                 className       = "glassjar__graph-holder">
+      <div className="glassjar__graph-holder">
       <ResponsiveContainer width           = "100%" height = "100%">
       <LineChart           data            = {combinedData}>
       <CartesianGrid       strokeDasharray = "3 3" />
@@ -169,11 +169,10 @@ const OutlookGraph: React.FC = () => {
             ))}
           </LineChart>
         </ResponsiveContainer>
-
-        <div    className = "glassjar__flex glassjar__flex--justify-between">
-        <button onClick   = {() => dispatch(setGraphSpan(1))}>1</button>
-        <button onClick   = {() => dispatch(setGraphSpan(6))}>6</button>
-        <button onClick   = {() => dispatch(setGraphSpan(12))}>12</button>
+        <div className="glassjar__flex glassjar__flex--justify-between">
+          <button onClick   = {() => dispatch(setGraphSpan(3))}>3</button>
+          <button onClick   = {() => dispatch(setGraphSpan(6))}>6</button>
+          <button onClick   = {() => dispatch(setGraphSpan(12))}>12</button>
         </div>
       </div>
     );
