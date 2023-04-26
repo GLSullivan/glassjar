@@ -4,7 +4,7 @@ import React, { useEffect, useState }                   from 'react';
 import TransactionForm                                  from './components/forms/TransactionForm';
 import { AccountList }                                  from './components/panels/AccountPanel';
 import { AccountForm }                                  from './components/forms/AccountForm';
-import { DayPanel }                                     from './components/panels/DayPanel';
+import TransactionList                                  from './components/TransactionList';
 import { recalculateProjections }                       from './redux/slices/projections';
 import OutlookGraph                                     from './components/OutlookGraph'
 import Calendar                                         from './components/Calendar';
@@ -81,7 +81,7 @@ const AppContent: React.FC = () => {
       </Modal>
       <Calendar />
       {panelState === 0 && <div className='glassjar__panel-group'>
-        <DayPanel />
+        <TransactionList />
       </div>}
       {panelState === 1 && <div className='glassjar__panel-group'>
         <AccountList />

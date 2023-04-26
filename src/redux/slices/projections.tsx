@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
 import { Transaction }                from './../../models/Transaction';
 import { Account }                    from './../../models/Account';
 import { RootState }                  from './../store';
@@ -27,63 +28,75 @@ export const projectionsSlice = createSlice({
       const startTime = performance.now();
 
       const { transactions, accounts, farDate } = action.payload;
-      const today        = (new Date(new Date().setHours(0, 0, 0, 0)).toISOString());
+      
+      const today                               = (new Date(new Date().setHours(0, 0, 0, 0)).toISOString());
       const calculateThruDate                   = new Date(farDate);
-            state.transactionOnDate             = {};
-            state.dayHasTransaction             = {};
-            state.balanceByDateAndAccount       = {};
+      state.transactionOnDate                   = {};
+      state.dayHasTransaction                   = {};
+      state.balanceByDateAndAccount             = {};
 
+
+
+      const populateTransactionsOnDate = () => {
         transactions.forEach((transaction) => {
-        const maxIterations: number = 10000;
-        let   count: number         = 0;
-        const transactionDate       = new Date(transaction.date);
-        const transactionEndDate    = transaction.isRecurring
-          ? transaction.endDate
-            ? new Date(
-                Math.min(
-                  calculateThruDate.getTime(),
-                  new Date(transaction.endDate).getTime()
+          const maxIterations: number = 10000;
+          let count: number = 0;
+          const transactionDate = new Date(transaction.date);
+          const transactionEndDate = transaction.isRecurring
+            ? transaction.endDate
+              ? new Date(
+                  Math.min(
+                    calculateThruDate.getTime(),
+                    new Date(transaction.endDate).getTime()
+                  )
                 )
-              )
-          :  calculateThruDate
-          :  transactionDate;
-          
-        while (transactionDate <= transactionEndDate && count < maxIterations) {
+              : calculateThruDate
+            : transactionDate;
 
-          count++;
-          const dateString = transactionDate.toISOString().split("T")[0];
-          if (!state.transactionOnDate[dateString]) {
-            state.transactionOnDate[dateString] = [];
-          }
-
-          state.transactionOnDate[dateString].push(transaction);
-          
-          state.dayHasTransaction[dateString] = true;
-
-          if (transaction.isRecurring) {
-              // Increase date based on recurrence interval
-            switch (transaction.recurrenceFrequency) {
-              case "daily": 
-                transactionDate.setDate(transactionDate.getDate() + 1);
-                break;
-              case "weekly": 
-                transactionDate.setDate(transactionDate.getDate() + 7);
-                break;
-              case "monthly": 
-                transactionDate.setMonth(transactionDate.getMonth() + 1);
-                break;
-              case "yearly": 
-                transactionDate.setFullYear(transactionDate.getFullYear() + 1);
-                break;
-              default: 
-                break;
+          while (
+            transactionDate <= transactionEndDate &&
+            count < maxIterations
+          ) {
+            count++;
+            const dateString = transactionDate.toISOString().split("T")[0];
+            if (!state.transactionOnDate[dateString]) {
+              state.transactionOnDate[dateString] = [];
             }
-          } else {
-            break;
-          }
-        }
-      });
 
+            state.transactionOnDate[dateString].push(transaction);
+
+            state.dayHasTransaction[dateString] = true;
+
+            if (transaction.isRecurring) {
+              // Increase date based on recurrence interval
+              switch (transaction.recurrenceFrequency) {
+                case "daily":
+                  transactionDate.setDate(transactionDate.getDate() + 1);
+                  break;
+                case "weekly":
+                  transactionDate.setDate(transactionDate.getDate() + 7);
+                  break;
+                case "monthly":
+                  transactionDate.setMonth(transactionDate.getMonth() + 1);
+                  break;
+                case "yearly":
+                  transactionDate.setFullYear(
+                    transactionDate.getFullYear() + 1
+                  );
+                  break;
+                default:
+                  break;
+              }
+            } else {
+              break;
+            }
+          }
+        });
+      };
+
+      populateTransactionsOnDate();
+
+        
 
       accounts.forEach((account) => {
         const accountId = account.id;

@@ -1,8 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState }                from '../../redux/store';
-import { openAccountForm }         from '../../redux/slices/modals';
+
 import { setActiveAccount }         from '../../redux/slices/accounts';
+import { openAccountForm }          from '../../redux/slices/modals';
+import { RootState }                from '../../redux/store';
+
+import AccountListItem              from '../AccountListItem';
 
 import "./../../css/Panels.css";
 
@@ -14,18 +17,7 @@ export const AccountList: React.FC = () => {
     <div className="glassjar__account-list">
       <h1>Accounts</h1>
       {accounts.map((account) => (
-        <p
-          onClick={() => {
-            dispatch(setActiveAccount(account));
-            dispatch(openAccountForm());
-          }}
-          key={account.id}
-        >
-          {account.name}: {account.currentBalance.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })}
-        </p>
+        <AccountListItem key={account.id} account={account} />
       ))}
       <button
         onClick={() => {

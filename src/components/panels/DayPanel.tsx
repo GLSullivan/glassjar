@@ -1,16 +1,19 @@
 import React                                      from "react";
 import { useSelector, useDispatch }               from "react-redux";
-import { RootState }                              from "../../redux/store";
-import { openTransactionModal }                   from "../../redux/slices/modals";
+
 import { setActiveTransaction }                   from "../../redux/slices/transactions";
 import {
   getTransactionsByDate,
   accountBalanceOnDate
 }                                                 from "../../redux/slices/projections";
-import { getDateWithOrdinal }                     from "../../utils/utils"
 import { selectAllAccounts }                      from "../../redux/slices/accounts";
+import { openTransactionModal }                   from "../../redux/slices/modals";
+import { RootState }                              from "../../redux/store";
+import { getDateWithOrdinal }                     from "../../utils/utils"
+
 import TransactionListItem                        from "../TransactionListItem"
 import TransactionList                            from "../TransactionList";
+import AccountListItem                            from "../AccountListItem";
 
 import "./../../css/Panels.css";
 
@@ -33,26 +36,21 @@ const { dateString, ordinal } = dateWithOrdinal;
 
   return (
     <div className="glassjar__transaction-list">
-      <h1>
+      {/* <h1>
         <span>{dateString}</span>
         <sup style={{ fontSize: '0.8em', marginLeft: '2px' }}>{ordinal}</sup>
-      </h1>
+      </h1> */}
       <div className="glassjar__flex glassjar__flex--justify-between">
         <h2>Account Balances: </h2>
       </div>
       <div className="account-balances">
-        {accounts.map((account) => (<div key={account.id}>
-          <p key={account.id}>
-            {account.name}: {" "}
-            {accountBalanceOnDate(state,
-          account.id,
-          activeDate)?.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })}
-          </p>
-          
-          </div>
+        {accounts.map((account) => (
+          <AccountListItem key={account.id} account={account} balance={accountBalanceOnDate(state,
+            account.id,
+            activeDate)?.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })}/>
         ))}
       </div>
       <div className="glassjar__flex glassjar__flex--justify-between">
@@ -71,7 +69,7 @@ const { dateString, ordinal } = dateWithOrdinal;
         <TransactionListItem key={transaction.id} transaction={transaction} />
       ))}
       <br />
-      <TransactionList />
+      {/* <TransactionList /> */}
     </div>
   );
 };

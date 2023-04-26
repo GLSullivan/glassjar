@@ -1,7 +1,9 @@
-import React                          from "react";
 import { useDispatch }                from "react-redux";
-import { openTransactionModal }       from "./../redux/slices/modals";
+import React                          from "react";
+
 import { setActiveTransaction }       from "./../redux/slices/transactions";
+import { openTransactionModal }       from "./../redux/slices/modals";
+
 import { Transaction }                from "../models/Transaction";
 
 import "./../css/Panels.css";

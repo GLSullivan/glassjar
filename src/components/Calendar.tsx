@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch }   from 'react-redux';
-import { RootState }                  from './../redux/store';
-import { setFarDate, setNearDate }    from './../redux/slices/activedates';
-import CalendarDay                    from './CalendarDay';
 import { useSwipeable }               from 'react-swipeable';
+import { useSelector, useDispatch }   from 'react-redux';
+
+import { setFarDate, setNearDate }    from './../redux/slices/activedates';
+import { RootState }                  from './../redux/store';
+import { DayPanel }                   from './panels/DayPanel';
+import CalendarDay                    from './CalendarDay';
 
 import './../css/Calendar.css';
 
@@ -143,20 +145,25 @@ const Calendar: React.FC = () => {
                 :  ''
             }`}
           >
-            {week.map((day: Date, dayIndex: number) => {
-              return (
-                <CalendarDay
-                  key            = {day.toISOString()}
-                  day            = {day}
-                  isCurrentMonth = {day.getMonth() === currentMonth.getMonth()}
-                  isToday        = {isSameDay(day, new Date(today))}
-                  isActive       = {isSameDay(day, new Date(activeDate))}
-                  hasTransaction = {
-                    hasTransactionByDate[day.toISOString().slice(0, 10)]
-                  }
-                />
-              );
-            })}
+            <div className="calendar__day-holder">
+              {week.map((day: Date, dayIndex: number) => {
+                return (
+                  <CalendarDay
+                    key            = {day.toISOString()}
+                    day            = {day}
+                    isCurrentMonth = {day.getMonth() === currentMonth.getMonth()}
+                    isToday        = {isSameDay(day, new Date(today))}
+                    isActive       = {isSameDay(day, new Date(activeDate))}
+                    hasTransaction = {
+                      hasTransactionByDate[day.toISOString().slice(0, 10)]
+                    }
+                  />
+                );
+              })}
+            </div>
+            <div className="calendar__inline-panel">
+              <DayPanel />
+            </div>
           </div>
         ))}
       </div>
