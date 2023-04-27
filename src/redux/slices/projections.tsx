@@ -1,20 +1,20 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Transaction }                from './../../models/Transaction';
-import { Account }                    from './../../models/Account';
-import { RootState }                  from './../store';
+import { Transaction } from "./../../models/Transaction";
+import { Account } from "./../../models/Account";
+import { RootState } from "./../store";
 
 interface ProjectionsState {
-  transactionOnDate      : { [date: string]: Transaction[] };
-  dayHasTransaction      : { [date: string]: boolean };
+  transactionsOnDate: { [date: string]: Transaction[] };
   balanceByDateAndAccount: { [accountId: string]: { [date: string]: number } };
 }
 
 const initialState: ProjectionsState = {
-  transactionOnDate      : {},
-  dayHasTransaction      : {},
+  transactionsOnDate: {},
   balanceByDateAndAccount: {},
 };
+
+const maxIterations: number = 100000;
 
 export const projectionsSlice = createSlice({
   name: "projections",
@@ -22,34 +22,50 @@ export const projectionsSlice = createSlice({
   reducers: {
     recalculateProjections: (
       state,
-      action: PayloadAction<{ transactions: Transaction[]; accounts: Account[]; farDate: string }>
+      action: PayloadAction<{
+        transactions: Transaction[];
+        accounts: Account[];
+        farDate: string;
+      }>
     ) => {
-      
       const startTime = performance.now();
-
       const { transactions, accounts, farDate } = action.payload;
+
+      const today = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+      const calculateThruDate = new Date(
+        new Date(farDate).setHours(0, 0, 0, 0)
+      );
+
+      state.transactionsOnDate = {};
+      state.balanceByDateAndAccount = {};
+
+      let tempTransactionsOnDate: { [date: string]: Transaction[] } = {};
+      let tempBalanceByDateAndAccount: { [accountId: string]: { [date: string]: number } } = {};
+
+
+      accounts.forEach((account) => {
+        const currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
+        const dateKey = currentDay.toISOString().split("T")[0];
+
+        if (!tempBalanceByDateAndAccount[account.id]) {
+          tempBalanceByDateAndAccount[account.id] = {};
+        }
+        tempBalanceByDateAndAccount[account.id][dateKey] = account.currentBalance;
+      })
       
-      const today                               = (new Date(new Date().setHours(0, 0, 0, 0)).toISOString());
-      const calculateThruDate                   = new Date(farDate);
-      state.transactionOnDate                   = {};
-      state.dayHasTransaction                   = {};
-      state.balanceByDateAndAccount             = {};
-
-
-
+      // Populate the arrays for transactionsOnDay and dayHasTransaction;
       const populateTransactionsOnDate = () => {
         transactions.forEach((transaction) => {
-          const maxIterations: number = 10000;
           let count: number = 0;
           const transactionDate = new Date(transaction.date);
           const transactionEndDate = transaction.isRecurring
             ? transaction.endDate
               ? new Date(
-                  Math.min(
-                    calculateThruDate.getTime(),
-                    new Date(transaction.endDate).getTime()
-                  )
+                Math.min(
+                  calculateThruDate.getTime(),
+                  new Date(transaction.endDate).getTime()
                 )
+              )
               : calculateThruDate
             : transactionDate;
 
@@ -59,13 +75,11 @@ export const projectionsSlice = createSlice({
           ) {
             count++;
             const dateString = transactionDate.toISOString().split("T")[0];
-            if (!state.transactionOnDate[dateString]) {
-              state.transactionOnDate[dateString] = [];
+            if (!tempTransactionsOnDate[dateString]) {
+              tempTransactionsOnDate[dateString] = [];
             }
 
-            state.transactionOnDate[dateString].push(transaction);
-
-            state.dayHasTransaction[dateString] = true;
+            tempTransactionsOnDate[dateString].push(transaction);
 
             if (transaction.isRecurring) {
               // Increase date based on recurrence interval
@@ -94,112 +108,191 @@ export const projectionsSlice = createSlice({
         });
       };
 
-      populateTransactionsOnDate();
+      // Calculate interest for the current day's balance
+      function runTodaysInterest(dateKey: string) {
 
-        
-
-      accounts.forEach((account) => {
-        const accountId = account.id;
-        const maxIterations = 109500;
-      
-        let balance = account.currentBalance;
-        let balanceArray: number[] = [];
-        let currentDay = new Date(today);
-        let iterations = 0;
-      
-        // Helper function to calculate interest based on account type and interest rate
-        const calculateInterest = (accountType: string, interestRate: number | undefined, balance: number) => {
+        // Calculate interest
+        const calculateInterest = (
+          accountType: string,
+          interestRate: number | undefined,
+          balance: number
+        ) => {
           let interest = 0;
           if (interestRate) {
-            if (accountType === "credit card") {
-              // Calculate interest for credit card (assuming daily compounding)
-              interest = balance * ((interestRate * .01) / 365);
+            if (accountType === "credit card" || "loan" || "savings") {
+              // Calculate interest on daily compounding accounts.
+              interest = balance * ((interestRate * 0.01) / 365);
             } else if (accountType === "mortgage") {
-              // Calculate interest for mortgage (assuming monthly compounding)
-              if (currentDay.getDate() === 1) {
-                interest = balance * ((interestRate * .01) / 12);
-              }
-            } else if (accountType === "savings") {
-              // Calculate interest for savings account (assuming daily compounding)
-              interest = balance * ((interestRate * .01) / 365);
-            } else if (accountType === "loan") {
-              // Calculate interest for loan account (assuming daily compounding)
-              interest = balance * ((interestRate * .01) / 365);
+              // Calculate interest for mortgage (monthly compounding)
+              interest = balance * ((interestRate * 0.01) / 12);
             }
           }
           return interest;
         };
-      
-        while (currentDay <= calculateThruDate && iterations < maxIterations) {
-          const transactionsForCurrentDay =
-            state.transactionOnDate[currentDay.toISOString().split("T")[0]] || [];
-          let dayBalance = 0;
-        
-          // Calculate interest for the current day's balance
-          const interest = calculateInterest(account.type, account.interestRate, account.currentBalance);
-          dayBalance += interest;
-        
-          for (const transaction of transactionsForCurrentDay) {
-            if (transaction.fromAccount === accountId) {
-              if (
-                transaction.type === "withdrawal" ) {
-                  if (account.isLiability) {
-                    dayBalance += transaction.amount;
-                  } else {
-                    dayBalance -= transaction.amount;
-                  }                
-                } else if (
-                  transaction.type === "deposit" ) {
-                    if (account.isLiability) {
-                      dayBalance -= transaction.amount;
-                    } else {
-                      dayBalance += transaction.amount;
-                    }                
-                  } else if ( transaction.type === "transfer" ) {
-                const toAccount = accounts.find(acc => acc.id === transaction.toAccount);
-                if (toAccount && toAccount.isLiability) {
-                  const transferAmount = Math.min(toAccount.currentBalance, transaction.amount);
-                  dayBalance -= transferAmount;
-                } else {
-                  dayBalance -= transaction.amount;
-                }
-              }
-            } else if (transaction.toAccount === accountId) {
-              if ( 
-                transaction.type === "transfer") {
-                if (account.isLiability) {
-                  // Calculate the amount that can be transferred without overpayment
-                  const transferAmount = Math.min(balance, transaction.amount);
-                  dayBalance -= transferAmount;
-                } else {
-                  dayBalance += transaction.amount;
-                }
-              }
-            }
-          }
-          balance += dayBalance;
-      
-          if (balanceArray.length > 0) {
-            dayBalance += balanceArray[balanceArray.length - 1];
-          } else {
-            dayBalance += balance;
-          }
-      
-          const dateKey = currentDay.toISOString().split("T")[0];
-      
-          if (!state.balanceByDateAndAccount[accountId]) {
-            state.balanceByDateAndAccount[accountId] = {};
-          }
-      
-          state.balanceByDateAndAccount[accountId][dateKey] = dayBalance;
-      
-          balanceArray.push(dayBalance);
-      
-          currentDay.setDate(currentDay.getDate() + 1);
-          iterations++;
+
+        // If the account is a mortgage, is interest due today
+        function isMortgageDue(account: Account, currentDay: Date) {
+          if (account.type !== "mortgage") return false;
+
+          const currentDayDate = currentDay.getDate();
+          const dueDateObj = account.dueDate
+            ? new Date(account.dueDate)
+            : undefined;
+          const daysInCurrentMonth = new Date(
+            currentDay.getFullYear(),
+            currentDay.getMonth() + 1,
+            0
+          ).getDate();
+
+          return (
+            (!account.dueDate && currentDayDate === 1) ||
+            (dueDateObj && dueDateObj.getDate() === currentDayDate) ||
+            (dueDateObj &&
+              dueDateObj.getDate() > daysInCurrentMonth &&
+              currentDayDate === daysInCurrentMonth)
+          );
         }
-      });
-                
+
+        accounts.forEach((account) => {
+          const accountId = account.id;
+          let activeBalance = tempBalanceByDateAndAccount[accountId][dateKey];
+          
+          if (
+            activeBalance > 0 &&
+            (account.type === "savings" ||
+              account.type === "credit card" ||
+              account.type === "loan" ||
+              isMortgageDue(account, currentDay))
+          ) {
+            const interest = calculateInterest(
+              account.type,
+              account.interestRate,
+              activeBalance
+            );
+            
+            let total = activeBalance + interest
+            tempBalanceByDateAndAccount[accountId][dateKey] = total;
+          }
+        });
+      }
+
+      interface TransactionData {
+        amount: number;
+      }
+      
+      interface AccountData {
+        id: string | number;
+        isLiability: boolean;
+      }
+      
+      interface BalanceData {
+        [accountId: string]: { [dateKey: string]: number };
+      }
+
+      function handleTransfer(  
+        tempBalanceByDateAndAccount: BalanceData,
+        transaction: TransactionData,
+        dateKey: string | number,
+        toAccount?: AccountData,
+        fromAccount?: AccountData
+        ) {
+          if (!toAccount || !fromAccount) return;
+
+        let toAccountBalance = tempBalanceByDateAndAccount[toAccount.id][dateKey];
+        let transferAmount = Math.min(transaction.amount, toAccountBalance);
+      
+        const toAccountSign = toAccount.isLiability ? -1 : 1;
+        const fromAccountSign = fromAccount.isLiability ? 1 : -1;
+        
+        tempBalanceByDateAndAccount[toAccount.id][dateKey] += transferAmount * toAccountSign;
+        tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transferAmount * fromAccountSign;
+        
+      }
+      
+      function handleWithdrawal(
+        tempBalanceByDateAndAccount: BalanceData,
+        transaction: TransactionData,
+        dateKey: string | number,
+        toAccount?: AccountData,
+        fromAccount?: AccountData
+       ) {
+        if (!fromAccount) return;
+
+        if (fromAccount.isLiability) {
+          tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transaction.amount;
+        } else {
+          tempBalanceByDateAndAccount[fromAccount.id][dateKey] -= transaction.amount;
+        }
+      }
+      
+      function handleDeposit(  
+        tempBalanceByDateAndAccount: BalanceData,
+        transaction: TransactionData,
+        dateKey: string | number,
+        toAccount?: AccountData,
+        fromAccount?: AccountData
+       ) {
+        if (!toAccount) return;
+        if (toAccount.isLiability) {
+          tempBalanceByDateAndAccount[toAccount.id][dateKey] -= transaction.amount;
+        } else {
+          tempBalanceByDateAndAccount[toAccount.id][dateKey] += transaction.amount;
+        }
+      }
+
+      const TRANSACTION_TYPES = {
+        TRANSFER: "transfer",
+        WITHDRAWAL: "withdrawal",
+        DEPOSIT: "deposit",
+      };
+
+      const transactionTypeHandlers = {
+        [TRANSACTION_TYPES.TRANSFER]: handleTransfer,
+        [TRANSACTION_TYPES.WITHDRAWAL]: handleWithdrawal,
+        [TRANSACTION_TYPES.DEPOSIT]: handleDeposit,
+      };
+
+      populateTransactionsOnDate();
+
+      let   currentDay    = new Date(new Date(today).setHours(0, 0, 0, 0));
+      let   iterations    = 0;
+
+      while (currentDay <= calculateThruDate && iterations < maxIterations) {
+
+        const dateKey = currentDay.toISOString().split("T")[0];
+
+        var tempDate = new Date(dateKey);
+        tempDate.setDate(tempDate.getDate() - 1);
+        const prevDateKey = tempDate.toISOString().split("T")[0];
+
+        // Set start balance for each account on this date
+        accounts.forEach((account) => {
+          tempBalanceByDateAndAccount[account.id][dateKey] = (tempBalanceByDateAndAccount[account.id][prevDateKey] !== undefined) ? tempBalanceByDateAndAccount[account.id][prevDateKey] : account.currentBalance;
+        })
+        
+        // Get a list of transactions on today's date
+        const transactionsForCurrentDay = tempTransactionsOnDate[currentDay.toISOString().split("T")[0]] || [];
+
+        for (const transaction of transactionsForCurrentDay) {
+          let toAccount = accounts.find(account => account.id === transaction.toAccount);
+          let fromAccount = accounts.find(account => account.id === transaction.fromAccount);
+        
+          const handler = transactionTypeHandlers[transaction.type];
+          if (handler) {
+            handler(tempBalanceByDateAndAccount, transaction, dateKey, toAccount, fromAccount);
+          }
+        }
+        
+
+        runTodaysInterest(dateKey);
+
+        currentDay.setDate(currentDay.getDate() + 1);
+        iterations++;
+      }
+
+      state.transactionsOnDate = tempTransactionsOnDate;
+      state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
+
       const endTime = performance.now();
       console.log(`Recalculating Projections took ${(endTime - startTime).toFixed(2)} milliseconds to execute.`);
 
@@ -212,25 +305,26 @@ export const { recalculateProjections } = projectionsSlice.actions;
 
 // Get transactions by date
 export const getTransactionsByDate = (state: RootState, activeDate: string) => {
-  return state.projections.transactionOnDate[activeDate] || [];
+  return state.projections.transactionsOnDate[activeDate] || [];
 };
 
 // Check if a date has transactions
 export const dateHasTransactions = (state: RootState, date: string) => {
-  return state.projections.dayHasTransaction[date] || false;
+  return state.projections.transactionsOnDate[date] !== undefined || false;
 };
 
 // Get account balance on a specific date
 export const accountBalanceOnDate = (
-  state    : RootState,
+  state: RootState,
   accountID: string,
-  date     : string
+  date: string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
-  const accountBalance          = balanceByDateAndAccount[accountID] || {};
+  const balanceByDateAndAccount =
+    state.projections.balanceByDateAndAccount || {};
+  const accountBalance = balanceByDateAndAccount[accountID] || {};
 
-  const today          = new Date(state.activeDates.today);
-  const inputDate      = new Date(date);
+  const today = new Date(state.activeDates.today);
+  const inputDate = new Date(date);
   const todayISOString = today.toISOString().split("T")[0];
 
   if (inputDate <= today) {
@@ -250,15 +344,19 @@ export const getTransactionsByRange = (
 ) => {
   const allTransactions: { transaction: Transaction; date: string }[] = [];
 
-  // Flatten the transactionOnDate object into a single array
-  Object.entries(state.projections.transactionOnDate).forEach(([date, transactions]) => {
-    transactions.forEach(transaction => {
-      allTransactions.push({ transaction, date });
-    });
-  });
+  // Flatten the transactionsOnDate object into a single array
+  Object.entries(state.projections.transactionsOnDate).forEach(
+    ([date, transactions]) => {
+      transactions.forEach((transaction) => {
+        allTransactions.push({ transaction, date });
+      });
+    }
+  );
 
   // Sort transactions by date
-  allTransactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  allTransactions.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   // Return the transactions within the specified range
   return allTransactions.slice(startIndex, endIndex);
@@ -271,7 +369,8 @@ export const accountBalancesByDateRange = (
   startDate: string,
   endDate: string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const balanceByDateAndAccount =
+    state.projections.balanceByDateAndAccount || {};
   const accountBalance = balanceByDateAndAccount[accountID] || {};
 
   const start = new Date(startDate);

@@ -3,8 +3,9 @@ import { useSwipeable }               from 'react-swipeable';
 import { useSelector, useDispatch }   from 'react-redux';
 
 import { setFarDate, setNearDate }    from './../redux/slices/activedates';
-import { RootState }                  from './../redux/store';
+import { dateHasTransactions }        from './../redux/slices/projections';
 import { DayPanel }                   from './panels/DayPanel';
+import { RootState }                  from './../redux/store';
 import CalendarDay                    from './CalendarDay';
 
 import './../css/Calendar.css';
@@ -17,17 +18,16 @@ const Calendar: React.FC = () => {
   const dispatch                        = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-    // Redux store selectors
+  // Redux store selectors
+  const state = useSelector((state: RootState) => state);
+
   const activeDate = useSelector(
     (state: RootState) => state.activeDates.activeDate
   );
   const today                = useSelector((state: RootState) => state.activeDates.today);
   const farDate              = useSelector((state: RootState) => state.activeDates.farDate);
-  const hasTransactionByDate = useSelector(
-    (state: RootState) => state.projections.dayHasTransaction
-  );
 
-    // Rotated day names to allow users to choose the first day of the week
+  // Rotated day names to allow users to choose the first day of the week
   const rotatedDayNames = dayNames
     .slice(startDayOfWeek)
     .concat(dayNames.slice(0, startDayOfWeek));
@@ -155,7 +155,8 @@ const Calendar: React.FC = () => {
                     isToday        = {isSameDay(day, new Date(today))}
                     isActive       = {isSameDay(day, new Date(activeDate))}
                     hasTransaction = {
-                      hasTransactionByDate[day.toISOString().slice(0, 10)]
+                      dateHasTransactions(state, day.toISOString().slice(0, 10))
+                     // hasTransactionByDate[day.toISOString().slice(0, 10)]
                     }
                   />
                 );

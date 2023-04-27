@@ -9,10 +9,10 @@ import {
 import { selectAllAccounts }                      from "../../redux/slices/accounts";
 import { openTransactionModal }                   from "../../redux/slices/modals";
 import { RootState }                              from "../../redux/store";
-import { getDateWithOrdinal }                     from "../../utils/utils"
+// import { getDateWithOrdinal }                     from "../../utils/utils"
 
 import TransactionListItem                        from "../TransactionListItem"
-import TransactionList                            from "../TransactionList";
+// import TransactionList                            from "../TransactionList";
 import AccountListItem                            from "../AccountListItem";
 
 import "./../../css/Panels.css";
@@ -31,8 +31,8 @@ export const DayPanel: React.FC = () => {
 
   const dispatch = useDispatch();
 
-const dateWithOrdinal = getDateWithOrdinal(new Date(activeDate));
-const { dateString, ordinal } = dateWithOrdinal;
+// const dateWithOrdinal = getDateWithOrdinal(new Date(activeDate));
+// const { dateString, ordinal } = dateWithOrdinal;
 
   return (
     <div className="glassjar__transaction-list">

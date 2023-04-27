@@ -44,9 +44,9 @@
   font-family   : "Space Grotesk", sans-serif;
   gap           : 1rem;
   height        : 100%;
-  min-height: -webkit-fill-available;
-    /* max-height    : 100vh;
-  min-height    : 100vh; */
+  min-height    : -webkit-fill-available;
+  max-height    : 100vh;
+  /* min-height    : 100vh; */
   overflow      : hidden;
   padding       : 0rem;
 }
