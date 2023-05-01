@@ -26,16 +26,6 @@
   width          : 100%; 
 }
 
-    /* adjust padding for iPhone swipe icon */
-@media only screen 
-and (device-width : 375px) 
-and (device-height : 812px) 
-and (-webkit-device-pixel-ratio : 3) {
-  footer {
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
-  }
-}
-
 .glassjar__panel-group {
   background   : var(--color-bright);
   border-radius: 1rem;
