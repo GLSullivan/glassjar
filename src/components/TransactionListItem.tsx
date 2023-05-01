@@ -26,7 +26,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
         </div>
         <div>
           {transaction.isRecurring && (<i className="fa-duotone fa-repeat" />)}
-          <div>{transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>
+          <div>{(transaction.amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>
         </div>
       </div>
     );

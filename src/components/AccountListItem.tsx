@@ -9,7 +9,7 @@ import "./../css/Panels.css";
 
 interface AccountListItem {
   account           : Account;
-  balance          ?: String;
+  balance          ?: number;
 }
 
 const CalendarDay: React.FC<AccountListItem> = React.memo(
@@ -27,7 +27,7 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
           <span>{" "}{account.name}</span>
         </div>
         <div>
-          <div>{balance ? balance : account.currentBalance.toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>
+          <div>{(account.currentBalance / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>
         </div>
       </div>
     );

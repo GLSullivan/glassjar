@@ -47,10 +47,7 @@ export const DayPanel: React.FC = () => {
         {accounts.map((account) => (
           <AccountListItem key={account.id} account={account} balance={accountBalanceOnDate(state,
             account.id,
-            activeDate)?.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}/>
+            activeDate)}/>
         ))}
       </div>
       <div className="glassjar__flex glassjar__flex--justify-between">

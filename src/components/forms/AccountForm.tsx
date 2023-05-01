@@ -87,8 +87,9 @@ export const AccountForm: React.FC = () => {
     value : string | undefined,
     name ?: string | undefined
   ) => {
+    console.log(value)
     if (name && value !== undefined) {
-      setAccount({ ...account, [name]: parseFloat(value) });
+      setAccount({ ...account, [name]: (parseFloat(value) ? Math.round(parseFloat(value) * 100) : 0)  });
     }
   };
 
@@ -119,10 +120,23 @@ export const AccountForm: React.FC = () => {
             prefix        = '$'
             name          = 'currentBalance'
             placeholder   = 'Current Balance:'
-            defaultValue  = {account.currentBalance}
+            defaultValue  = {account.currentBalance / 100}
             decimalsLimit = {0}
             onValueChange = {handleCurrencyChange}
           />
+
+
+
+{/* <CurrencyInput
+  id            = "amount"
+  prefix        = "$"
+  name          = "amount"
+  placeholder   = "Transaction Amount:"
+  defaultValue  = {amount / 100} // Convert cents to dollars for display
+  decimalsLimit = {2} // Allow decimal input
+  onValueChange = {(value) => setAmount(value ? Math.round(parseFloat(value) * 100) : 0)}
+/> */}
+
         </div>
 
         <div   className = 'glassjar__form__input-group glassjar__form__input-group--drop'>

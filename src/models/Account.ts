@@ -10,5 +10,5 @@ export interface Account {
   showInGraph    : boolean;
   dueDate       ?: string;
   color          : string; 
-  creditLimit   ?: number; // TODO - Wire this up! 
+  creditLimit   ?: number;
 }

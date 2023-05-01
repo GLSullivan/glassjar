@@ -7,9 +7,9 @@ import { addTransaction, updateTransaction, deleteTransaction }   from './../../
 import { RootState }                                              from './../../redux/store';
 import { stripTime, addZoneOffset }                               from './../../utils/dateUtils';
 import { Account }                                                from './../../models/Account';
-// import { resetMemoizedBalance }                                   from './../../redux/slices/projections';
 
 import './../../css/Forms.css';
+
 interface TransactionFormProps {
   onClose: () => void;
   initialDate?: string;
@@ -148,10 +148,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               prefix        = "$"
               name          = "amount"
               placeholder   = "Transaction Amount:"
-              defaultValue  = {amount}
-              decimalsLimit = {0}
-              onValueChange = {(value) => setAmount(value ? parseInt(value) : 0)}
-              />
+              defaultValue  = {amount / 100} // Convert cents to dollars for display
+              decimalsLimit = {2} // Allow decimal input
+              onValueChange = {(value) => setAmount(value ? Math.round(parseFloat(value) * 100) : 0)}
+            />
           </div>
         </div>
 
