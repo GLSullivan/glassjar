@@ -1,4 +1,4 @@
-import React                                      from "react";
+import React, { useState }                                      from "react";
 import { useSelector, useDispatch }               from "react-redux";
 
 import { setActiveTransaction }                   from "../../redux/slices/transactions";
@@ -18,9 +18,8 @@ import AccountListItem                            from "../AccountListItem";
 import "./../../css/Panels.css";
 
 export const DayPanel: React.FC = () => {
-  const state = useSelector((state: RootState) => state);
-
-  const accounts = useSelector(selectAllAccounts);
+  const state      = useSelector((state: RootState) => state);
+  const accounts   = useSelector(selectAllAccounts);
   const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
 
   const activeDateFormatted = new Date(activeDate).toISOString().split("T")[0];

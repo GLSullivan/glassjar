@@ -40,12 +40,12 @@ export const activeDate = createSlice({
     setNearDate: (state, action: PayloadAction<string>) => {
       state.nearDate = conformDate(action.payload);
 
-      const nearDate = new Date(conformDate(action.payload));
-      const firstOfMonth = new Date(nearDate.getFullYear(), nearDate.getMonth(), 1).toISOString();
-      state.graphNearDate = firstOfMonth >= state.today ? firstOfMonth : state.today;
+      const nearDate            = new Date(conformDate(action.payload));
+      const firstOfMonth        = new Date(nearDate.getFullYear(), nearDate.getMonth(), 1).toISOString();
+            state.graphNearDate = firstOfMonth >= state.today ? firstOfMonth : state.today;
 
-      const graphNearDate = new Date(state.graphNearDate);
-      state.graphFarDate = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + state.graphSpan, 0).toISOString();
+      const graphNearDate       = new Date(state.graphNearDate);
+            state.graphFarDate  = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + state.graphSpan, 0).toISOString();
       if (new Date(new Date(state.graphFarDate).getFullYear(), new Date(state.graphFarDate).getMonth() + 3, 0) > new Date(state.farDate)) {
         state.farDate = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + 3 + state.graphSpan, 0).toISOString();
       }
@@ -57,9 +57,9 @@ export const activeDate = createSlice({
       state.farDate = conformDate(action.payload)
     },
     setGraphSpan: (state, action: PayloadAction<number>) => {
-      state.graphSpan = action.payload
-      const graphNearDate = new Date(state.graphNearDate);
-      state.graphFarDate = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + action.payload, 0).toISOString();
+            state.graphSpan    = action.payload
+      const graphNearDate      = new Date(state.graphNearDate);
+            state.graphFarDate = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + action.payload, 0).toISOString();
     },
   },
 })

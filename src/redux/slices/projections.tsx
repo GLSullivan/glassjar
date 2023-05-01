@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Transaction } from "./../../models/Transaction";
-import { Account } from "./../../models/Account";
-import { RootState } from "./../store";
+import { Transaction }                from "./../../models/Transaction";
+import { Account }                    from "./../../models/Account";
+import { RootState }                  from "./../store";
 
 interface ProjectionsState {
   transactionsOnDate: { [date: string]: Transaction[] };
@@ -10,7 +10,7 @@ interface ProjectionsState {
 }
 
 const initialState: ProjectionsState = {
-  transactionsOnDate: {},
+  transactionsOnDate     : {},
   balanceByDateAndAccount: {},
 };
 
@@ -36,13 +36,11 @@ export const projectionsSlice = createSlice({
         new Date(farDate).setHours(0, 0, 0, 0)
       );
 
-      state.transactionsOnDate = {};
+      state.transactionsOnDate      = {};
       state.balanceByDateAndAccount = {};
 
-      let tempTransactionsOnDate: { [date: string]: Transaction[] } = {};
-      let tempBalanceByDateAndAccount: {
-        [accountId: string]: { [date: string]: number };
-      } = {};
+      let tempTransactionsOnDate: { [date: string]: Transaction[] }                        = {};
+      let tempBalanceByDateAndAccount: { [accountId: string]: { [date: string]: number } } = {};
 
       accounts.forEach((account) => {
         const currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
@@ -59,7 +57,7 @@ export const projectionsSlice = createSlice({
       const populateTransactionsOnDate = () => {
         transactions.forEach((transaction) => {
           let count: number = 0;
-          const transactionDate = new Date(transaction.date);
+          const transactionDate    = new Date(transaction.date);
           const transactionEndDate = transaction.isRecurring
             ? transaction.endDate
               ? new Date(
@@ -120,39 +118,34 @@ export const projectionsSlice = createSlice({
         ) => {
           let interest = 0;
           if (interestRate) {
-            if (accountType === "credit card" || "loan" || "savings") {
+            if (accountType == "credit card" || accountType == "loan" || accountType == "savings") {
               // Calculate interest on daily compounding accounts.
               interest = balance * ((interestRate * 0.01) / 365);
-            } else if (accountType === "mortgage") {
+            } else if (accountType == "mortgage") {
               // Calculate interest for mortgage (monthly compounding)
-              interest = balance * ((interestRate * 0.01) / 12);
+              const annualInterestRateDecimal = interestRate / 100;
+              const monthlyInterestRate = annualInterestRateDecimal / 12;
+              interest =  interest = monthlyInterestRate * balance;
             }
           }
-          return interest;
+          return Math.round(interest);
         };
 
         // If the account is a mortgage, is interest due today
-        function isMortgageDue(account: Account, currentDay: Date) {
-          if (account.type !== "mortgage") return false;
+        function isMortgageDue(account: Account, currentDay: Date): boolean {
+          if (account.type !== 'mortgage') return false;
+        
+          const currentDayDate = currentDay.getUTCDate();
+          const daysInMonth    = new Date(currentDay.getUTCFullYear(), currentDay.getUTCMonth() + 1, 0).getUTCDate();
 
-          const currentDayDate = currentDay.getDate();
-          const dueDateObj = account.dueDate
-            ? new Date(account.dueDate)
-            : undefined;
-          const daysInCurrentMonth = new Date(
-            currentDay.getFullYear(),
-            currentDay.getMonth() + 1,
-            0
-          ).getDate();
-
-          return (
-            (!account.dueDate && currentDayDate === 1) ||
-            (dueDateObj && dueDateObj.getDate() === currentDayDate) ||
-            (dueDateObj &&
-              dueDateObj.getDate() > daysInCurrentMonth &&
-              currentDayDate === daysInCurrentMonth)
-          );
+          if (account.dueDate) {
+            const dateDue = new Date(account.dueDate).getUTCDate();
+            return dateDue === currentDayDate || (daysInMonth < dateDue && currentDayDate === daysInMonth);
+          } else {
+            return currentDayDate === 1;
+          }
         }
+
 
         accounts.forEach((account) => {
           const accountId = account.id;
@@ -170,7 +163,6 @@ export const projectionsSlice = createSlice({
               account.interestRate,
               activeBalance
             );
-
             let total = activeBalance + interest;
             tempBalanceByDateAndAccount[accountId][dateKey] = total;
           }
@@ -182,7 +174,7 @@ export const projectionsSlice = createSlice({
       }
 
       interface AccountData {
-        id: string | number;
+        id         : string | number;
         isLiability: boolean;
       }
 
@@ -191,33 +183,31 @@ export const projectionsSlice = createSlice({
       }
 
       function handleTransfer(
-        tempBalanceByDateAndAccount: BalanceData,
-        transaction: TransactionData,
-        dateKey: string | number,
-        toAccount?: AccountData,
-        fromAccount?: AccountData
+        tempBalanceByDateAndAccount : BalanceData,
+        transaction                 : TransactionData,
+        dateKey                     : string | number,
+        toAccount                  ?: AccountData,
+        fromAccount                ?: AccountData
       ) {
         if (!toAccount || !fromAccount) return;
 
-        let toAccountBalance =
+        let toAccountBalance = 
           tempBalanceByDateAndAccount[toAccount.id][dateKey];
         let transferAmount = Math.min(transaction.amount, toAccountBalance);
 
-        const toAccountSign = toAccount.isLiability ? -1 : 1;
+        const toAccountSign   = toAccount.isLiability ? -1 : 1;
         const fromAccountSign = fromAccount.isLiability ? 1 : -1;
 
-        tempBalanceByDateAndAccount[toAccount.id][dateKey] +=
-          transferAmount * toAccountSign;
-        tempBalanceByDateAndAccount[fromAccount.id][dateKey] +=
-          transferAmount * fromAccountSign;
+        tempBalanceByDateAndAccount[toAccount.id][dateKey]   += transferAmount * toAccountSign;
+        tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transferAmount * fromAccountSign;
       }
 
       function handleWithdrawal(
-        tempBalanceByDateAndAccount: BalanceData,
-        transaction: TransactionData,
-        dateKey: string | number,
-        toAccount?: AccountData,
-        fromAccount?: AccountData
+        tempBalanceByDateAndAccount : BalanceData,
+        transaction                 : TransactionData,
+        dateKey                     : string | number,
+        toAccount                  ?: AccountData,
+        fromAccount                ?: AccountData
       ) {
         if (!fromAccount) return;
 
@@ -231,11 +221,11 @@ export const projectionsSlice = createSlice({
       }
 
       function handleDeposit(
-        tempBalanceByDateAndAccount: BalanceData,
-        transaction: TransactionData,
-        dateKey: string | number,
-        toAccount?: AccountData,
-        fromAccount?: AccountData
+        tempBalanceByDateAndAccount : BalanceData,
+        transaction                 : TransactionData,
+        dateKey                     : string | number,
+        toAccount                  ?: AccountData,
+        fromAccount                ?: AccountData
       ) {
         if (!toAccount) return;
         if (toAccount.isLiability) {
@@ -248,15 +238,15 @@ export const projectionsSlice = createSlice({
       }
 
       const TRANSACTION_TYPES = {
-        TRANSFER: "transfer",
+        TRANSFER  : "transfer",
         WITHDRAWAL: "withdrawal",
-        DEPOSIT: "deposit",
+        DEPOSIT   : "deposit",
       };
 
       const transactionTypeHandlers = {
-        [TRANSACTION_TYPES.TRANSFER]: handleTransfer,
+        [TRANSACTION_TYPES.TRANSFER]  : handleTransfer,
         [TRANSACTION_TYPES.WITHDRAWAL]: handleWithdrawal,
-        [TRANSACTION_TYPES.DEPOSIT]: handleDeposit,
+        [TRANSACTION_TYPES.DEPOSIT]   : handleDeposit,
       };
 
       populateTransactionsOnDate();
@@ -273,10 +263,10 @@ export const projectionsSlice = createSlice({
 
         // Set start balance for each account on this date
         accounts.forEach((account) => {
-          tempBalanceByDateAndAccount[account.id][dateKey] =
-            tempBalanceByDateAndAccount[account.id][prevDateKey] !== undefined
+          tempBalanceByDateAndAccount[account.id][dateKey]       = 
+          tempBalanceByDateAndAccount[account.id][prevDateKey] !== undefined
               ? tempBalanceByDateAndAccount[account.id][prevDateKey]
-              : account.currentBalance;
+              :  account.currentBalance;
         });
 
         // Get a list of transactions on today's date
@@ -341,12 +331,11 @@ export const accountBalanceOnDate = (
   accountID: string,
   date: string
 ) => {
-  const balanceByDateAndAccount =
-    state.projections.balanceByDateAndAccount || {};
-  const accountBalance = balanceByDateAndAccount[accountID] || {};
+  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const accountBalance          = balanceByDateAndAccount[accountID] || {};
 
-  const today = new Date(state.activeDates.today);
-  const inputDate = new Date(date);
+  const today          = new Date(state.activeDates.today);
+  const inputDate      = new Date(date);
   const todayISOString = today.toISOString().split("T")[0];
 
   if (inputDate <= today) {
@@ -360,9 +349,9 @@ export const accountBalanceOnDate = (
 
 // Get transactions in range.
 export const getTransactionsByRange = (
-  state: RootState,
+  state     : RootState,
   startIndex: number,
-  endIndex: number
+  endIndex  : number
 ) => {
   const allTransactions: { transaction: Transaction; date: string }[] = [];
 
@@ -386,25 +375,22 @@ export const getTransactionsByRange = (
 
 // Get account balances for a date range
 export const accountBalancesByDateRange = (
-  state: RootState,
+  state    : RootState,
   accountID: string,
   startDate: string,
-  endDate: string
+  endDate  : string
 ) => {
-  const balanceByDateAndAccount =
-    state.projections.balanceByDateAndAccount || {};
-  const accountBalance = balanceByDateAndAccount[accountID] || {};
-
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const balances: number[] = [];
+  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const accountBalance          = balanceByDateAndAccount[accountID] || {};
+  const start                   = new Date(startDate);
+  const end                     = new Date(endDate);
+  const balances: number[]      = [];
 
   while (start <= end) {
     const dateKey = start.toISOString().split("T")[0];
     balances.push(accountBalance[dateKey] || 0);
     start.setDate(start.getDate() + 1);
   }
-
   return balances;
 };
 

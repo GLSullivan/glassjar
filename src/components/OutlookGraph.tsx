@@ -13,10 +13,10 @@ import {
 }                                                   from "recharts";
 import { useDispatch, useSelector }                 from "react-redux";
 
-import { RootState }                                from "./../redux/store";
 import { accountBalancesByDateRange }               from "./../redux/slices/projections";
-import { Account }                                  from "./../models/Account";
 import { setGraphSpan }                             from "./../redux/slices/activedates";
+import { Account }                                  from "./../models/Account";
+import { RootState }                                from "./../redux/store";
 
 import "./../css/OutlookGraph.css";
 
@@ -76,7 +76,7 @@ const OutlookGraph: React.FC = () => {
               multiplier = -1;
             }
             const balance = (
-              accountBalances[accountIndex][dayIndex] * multiplier
+              accountBalances[accountIndex][dayIndex] * multiplier / 100
             ).toFixed(2);
             dayData[accounts[accountIndex].name] = balance;
   
@@ -90,7 +90,7 @@ const OutlookGraph: React.FC = () => {
   
       minY = minY - Math.abs(minY) * 0.1;
       maxY = maxY + Math.abs(maxY) * 0.1;
-  
+  console.log(combinedData)
       return { combinedData, minY, maxY };
     }, [state.activeDates.graphNearDate]);
 
@@ -135,10 +135,10 @@ const OutlookGraph: React.FC = () => {
   ) => {
     return (
       <div className="glassjar__graph-holder">
-      <ResponsiveContainer width           = "100%" height = "100%">
-      <LineChart           data            = {combinedData}>
-      <CartesianGrid       strokeDasharray = "3 3" />
-      <XAxis               dataKey         = "date" />
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={combinedData}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
             <YAxis
               tickFormatter = {currencyFormatter}
               width         = {75}

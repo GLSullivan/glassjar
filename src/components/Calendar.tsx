@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useSwipeable }               from 'react-swipeable';
 import { useSelector, useDispatch }   from 'react-redux';
+import React, { useState, useEffect } from 'react';
+
+import { useSwipeable }               from 'react-swipeable';
 
 import { setFarDate, setNearDate }    from './../redux/slices/activedates';
 import { dateHasTransactions }        from './../redux/slices/projections';
@@ -156,7 +157,6 @@ const Calendar: React.FC = () => {
                     isActive       = {isSameDay(day, new Date(activeDate))}
                     hasTransaction = {
                       dateHasTransactions(state, day.toISOString().slice(0, 10))
-                     // hasTransactionByDate[day.toISOString().slice(0, 10)]
                     }
                   />
                 );

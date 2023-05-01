@@ -86,7 +86,7 @@ const AppContent: React.FC = () => {
       {panelState === 1 && <div className='glassjar__panel-group'>
         <AccountList />
       </div>}
-      {panelState === 2 && <div className='glassjar__panel-group glassjar__panel-group--no-scroll'>
+      {panelState === 2 && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
         <OutlookGraph />
       </div>}
       {panelState === 3 && <div className='glassjar__panel-group'>

@@ -12,22 +12,40 @@ interface AccountListItem {
   balance          ?: number;
 }
 
+const accountTypeIcons = {
+  "checking"     : "fa-light fa-money-check-dollar-pen",
+  "savings"      : "fa-light fa-piggy-bank",
+  "credit card"  : "fa-light fa-credit-card",
+  "loan"         : "fa-light fa-hand-holding-dollar",
+  "mortgage"     : "fa-light fa-house-chimney-window",
+  "cash"         : "fa-light fa-wallet",
+};
+
 const CalendarDay: React.FC<AccountListItem> = React.memo(
   ({ account, balance }) => {
     const dispatch = useDispatch();
     return (
-      <div className="glassjar__account-list-item" onClick={() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key={account.id}        >
+      <div
+        className="glassjar__account-list-item"
+        onClick={() => {
+          dispatch(setActiveAccount(account));
+          dispatch(openAccountForm());
+        }}
+        key={account.id}
+      >
         <div>
-          {account.type === "checking" && <i className="fa-light fa-money-check-dollar-pen" />}
-          {account.type === "savings" && <i className="fa-light fa-piggy-bank" />}
-          {account.type === "credit card" && <i className="fa-light fa-credit-card" />}
-          {account.type === "loan" && <i className="fa-light fa-hand-holding-dollar" />}
-          {account.type === "mortgage" && <i className="fa-light fa-house-chimney-window" />}
-          {account.type === "cash" && <i className="fa-light fa-wallet" />}
-          <span>{" "}{account.name}</span>
+          <i className={accountTypeIcons[account.type]} /> <span>{account.name}</span>
         </div>
         <div>
-          <div>{(account.currentBalance / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>
+          {balance !== undefined && balance !== null
+            ? (balance / 100).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })
+            : (account.currentBalance / 100).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })}
         </div>
       </div>
     );

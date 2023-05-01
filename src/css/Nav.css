@@ -46,6 +46,7 @@ and (-webkit-device-pixel-ratio : 3) {
   padding      : 1rem;
   position     : relative;
   width        : 100%;
+  flex: 2
 }
 
 .glassjar__panel-group.glassjar__panel-group--no-scroll {
