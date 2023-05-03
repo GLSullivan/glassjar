@@ -98,7 +98,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="glassjar__form__input-group">
-          <label htmlFor="name">Transaction Name:</label>
+          <label htmlFor="transactionName">Transaction Name:</label>
           <input
             placeholder='Transaction Name'
             type="text"

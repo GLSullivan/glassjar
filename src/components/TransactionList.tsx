@@ -17,15 +17,21 @@ function groupTransactionsByDate(
   }[] = [];
 
   transactions.forEach((transactionItem) => {
+    // Create the date object and adjust for the timezone offset
+    const transactionDate = new Date(transactionItem.date);
+    console.log(transactionDate)
+    const adjustedDate = new Date(transactionDate.getTime() - transactionDate.getTimezoneOffset() * 60 * 1000);
+    console.log(transactionDate,adjustedDate)
+
     const existingGroup = groupedTransactions.find(
-      (group) => group.date === transactionItem.date
+      (group) => group.date === adjustedDate.toISOString().split("T")[0]
     );
 
     if (existingGroup) {
       existingGroup.transactions.push(transactionItem);
     } else {
       groupedTransactions.push({
-        date        : new Date(transactionItem.date).toLocaleDateString(undefined, {month: 'long', day: 'numeric'}),
+        date        : adjustedDate.toLocaleDateString(undefined, {month: 'long', day: 'numeric'}),
         transactions: [transactionItem],
       });
     }
