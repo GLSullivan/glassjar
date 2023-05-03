@@ -33,6 +33,17 @@ const getInitialDate = () => {
 
 const initialState: ActiveDate = getInitialDate();
 
+const updateGraphFarDate = (state: ActiveDate) => {
+  const graphNearDate = new Date(state.graphNearDate);
+  const newGraphFarDate = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + state.graphSpan, 0).toISOString();
+  
+  if (new Date(newGraphFarDate) > new Date(state.farDate)) {
+    state.farDate = newGraphFarDate;
+  }
+  
+  state.graphFarDate = newGraphFarDate;
+};
+
 export const activeDate = createSlice({
   name: 'activeDate',
   initialState,
@@ -57,9 +68,8 @@ export const activeDate = createSlice({
       state.farDate = conformDate(action.payload)
     },
     setGraphSpan: (state, action: PayloadAction<number>) => {
-            state.graphSpan    = action.payload
-      const graphNearDate      = new Date(state.graphNearDate);
-            state.graphFarDate = new Date(graphNearDate.getFullYear(), graphNearDate.getMonth() + action.payload, 0).toISOString();
+      state.graphSpan = action.payload;
+      updateGraphFarDate(state);
     },
   },
 })

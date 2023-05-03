@@ -67,7 +67,7 @@ export const projectionsSlice = createSlice({
                 )
               : calculateThruDate
             : transactionDate;
-
+      
           while (
             transactionDate <= transactionEndDate && count < maxIterations
           ) {
@@ -76,42 +76,51 @@ export const projectionsSlice = createSlice({
             if (!tempTransactionsOnDate[dateString]) {
               tempTransactionsOnDate[dateString] = [];
             }
-
+      
             tempTransactionsOnDate[dateString].push(transaction);
-
+      
             if (transaction.isRecurring) {
-              console.log(transaction.recurrenceFrequency,transaction.customIntervalType,transaction.recurrenceInterval)
-
+      
+              let caseFound = false; // Add a flag to check if a switch case was met
+      
               // Increase date based on recurrence interval
               switch (transaction.recurrenceFrequency) {
                 case "daily":
                   transactionDate.setDate(transactionDate.getDate() + 1);
+                  caseFound = true;
                   break;
                 case "weekly":
                   transactionDate.setDate(transactionDate.getDate() + 7);
+                  caseFound = true;
                   break;
                 case "monthly":
                   transactionDate.setMonth(transactionDate.getMonth() + 1);
+                  caseFound = true;
                   break;
                 case "yearly":
                   transactionDate.setFullYear(
                     transactionDate.getFullYear() + 1
                   );
+                  caseFound = true;
                   break;
                 case "custom":
                   if (transaction.recurrenceInterval) {
                     switch (transaction.customIntervalType) {
                       case "day":
                         transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval);
+                        caseFound = true;
                         break;
                       case "week":
                         transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval * 7);
+                        caseFound = true;
                         break;
                       case "month":
                         transactionDate.setMonth(transactionDate.getMonth() + transaction.recurrenceInterval);
+                        caseFound = true;
                         break;
                       case "year":
                         transactionDate.setFullYear(transactionDate.getFullYear() + transaction.recurrenceInterval);
+                        caseFound = true;
                         break;
                       default:
                         break;
@@ -121,6 +130,11 @@ export const projectionsSlice = createSlice({
                 default:
                   break;
               }
+      
+              if (!caseFound) {
+                break;
+              }
+      
             } else {
               break;
             }
@@ -128,6 +142,7 @@ export const projectionsSlice = createSlice({
             
         });
       };
+      
 
       // Calculate interest for the current day's balance
       function runTodaysInterest(dateKey: string) {

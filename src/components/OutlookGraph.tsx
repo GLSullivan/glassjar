@@ -178,6 +178,7 @@ const OutlookGraph: React.FC = () => {
           <button onClick   = {() => dispatch(setGraphSpan(6))}>6</button>
           <button onClick   = {() => dispatch(setGraphSpan(12))}>12</button>
         </div>
+        <h1></h1>
         
       </div>
     );
