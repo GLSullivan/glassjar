@@ -36,7 +36,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [description, setDescription]                 = useState(activeTransaction?.description || '');
   const [isRecurring, setIsRecurring]                 = useState(activeTransaction?.isRecurring || false);
   const [endDate, setEndDate]                         = useState(activeTransaction?.endDate || '');
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState(activeTransaction?.recurrenceFrequency || 'daily');
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState(activeTransaction?.recurrenceFrequency || 'monthly');
 
   const dispatch = useDispatch();
 
@@ -155,7 +155,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
           </div>
         </div>
 
-        <div className='glassjar__flex'> 
           {(type === "withdrawal" || type === "transfer") && (
             <div className="glassjar__form__input-group glassjar__form__input-group--drop">
               <label htmlFor="fromAccount">From Account:</label>
@@ -190,7 +189,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               </select>
             </div>
           )}
-        </div>
 
         <div className="glassjar__form__input-group">
           <label htmlFor="description">Description (optional):</label>

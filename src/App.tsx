@@ -1,6 +1,7 @@
 import { useSelector, useDispatch }                     from 'react-redux';
 import React, { useEffect, useState }                   from 'react';
 
+import TransactionHelper                                from './components/helpers/TransactionHelper';
 import TransactionForm                                  from './components/forms/TransactionForm';
 import { AccountList }                                  from './components/panels/AccountPanel';
 import { AccountForm }                                  from './components/forms/AccountForm';
@@ -11,7 +12,9 @@ import Calendar                                         from './components/Calen
 import { closeTransactionModal, 
   closeAccountForm,
   closeAccountList,
-  openAccountForm }                                     from './redux/slices/modals'
+  openAccountForm,
+  closeTransactionHelper,
+  openTransactionHelper}                                from './redux/slices/modals'
 import Loader                                           from './components/Loader';
 import Modal                                            from './components/Modal';
 import { RootState }                                    from './redux/store';        
@@ -23,13 +26,14 @@ import 'swiper/css';
 import './css/Nav.css'
 
 const AppContent: React.FC = () => {
-  const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
-  const accountListOpen = useSelector((state: RootState) => state.modalState.accountListOpen)
-  const accountFormOpen = useSelector((state: RootState) => state.modalState.accountFormOpen)
-  const transactions    = useSelector((state: RootState) => state.transactions.transactions);
-  const activeDate      = useSelector((state: RootState) => state.activeDates.activeDate)
-  const farDate         = useSelector((state: RootState) => state.activeDates.farDate);
-  const accounts        = useSelector((state: RootState) => state.accounts.accounts);
+  const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
+  const accountListOpen       = useSelector((state: RootState) => state.modalState.accountListOpen)
+  const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen)
+  const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen)
+  const transactions          = useSelector((state: RootState) => state.transactions.transactions);
+  const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate)
+  const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
+  const accounts              = useSelector((state: RootState) => state.accounts.accounts);
 
   const dispatch = useDispatch()
 
@@ -51,6 +55,11 @@ const AppContent: React.FC = () => {
 
   const closeTheAccountForm = () => {
     dispatch(closeAccountForm())
+  }
+
+
+  const closeTheTransactionHelper = () => {
+    dispatch(closeTransactionHelper())
   }
 
   if (accounts.length < 1) {
@@ -77,6 +86,12 @@ const AppContent: React.FC = () => {
       >
         <AccountForm />
       </Modal>
+      <Modal
+        isOpen={transactionHelperOpen}
+        onClose={closeTheTransactionHelper}
+      >
+        <TransactionHelper />
+      </Modal>
       <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>
         <TransactionForm
           initialDate={activeDate}
@@ -100,6 +115,7 @@ const AppContent: React.FC = () => {
           {' '}
           <i className='fa-solid fa-floppy-disk-circle-xmark' />
         </h3>
+        <h3 onClick={() => dispatch(openTransactionHelper())}>Run Transaction Helper</h3>
       </div>}
       <div className='glassjar__footer-nav'>
         <i onClick = {() => { setPanelState(0) }} className = {'glassjar__footer-nav__button fa-solid fa-jar' + (panelState === 0 ? ' glassjar__footer-nav__button--active' : '')} />

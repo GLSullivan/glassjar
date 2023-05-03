@@ -148,7 +148,7 @@ const OutlookGraph: React.FC = () => {
                     tickCount     = {5}
                   />
                   <Tooltip />
-                  <Legend />
+                  {/* <Legend /> */}
                   <ReferenceLine
                     position = "start"
                     x        = {formatDate(new Date(state.activeDates.activeDate))}

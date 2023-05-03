@@ -4,12 +4,14 @@ export interface ModalState {
   transactionFormOpen: boolean,
   accountFormOpen: boolean,
   accountListOpen: boolean,
+  transactionHelperOpen: boolean,
 }
 
 const initialState: ModalState = {
-  transactionFormOpen: false,
-  accountFormOpen: false,
-  accountListOpen: false,
+  transactionFormOpen  : false,
+  accountFormOpen      : false,
+  accountListOpen      : false,
+  transactionHelperOpen: false,
 }
 
 export const modalState = createSlice({
@@ -34,6 +36,12 @@ export const modalState = createSlice({
     openAccountForm: (state) => {
       state.accountFormOpen = true;
     },
+    closeTransactionHelper: (state) => {
+      state.transactionHelperOpen = false
+    },    
+    openTransactionHelper: (state) => {
+      state.transactionHelperOpen = true;
+    },
   },
 })
 
@@ -43,7 +51,9 @@ export const {
   closeAccountList, 
   openAccountList, 
   closeAccountForm, 
-  openAccountForm, 
+  openAccountForm,
+  closeTransactionHelper,
+  openTransactionHelper
 } = modalState.actions
 
 export default modalState.reducer
