@@ -19,9 +19,8 @@ function groupTransactionsByDate(
   transactions.forEach((transactionItem) => {
     // Create the date object and adjust for the timezone offset
     const transactionDate = new Date(transactionItem.date);
-    console.log(transactionDate)
-    const adjustedDate = new Date(transactionDate.getTime() - transactionDate.getTimezoneOffset() * 60 * 1000);
-    console.log(transactionDate,adjustedDate)
+    const timezoneOffset = transactionDate.getTimezoneOffset() * 60 * 1000; // Get the timezone offset in milliseconds
+    const adjustedDate = new Date(transactionDate.getTime() + timezoneOffset);
 
     const existingGroup = groupedTransactions.find(
       (group) => group.date === adjustedDate.toISOString().split("T")[0]

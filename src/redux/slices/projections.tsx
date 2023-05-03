@@ -49,8 +49,7 @@ export const projectionsSlice = createSlice({
         if (!tempBalanceByDateAndAccount[account.id]) {
           tempBalanceByDateAndAccount[account.id] = {};
         }
-        tempBalanceByDateAndAccount[account.id][dateKey] =
-          account.currentBalance;
+        tempBalanceByDateAndAccount[account.id][dateKey] = account.currentBalance;
       });
 
       // Populate the arrays for transactionsOnDay and dayHasTransaction;
@@ -70,8 +69,7 @@ export const projectionsSlice = createSlice({
             : transactionDate;
 
           while (
-            transactionDate <= transactionEndDate &&
-            count < maxIterations
+            transactionDate <= transactionEndDate && count < maxIterations
           ) {
             count++;
             const dateString = transactionDate.toISOString().split("T")[0];
@@ -82,6 +80,8 @@ export const projectionsSlice = createSlice({
             tempTransactionsOnDate[dateString].push(transaction);
 
             if (transaction.isRecurring) {
+              console.log(transaction.recurrenceFrequency,transaction.customIntervalType,transaction.recurrenceInterval)
+
               // Increase date based on recurrence interval
               switch (transaction.recurrenceFrequency) {
                 case "daily":
@@ -98,6 +98,26 @@ export const projectionsSlice = createSlice({
                     transactionDate.getFullYear() + 1
                   );
                   break;
+                case "custom":
+                  if (transaction.recurrenceInterval) {
+                    switch (transaction.customIntervalType) {
+                      case "day":
+                        transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval);
+                        break;
+                      case "week":
+                        transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval * 7);
+                        break;
+                      case "month":
+                        transactionDate.setMonth(transactionDate.getMonth() + transaction.recurrenceInterval);
+                        break;
+                      case "year":
+                        transactionDate.setFullYear(transactionDate.getFullYear() + transaction.recurrenceInterval);
+                        break;
+                      default:
+                        break;
+                    }
+                  }
+                  break;
                 default:
                   break;
               }
@@ -105,6 +125,7 @@ export const projectionsSlice = createSlice({
               break;
             }
           }
+            
         });
       };
 
@@ -112,9 +133,9 @@ export const projectionsSlice = createSlice({
       function runTodaysInterest(dateKey: string) {
         // Calculate interest
         const calculateInterest = (
-          accountType: string,
+          accountType : string,
           interestRate: number | undefined,
-          balance: number
+          balance     : number
         ) => {
           let interest = 0;
           if (interestRate) {
@@ -124,8 +145,8 @@ export const projectionsSlice = createSlice({
             } else if (accountType == "mortgage") {
               // Calculate interest for mortgage (monthly compounding)
               const annualInterestRateDecimal = interestRate / 100;
-              const monthlyInterestRate = annualInterestRateDecimal / 12;
-              interest =  interest = monthlyInterestRate * balance;
+              const monthlyInterestRate       = annualInterestRateDecimal / 12;
+                    interest                  = interest = monthlyInterestRate * balance;
             }
           }
           return Math.round(interest);
@@ -153,7 +174,7 @@ export const projectionsSlice = createSlice({
 
           if (
             activeBalance > 0 &&
-            (account.type === "savings" ||
+            (account.type  === "savings" ||
               account.type === "credit card" ||
               account.type === "loan" ||
               isMortgageDue(account, currentDay))
@@ -210,15 +231,12 @@ export const projectionsSlice = createSlice({
         fromAccount                ?: AccountData
       ) {
         if (!fromAccount) return;
-
-        if (fromAccount.isLiability) {
-          tempBalanceByDateAndAccount[fromAccount.id][dateKey] +=
-            transaction.amount;
-        } else {
-          tempBalanceByDateAndAccount[fromAccount.id][dateKey] -=
-            transaction.amount;
+          if (fromAccount.isLiability) {
+            tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transaction.amount;
+          } else {
+            tempBalanceByDateAndAccount[fromAccount.id][dateKey] -= transaction.amount;
+          }
         }
-      }
 
       function handleDeposit(
         tempBalanceByDateAndAccount : BalanceData,
@@ -334,9 +352,9 @@ export const accountBalanceOnDate = (
   const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
   const accountBalance          = balanceByDateAndAccount[accountID] || {};
 
-  const today          = new Date(state.activeDates.today);
-  const inputDate      = new Date(date);
-  const todayISOString = today.toISOString().split("T")[0];
+  const today                   = new Date(state.activeDates.today);
+  const todayISOString          = today.toISOString().split("T")[0];
+  const inputDate               = new Date(date);
 
   if (inputDate <= today) {
     date = todayISOString;

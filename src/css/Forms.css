@@ -114,6 +114,10 @@ select {
   display: inline-block;
 }
 
+select option {
+  white-space: normal;
+}
+
     /* Override form defaults */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
