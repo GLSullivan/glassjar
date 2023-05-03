@@ -97,7 +97,7 @@ button {
   align-self    : center;
   background    : var(--color-secondary);
   border        : none;
-  border-radius : 1rem;
+  border-radius : 10rem;
   color         : var(--color-bright);
   cursor        : pointer;
   font-weight   : 900;

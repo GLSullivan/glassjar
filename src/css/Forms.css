@@ -25,7 +25,7 @@ form {
   margin-top: 0;
 }
 
-.glassjar__form__input-group label {
+label {
   color: var(--color-tertiary);
 }
 
@@ -34,7 +34,7 @@ form {
   width   : 100%;
 }
 
-.glassjar__form__input-group input {
+input {
   background   : var(--color-inverse);
   border       : none;
   border-radius: 0.5rem;
@@ -45,27 +45,27 @@ form {
   width        : 100%;
 }
 
-.glassjar__form__input-group input::-webkit-input-placeholder {
+input::-webkit-input-placeholder {
   color: #cdcdcd;
 }
 
-.glassjar__form__input-group input::-moz-placeholder {
+input::-moz-placeholder {
   color: #cdcdcd;
 }
 
-.glassjar__form__input-group input:-ms-input-placeholder {
+input:-ms-input-placeholder {
   color: #cdcdcd;
 }
 
-.glassjar__form__input-group input::-ms-input-placeholder {
+input::-ms-input-placeholder {
   color: #cdcdcd;
 }
 
-.glassjar__form__input-group input::placeholder {
+input::placeholder {
   color: #cdcdcd;
 }
 
-.glassjar__form__input-group select {
+select {
   -webkit-appearance: none;
   -moz-appearance   : none;
   appearance        : none;
