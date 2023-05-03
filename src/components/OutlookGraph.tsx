@@ -90,7 +90,7 @@ const OutlookGraph: React.FC = () => {
   
       minY = minY - Math.abs(minY) * 0.1;
       maxY = maxY + Math.abs(maxY) * 0.1;
-  console.log(combinedData)
+
       return { combinedData, minY, maxY };
     }, [state.activeDates.graphNearDate]);
 
