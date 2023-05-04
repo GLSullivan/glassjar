@@ -9,22 +9,49 @@ import { Transaction } from "../../models/Transaction";
 import "./../../css/MiniForms.css";
 
 interface MiniTransactionFormProps {
-  initialName?: string;
-  initialAmount?: number;
-  initialDay?: string;
+  initialName               ?: string;
+  initialAmount             ?: number;
+  initialDay                ?: string;
+  initialType               ?: string;
+  initialDescription        ?: string;
+  initialFromAccount        ?: string;
+  initialToAccount          ?: string;
+  initialIsRecurring        ?: boolean;
+  initialEndDate            ?: string;
+  initialRecurrenceFrequency?: string;
+  initialAllowOverpayment   ?: boolean;
+  initialShowInCalendar     ?: boolean;
 }
 
 const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
-  initialName = "",
-  initialAmount = 0,
-  initialDay = "",
+  initialName                = "",
+  initialAmount              = 0,
+  initialDay                 = "",
+  initialType                = "withdrawal",
+  initialDescription         = "",
+  initialFromAccount         = "",
+  initialToAccount           = "",
+  initialIsRecurring         = true,
+  initialEndDate             = "",
+  initialRecurrenceFrequency = "monthly",
+  initialAllowOverpayment    = false,
+  initialShowInCalendar      = true,
 }) => {
   const accounts = useSelector((state: RootState) => state.accounts.accounts);
   const firstAccountId = accounts.length > 0 ? accounts[0].id : "";
 
-  const [transactionName, setTransactionName] = useState(initialName);
-  const [day, setDay] = useState(initialDay);
-  const [amount, setAmount] = useState(initialAmount);
+  const [transactionName, setTransactionName]         = useState(initialName);
+  const [day, setDay]                                 = useState(initialDay);
+  const [amount, setAmount]                           = useState(initialAmount);
+  const [transactionType, setTransactionType]         = useState(initialType);
+  const [description, setDescription]                 = useState(initialDescription);
+  const [fromAccount, setFromAccount]                 = useState(initialFromAccount || firstAccountId);
+  const [toAccount, setToAccount]                     = useState(initialToAccount);
+  const [isRecurring, setIsRecurring]                 = useState(initialIsRecurring);
+  const [endDate, setEndDate]                         = useState(initialEndDate);
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState(initialRecurrenceFrequency);
+  const [allowOverpayment, setAllowOverpayment]       = useState(initialAllowOverpayment);
+  const [showInCalendar, setShowInCalendar]           = useState(initialShowInCalendar);
 
   const dispatch = useDispatch();
 
@@ -49,22 +76,22 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
       date: isoDate,
       type: "withdrawal",
       amount,
-      description: "",
-      fromAccount: firstAccountId,
-      toAccount: "",
-      id: new Date().getTime(),
-      isRecurring: true,
-      endDate: "",
+      description        : "",
+      fromAccount        : firstAccountId,
+      toAccount          : "",
+      id                 : new Date().getTime(),
+      isRecurring        : true,
+      endDate            : "",
       recurrenceFrequency: "monthly",
-      allowOverpayment: false,
-      showInCalendar: true,
+      allowOverpayment   : false,
+      showInCalendar     : true,
     };
 
     dispatch(addTransaction(transactionData));
-
-    setTransactionName("");
-    setDay("");
-    setAmount(0);
+    // Isn't this a place to set a state for success? 
+    // setTransactionName("");
+    // setDay("");
+    // setAmount(0);
   };
 
   return (

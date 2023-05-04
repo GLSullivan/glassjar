@@ -1,10 +1,6 @@
 import React                from "react";
 import MiniTransactionForm  from "../forms/MiniTransactionForm";
 
-
-import { useSelector }  from "react-redux";
-import { RootState }    from "./../../redux/store";
-
 import { recurringExpenses } from "../../data/RecurringExpenses";
 
 const Loader: React.FC = () => {
@@ -20,7 +16,6 @@ const Loader: React.FC = () => {
       </p>
 
       {recurringExpenses.map((categoryItem, index) => (
-        <>
           <div key={index}>
             <h3>{categoryItem.category}</h3>
             <div>
@@ -29,7 +24,6 @@ const Loader: React.FC = () => {
               ))}
             </div>
           </div>
-        </>
       ))}
     </>
   );
