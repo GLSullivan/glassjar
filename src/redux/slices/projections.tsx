@@ -52,17 +52,6 @@ export const projectionsSlice = createSlice({
         tempBalanceByDateAndAccount[account.id][dateKey] = account.currentBalance;
       });
 
-      const getNextOccurrenceOfDay = (day: number, currentDate: Date): Date => {
-        const currentDay = currentDate.getDay();
-        const targetDay = day;
-        const daysUntilNext = (targetDay - currentDay + 7) % 7 || 7;
-
-        const nextOccurrence = new Date(currentDate);
-        nextOccurrence.setDate(currentDate.getDate() + daysUntilNext);
-console.log(nextOccurrence)
-        return nextOccurrence;
-      };
-
       // Populate the arrays for transactionsOnDay and dayHasTransaction;
       const populateTransactionsOnDate = () => {
         transactions.forEach((transaction) => {
@@ -114,26 +103,26 @@ console.log(nextOccurrence)
                   );
                   caseFound = true;
                   break;
-                  case "given days":
-                    if (transaction.givenDays && transaction.givenDays.length > 0) {
-                      const currentDayOfWeek = transactionDate.getDay();
-                      let closestDayOfWeek = null;
-                      let minDaysUntilNext = Infinity;
-                  
-                      for (const dayOfWeek of transaction.givenDays) {
-                        const daysUntilNext = (dayOfWeek - currentDayOfWeek + 7) % 7 || 7;
-                        if (daysUntilNext < minDaysUntilNext) {
-                          minDaysUntilNext = daysUntilNext;
-                          closestDayOfWeek = dayOfWeek;
-                        }
-                      }
-                  
-                      if (closestDayOfWeek !== null) {
-                        transactionDate.setDate(transactionDate.getDate() + minDaysUntilNext);
-                        caseFound = true;
+                case "given days":
+                  if (transaction.givenDays && transaction.givenDays.length > 0) {
+                    const currentDayOfWeek = transactionDate.getDay();
+                    let   closestDayOfWeek = null;
+                    let   minDaysUntilNext = Infinity;
+                
+                    for (const dayOfWeek of transaction.givenDays) {
+                      const daysUntilNext = (dayOfWeek - currentDayOfWeek + 7) % 7 || 7;
+                      if (daysUntilNext < minDaysUntilNext) {
+                        minDaysUntilNext = daysUntilNext;
+                        closestDayOfWeek = dayOfWeek;
                       }
                     }
-                    break;                  
+                
+                    if (closestDayOfWeek !== null) {
+                      transactionDate.setDate(transactionDate.getDate() + minDaysUntilNext);
+                      caseFound = true;
+                    }
+                  }
+                  break;                  
                 case "custom":
                   if (transaction.recurrenceInterval) {
                     switch (transaction.customIntervalType) {
