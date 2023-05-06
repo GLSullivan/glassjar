@@ -1,4 +1,4 @@
-  /* 
+    /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -118,10 +118,30 @@ select option {
   white-space: normal;
 }
 
-    /* Override form defaults */
+      /* Override form defaults */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   box-shadow: 0 0 0 30px var(--color-inverse) inset !important;
+}
+
+.glassjar__day-buttons button {
+  aspect-ratio: 1;
+  background  : var(--color-inverse);
+  color       : var(--color-secondary);
+  padding     : .5rem;
+  transition  : .5s ease;
+  width       : 100%;
+}
+
+.glassjar__day-buttons {
+  display        : flex;
+  gap            : 0.5rem;
+  justify-content: space-between;
+}
+
+.glassjar__day-buttons button.selected {
+  background: var(--color-secondary);
+  color     : var(--color-inverse);
 }

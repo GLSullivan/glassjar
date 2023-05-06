@@ -6,8 +6,9 @@ export interface Transaction {
   date                : string;
   description         : string;
   isRecurring         : boolean;
-  recurrenceFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+  recurrenceFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'given days' | 'twice monthly' | 'custom';
   customIntervalType ?: 'day' | 'week' | 'month' | 'year';
+  givenDays          ?: number[];
   recurrenceInterval ?: number;  
   endDate            ?: string;
   fromAccount        ?: string;
