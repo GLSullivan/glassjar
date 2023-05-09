@@ -12,36 +12,38 @@ function groupTransactionsByDate(
   transactions: { transaction: Transaction; date: string }[]
 ) {
   const groupedTransactions: {
-    date        : string;
+    date: string;
     transactions: { transaction: Transaction; date: string }[];
   }[] = [];
 
   transactions.forEach((transactionItem) => {
     // Create the date object and adjust for the timezone offset
     const transactionDate = new Date(transactionItem.date);
-    const timezoneOffset = transactionDate.getTimezoneOffset() * 60 * 1000; // Get the timezone offset in milliseconds
+    const timezoneOffset = transactionDate.getTimezoneOffset() * 60 * 1000; 
     const adjustedDate = new Date(transactionDate.getTime() + timezoneOffset);
 
+    // Store the date string in a variable
+    const dateString = adjustedDate.toISOString().split("T")[0];
+
     const existingGroup = groupedTransactions.find(
-      (group) => group.date === adjustedDate.toISOString().split("T")[0]
+      (group) => group.date === dateString
     );
 
     if (existingGroup) {
       existingGroup.transactions.push(transactionItem);
     } else {
       groupedTransactions.push({
-        date        : adjustedDate.toLocaleDateString(undefined, {month: 'long', day: 'numeric'}),
+        date: dateString,
         transactions: [transactionItem],
       });
     }
   });
-
   return groupedTransactions;
 }
 
 const TransactionList: React.FC = () => {
-  const [transactionCount, setTransactionCount]       = useState(10);
-  const [loading, setLoading]                         = useState(false);
+  const [transactionCount, setTransactionCount] = useState(10);
+  const [loading, setLoading] = useState(false);
   const [hasMoreTransactions, setHasMoreTransactions] = useState(true);
 
   const loader = useRef<HTMLDivElement | null>(null);
@@ -79,13 +81,16 @@ const TransactionList: React.FC = () => {
   useEffect(() => {
     if (loader.current && hasMoreTransactions) {
       const observerOptions: IntersectionObserverInit = {
-        root      : null,
+        root: null,
         rootMargin: "0px",
-        threshold : 1.0,
+        threshold: 1.0,
       };
 
-      const observer      = new IntersectionObserver(observerCallback, observerOptions);
-      const loaderCurrent = loader.current;                                               // Copy the loader.current value to a variable
+      const observer = new IntersectionObserver(
+        observerCallback,
+        observerOptions
+      );
+      const loaderCurrent = loader.current; 
       observer.observe(loaderCurrent);
 
       return () => {
@@ -103,20 +108,25 @@ const TransactionList: React.FC = () => {
   return (
     <div>
       {groupedTransactions.map((group, groupIndex) => (
-        <div key       = {groupIndex} className = "glassjar__lazy-list">
-        <h4  className = "glassjar__lazy-list__header">{group.date}</h4>
+        <div key={groupIndex} className="glassjar__lazy-list">
+          <h4 className="glassjar__lazy-list__header">
+            {new Date(group.date).toLocaleDateString(undefined, {
+              month: "long",
+              day: "numeric",
+            })}
+          </h4>
           {group.transactions.map(({ transaction }, transactionIndex) => (
             <TransactionListItem
-              key         = {`${groupIndex}-${transactionIndex}`}
-              transaction = {transaction}
+              key={`${groupIndex}-${transactionIndex}`}
+              transaction={transaction}
             />
-          ))}    
+          ))}
         </div>
       ))}
-      <div ref = {loader} style = {{ minHeight: '1px' }} />
+      <div ref={loader} style={{ minHeight: "1px" }} />
       {loading && <p>Loading...</p>}
     </div>
   );
 };
-  
+
 export default TransactionList;
