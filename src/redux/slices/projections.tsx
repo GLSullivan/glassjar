@@ -14,7 +14,7 @@ const initialState: ProjectionsState = {
   balanceByDateAndAccount: {},
 };
 
-const maxIterations: number = 100000;
+const maxIterations: number = 100;
 
 export const projectionsSlice = createSlice({
   name: "projections",
@@ -122,7 +122,38 @@ export const projectionsSlice = createSlice({
                       caseFound = true;
                     }
                   }
-                  break;                  
+                  break;    
+                  case "twice monthly":
+
+                    const initialDate        = new Date(transaction.date).getDate();
+
+                    const currentDay         = transactionDate.getDate();
+                    const currentMonth       = transactionDate.getMonth();
+                    const currentYear        = transactionDate.getFullYear();
+                    const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+                    const daysAway           = Math.abs(currentDay - initialDate);
+                    if (daysAway < 10 || daysAway > 20) {
+                      if (currentDay + 14 <= daysInCurrentMonth) {
+                        transactionDate.setDate(currentDay + 14);
+                      } else {
+                        transactionDate.setDate(currentDay - 14);
+                        transactionDate.setMonth(currentMonth + 1);
+                      }
+                      console.log("E",transactionDate)
+                    } else {
+                      if (initialDate < 15) {
+                        transactionDate.setMonth(currentMonth + 1);
+                        transactionDate.setDate(initialDate);
+                      } else if (currentDay + 14 <= daysInCurrentMonth) {
+                        transactionDate.setDate(initialDate);
+                      } else {
+                        transactionDate.setDate(daysInCurrentMonth);
+                      }
+                      console.log("O",transactionDate)
+                    }
+                    caseFound = true;
+                    break;  
                 case "custom":
                   if (transaction.recurrenceInterval) {
                     switch (transaction.customIntervalType) {
