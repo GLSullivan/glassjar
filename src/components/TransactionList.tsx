@@ -23,8 +23,8 @@ function groupTransactionsByDate(
     const adjustedDate = new Date(transactionDate.getTime() + timezoneOffset);
 
     // Store the date string in a variable
-    const dateString = adjustedDate.toISOString().split("T")[0];
-
+    const dateString = transactionDate.toISOString().split("T")[0];
+console.log(dateString)
     const existingGroup = groupedTransactions.find(
       (group) => group.date === dateString
     );
@@ -105,16 +105,41 @@ const TransactionList: React.FC = () => {
     setLoading(false);
   }, [transactionCount]);
 
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const [year, month, day] = date.toISOString().split('T')[0].split('-');
+  
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June', 'July',
+      'August', 'September', 'October', 'November', 'December',
+    ];
+  
+    const getOrdinalSuffix = (n: number): string => {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'st';
+      if (mod10 === 2 && mod100 !== 12) return 'nd';
+      if (mod10 === 3 && mod100 !== 13) return 'rd';
+      return 'th';
+    };
+  
+    const monthName = monthNames[parseInt(month, 10) - 1];
+    const dayWithSuffix = parseInt(day, 10) + getOrdinalSuffix(parseInt(day, 10));
+  
+    return `${monthName} ${dayWithSuffix}`;
+  }
+
   return (
     <div>
       {groupedTransactions.map((group, groupIndex) => (
         <div key={groupIndex} className="glassjar__lazy-list">
-          <h4 className="glassjar__lazy-list__header">
-            {new Date(group.date).toLocaleDateString(undefined, {
+          <h4 className="glassjar__lazy-list__header">{formatDate(group.date)}</h4>
+          {/* <h4 className="glassjar__lazy-list__header">
+            {new Date(group.date).toDateString(undefined, {
               month: "long",
               day: "numeric",
             })}
-          </h4>
+          </h4> */}
           {group.transactions.map(({ transaction }, transactionIndex) => (
             <TransactionListItem
               key={`${groupIndex}-${transactionIndex}`}

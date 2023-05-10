@@ -17,6 +17,7 @@ import { accountBalancesByDateRange }               from "./../redux/slices/proj
 import { setGraphSpan }                             from "./../redux/slices/activedates";
 import { Account }                                  from "./../models/Account";
 import { RootState }                                from "./../redux/store";
+import { colorPalette }                             from "../data/ColorPalette";
 
 import "./../css/OutlookGraph.css";
 
@@ -163,7 +164,7 @@ const OutlookGraph: React.FC = () => {
                       key         = {key}
                       type        = "monotone"
                       dataKey     = {key}
-                      stroke      = {accounts[index].color}
+                      stroke      = {colorPalette[accounts[index].color]}
                       strokeWidth = {2}
                       activeDot   = {{ r: 8 }}
                       dot         = {false}

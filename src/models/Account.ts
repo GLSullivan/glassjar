@@ -9,6 +9,6 @@ export interface Account {
   updatedAt     ?: number;
   showInGraph    : boolean;
   dueDate       ?: string;
-  color          : string; 
+  color          : number; 
   creditLimit   ?: number;
 }

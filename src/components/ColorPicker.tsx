@@ -1,35 +1,21 @@
 import React from "react";
 
-import './../css/ColorPicker.css'
+import { colorPalette } from "./../data/ColorPalette";
+
+import "./../css/ColorPicker.css";
 
 interface ColorPickerProps {
-  onSelect: (color: string) => void;
-  selectedColor: string; 
+  onSelect: (selectedIndex: number) => void;
+  selectedIndex: number;
 }
 
-const colorPalette = [
-  "#F0F5F3",
-  "#CFD8DC",
-  "#A8DADC",
-  "#A7C4B5",
-  "#A8C1B4",
-  "#A9C9A4",
-  "#9FA9A3",
-  "#54816F",
-  "#6C8572",
-  "#7B9A98",
-  "#8B7C6D",
-  "#B7A797",
-  "#D19F84",
-  "#C1A4A4",
-  "#CBA3A3",
-  "#B8A7A6",
-];
-
-const ColorPicker: React.FC<ColorPickerProps> = ({ onSelect, selectedColor }) => {
-  const handleColorSelect = (event: React.MouseEvent, color: string) => {
-    event.stopPropagation(); 
-    onSelect(color);
+const ColorPicker: React.FC<ColorPickerProps> = ({
+  onSelect,
+  selectedIndex,
+}) => {
+  const handleColorSelect = (event: React.MouseEvent, index: number) => {
+    event.stopPropagation();
+    onSelect(index);
   };
 
   return (
@@ -37,9 +23,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onSelect, selectedColor }) =>
       {colorPalette.map((color, index) => (
         <button
           key={index}
-          className={`color-picker__color${color.toLowerCase() === selectedColor.toLowerCase() ? " color-picker__color--selected" : ""}`} // Convert both colors to lowercase when comparing
+          className={`color-picker__color${
+            index === selectedIndex ? " color-picker__color--selected" : ""
+          }`}
           style={{ backgroundColor: color }}
-          onClick={(event) => handleColorSelect(event, color)}
+          onClick={(event) => handleColorSelect(event, index)}
           type="button"
         ></button>
       ))}

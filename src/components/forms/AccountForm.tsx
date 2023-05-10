@@ -12,14 +12,15 @@ import {
 }                                   from './../../redux/slices/accounts';
 import { Account }                  from './../../models/Account';
 import ColorPicker                  from './../ColorPicker';
+import { colorPalette }             from './../../data/ColorPalette';
 
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();
 
   const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
-  const handleColorSelect = (color: string) => {
-    setAccount({ ...account, color });
+  const handleColorSelect = (selectedIndex: number) => {
+    setAccount({ ...account, color: selectedIndex });
   };
 
   const handleDelete = () => {
@@ -43,7 +44,7 @@ export const AccountForm: React.FC = () => {
       lastUpdated   : new Date().toISOString(),
       isLiability   : false,
       showInGraph   : true,
-      color         : '',
+      color         : 1,
     }
   );
 
@@ -125,18 +126,6 @@ export const AccountForm: React.FC = () => {
             onValueChange = {handleCurrencyChange}
           />
 
-
-
-{/* <CurrencyInput
-  id            = "amount"
-  prefix        = "$"
-  name          = "amount"
-  placeholder   = "Transaction Amount:"
-  defaultValue  = {amount / 100} // Convert cents to dollars for display
-  decimalsLimit = {2} // Allow decimal input
-  onValueChange = {(value) => setAmount(value ? Math.round(parseFloat(value) * 100) : 0)}
-/> */}
-
         </div>
 
         <div   className = 'glassjar__form__input-group glassjar__form__input-group--drop'>
@@ -179,9 +168,9 @@ export const AccountForm: React.FC = () => {
             onChange={handleChange}
           />
         </div>
-        <div className = 'glassjar__form__input-group'>
-          <label>Select a color: </label>
-          <ColorPicker onSelect={handleColorSelect} selectedColor={account.color} />
+        <div className='glassjar__form__input-group'>
+          <label>Account Color: </label>
+          <ColorPicker onSelect={handleColorSelect} selectedIndex={account.color} />
         </div>
         {account.type === 'loan' ||
         account.type === 'mortgage' ||
@@ -198,7 +187,7 @@ export const AccountForm: React.FC = () => {
           </div>
         ) : null}
         <div className="glassjar__flex glassjar__flex--justify-center">
-          {activeAccount ? <button onClick={handleDelete}>Delete</button> : null}
+          {activeAccount && accounts.length > 1 ? <button onClick={handleDelete}>Delete</button> : null}
           <button type = 'submit'>Save</button>
         </div>
       </form>

@@ -21,15 +21,22 @@
 
 .glassjar__transaction-list-item,
 .glassjar__account-list-item {
-  background     : var(--color-inverse);
-  border-radius  : 0.5rem;
+  align-items    : center;
   box-sizing     : border-box;
   cursor         : pointer;
   display        : flex;
+  gap            : .5rem;
   justify-content: space-between;
-  margin-bottom  : 0.5rem;
-  padding        : 0.5rem 1rem;
+  padding        : 0.5rem;
   width          : 100%;
+}
+
+.glassjar__transaction-list-item span {
+  flex: 2;
+}
+
+.glassjar__transaction-list-item + .glassjar__transaction-list-item {
+  border-top: 1px solid var(--color-inverse);
 }
 
 .glassjar__transaction-list-item > div {
@@ -49,5 +56,5 @@
 }
 
 .glassjar__transaction-list h2 {
-  margin: 0 0 1rem 0;
+  margin: 0;
 }
