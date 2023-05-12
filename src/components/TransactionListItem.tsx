@@ -1,10 +1,12 @@
-import { useDispatch }                from "react-redux";
+import { useDispatch, useSelector }   from "react-redux";
 import React                          from "react";
 
 import { setActiveTransaction }       from "./../redux/slices/transactions";
 import { openTransactionModal }       from "./../redux/slices/modals";
 
-import { Transaction }                from "../models/Transaction";
+import { Transaction }                from "./../models/Transaction";
+import { RootState }                  from './../redux/store';
+import { colorPalette }               from "./../data/ColorPalette";
 
 import "./../css/Panels.css";
 
@@ -14,10 +16,15 @@ interface TransactionListItem {
 
 const CalendarDay: React.FC<TransactionListItem> = React.memo(
   ({ transaction }) => {
+
     const dispatch = useDispatch();
+    const accounts = useSelector((state: RootState) => state.accounts.accounts);
+
+    console.log(transaction.fromAccount)
+
     return (
       <div className="glassjar__transaction-list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
-        {transaction.type === "deposit"     && <i className="fa-duotone fa-plus-circle" />}
+        {transaction.type === "deposit"     && (<i className="fa-duotone fa-plus-circle" />)}
         {transaction.type === "withdrawal"  && (<i className="fa-duotone fa-minus-circle" />)}
         {transaction.type === "transfer"    && (<i className="fa-duotone  fa-money-bill-transfer" />)}
         {transaction.type === "event"       && (<i className="fa-duotone fa-calendar" />)}

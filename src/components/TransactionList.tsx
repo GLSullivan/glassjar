@@ -24,7 +24,7 @@ function groupTransactionsByDate(
 
     // Store the date string in a variable
     const dateString = transactionDate.toISOString().split("T")[0];
-console.log(dateString)
+
     const existingGroup = groupedTransactions.find(
       (group) => group.date === dateString
     );
