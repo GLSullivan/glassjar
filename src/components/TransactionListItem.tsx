@@ -20,11 +20,12 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
     let accountColor;
-if (transaction.type === "deposit") {
-  accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.toAccount)].color]
-} else {
-  accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].color]
-}
+    if (transaction.type === "deposit") {
+      accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.toAccount)].color]
+    } else {
+      accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].color]
+    }
+
     return (
       <div className="glassjar__transaction-list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
         <div style={{ color: accountColor }}>

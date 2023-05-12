@@ -5,13 +5,15 @@ import { Account }                    from "./../../models/Account";
 import { RootState }                  from "./../store";
 
 interface ProjectionsState {
-  transactionsOnDate: { [date: string]: Transaction[] };
+  transactionsOnDate     : { [date: string]: Transaction[] };
   balanceByDateAndAccount: { [accountId: string]: { [date: string]: number } };
+  categorySpend          : { [category: string]: number };
 }
 
 const initialState: ProjectionsState = {
   transactionsOnDate     : {},
   balanceByDateAndAccount: {},
+  categorySpend          : {}
 };
 
 const maxIterations: number = 1000;
@@ -29,19 +31,19 @@ export const projectionsSlice = createSlice({
       }>
     ) => {
       const startTime = performance.now();
-      const { transactions, accounts, farDate }     = action.payload;
-      type  Category                                = string;
-      const categorySpend: Record<Category, number> = {};
-      const today                                   = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
-      const calculateThruDate                       = new Date(
+      const { transactions, accounts, farDate } = action.payload;
+      const today                               = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+      const calculateThruDate                   = new Date(
         new Date(farDate).setHours(0, 0, 0, 0)
       );
 
       state.transactionsOnDate      = {};
       state.balanceByDateAndAccount = {};
+      state.categorySpend           = {};
 
-      let tempTransactionsOnDate: { [date: string]: Transaction[] }                        = {};
-      let tempBalanceByDateAndAccount: { [accountId: string]: { [date: string]: number } } = {};
+      let tempTransactionsOnDate      : { [date: string]: Transaction[] }                   = {};
+      let tempBalanceByDateAndAccount : { [accountId: string]: { [date: string]: number } } = {};
+      let tempCategorySpend           : { [category: string]: number }                      = {};
 
       accounts.forEach((account) => {
         const currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
@@ -268,6 +270,13 @@ export const projectionsSlice = createSlice({
         [accountId: string]: { [dateKey: string]: number };
       }
 
+      function sumUpCategories(category: string, amount: number) {
+        if (!tempCategorySpend[category]) {
+          tempCategorySpend[category] = 0;
+        }
+        tempCategorySpend[category] += amount;
+      }
+
       function handleTransfer(
         tempBalanceByDateAndAccount : BalanceData,
         transaction                 : TransactionData,
@@ -277,6 +286,10 @@ export const projectionsSlice = createSlice({
         category                   ?: string,
       ) {
         if (!toAccount || !fromAccount) return;
+
+        if (category) {
+          sumUpCategories(category, transaction.amount)
+        }
 
         let toAccountBalance = 
           tempBalanceByDateAndAccount[toAccount.id][dateKey];
@@ -297,6 +310,7 @@ export const projectionsSlice = createSlice({
         fromAccount                ?: AccountData,
         category                   ?: string,
       ) {
+
         if (!fromAccount) return;
           if (fromAccount.isLiability) {
             tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transaction.amount;
@@ -305,13 +319,9 @@ export const projectionsSlice = createSlice({
           }
 
           if (category) {
-          if (!categorySpend.hasOwnProperty(category)) {
-            categorySpend[category] = 0;
+            sumUpCategories(category, transaction.amount)
           }
         
-          // Add the transaction amount to the corresponding category
-          categorySpend[category] += transaction.amount;
-        }
         }
 
       function handleDeposit(
@@ -397,24 +407,11 @@ export const projectionsSlice = createSlice({
         iterations++;
       }
 
-      state.transactionsOnDate = tempTransactionsOnDate;
+      state.transactionsOnDate      = tempTransactionsOnDate;
       state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
+      state.categorySpend           = tempCategorySpend;
 
       const endTime = performance.now();
-
-
-      // This all needs to become a slice!
-// Calculate the total spend
-const totalSpend = Object.values(categorySpend).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-// Calculate the percentage of total spend for each category
-const categorySpendPercentage: Record<Category, string> = {};
-
-for (const category in categorySpend) {
-  categorySpendPercentage[category] = Number((categorySpend[category] / totalSpend) * 100).toFixed(2) + "%";
-}
-
-console.log(categorySpendPercentage);
 
       console.log(
         `Recalculating Projections took ${(endTime - startTime).toFixed(
@@ -437,6 +434,11 @@ export const getTransactionsByDate = (state: RootState, activeDate: string) => {
 export const dateHasTransactions = (state: RootState, date: string) => {
   return state.projections.transactionsOnDate[date] !== undefined || false;
 };
+
+// Get categorized spend amounts
+export const getCategorySpend = (state: RootState) => {
+  return state.projections.categorySpend;
+}
 
 // Get account balance on a specific date
 export const accountBalanceOnDate = (
