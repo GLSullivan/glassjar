@@ -7,6 +7,7 @@ import { addTransaction, updateTransaction, deleteTransaction }   from './../../
 import { RootState }                                              from './../../redux/store';
 import { stripTime, addZoneOffset }                               from './../../utils/dateUtils';
 import { Account }                                                from './../../models/Account';
+import { FinancialCategories }                                    from './../../data/FinancialCategories';
 
 import './../../css/Forms.css';
 
@@ -30,6 +31,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                                                                 return '';
                                                               });
   const [type, setType]                                       = useState(activeTransaction?.type || 'withdrawal');
+  const [category, setCategory]                               = useState(activeTransaction?.category || 'None');
   const [amount, setAmount]                                   = useState(activeTransaction?.amount || 0);
   const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || '');
   const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || '');
@@ -69,6 +71,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       customIntervalType,
       allowOverpayment: false,
       showInCalendar: true,
+      category,
     };
   
     // Include givenDays in the transaction data when the recurrenceFrequency is set to 'given days'
@@ -223,6 +226,25 @@ console.log()
             </select>
           </div>
         )}
+
+        {(type === "withdrawal" || type === "transfer") && <div className="glassjar__flex">
+          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+            <label htmlFor="category">Category:</label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) =>
+                setCategory(
+                  e.target.value
+                )
+              }
+            >
+              {FinancialCategories.map((category, index) => (
+                <option key={index} value={FinancialCategories[index].category}>{FinancialCategories[index].category}</option>
+              ))}
+            </select>
+          </div>
+        </div>}
 
         <div className="glassjar__form__input-group">
           <label htmlFor="description">Description (optional):</label>

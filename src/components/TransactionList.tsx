@@ -20,7 +20,6 @@ function groupTransactionsByDate(
     // Create the date object and adjust for the timezone offset
     const transactionDate = new Date(transactionItem.date);
     const timezoneOffset = transactionDate.getTimezoneOffset() * 60 * 1000; 
-    const adjustedDate = new Date(transactionDate.getTime() + timezoneOffset);
 
     // Store the date string in a variable
     const dateString = transactionDate.toISOString().split("T")[0];
@@ -134,12 +133,6 @@ const TransactionList: React.FC = () => {
       {groupedTransactions.map((group, groupIndex) => (
         <div key={groupIndex} className="glassjar__lazy-list">
           <h4 className="glassjar__lazy-list__header">{formatDate(group.date)}</h4>
-          {/* <h4 className="glassjar__lazy-list__header">
-            {new Date(group.date).toDateString(undefined, {
-              month: "long",
-              day: "numeric",
-            })}
-          </h4> */}
           {group.transactions.map(({ transaction }, transactionIndex) => (
             <TransactionListItem
               key={`${groupIndex}-${transactionIndex}`}

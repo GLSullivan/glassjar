@@ -16,18 +16,23 @@ interface TransactionListItem {
 
 const CalendarDay: React.FC<TransactionListItem> = React.memo(
   ({ transaction }) => {
-
     const dispatch = useDispatch();
     const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
-    console.log(transaction.fromAccount)
-
+    let accountColor;
+if (transaction.type === "deposit") {
+  accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.toAccount)].color]
+} else {
+  accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].color]
+}
     return (
       <div className="glassjar__transaction-list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
-        {transaction.type === "deposit"     && (<i className="fa-duotone fa-plus-circle" />)}
-        {transaction.type === "withdrawal"  && (<i className="fa-duotone fa-minus-circle" />)}
-        {transaction.type === "transfer"    && (<i className="fa-duotone  fa-money-bill-transfer" />)}
-        {transaction.type === "event"       && (<i className="fa-duotone fa-calendar" />)}
+        <div style={{ color: accountColor }}>
+          {transaction.type === "deposit"     && (<i className="fa-duotone fa-fw fa-plus-circle" />)}
+          {transaction.type === "withdrawal"  && (<i className="fa-duotone fa-fw fa-minus-circle" />)}
+          {transaction.type === "transfer"    && (<i className="fa-duotone fa-fw fa-money-bill-transfer" />)}
+          {transaction.type === "event"       && (<i className="fa-duotone fa-fw fa-calendar" />)}
+        </div>
         <span>{transaction.transactionName}</span>
         {transaction.isRecurring && (<i className="fa-duotone fa-repeat" />)}
         <div>{(transaction.amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>

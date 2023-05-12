@@ -4,6 +4,7 @@ import React                          from "react";
 import { setActiveAccount }           from '../redux/slices/accounts';
 import { openAccountForm }            from '../redux/slices/modals';
 import { Account }                    from "../models/Account";
+import { colorPalette }               from "./../data/ColorPalette";
 
 import "./../css/Panels.css";
 
@@ -13,12 +14,12 @@ interface AccountListItem {
 }
 
 const accountTypeIcons = {
-  "checking"     : "fa-light fa-money-check-dollar-pen",
-  "savings"      : "fa-light fa-piggy-bank",
-  "credit card"  : "fa-light fa-credit-card",
-  "loan"         : "fa-light fa-hand-holding-dollar",
-  "mortgage"     : "fa-light fa-house-chimney-window",
-  "cash"         : "fa-light fa-wallet",
+  "checking"     : "fa-duotone fa-fw fa-money-check-dollar-pen",
+  "savings"      : "fa-duotone fa-fw fa-piggy-bank",
+  "credit card"  : "fa-duotone fa-fw fa-credit-card",
+  "loan"         : "fa-duotone fa-fw fa-hand-holding-dollar",
+  "mortgage"     : "fa-duotone fa-fw fa-house-chimney-window",
+  "cash"         : "fa-duotone fa-fw fa-wallet",
 };
 
 const CalendarDay: React.FC<AccountListItem> = React.memo(
@@ -34,7 +35,7 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
         key={account.id}
       >
         <div>
-          <i className={accountTypeIcons[account.type]} /> <span>{account.name}</span>
+          <i style={{ color: colorPalette[account.color] }} className={accountTypeIcons[account.type]} /> <span>{account.name}</span>
         </div>
         <div>
           {balance !== undefined && balance !== null

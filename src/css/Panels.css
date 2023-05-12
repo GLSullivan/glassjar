@@ -58,3 +58,8 @@
 .glassjar__transaction-list h2 {
   margin: 0;
 }
+
+.glassjar__account-list-item i,
+.glassjar__transaction-list-item i {
+  font-size: 1.4em;
+}
