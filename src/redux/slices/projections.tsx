@@ -29,10 +29,11 @@ export const projectionsSlice = createSlice({
       }>
     ) => {
       const startTime = performance.now();
-      const { transactions, accounts, farDate } = action.payload;
-
-      const today             = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
-      const calculateThruDate = new Date(
+      const { transactions, accounts, farDate }     = action.payload;
+      type  Category                                = string;
+      const categorySpend: Record<Category, number> = {};
+      const today                                   = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+      const calculateThruDate                       = new Date(
         new Date(farDate).setHours(0, 0, 0, 0)
       );
 
@@ -232,7 +233,6 @@ export const projectionsSlice = createSlice({
           }
         }
 
-
         accounts.forEach((account) => {
           const accountId = account.id;
           let activeBalance = tempBalanceByDateAndAccount[accountId][dateKey];
@@ -273,7 +273,8 @@ export const projectionsSlice = createSlice({
         transaction                 : TransactionData,
         dateKey                     : string | number,
         toAccount                  ?: AccountData,
-        fromAccount                ?: AccountData
+        fromAccount                ?: AccountData,
+        category                   ?: string,
       ) {
         if (!toAccount || !fromAccount) return;
 
@@ -293,7 +294,8 @@ export const projectionsSlice = createSlice({
         transaction                 : TransactionData,
         dateKey                     : string | number,
         toAccount                  ?: AccountData,
-        fromAccount                ?: AccountData
+        fromAccount                ?: AccountData,
+        category                   ?: string,
       ) {
         if (!fromAccount) return;
           if (fromAccount.isLiability) {
@@ -301,6 +303,15 @@ export const projectionsSlice = createSlice({
           } else {
             tempBalanceByDateAndAccount[fromAccount.id][dateKey] -= transaction.amount;
           }
+
+          if (category) {
+          if (!categorySpend.hasOwnProperty(category)) {
+            categorySpend[category] = 0;
+          }
+        
+          // Add the transaction amount to the corresponding category
+          categorySpend[category] += transaction.amount;
+        }
         }
 
       function handleDeposit(
@@ -308,7 +319,8 @@ export const projectionsSlice = createSlice({
         transaction                 : TransactionData,
         dateKey                     : string | number,
         toAccount                  ?: AccountData,
-        fromAccount                ?: AccountData
+        fromAccount                ?: AccountData,
+        category                   ?: string,
       ) {
         if (!toAccount) return;
         if (toAccount.isLiability) {
@@ -364,6 +376,8 @@ export const projectionsSlice = createSlice({
             (account) => account.id === transaction.fromAccount
           );
 
+          let category = transaction.category
+
           const handler = transactionTypeHandlers[transaction.type];
           if (handler) {
             handler(
@@ -371,7 +385,8 @@ export const projectionsSlice = createSlice({
               transaction,
               dateKey,
               toAccount,
-              fromAccount
+              fromAccount,
+              category
             );
           }
         }
@@ -386,6 +401,21 @@ export const projectionsSlice = createSlice({
       state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
 
       const endTime = performance.now();
+
+
+      // This all needs to become a slice!
+// Calculate the total spend
+const totalSpend = Object.values(categorySpend).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+// Calculate the percentage of total spend for each category
+const categorySpendPercentage: Record<Category, string> = {};
+
+for (const category in categorySpend) {
+  categorySpendPercentage[category] = Number((categorySpend[category] / totalSpend) * 100).toFixed(2) + "%";
+}
+
+console.log(categorySpendPercentage);
+
       console.log(
         `Recalculating Projections took ${(endTime - startTime).toFixed(
           2
