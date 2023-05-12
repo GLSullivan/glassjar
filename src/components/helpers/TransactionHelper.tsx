@@ -1,7 +1,6 @@
-import React                from "react";
-import MiniTransactionForm  from "../forms/MiniTransactionForm";
-
-import { recurringExpenses } from "../../data/RecurringExpenses";
+import React                 from "react";
+import MiniTransactionForm   from "../forms/MiniTransactionForm";
+import { RecurringExpenses } from "../../data/RecurringExpenses";
 
 const Loader: React.FC = () => {
 
@@ -15,12 +14,12 @@ const Loader: React.FC = () => {
         If you don't see something here, adding it later is easy. No worries.
       </p>
 
-      {recurringExpenses.map((categoryItem, index) => (
+      {RecurringExpenses.map((categoryItem, index) => (
           <div key={index}>
             <h3>{categoryItem.category}</h3>
             <div>
               {categoryItem.expenses.map((expense, expenseIndex) => (
-                <MiniTransactionForm key={expenseIndex} initialName={expense} initialDay="1" />
+                <MiniTransactionForm key={expenseIndex} initialCategory={categoryItem.category} initialName={expense} initialDay="1" />
               ))}
             </div>
           </div>

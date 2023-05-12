@@ -7,7 +7,7 @@ import { addTransaction, updateTransaction, deleteTransaction }   from './../../
 import { RootState }                                              from './../../redux/store';
 import { stripTime, addZoneOffset }                               from './../../utils/dateUtils';
 import { Account }                                                from './../../models/Account';
-import { FinancialCategories }                                    from './../../data/FinancialCategories';
+import { RecurringExpenses }                                      from './../../data/RecurringExpenses';
 
 import './../../css/Forms.css';
 
@@ -239,8 +239,8 @@ console.log()
                 )
               }
             >
-              {FinancialCategories.map((category, index) => (
-                <option key={index} value={FinancialCategories[index].category}>{FinancialCategories[index].category}</option>
+              {RecurringExpenses.map((category, index) => (
+                <option key={index} value={RecurringExpenses[index].category}>{RecurringExpenses[index].category}</option>
               ))}
             </select>
           </div>

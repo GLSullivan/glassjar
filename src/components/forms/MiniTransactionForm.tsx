@@ -21,6 +21,7 @@ interface MiniTransactionFormProps {
   initialRecurrenceFrequency?: string;
   initialAllowOverpayment   ?: boolean;
   initialShowInCalendar     ?: boolean;
+  initialCategory           ?: string;
 }
 
 const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
@@ -36,6 +37,7 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
   initialRecurrenceFrequency = "monthly",
   initialAllowOverpayment    = false,
   initialShowInCalendar      = true,
+  initialCategory            = "None"
 }) => {
   const accounts = useSelector((state: RootState) => state.accounts.accounts);
   const firstAccountId = accounts.length > 0 ? accounts[0].id : "";
@@ -43,6 +45,7 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
   const [transactionName, setTransactionName]         = useState(initialName);
   const [day, setDay]                                 = useState(initialDay);
   const [amount, setAmount]                           = useState(initialAmount);
+  const [category, setCategory]                       = useState(initialCategory);
   const [transactionType, setTransactionType]         = useState(initialType);
   const [description, setDescription]                 = useState(initialDescription);
   const [fromAccount, setFromAccount]                 = useState(initialFromAccount || firstAccountId);
@@ -73,9 +76,9 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
 
     const transactionData: Transaction = {
       transactionName,
-      date: isoDate,
-      type: "withdrawal",
       amount,
+      date               : isoDate,
+      type               : "withdrawal",
       description        : "",
       fromAccount        : firstAccountId,
       toAccount          : "",
@@ -85,6 +88,7 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
       recurrenceFrequency: "monthly",
       allowOverpayment   : false,
       showInCalendar     : true,
+      category           : initialCategory,
     };
 
     dispatch(addTransaction(transactionData));

@@ -1,4 +1,4 @@
-export const recurringExpenses: { category: string; expenses: string[] }[] = [
+export const RecurringExpenses: { category: string; expenses: string[]; percentage: string }[] = [
   {
     category: "Housing",
     expenses: [
@@ -7,6 +7,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Homeowners Insurance",
       "Property Taxes",
     ],
+    percentage: ".3",
   },
   {
     category: "Utilities",
@@ -18,7 +19,10 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Trash Collection",
       "Internet Service",
       "Cable TV",
+      "Cell Phone Bill",
+      "Landline Phone",
     ],
+    percentage: ".1",
   },
   {
     category: "Entertainment",
@@ -32,13 +36,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Date Nights",
       "Movie Tickets",
     ],
-  },
-  {
-    category: "Communications",
-    expenses: [
-      "Cell Phone Bill",
-      "Landline Phone",
-    ],
+    percentage: ".05",
   },
   {
     category: "Food",
@@ -50,6 +48,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Alcohol",
       "Tobacco",
     ],
+    percentage: ".15",
   },
   {
     category: "Transportation",
@@ -62,6 +61,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Ride-Sharing",
       "Bicycle Maintenance",
     ],
+    percentage: ".15",
   },
   {
     category: "Healthcare",
@@ -72,6 +72,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Dental Care",
       "Vision Care",
     ],
+    percentage: ".1",
   },
   {
     category: "Fitness",
@@ -80,6 +81,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Fitness Classes",
       "Sports Equipment",
     ],
+    percentage: ".02",
   },
   {
     category: "Insurance",
@@ -88,6 +90,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Disability Insurance",
       "Long-term Care Insurance",
     ],
+    percentage: ".05",
   },
   {
     category: "Clothing and Personal Care",
@@ -102,6 +105,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Cosmetics",
       "Toiletries",
     ],
+    percentage: ".05",
   },
   {
     category: "Childcare and Education",
@@ -112,6 +116,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Extracurricular Activities",
       "College Savings",
     ],
+    percentage: ".1",
   },
   {
     category: "Debt and Savings",
@@ -123,6 +128,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Emergency Fund",
       "Investments",
     ],
+    percentage: ".15",
   },
   {
     category: "Banking and Financial Services",
@@ -133,6 +139,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Legal Fees",
       "Financial Advisor",
     ],
+    percentage: ".02",
   },
   {
     category: "Charity and Gifts",
@@ -141,15 +148,17 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Religious Contributions",
       "Gifts",
     ],
+    percentage: ".05",
   },
   {
-    category: "Subscriptions and Memberships",
+    category: "Subscriptions/Memberships",
     expenses: [
       "Magazines",
       "Newspapers",
       "Professional Association Memberships",
       "Club Memberships",
     ],
+    percentage: ".02",
   },
   {
     category: "Pets",
@@ -160,6 +169,7 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Grooming",
       "Pet Insurance",
     ],
+    percentage: ".03",
   },
   {
     category: "Miscellaneous",
@@ -172,5 +182,6 @@ export const recurringExpenses: { category: string; expenses: string[] }[] = [
       "Home Security",
       "Storage Unit Rental",
     ],
+    percentage: ".05",
   },
 ];

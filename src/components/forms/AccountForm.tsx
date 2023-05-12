@@ -88,7 +88,6 @@ export const AccountForm: React.FC = () => {
     value : string | undefined,
     name ?: string | undefined
   ) => {
-    console.log(value)
     if (name && value !== undefined) {
       setAccount({ ...account, [name]: (parseFloat(value) ? Math.round(parseFloat(value) * 100) : 0)  });
     }
