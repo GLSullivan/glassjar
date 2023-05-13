@@ -1,5 +1,5 @@
-import { useSelector }      from "react-redux";
-import { getCategorySpend } from "../redux/slices/projections";
+import { useSelector }        from "react-redux";
+import { getCategorySpend }   from "../redux/slices/projections";
 import {
   PieChart,
   Pie,
@@ -7,7 +7,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-}                           from "recharts";
+}                             from "recharts";
+import { RecurringExpenses }  from "../data/RecurringExpenses";
 
 const CategorySpendPieChart = () => {
   const categorySpendData = useSelector(getCategorySpend);
@@ -20,36 +21,51 @@ const CategorySpendPieChart = () => {
     "#8dd1e1",
   ];
 
-  const formattedData = Object.entries(categorySpendData).map(
-    ([name, value]) => ({
-      name,
-      value,
-    })
-  );
-console.log(formattedData)
-
-  // const renderCustomLegend = () => {
-  //   const total = formattedData.reduce((acc, cur) => acc + cur.value, 0);
-  //   const percentage = ((entry.value / total) * 100).toFixed(2);
-  //   return `${entry.name}: ${percentage}%`;
-  // };
+  const getCategoryPercentage = (categoryName: any) => {
+    const [beforeColon] = categoryName.split(':');
+    const category = RecurringExpenses.find((item: { category: any; }) => item.category === beforeColon);
+    if (category) {
+      return category.percentage;
+    }
+    return null;
+  };
+  
+  const formattedData = Object.entries(categorySpendData).map(([category, spend]) => ({
+    name: category + ": " +  ((spend / Object.values(categorySpendData).reduce((acc, curr) => acc + curr, 0)) * 100).toFixed(2) + "%",
+    value: Number(((spend / Object.values(categorySpendData).reduce((acc, curr) => acc + curr, 0)) * 100).toFixed(2)),
+  }));
+  
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const fill             = payload[0]?.payload?.fill;
+      const targetPercentage = getCategoryPercentage(payload[0].name)
+      return (
+        <div
+          style={{ border: `2px solid ${fill}` }}
+          className="glassjar__custom-tooltip"
+        >
+          <h3>{payload[0].name}</h3>
+          <h4>Recommended: {Number(targetPercentage) * 100}%</h4>
+        </div>
+      );
+    }
+  
+    return null;
+  };
 
   return (
     <div className="glassjar__graph-holder">
       <div className="glassjar__graph-holder__sub">
         <div className="glassjar__graph-holder__sub-sub">
           <ResponsiveContainer width="100%" height="100%">
-            {/* <PieChart width={400} height={400}> */}
             <PieChart>
               <Pie
                 data        = {formattedData}
-                // cx          = {200}
-                // cy          = {200}
-                labelLine   = {false}
+                labelLine   = {true}
                 outerRadius = {100}
+                innerRadius = {60}
                 fill        = "#8884d8"
                 dataKey     = "value"
-                // label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(2)}%`}
               >
                 {formattedData.map((entry, index) => (
                   <Cell
@@ -58,9 +74,8 @@ console.log(formattedData)
                   />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip content={<CustomTooltip />}/>
               <Legend />
-              {/* <Legend formatter={renderCustomLegend} /> */}
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -70,18 +85,3 @@ console.log(formattedData)
 };
 
 export default CategorySpendPieChart;
-
-
-// console.log(state.categorySpend)
-//       console.log(
-//         Object.entries(state.categorySpend).map(([category, spend]) => ({
-//           category,
-//           percentage:
-//             Number((spend /
-//               Object.values(state.categorySpend).reduce(
-//                 (acc, curr) => acc + curr,
-//                 0
-//               )) *
-//             100).toFixed(2),
-//         }))
-//       );

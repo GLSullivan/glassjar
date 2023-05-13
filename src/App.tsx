@@ -99,7 +99,10 @@ const AppContent: React.FC = () => {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-      <Calendar />
+      
+      {panelState === 5 && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
+        <Calendar />
+      </div>}
       {panelState === 0 && <div className='glassjar__panel-group'>
         <TransactionList />
       </div>}
@@ -122,11 +125,12 @@ const AppContent: React.FC = () => {
         <h3 onClick={() => dispatch(openTransactionHelper())}>Run Transaction Helper</h3>
       </div>}
       <div className='glassjar__footer-nav'>
+        <i onClick = {() => { setPanelState(5) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (panelState === 5 ? ' glassjar__footer-nav__button--active' : '')} />
         <i onClick = {() => { setPanelState(0) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (panelState === 0 ? ' glassjar__footer-nav__button--active' : '')} />
         <i onClick = {() => { setPanelState(1) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (panelState === 1 ? ' glassjar__footer-nav__button--active' : '')} />
         <i onClick = {() => { setPanelState(2) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (panelState === 2 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(3) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (panelState === 2 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(4) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (panelState === 3 ? ' glassjar__footer-nav__button--active' : '')} />
+        <i onClick = {() => { setPanelState(3) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (panelState === 3 ? ' glassjar__footer-nav__button--active' : '')} />
+        <i onClick = {() => { setPanelState(4) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (panelState === 4 ? ' glassjar__footer-nav__button--active' : '')} />
       </div>
     </div>
   );

@@ -270,7 +270,11 @@ export const projectionsSlice = createSlice({
         [accountId: string]: { [dateKey: string]: number };
       }
 
-      function sumUpCategories(category: string, amount: number) {
+      function sumUpCategories(amount: number, category?: string) {
+        if (!category) {
+          category = "Uncategorized"
+        }
+
         if (!tempCategorySpend[category]) {
           tempCategorySpend[category] = 0;
         }
@@ -287,9 +291,7 @@ export const projectionsSlice = createSlice({
       ) {
         if (!toAccount || !fromAccount) return;
 
-        if (category) {
-          sumUpCategories(category, transaction.amount)
-        }
+        sumUpCategories(transaction.amount, category)
 
         let toAccountBalance = 
           tempBalanceByDateAndAccount[toAccount.id][dateKey];
@@ -318,9 +320,7 @@ export const projectionsSlice = createSlice({
             tempBalanceByDateAndAccount[fromAccount.id][dateKey] -= transaction.amount;
           }
 
-          if (category) {
-            sumUpCategories(category, transaction.amount)
-          }
+          sumUpCategories(transaction.amount, category)
         
         }
 
@@ -438,7 +438,7 @@ export const dateHasTransactions = (state: RootState, date: string) => {
 // Get categorized spend amounts
 export const getCategorySpend = (state: RootState) => {
   return state.projections.categorySpend;
-}
+};
 
 // Get account balance on a specific date
 export const accountBalanceOnDate = (
