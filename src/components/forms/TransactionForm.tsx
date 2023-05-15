@@ -91,9 +91,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   
   
   useEffect(() => {
-    if (!activeTransaction && accounts.length > 0) {
+    if (!activeTransaction && accounts.length > 1) {
       setFromAccount(accounts[0].id);
-      setToAccount(accounts[0].id);
+      setToAccount(accounts[1].id);
     }
   }, [activeTransaction, accounts]);
 
@@ -170,12 +170,12 @@ console.log()
             >
               <option value="deposit">Income</option>
               <option value="withdrawal">Expense</option>
-              <option value="transfer">Transfer</option>
+              {accounts.length > 1 && (<option value="transfer">Transfer</option>)}              
               <option value="event">Event</option>
             </select>
           </div>
 
-          <div className="glassjar__form__input-group">
+          {type != "event" && <div className="glassjar__form__input-group">
             <label htmlFor="amount">Amount:</label>
             <CurrencyInput
               id="amount"
@@ -188,7 +188,7 @@ console.log()
                 setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
               }
             />
-          </div>
+          </div>}
         </div>
 
         {(type === "withdrawal" || type === "transfer") && (

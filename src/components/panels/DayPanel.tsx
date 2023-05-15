@@ -1,4 +1,4 @@
-import React, { useState }                                      from "react";
+import React, { useState }                        from "react";
 import { useSelector, useDispatch }               from "react-redux";
 
 import { setActiveTransaction }                   from "../../redux/slices/transactions";
@@ -30,15 +30,8 @@ export const DayPanel: React.FC = () => {
 
   const dispatch = useDispatch();
 
-// const dateWithOrdinal = getDateWithOrdinal(new Date(activeDate));
-// const { dateString, ordinal } = dateWithOrdinal;
-
   return (
     <div className="glassjar__transaction-list">
-      {/* <h1>
-        <span>{dateString}</span>
-        <sup style={{ fontSize: '0.8em', marginLeft: '2px' }}>{ordinal}</sup>
-      </h1> */}
       <div className="glassjar__flex glassjar__flex--justify-between">
         <h2>Account Balances: </h2>
       </div>

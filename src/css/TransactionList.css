@@ -14,11 +14,33 @@
 }
 
 .glassjar__lazy-list__header {
-  background: var(--color-bright);
+  background-color: var(--color-brand);
+  color: var(--color-bright);
   margin    : 0;
   padding   : 0.5rem 0;
   position  : sticky;
-  top       : -1rem;
+  top       : 0;
   width     : 100%;
   z-index   : 2;
+  text-align: left;
+}
+
+.glassjar__schedule {
+  padding: 1rem;
+}
+
+.glassjar__calendar-group {
+  max-height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.glassjar__calendar-holder {
+  max-height: 90%;
+  overflow: auto;
+  position: relative;
+  height: 90%;
 }

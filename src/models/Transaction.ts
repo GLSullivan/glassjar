@@ -6,6 +6,8 @@ export interface Transaction {
   date                : string;
   description         : string;
   isRecurring         : boolean;
+  allowOverpayment    : false;
+  showInCalendar      : true;
   recurrenceFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'given days' | 'twice monthly' | 'custom';
   customIntervalType ?: 'day' | 'week' | 'month' | 'year';
   givenDays          ?: number[];
@@ -13,10 +15,9 @@ export interface Transaction {
   endDate            ?: string;
   fromAccount        ?: string;
   toAccount          ?: string;
-  allowOverpayment    : false;
-  showInCalendar      : true;
   updatedAt          ?: number;
   category           ?: string;
   skippedDates       ?: [];
   arbitraryDates     ?: []; // Future feature for holidays and anything with arbitrary recurrences. 
+  discretionary      ?: boolean; // Future feature for sorting, showing things that are required.
 }

@@ -31,6 +31,19 @@
   width          : 100%;
 }
 
+.glassjar__transaction-list-item {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.glassjar__transaction-list-item > div {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: .5rem;
+}
+
 .glassjar__transaction-list-item span {
   flex: 2;
 }
@@ -59,7 +72,40 @@
   margin: 0;
 }
 
-.glassjar__account-list-item i,
-.glassjar__transaction-list-item i {
+.glassjar__account-list-item i {
   font-size: 1.4em;
+}
+
+.glassjar__schedule .glassjar__transaction-list-item {
+  color: var(--color-bright);
+}
+
+.glassjar__transaction-list-item__second-row i {
+  font-size: 1rem;
+}
+
+.glassjar__transaction-list-item__second-row {
+  font-size: 0.8rem;
+}
+
+.glassjar__transaction-list-item__second-row span {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.glassjar__transaction-list-item__second-row > span:last-of-type {
+  flex: 2;
+  width: 100%;
+  text-align: right;
+}
+
+.glassjar__transaction-list-item__second-row div {
+  flex: 2;
+  width: 100%;
+  display: flex;
+  gap: .25rem;
+}
+
+.glassjar__recurring-icon {
+  font-size: .8rem;
 }

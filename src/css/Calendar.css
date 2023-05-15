@@ -201,3 +201,23 @@
   pointer-events: auto;
 }
 
+.glassjar__calendar-selector {
+  box-sizing     : border-box;
+  color          : var(--color-bright);
+  display        : flex;
+  font-size      : 1.4rem;
+  justify-content: end;
+  top            : 0;
+  width          : 100%;
+}
+
+.glassjar__calendar-selector i {
+  padding: 1rem;
+  transition: .5s ease;
+  opacity: .5;
+  cursor: pointer;
+}
+
+.glassjar__calendar-selector i.selected {
+  opacity: 1;
+}

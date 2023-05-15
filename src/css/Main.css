@@ -30,19 +30,20 @@
 
 .glassjar__root {
   align-items: center;
-  background : linear-gradient(
+  background: var(--color-brand);
+  /* background : linear-gradient(
     160deg,
     #e0f4e6,
     #568371,
     #568371,
     #568371,
     #568371
-  );
+  ); */
   box-sizing    : border-box;
   display       : flex;
   flex-direction: column;
   font-family   : "Space Grotesk", sans-serif;
-  gap           : 1rem;
+  /* gap           : 1rem; */
   /* height        : -webkit-fill-available;
   min-height    : 100%; */
   /* max-height    : -webkit-fill-available; */
