@@ -9,6 +9,9 @@ import { DayPanel }                   from './panels/DayPanel';
 import { RootState }                  from '../redux/store';
 import CalendarDay                    from './CalendarDay';
 
+import { setCalendarView }            from '../redux/slices/views';
+
+
 import './../css/Calendar.css';
 
   // Constants
@@ -18,6 +21,7 @@ const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 const CalendarMonth: React.FC = () => {
   const dispatch                        = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const calendarView                    = useSelector((state: RootState) => state.views.calendarView);
 
   // Redux store selectors
   const state = useSelector((state: RootState) => state);
@@ -84,6 +88,10 @@ const CalendarMonth: React.FC = () => {
     return daysArray;
   };
 
+  const handleViewChange = (view: string) => {
+    dispatch(setCalendarView(view))
+  };
+
   const [days, setDays] = useState<Date[]>(
     generateDaysArray(currentMonth, startDayOfWeek)
   );
@@ -113,58 +121,59 @@ const CalendarMonth: React.FC = () => {
   }, [currentMonth]);
 
   return (
-    <div    className = 'calendar__container' {...swipeHandlers}>
-    <div    className = 'calendar__navigation'>
-    <button onClick   = {() => changeMonth('previous')}>
-    <i      className = 'fa-regular fa-chevron-left' />
+    <div className='glassjar__calendar__container' {...swipeHandlers}>
+      <div className='glassjar__calendar__navigation'>
+        <button onClick={() => changeMonth('previous')}>
+          <i className='fa-regular fa-chevron-left' />
         </button>
         <h2
-          className = 'calendar__month'
-          onClick   = {() => {setCurrentMonth(new Date()); dispatch(setNearDate(new Date(new Date()).toISOString()))}}
+          className='glassjar__calendar__month'
+          onClick={() => { setCurrentMonth(new Date()); dispatch(setNearDate(new Date(new Date()).toISOString())) }}
         >
           {currentMonth.toLocaleString('default', { month: 'long' })}{' '}
           {currentMonth.getFullYear()}
         </h2>
-        <button onClick   = {() => changeMonth('next')}>
-        <i      className = 'fa-regular fa-chevron-right' />
+        <button onClick={() => changeMonth('next')}>
+          <i className='fa-regular fa-chevron-right' />
         </button>
-      </div>
-      <div className = 'calendar__calendar'>
-      <div className = 'calendar__header-row'>
+        <i onClick={() => handleViewChange('Month')}   className={`fa-duotone fa-calendar-days${ calendarView === 'Month' ? " selected" : ""}`} />
+        <i onClick={() => handleViewChange('Schedule')} className={`fa-duotone fa-list${ calendarView === 'Schedule' ? " selected" : ""}`} />
+     </div>
+      <div className='glassjar__calendar__calendar'>
+        <div className='glassjar__calendar__seven-row glassjar__calendar__seven-row--header'>
           {rotatedDayNames.map((dayName, index) => (
-            <div key = {index} className = 'calendar__header-day'>
+            <div key={index} className='glassjar__calendar__header-day'>
               {dayName}
             </div>
           ))}
         </div>
         {chunk(days, 7).map((week: Date[], weekIndex: number) => (
           <div
-            key       = {weekIndex}
-            className = {`calendar__week${
-              containsActiveDate(week, new Date(activeDate))
-                ? ' calendar__week--active'
-                :  ''
-            }`}
+            key={weekIndex}
+            className={`glassjar__calendar__week${containsActiveDate(week, new Date(activeDate))
+                ? ' active'
+                : ''
+              }`}
           >
-            <div className="calendar__day-holder">
+            <div className="glassjar__calendar__seven-row">
               {week.map((day: Date, dayIndex: number) => {
                 return (
                   <CalendarDay
-                    key            = {day.toISOString()}
-                    day            = {day}
-                    isCurrentMonth = {day.getMonth() === currentMonth.getMonth()}
-                    isToday        = {isSameDay(day, new Date(today))}
-                    isActive       = {isSameDay(day, new Date(activeDate))}
-                    hasTransaction = {
+                    key={day.toISOString()}
+                    day={day}
+                    isCurrentMonth={day.getMonth() === currentMonth.getMonth()}
+                    isToday={isSameDay(day, new Date(today))}
+                    isActive={isSameDay(day, new Date(activeDate))}
+                    hasTransaction={
                       dateHasTransactions(state, day.toISOString().slice(0, 10))
                     }
                   />
                 );
               })}
             </div>
-            <div className="calendar__inline-panel">
+            {/* <div className="calendar__inline-panel">
               <DayPanel />
-            </div>
+            </div> */}
           </div>
         ))}
       </div>

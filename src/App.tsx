@@ -5,26 +5,24 @@ import TransactionHelper                                from './components/helpe
 import TransactionForm                                  from './components/forms/TransactionForm';
 import { AccountList }                                  from './components/panels/AccountPanel';
 import { AccountForm }                                  from './components/forms/AccountForm';
-import Calendar                                         from './components/Calendar';
-import { recalculateProjections }                       from './redux/slices/projections';
-import OutlookGraph                                     from './components/OutlookGraph'
+import TransactionList                                  from './components/TransactionList';
 import CategoryGraph                                    from './components/CategoryGraph'
+import SettingsPanel                                    from './components/SettingsPanel';
+import OutlookGraph                                     from './components/OutlookGraph'
+import Calendar                                         from './components/Calendar';
+import Loader                                           from './components/Loader';
+import Modal                                            from './components/Modal';
+
+import { recalculateProjections }                       from './redux/slices/projections';
+import { setView }                                      from './redux/slices/views';
 import { closeTransactionModal, 
   closeAccountForm,
   closeAccountList,
   openAccountForm,
-  closeTransactionHelper,
-  openTransactionHelper}                                from './redux/slices/modals'
-import Loader                                           from './components/Loader';
-import Modal                                            from './components/Modal';
+  closeTransactionHelper}                               from './redux/slices/modals'
 import { RootState }                                    from './redux/store';        
-  
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-import 'swiper/css';
 
 import './css/Nav.css'
-import TransactionList from './components/TransactionList';
 
 const AppContent: React.FC = () => {
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
@@ -35,6 +33,7 @@ const AppContent: React.FC = () => {
   const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate)
   const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
   const accounts              = useSelector((state: RootState) => state.accounts.accounts);
+  const activeView            = useSelector((state: RootState) => state.views.activeView);
 
   const dispatch = useDispatch()
 
@@ -58,18 +57,16 @@ const AppContent: React.FC = () => {
     dispatch(closeAccountForm())
   }
 
-
   const closeTheTransactionHelper = () => {
     dispatch(closeTransactionHelper())
   }
 
-  if (accounts.length < 1) {
-    dispatch(openAccountForm()); // Initial setup. 
+  const setActiveView = (view: string) => {
+    dispatch(setView(view))
   }
 
-  function clearLocalStorage() {
-    localStorage.removeItem('transactions');
-    localStorage.removeItem('accounts');
+  if (accounts.length < 1) {
+    dispatch(openAccountForm()); // Initial setup. 
   }
 
   const [panelState, setPanelState] = useState(0);
@@ -100,37 +97,33 @@ const AppContent: React.FC = () => {
         />
       </Modal>
       
-      {panelState === 0 && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
+      {activeView === "calendar" && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
         <Calendar />
       </div>}
-      {panelState === 1 && <div className='glassjar__panel-group'>
+      {activeView === "accounts" && <div className='glassjar__panel-group'>
         <AccountList />
       </div>}
-      {panelState === 2 && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
+      {activeView === "outlook" && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
         <OutlookGraph />
       </div>}
-      {panelState === 3 && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
+      {activeView === "categories" && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
         <CategoryGraph />
       </div>}
-      {panelState === 4 && <div className='glassjar__panel-group'>
+      {activeView === "transactions" && <div className='glassjar__panel-group'>
         <TransactionList />
       </div>}
-      {panelState === 5 && <div className='glassjar__panel-group'>
-        <h1>Dev Tools Menu</h1>
-        <h3 onClick={() => clearLocalStorage()}>
-          Clear Local Storage
-          {' '}
-          <i className='fa-solid fa-floppy-disk-circle-xmark' />
-        </h3>
-        <h3 onClick={() => dispatch(openTransactionHelper())}>Run Transaction Helper</h3>
-      </div>}
+      {activeView === "settings" && <div className='glassjar__panel-group'>
+        <SettingsPanel />
+      </div>
+      }
+
       <div className='glassjar__footer-nav'>
-        <i onClick = {() => { setPanelState(0) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (panelState === 0 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(1) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (panelState === 1 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(2) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (panelState === 2 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(3) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (panelState === 3 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(4) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (panelState === 4 ? ' glassjar__footer-nav__button--active' : '')} />
-        <i onClick = {() => { setPanelState(5) }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (panelState === 5 ? ' glassjar__footer-nav__button--active' : '')} />
+        <i onClick = {() => { setActiveView("calendar") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === "calendar" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("accounts") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === "accounts" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("outlook") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === "outlook" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("categories") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("transactions") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === "transactions" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("settings") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
       </div>
     </div>
   );

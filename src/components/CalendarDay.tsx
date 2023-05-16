@@ -1,6 +1,13 @@
-import React              from "react";
-import { useDispatch }    from "react-redux";
-import { setActiveDate }  from "./../redux/slices/activedates";
+import { useDispatch, useSelector }   from "react-redux";
+import React                          from "react";
+
+import { interpolateRgb }             from 'd3-interpolate';
+import { RGBColor, rgb as d3Rgb }     from 'd3-color';
+
+import { aggregateBalanceOnDate }     from './../redux/slices/projections';
+import { setActiveDate }              from "./../redux/slices/activedates";
+import { RootState }                  from "./../redux/store";
+
 import "./../css/Calendar.css";
 
 interface CalendarDayProps {
@@ -14,27 +21,69 @@ interface CalendarDayProps {
 const CalendarDay: React.FC<CalendarDayProps> = React.memo(
   ({ day, isCurrentMonth, isToday, isActive, hasTransaction }) => {
     const dispatch  = useDispatch();
+    const state = useSelector((state: RootState) => state);
+
+    function calculateRelativeBalance(
+      healthRangeBottom: number,
+      healthRangeTop: number,
+      todaysBalance: number
+    ): number {
+      if (healthRangeTop - healthRangeBottom === 0) {
+        return 0;
+      }
+
+      const relativeBalance =
+        (todaysBalance - healthRangeBottom) / (healthRangeTop - healthRangeBottom);
+    
+      return relativeBalance;
+    }
+    
+    const todaysBalance: number = aggregateBalanceOnDate(state, day.toISOString().slice(0, 10));
+    let dayHealth: number = calculateRelativeBalance(state.userPrefs.healthRangeBottom, state.userPrefs.healthRangeTop,todaysBalance); 
+    
+    // TODO: Put this in the right place. Either color pallette data or user prefs. 
+    let colors = ['#b23333', '#dff3e5', '#6e9c88', '#6e9c88', '#3a6454', '#13d084'];
+    
+    // TODO: Make this a utility. 
+    function hexToRGB(hex: string): RGBColor {
+      return d3Rgb(hex);
+    }
+    
+    function lerpColor(a: RGBColor, b: RGBColor, amount: number): string {
+      return interpolateRgb(a, b)(amount).toString();
+    }
+    
+    function getColorFromGradient(colors: string[], amount: number): string {
+      // Clamp amount between 0 and 1
+      amount = Math.max(0, Math.min(1, amount));
+    
+      let space = 1 / (colors.length - 1);
+      let index = Math.floor(amount / space);
+    
+      let colorA = hexToRGB(colors[index]);
+      let colorB = hexToRGB(colors[index + 1]);
+    
+      let t = (amount - space * index) / space;
+      return lerpColor(colorA, colorB, t);
+    }
+
     const className = [
-      "calendar__day",
-      !isCurrentMonth ? "calendar__day--other-month"    : "",
-      isToday         ? "calendar__day--today"          : "",
-      isActive        ? "calendar__day--active"         : "",
-      hasTransaction  ? "calendar__day--has-transaction": "",
+      "glassjar__calendar__day",
+      !isCurrentMonth ? "glassjar__calendar__day--other-month"    : "",
+      isToday         ? "glassjar__calendar__day--today"          : "",
+      isActive        ? "glassjar__calendar__day--active"         : "",
+      hasTransaction  ? "glassjar__calendar__day--has-transaction": "",
     ]
       .join(" ")
       .replace(/\s{2,}/g, " ");
 
     return (
-      <div className = {className}>
-        <button
-          key       = {day.toISOString()}
-          onClick   = {() => dispatch(setActiveDate(day.toISOString()))}
-        >
-          <div>
-            {day.getDate()}
-            {hasTransaction && <div className="calendar__day__marker"></div>}
-          </div>
-        </button>
+      <div className={className} style={{ backgroundColor: getColorFromGradient(colors, dayHealth) }}>
+        <h1 key={day.toISOString()}
+          onClick={() => dispatch(setActiveDate(day.toISOString()))} >
+          {day.getDate()}
+        </h1>
+        {hasTransaction && <div className="glassjar__calendar__day__marker"></div>}
       </div>
     );
   }

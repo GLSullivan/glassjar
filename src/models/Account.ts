@@ -3,12 +3,12 @@ export interface Account {
   name           : string;
   currentBalance : number;
   type           : 'checking' | 'savings' | 'credit card' | 'loan' | 'mortgage' | 'cash';
-  interestRate  ?: number;
   isLiability    : boolean;
   lastUpdated    : string;
-  updatedAt     ?: number;
   showInGraph    : boolean;
-  dueDate       ?: string;
   color          : number; 
+  interestRate  ?: number;
+  updatedAt     ?: number;
+  dueDate       ?: string;
   creditLimit   ?: number;
 }

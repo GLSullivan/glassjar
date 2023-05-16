@@ -121,8 +121,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     });
   };
 
-console.log()
-
   return (
     <div className="glassjar__form">
       <h2>

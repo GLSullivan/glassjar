@@ -11,6 +11,8 @@
     "@types/node": "^16.18.18",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "d3-color": "^3.1.0",
+    "d3-interpolate": "^3.0.1",
     "react": "^18.2.0",
     "react-currency-input-field": "^3.6.10",
     "react-dom": "^18.2.0",

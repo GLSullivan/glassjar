@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch }                     from 'react-redux';
+
 import CalendarMonth from './CalendarMonth';
 import CalendarSchedule from './CalendarSchedule';
-
-type CalendarView = 'Month' | 'Schedule';
+import { RootState } from '../redux/store';
+import { setCalendarView }            from '../redux/slices/views';
 
 const CalendarSelector: React.FC = () => {
-const [calendarView, setCalendarView] = useState("Month")
+  const dispatch = useDispatch()
 
-  const handleViewChange = (selected: string) => {
-    // const selected = event.target.value as CalendarView;
-    setCalendarView(selected);
+  const handleViewChange = (view: string) => {
+    dispatch(setCalendarView(view))
   };
+
+  const calendarView = useSelector((state: RootState) => state.views.calendarView);
 
   return (
     <div className='glassjar__calendar-group'>

@@ -16,6 +16,8 @@ const initialState: ProjectionsState = {
   categorySpend          : {}
 };
 
+let allAccounts: Account[]
+
 const maxIterations: number = 1000;
 
 export const projectionsSlice = createSlice({
@@ -36,7 +38,8 @@ export const projectionsSlice = createSlice({
       const calculateThruDate                   = new Date(
         new Date(farDate).setHours(0, 0, 0, 0)
       );
-
+      
+      allAccounts                   = accounts;
       state.transactionsOnDate      = {};
       state.balanceByDateAndAccount = {};
       state.categorySpend           = {};
@@ -461,6 +464,41 @@ export const accountBalanceOnDate = (
 
   return accountBalance[date] || 0;
 };
+
+// Get account balance on a specific date
+export const aggregateBalanceOnDate = (
+  state: RootState,
+  date: string
+) => {
+  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  
+  const today                   = new Date(state.activeDates.today);
+  const todayISOString          = today.toISOString().split("T")[0];
+  const inputDate               = new Date(date);
+
+  if (inputDate <= today) {
+    date = todayISOString;
+  } else {
+    date = inputDate.toISOString().split("T")[0];
+  }
+
+  let totalBalance = 0;
+if (allAccounts) {
+  allAccounts.forEach((account) => {
+    const accountId = account.id;
+    if (account && account.showInGraph) {
+      if (account.isLiability) {
+        totalBalance -= balanceByDateAndAccount[accountId][date] || 0;
+      } else {
+        totalBalance += balanceByDateAndAccount[accountId][date] || 0;
+      }
+    }
+
+  })
+}
+  return totalBalance;
+};
+
 
 // Get transactions in range.
 export const getTransactionsByRange = (
