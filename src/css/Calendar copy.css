@@ -56,8 +56,8 @@
   padding-bottom: 20vh;
   position      : sticky;
   top           : 77px;
-      /* background: var(--color-brand); */
-  z-index: 2;
+  z-index       : 2;
+  /* background: var(--color-brand); */
 }
 
 .calendar__day-holder {
@@ -101,21 +101,21 @@
     /* transition     : 0.25s; */
 }
 
-.calendar__day.calendar__day--other-month button > div {
+.calendar__day.other-month button > div {
   opacity: 0.5;
 }
 
-.calendar__day.calendar__day--today button > div {
+.calendar__day.today button > div {
   font-size  : 1.8rem;
   font-weight: 900;
 }
 
-.calendar__day.calendar__day--has-transaction button > div {
+.calendar__day.has-transaction button > div {
   background: var(--color-brand);
   color     : var(--color-inverse);
 }
 
-.calendar__day.calendar__day--active button > div {
+.calendar__day.active button > div {
   background   : var(--color-bright);
   border       : 2px solid var(--color-bright);
   border-bottom: 2px solid transparent;
@@ -125,7 +125,7 @@
   opacity      : 1;
 }
 
-.calendar__day.calendar__day--active:after {
+.calendar__day.active:after {
   background: var(--color-bright);
   content   : " ";
   height    : 2rem;

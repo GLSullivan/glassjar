@@ -16,7 +16,10 @@ const initialState: ProjectionsState = {
   categorySpend          : {}
 };
 
-let allAccounts: Account[]
+let allAccounts: Account[];
+
+let rangeMin: number = 0;
+let rangeMax: number = 0;
 
 const maxIterations: number = 1000;
 
@@ -498,7 +501,6 @@ if (allAccounts) {
 }
   return totalBalance;
 };
-
 
 // Get transactions in range.
 export const getTransactionsByRange = (

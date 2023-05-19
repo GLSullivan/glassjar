@@ -171,9 +171,11 @@ const CalendarMonth: React.FC = () => {
                 );
               })}
             </div>
-            {/* <div className="calendar__inline-panel">
-              <DayPanel />
-            </div> */}
+            <div className="glassjar__calendar__inline-panel">
+              <div>
+                <DayPanel />
+              </div>
+            </div>
           </div>
         ))}
       </div>

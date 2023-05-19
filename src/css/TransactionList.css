@@ -37,10 +37,3 @@
   display: flex;
   flex-direction: column;
 }
-
-.glassjar__calendar-holder {
-  max-height: 90%;
-  overflow: auto;
-  position: relative;
-  height: 90%;
-}

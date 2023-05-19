@@ -19,27 +19,48 @@
   width: 100%;
 }
 
-.glassjar__calendar__day__marker {
-  background   : var(--color-secondary);
+.glassjar__calendar__day-marker {
+  background   : var(--color-primary);
   border-radius: 1rem;
   bottom       : 0.2rem;
   height       : 0.4rem;
   position     : absolute;
   width        : 0.4rem;
 }
+
 .glassjar__calendar__day {
     align-items    : center;
-    aspect-ratio   : 1;
+    aspect-ratio   : .9;
     box-sizing     : border-box;
     display        : flex;
     justify-content: center;
-    margin         : 1px;
     position       : relative;
     text-align     : center;
 }
 
+/* 
+"other-month"     : "",
+      isToday         ? "today"           : "",
+      isActive        ? "active"          : "", */
+
+
+      .glassjar__calendar__day.today h1 {
+        font-size: 1.2rem;
+        font-weight: 900;
+      }
+
+      .glassjar__calendar__day.other-month {
+        opacity: .25;
+      }
+
+.glassjar__calendar__day.active {
+  border : 2px solid var(--color-brand);
+  border-bottom: none;
+  opacity: 1;
+}
+
 .glassjar__calendar__day h1 {
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .glassjar__calendar__seven-row.glassjar__calendar__seven-row--header {
@@ -51,4 +72,45 @@
     align-items    : center;
     display        : flex;
     justify-content: space-around;
+}
+
+.glassjar__calendar__navigation h2 {
+  font-size: 1.2rem;
+}
+
+.glassjar__calendar__inline-panel {
+  box-sizing    : border-box;
+  height        : 0;
+  left          : 0;
+  opacity       : 100%;
+  overflow      : auto;
+  pointer-events: none;
+  position      : absolute;
+  transition    : height .5s ease;
+  width         : 100%;
+}
+
+.glassjar__calendar__inline-panel > div {
+  padding       : 1rem;
+}
+
+.glassjar__calendar__week.active .glassjar__calendar__inline-panel {
+  bottom        : 0;
+  height        : 20vh;
+  pointer-events: auto;
+}
+
+.glassjar__calendar__week.active {
+  padding-bottom: 20vh;
+  position      : sticky;
+  top           : 77px;
+  z-index       : 2;
+}
+
+.glassjar__calendar__navigation button {
+  background: none;
+  border    : none;
+  color     : var(--color-inverse);
+  font-size : 1.4rem;
+  outline   : none;
 }

@@ -13,10 +13,10 @@
         /* --primary: #7B9F90ff; */
   --color-bright   : #ffffff;
   --color-inverse  : #f0f5f3;
-  --color-secondary: #d19f84;
-  --color-brand    : #54816f;
-  --color-tertiary : #638d7c;
-  --color-primary  : #122420;
+  --color-secondary: #258596;
+  --color-brand    : #202230;
+  --color-tertiary : #ff0000;
+  --color-primary  : #ffffff;
 
   --gradient-brand    : linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
   --gradient-secondary: linear-gradient(
@@ -40,6 +40,7 @@
     #568371
   ); */
   box-sizing    : border-box;
+  color         : var(--color-primary);
   display       : flex;
   flex-direction: column;
   font-family   : "Space Grotesk", sans-serif;
