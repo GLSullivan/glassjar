@@ -24,16 +24,3 @@
   z-index   : 2;
   text-align: left;
 }
-
-.glassjar__schedule {
-  padding: 1rem;
-}
-
-.glassjar__calendar-group {
-  max-height: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}

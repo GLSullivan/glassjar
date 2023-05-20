@@ -32,16 +32,16 @@
 }
 
 .glassjar__transaction-list-item {
-  flex-direction: column;
   align-items: center;
+  flex-direction: column;
   justify-content: space-between;
 }
 
 .glassjar__transaction-list-item > div {
   display: flex;
+  gap: .5rem;
   justify-content: space-between;
   width: 100%;
-  gap: .5rem;
 }
 
 .glassjar__transaction-list-item span {
@@ -49,7 +49,7 @@
 }
 
 .glassjar__transaction-list-item + .glassjar__transaction-list-item {
-  border-top: 1px solid var(--color-inverse);
+  border-top: 1px solid var(--color-accent);
 }
 
 .glassjar__transaction-list-item > div {
@@ -69,7 +69,9 @@
 }
 
 .glassjar__transaction-list h2 {
-  margin: 0;
+  font-size  : 1.2rem;
+  font-weight: 500;
+  margin     : 0;
 }
 
 .glassjar__account-list-item i {
@@ -89,21 +91,21 @@
 }
 
 .glassjar__transaction-list-item__second-row span {
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .glassjar__transaction-list-item__second-row > span:last-of-type {
   flex: 2;
-  width: 100%;
   text-align: right;
+  width: 100%;
 }
 
 .glassjar__transaction-list-item__second-row div {
-  flex: 2;
-  width: 100%;
   display: flex;
+  flex: 2;
   gap: .25rem;
+  width: 100%;
 }
 
 .glassjar__recurring-icon {

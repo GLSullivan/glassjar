@@ -5,11 +5,11 @@ import { useSwipeable }               from 'react-swipeable';
 
 import { setFarDate, setNearDate }    from '../redux/slices/activedates';
 import { dateHasTransactions }        from '../redux/slices/projections';
+import { setCalendarView }            from '../redux/slices/views';
 import { DayPanel }                   from './panels/DayPanel';
 import { RootState }                  from '../redux/store';
 import CalendarDay                    from './CalendarDay';
 
-import { setCalendarView }            from '../redux/slices/views';
 
 
 import './../css/Calendar.css';
@@ -122,6 +122,10 @@ const CalendarMonth: React.FC = () => {
 
   return (
     <div className='glassjar__calendar__container' {...swipeHandlers}>
+      <div className="glassjar__schedule__view-control">
+        <div onClick={() => handleViewChange('Month')} className={`glassjar__calendar-view-button${calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div>
+        <div onClick={() => handleViewChange('Schedule')} className={`glassjar__calendar-view-button${calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div>
+      </div>
       <div className='glassjar__calendar__navigation'>
         <button onClick={() => changeMonth('previous')}>
           <i className='fa-regular fa-chevron-left' />
@@ -136,9 +140,9 @@ const CalendarMonth: React.FC = () => {
         <button onClick={() => changeMonth('next')}>
           <i className='fa-regular fa-chevron-right' />
         </button>
-        <i onClick={() => handleViewChange('Month')}   className={`fa-duotone fa-calendar-days${ calendarView === 'Month' ? " selected" : ""}`} />
-        <i onClick={() => handleViewChange('Schedule')} className={`fa-duotone fa-list${ calendarView === 'Schedule' ? " selected" : ""}`} />
-     </div>
+        {/* <div onClick={() => handleViewChange('Month')} className={`glassjar__calendar-view-button${ calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div> */}
+        {/* <div onClick={() => handleViewChange('Schedule')} className={`glassjar__calendar-view-button${ calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div> */}
+      </div>
       <div className='glassjar__calendar__calendar'>
         <div className='glassjar__calendar__seven-row glassjar__calendar__seven-row--header'>
           {rotatedDayNames.map((dayName, index) => (
