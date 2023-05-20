@@ -38,14 +38,15 @@
 }
 
 .glassjar__calendar__day {
-    align-items    : center;
-    aspect-ratio   : .9;
-    border         : 2px solid transparent;
-    box-sizing     : border-box;
-    display        : flex;
-    justify-content: center;
-    position       : relative;
-    text-align     : center;
+  align-items    : center;
+  aspect-ratio   : .9;
+  border-bottom  : none;
+  border         : 2px solid transparent;
+  box-sizing     : border-box;
+  display        : flex;
+  justify-content: center;
+  position       : relative;
+  text-align     : center;
 }
 
 .glassjar__calendar__day.today h1 {
@@ -60,7 +61,6 @@
 .glassjar__calendar__day.active {
   background   : none !important;
   border       : 2px solid var(--color-brand);
-  border-bottom: none;
   opacity      : 1;
 }
 
@@ -86,8 +86,8 @@
 }
 
 .glassjar__calendar__month {
-  font-size: 1.2rem;
-  margin   : 1rem 0;
+  background: var(--color-brand);
+  font-size : 1.2rem;
 }
 
 .glassjar__calendar__inline-panel {
@@ -146,6 +146,7 @@
 }
 
 .glassjar__schedule__view-control {
+  background     : var(--color-brand);
   display        : flex;
   justify-content: flex-end;
   position       : absolute;

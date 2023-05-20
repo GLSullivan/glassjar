@@ -144,7 +144,7 @@ const CalendarSchedule: React.FC = () => {
 
       {/* <h1>Transactions By Date</h1> */}
       {groupedTransactions.map((group, groupIndex) => (
-        <div key={groupIndex} className="glassjar__lazy-list">
+        <div key={groupIndex} className="glassjar__lazy-list-group">
           <h2 className="glassjar__calendar__month glassjar__lazy-list__header">{formatDate(group.date)}</h2>
           {group.transactions.map(({ transaction }, transactionIndex) => (
             <TransactionListItem
