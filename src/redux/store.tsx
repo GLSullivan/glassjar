@@ -12,6 +12,7 @@ import userPrefsReducer, { UserPrefsState }             from './slices/userprefs
 import modalState                                       from './slices/modals';
 import loaderReducer                                    from './slices/loader';
 import viewReducer, { ViewState }                       from './slices/views';
+import auth                                             from './slices/auth';
                     
 import { Transaction }                                  from '../models/Transaction';
 import { Account }                                      from '../models/Account';
@@ -84,6 +85,7 @@ export const store = configureStore({
     projections : projectionsReducer,
     views       : viewReducer,
     userPrefs   : userPrefsReducer,
+    auth        : auth,
   },
   preloadedState,
 });

@@ -8,6 +8,7 @@ import { RootState } from "../redux/store";
 
 import "./../css/TransactionList.css";
 import CurrencyInput from "react-currency-input-field";
+import firebase from "firebase/compat";
 
 const SettingsPanel: React.FC = () => {
   const dispatch = useDispatch();
@@ -57,6 +58,7 @@ const SettingsPanel: React.FC = () => {
               }
             />
       </label>
+      {/* <button onClick={() => firebase.auth().signOut()}>Sign out</button> */}
 
     </>
   );

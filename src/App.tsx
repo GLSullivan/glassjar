@@ -1,41 +1,105 @@
-import { useSelector, useDispatch }                     from 'react-redux';
-import React, { useEffect }                             from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
 
-import TransactionHelper                                from './components/helpers/TransactionHelper';
-import TransactionForm                                  from './components/forms/TransactionForm';
-import { AccountList }                                  from './components/panels/AccountPanel';
-import { AccountForm }                                  from './components/forms/AccountForm';
-import TransactionList                                  from './components/TransactionList';
-import CategoryGraph                                    from './components/CategoryGraph'
-import SettingsPanel                                    from './components/SettingsPanel';
-import OutlookGraph                                     from './components/OutlookGraph'
-import Calendar                                         from './components/Calendar';
-import Loader                                           from './components/Loader';
-import Modal                                            from './components/Modal';
+import TransactionHelper from './components/helpers/TransactionHelper';
+import TransactionForm from './components/forms/TransactionForm';
+import { AccountList } from './components/panels/AccountPanel';
+import { AccountForm } from './components/forms/AccountForm';
+import TransactionList from './components/TransactionList';
+import CategoryGraph from './components/CategoryGraph'
+import SettingsPanel from './components/SettingsPanel';
+import OutlookGraph from './components/OutlookGraph'
+import Calendar from './components/Calendar';
+import Loader from './components/Loader';
+import Modal from './components/Modal';
 
-import { recalculateProjections }                       from './redux/slices/projections';
-import { setView }                                      from './redux/slices/views';
-import { closeTransactionModal, 
+import { recalculateProjections } from './redux/slices/projections';
+import { setView } from './redux/slices/views';
+import {
+  closeTransactionModal,
   closeAccountForm,
   closeAccountList,
   openAccountForm,
-  closeTransactionHelper}                               from './redux/slices/modals'
-import { RootState }                                    from './redux/store';        
+  closeTransactionHelper
+} from './redux/slices/modals'
+import { RootState } from './redux/store';
 
 import './css/Nav.css'
 
+
+import * as firebaseui from 'firebaseui';
+import 'firebaseui/dist/firebaseui.css';
+
+import firebase from 'firebase/compat/app';
+import { setCurrentUser, setSignedIn } from './redux/slices/auth';
+
 const AppContent: React.FC = () => {
-  const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
-  const accountListOpen       = useSelector((state: RootState) => state.modalState.accountListOpen)
-  const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen)
+  const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
+  const accountListOpen = useSelector((state: RootState) => state.modalState.accountListOpen)
+  const accountFormOpen = useSelector((state: RootState) => state.modalState.accountFormOpen)
   const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen)
-  const transactions          = useSelector((state: RootState) => state.transactions.transactions);
-  const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate)
-  const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
-  const accounts              = useSelector((state: RootState) => state.accounts.accounts);
-  const activeView            = useSelector((state: RootState) => state.views.activeView);
+  const transactions = useSelector((state: RootState) => state.transactions.transactions);
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate)
+  const farDate = useSelector((state: RootState) => state.activeDates.farDate);
+  const accounts = useSelector((state: RootState) => state.accounts.accounts);
+  const activeView = useSelector((state: RootState) => state.views.activeView);
 
   const dispatch = useDispatch()
+
+
+
+
+
+
+
+  const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
+  const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
+  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+
+
+  const uiConfig: firebaseui.auth.Config = {
+    signInFlow: 'popup',
+    signInOptions: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    ],
+    callbacks: {
+      signInSuccessWithAuthResult: () => false,
+    },
+  };
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      ui.start('#firebaseui-auth-container', uiConfig);
+    }
+  }, [isSignedIn, ui, uiConfig]);
+
+  useEffect(() => {
+    const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
+      dispatch(setSignedIn(!!user));
+      if(user) {
+        dispatch(setCurrentUser({
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+        }));
+      } else {
+        dispatch(setCurrentUser(null));
+      }
+    });
+
+    return () => unregisterAuthObserver();
+  }, [dispatch]);
+
+
+
+  console.log(currentUser)
+
+
+
+
+
 
   useEffect(() => {
     dispatch(recalculateProjections({ transactions, accounts, farDate }));
@@ -72,6 +136,8 @@ const AppContent: React.FC = () => {
   return (
     <div className='glassjar__root'>
       <Loader />
+      {!isSignedIn && <div id="firebaseui-auth-container" />}
+      {isSignedIn && <><h1>{currentUser?.displayName}</h1>
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
       </Modal>
@@ -94,7 +160,7 @@ const AppContent: React.FC = () => {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-      
+
       {activeView === "calendar" && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
         <Calendar />
       </div>}
@@ -116,13 +182,14 @@ const AppContent: React.FC = () => {
       }
 
       <div className='glassjar__footer-nav'>
-        <i onClick = {() => { setActiveView("calendar") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === "calendar" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("accounts") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === "accounts" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("outlook") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === "outlook" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("categories") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("transactions") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === "transactions" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("settings") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
+        <i onClick={() => { setActiveView("calendar") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === "calendar" ? ' active' : '')} />
+        <i onClick={() => { setActiveView("accounts") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === "accounts" ? ' active' : '')} />
+        <i onClick={() => { setActiveView("outlook") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === "outlook" ? ' active' : '')} />
+        <i onClick={() => { setActiveView("categories") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
+        <i onClick={() => { setActiveView("transactions") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === "transactions" ? ' active' : '')} />
+        <i onClick={() => { setActiveView("settings") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
       </div>
+      </>}
     </div>
   );
 };
