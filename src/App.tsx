@@ -1,5 +1,5 @@
 import { useSelector, useDispatch }                     from 'react-redux';
-import React, { useEffect, useState }                   from 'react';
+import React, { useEffect }                             from 'react';
 
 import TransactionHelper                                from './components/helpers/TransactionHelper';
 import TransactionForm                                  from './components/forms/TransactionForm';

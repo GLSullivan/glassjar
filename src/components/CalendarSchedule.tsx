@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState, useRef }  from 'react';
-import { useDispatch, useSelector }                         from 'react-redux';
+import { useSelector }                                      from 'react-redux';
 
 import { RootState }                                        from '../redux/store';
 import { getTransactionsByRange }                           from '../redux/slices/projections';
 import TransactionListItem                                  from './TransactionListItem';
 import { Transaction }                                      from '../models/Transaction';
-import { setCalendarView }                                  from '../redux/slices/views';
 
 import './../css/TransactionList.css';
 
@@ -45,8 +44,6 @@ const CalendarSchedule: React.FC = () => {
   const [transactionCount, setTransactionCount]       = useState(10);
   const [loading, setLoading]                         = useState(false);
   const [hasMoreTransactions, setHasMoreTransactions] = useState(true);
-  const dispatch                                      = useDispatch();
-  const calendarView                                  = useSelector((state: RootState) => state.views.calendarView);
 
   const loader = useRef<HTMLDivElement | null>(null);
 
@@ -131,17 +128,8 @@ const CalendarSchedule: React.FC = () => {
     return `${monthName} ${dayWithSuffix}`;
   }
 
-  const handleViewChange = (view: string) => {
-    dispatch(setCalendarView(view))
-  };
-
   return (
     <div className='glassjar__schedule'>
-      <div className="glassjar__schedule__view-control">
-        <div onClick={() => handleViewChange('Month')} className={`glassjar__calendar-view-button${calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div>
-        <div onClick={() => handleViewChange('Schedule')} className={`glassjar__calendar-view-button${calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div>
-      </div>
-
       {/* <h1>Transactions By Date</h1> */}
       {groupedTransactions.map((group, groupIndex) => (
         <div key={groupIndex} className="glassjar__lazy-list-group">

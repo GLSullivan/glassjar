@@ -5,7 +5,6 @@ import { useSwipeable }               from 'react-swipeable';
 
 import { setFarDate, setNearDate }    from '../redux/slices/activedates';
 import { dateHasTransactions }        from '../redux/slices/projections';
-import { setCalendarView }            from '../redux/slices/views';
 import { DayPanel }                   from './panels/DayPanel';
 import { RootState }                  from '../redux/store';
 import CalendarDay                    from './CalendarDay';
@@ -88,10 +87,6 @@ const CalendarMonth: React.FC = () => {
     return daysArray;
   };
 
-  const handleViewChange = (view: string) => {
-    dispatch(setCalendarView(view))
-  };
-
   const [days, setDays] = useState<Date[]>(
     generateDaysArray(currentMonth, startDayOfWeek)
   );
@@ -122,10 +117,6 @@ const CalendarMonth: React.FC = () => {
 
   return (
     <div className='glassjar__calendar__container' {...swipeHandlers}>
-      <div className="glassjar__schedule__view-control">
-        <div onClick={() => handleViewChange('Month')} className={`glassjar__calendar-view-button${calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div>
-        <div onClick={() => handleViewChange('Schedule')} className={`glassjar__calendar-view-button${calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div>
-      </div>
       <div className='glassjar__calendar__navigation'>
         <button onClick={() => changeMonth('previous')}>
           <i className='fa-regular fa-chevron-left' />

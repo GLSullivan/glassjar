@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React                                            from 'react';
 import { useSelector, useDispatch }                     from 'react-redux';
 
-import CalendarMonth from './CalendarMonth';
-import CalendarSchedule from './CalendarSchedule';
-import { RootState } from '../redux/store';
-import { setCalendarView }            from '../redux/slices/views';
+import CalendarMonth                                    from './CalendarMonth';
+import CalendarSchedule                                 from './CalendarSchedule';
+import { RootState }                                    from '../redux/store';
+import { setCalendarView }                              from '../redux/slices/views';
 
 const CalendarSelector: React.FC = () => {
   const dispatch = useDispatch()
@@ -17,10 +17,10 @@ const CalendarSelector: React.FC = () => {
 
   return (
     <div className='glassjar__calendar-group'>
-      {/* <div className="glassjar__calendar-selector">
-        <i onClick={() => handleViewChange('Month')}   className={`fa-duotone fa-calendar-days${ calendarView === 'Month' ? " selected" : ""}`} />
-        <i onClick={() => handleViewChange('Schedule')} className={`fa-duotone fa-list${ calendarView === 'Schedule' ? " selected" : ""}`} />
-        </div> */}
+      <div className="glassjar__schedule__view-control">
+        <div onClick={() => handleViewChange('Month')} className={`glassjar__calendar-view-button${calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div>
+        <div onClick={() => handleViewChange('Schedule')} className={`glassjar__calendar-view-button${calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div>
+      </div>
         {/* <div className="glassjar__calendar-holder"> */}
           {calendarView === 'Month' ? (
             <CalendarMonth />
