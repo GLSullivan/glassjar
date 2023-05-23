@@ -69,8 +69,6 @@ const AppContent: React.FC = () => {
     dispatch(openAccountForm()); // Initial setup. 
   }
 
-  const [panelState, setPanelState] = useState(0);
-
   return (
     <div className='glassjar__root'>
       <Loader />

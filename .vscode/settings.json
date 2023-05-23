@@ -1,7 +1,11 @@
 {
     "cSpell.words": [
+        "appspot",
+        "firebaseapp",
+        "firestore",
         "glassjar",
         "immer",
+        "jarstore",
         "lerp",
         "modalstate",
         "Prefs",
