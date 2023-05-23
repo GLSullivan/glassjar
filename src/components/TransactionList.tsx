@@ -112,7 +112,7 @@ const TransactionList: React.FC = () => {
   
     useEffect(() => {
       applyFilterAndSort();
-      // eslint-disable-next-line eqeqeq
+      // eslint-disable-next-line
     }, [filter, sort, search, allTransactions]);
   
     return (

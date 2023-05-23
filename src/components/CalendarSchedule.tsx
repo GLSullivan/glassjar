@@ -106,7 +106,7 @@ const CalendarSchedule: React.FC = () => {
 
   function formatDate(dateString: string) {
     const date = new Date(dateString);
-    // eslint-disable-next-line eqeqeq
+    // eslint-disable-next-line
     const [year, month, day] = date.toISOString().split('T')[0].split('-');
   
     const monthNames = [

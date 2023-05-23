@@ -20,7 +20,6 @@ const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 const CalendarMonth: React.FC = () => {
   const dispatch                        = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const calendarView                    = useSelector((state: RootState) => state.views.calendarView);
 
   // Redux store selectors
   const state = useSelector((state: RootState) => state);
