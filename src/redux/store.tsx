@@ -1,16 +1,32 @@
-import { configureStore }           from '@reduxjs/toolkit';
+import { configureStore }                               from '@reduxjs/toolkit';
 
-import transactions                 from './slices/transactions';
-import activeDates                  from './slices/activedates';
-import projectionsReducer           from './slices/projections';
-import accounts                     from './slices/accounts';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
+import transactions                                     from './slices/transactions';
+import activeDates                                      from './slices/activedates';
+import projectionsReducer                               from './slices/projections';
+import accounts                                         from './slices/accounts';
 import userPrefsReducer, { UserPrefsState }             from './slices/userprefs';
-import modalState                   from './slices/modals';
-import loaderReducer                from './slices/loader';
-import viewReducer, { ViewState }   from './slices/views';
+import modalState                                       from './slices/modals';
+import loaderReducer                                    from './slices/loader';
+import viewReducer, { ViewState }                       from './slices/views';
+                    
+import { Transaction }                                  from '../models/Transaction';
+import { Account }                                      from '../models/Account';
 
-import { Transaction }              from '../models/Transaction';
-import { Account }                  from '../models/Account';
+const firebaseConfig = {
+  apiKey           : "AIzaSyAlTL5Q1AGIK1bsKz0eWd7d5jwoyNIlLE0",
+  authDomain       : "glassjar-jarstore.firebaseapp.com",
+  projectId        : "glassjar-jarstore",
+  storageBucket    : "glassjar-jarstore.appspot.com",
+  messagingSenderId: "485993136920",
+  appId            : "1:485993136920:web:cf2c6312a276293ca2946d",
+  measurementId    : "G-MWSVVY6GTK"
+};
+
+firebase.initializeApp(firebaseConfig);
 
 // Check if states are in local storage
 const savedAccounts: Account[] | null = localStorage.getItem('accounts')
@@ -26,7 +42,6 @@ let savedViews: ViewState | null = localStorage.getItem('views')
   : null;
 
 let savedPrefsRaw = localStorage.getItem('prefs');
-console.log(savedPrefsRaw, savedPrefsRaw === 'undefined')
 
 let savedPrefs: UserPrefsState | null;
 if (savedPrefsRaw === 'undefined') {
@@ -35,9 +50,7 @@ if (savedPrefsRaw === 'undefined') {
 } else {
   savedPrefs = savedPrefsRaw ? JSON.parse(savedPrefsRaw as string)
     : null;
-
 }
-
 
 // Preloaded state for transactions and accounts slices
 const preloadedState = {
@@ -59,7 +72,8 @@ const preloadedState = {
   },
 };
 
-console.log(preloadedState)
+console.log(firebase)
+
 export const store = configureStore({
   reducer: {
     loader      : loaderReducer,
