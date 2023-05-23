@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../store';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { RootState }                  from '../store';
 
+import 'firebase/compat/auth';
 
 interface UserData {
   uid: string;

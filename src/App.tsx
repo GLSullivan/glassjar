@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import TransactionHelper from './components/helpers/TransactionHelper';
 import TransactionForm from './components/forms/TransactionForm';
@@ -52,12 +52,14 @@ const AppContent: React.FC = () => {
 
 
 
-  const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
-
-
-  const uiConfig: firebaseui.auth.Config = {
+  
+  const ui = useMemo(() => {
+    return firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
+  }, []);
+  
+  const uiConfig = useMemo(() => ({
     signInFlow: 'popup',
     signInOptions: [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -66,8 +68,8 @@ const AppContent: React.FC = () => {
     callbacks: {
       signInSuccessWithAuthResult: () => false,
     },
-  };
-
+  }), []);
+  
   useEffect(() => {
     if (!isSignedIn) {
       ui.start('#firebaseui-auth-container', uiConfig);
@@ -92,10 +94,7 @@ const AppContent: React.FC = () => {
     return () => unregisterAuthObserver();
   }, [dispatch]);
 
-
-
   console.log(currentUser)
-
 
 
 
@@ -106,7 +105,6 @@ const AppContent: React.FC = () => {
   }, [transactions, accounts, farDate, dispatch]);
 
   let vh = window.innerHeight * 0.01;
-  // Then we set the value in the --vh custom property to the root of the document
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 
   const closeTheTransactionModal = () => {
