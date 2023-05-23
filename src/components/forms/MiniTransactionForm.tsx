@@ -45,16 +45,16 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
   const [transactionName, setTransactionName]         = useState(initialName);
   const [day, setDay]                                 = useState(initialDay);
   const [amount, setAmount]                           = useState(initialAmount);
-  const [category, setCategory]                       = useState(initialCategory);
-  const [transactionType, setTransactionType]         = useState(initialType);
-  const [description, setDescription]                 = useState(initialDescription);
-  const [fromAccount, setFromAccount]                 = useState(initialFromAccount || firstAccountId);
-  const [toAccount, setToAccount]                     = useState(initialToAccount);
-  const [isRecurring, setIsRecurring]                 = useState(initialIsRecurring);
-  const [endDate, setEndDate]                         = useState(initialEndDate);
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState(initialRecurrenceFrequency);
-  const [allowOverpayment, setAllowOverpayment]       = useState(initialAllowOverpayment);
-  const [showInCalendar, setShowInCalendar]           = useState(initialShowInCalendar);
+  // const [category, setCategory]                       = useState(initialCategory);
+  // const [transactionType, setTransactionType]         = useState(initialType);
+  // const [description, setDescription]                 = useState(initialDescription);
+  // const [fromAccount, setFromAccount]                 = useState(initialFromAccount || firstAccountId);
+  // const [toAccount, setToAccount]                     = useState(initialToAccount);
+  // const [isRecurring, setIsRecurring]                 = useState(initialIsRecurring);
+  // const [endDate, setEndDate]                         = useState(initialEndDate);
+  // const [recurrenceFrequency, setRecurrenceFrequency] = useState(initialRecurrenceFrequency);
+  // const [allowOverpayment, setAllowOverpayment]       = useState(initialAllowOverpayment);
+  // const [showInCalendar, setShowInCalendar]           = useState(initialShowInCalendar);
 
   const dispatch = useDispatch();
 

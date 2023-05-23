@@ -43,9 +43,9 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
             {transaction.type === "event" && (<i className="fa-duotone fa-fw fa-calendar" />)}
           </div>
           <span>{transaction.transactionName} {transaction.isRecurring && (<i className="glassjar__recurring-icon fa-duotone fa-repeat" />)}</span>
-          {transaction.type != "event" && <div>{(transaction.amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>}
+          {transaction.type !== "event" && <div>{(transaction.amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</div>}
         </div>
-        {transaction.type != "event" && <div className="glassjar__transaction-list-item__second-row">
+        {transaction.type !== "event" && <div className="glassjar__transaction-list-item__second-row">
           <div>
             {(transaction.type === "withdrawal" || transaction.type === "transfer") &&
               <span>{accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].name}</span>
@@ -54,7 +54,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
             {(transaction.type === "deposit" || transaction.type === "transfer") &&
               <span>{accounts[accounts.findIndex(account => account.id === transaction.toAccount)].name}</span>
             }</div>
-          {(transaction.category && transaction.category != "None") ? <span>{transaction.category}</span> : <span></span>}
+          {(transaction.category && transaction.category !== "None") ? <span>{transaction.category}</span> : <span></span>}
         </div>}
       </div>
     );

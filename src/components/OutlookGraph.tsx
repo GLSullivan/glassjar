@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   Label,
-  Legend,
   ResponsiveContainer,
   ReferenceLine,
 }                                                   from "recharts";
@@ -149,7 +148,6 @@ const OutlookGraph: React.FC = () => {
                     tickCount     = {5}
                   />
                   <Tooltip />
-                  {/* <Legend /> */}
                   <ReferenceLine
                     position = "start"
                     x        = {formatDate(new Date(state.activeDates.activeDate))}
@@ -178,9 +176,7 @@ const OutlookGraph: React.FC = () => {
           <button onClick   = {() => dispatch(setGraphSpan(3))}>3</button>
           <button onClick   = {() => dispatch(setGraphSpan(6))}>6</button>
           <button onClick   = {() => dispatch(setGraphSpan(12))}>12</button>
-        </div>
-        <h1></h1>
-        
+        </div>       
       </div>
     );
   };

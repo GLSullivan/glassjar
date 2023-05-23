@@ -18,9 +18,6 @@ const initialState: ProjectionsState = {
 
 let allAccounts: Account[];
 
-let rangeMin: number = 0;
-let rangeMax: number = 0;
-
 const maxIterations: number = 1000;
 
 export const projectionsSlice = createSlice({
@@ -213,9 +210,11 @@ export const projectionsSlice = createSlice({
         ) => {
           let interest = 0;
           if (interestRate) {
+            // eslint-disable-next-line eqeqeq
             if (accountType == "credit card" || accountType == "loan" || accountType == "savings") {
               // Calculate interest on daily compounding accounts.
               interest = balance * ((interestRate * 0.01) / 365);
+            // eslint-disable-next-line eqeqeq
             } else if (accountType == "mortgage") {
               // Calculate interest for mortgage (monthly compounding)
               const annualInterestRateDecimal = interestRate / 100;

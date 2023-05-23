@@ -173,7 +173,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             </select>
           </div>
 
-          {type != "event" && <div className="glassjar__form__input-group">
+          {type !== "event" && <div className="glassjar__form__input-group">
             <label htmlFor="amount">Amount:</label>
             <CurrencyInput
               id="amount"

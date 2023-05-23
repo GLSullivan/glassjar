@@ -12,7 +12,6 @@ import {
 }                                   from './../../redux/slices/accounts';
 import { Account }                  from './../../models/Account';
 import ColorPicker                  from './../ColorPicker';
-import { colorPalette }             from './../../data/ColorPalette';
 
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();
