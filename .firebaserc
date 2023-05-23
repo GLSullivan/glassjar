@@ -1,6 +1,7 @@
 {
   "projects": {
-    "staging": "glassjar-jarstore"
+    "staging": "glassjar-jarstore",
+    "default": "glassjar-jarstore"
   },
   "targets": {},
   "etags": {}
