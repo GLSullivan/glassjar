@@ -136,6 +136,7 @@ const AppContent: React.FC = () => {
       <Loader />
       {!isSignedIn && <div id="firebaseui-auth-container" />}
       {isSignedIn && <><h1>{currentUser?.displayName}</h1>
+
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
       </Modal>
