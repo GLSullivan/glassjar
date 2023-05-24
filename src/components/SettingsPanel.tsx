@@ -18,10 +18,12 @@ const SettingsPanel: React.FC = () => {
   }
 
   const { healthRangeTop, healthRangeBottom } = useSelector((state: RootState) => state.userPrefs);
+  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
 
   return (
     <>
       <h1>Dev Tools Menu</h1>
+      <h2>Welcome, {currentUser?.displayName}</h2>
       <h3 onClick={() => clearLocalStorage()}>
         Clear Local Storage{" "}
         <i className="fa-solid fa-floppy-disk-circle-xmark" />

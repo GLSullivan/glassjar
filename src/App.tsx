@@ -46,14 +46,10 @@ const AppContent: React.FC = () => {
 
   const dispatch = useDispatch()
 
-
-
-
-
+  
 
 
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
-  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
   
   const ui = useMemo(() => {
     return firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
