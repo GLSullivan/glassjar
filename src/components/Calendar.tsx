@@ -14,7 +14,7 @@ const CalendarSelector: React.FC = () => {
   };
 
   const calendarView = useSelector((state: RootState) => state.views.calendarView);
-
+console.log("???")
   return (
     <div className='glassjar__calendar-group'>
       <div className="glassjar__schedule__view-control">

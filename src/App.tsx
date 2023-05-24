@@ -94,8 +94,6 @@ const AppContent: React.FC = () => {
     return () => unregisterAuthObserver();
   }, [dispatch]);
 
-  console.log(currentUser)
-
 
 
 
@@ -135,7 +133,8 @@ const AppContent: React.FC = () => {
     <div className='glassjar__root'>
       <Loader />
       {!isSignedIn && <div id="firebaseui-auth-container" />}
-      {isSignedIn && <><h1>{currentUser?.displayName}</h1>
+      {isSignedIn && <>
+      {/* <h1>{currentUser?.displayName}</h1> */}
 
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />

@@ -65,7 +65,7 @@ const preloadedState = {
   },
   views: savedViews || { 
     activeView  : "calendar",
-    calendarView: ""
+    calendarView: "Month"
   },
   userPrefs: savedPrefs || { 
     healthRangeTop   : 1000000,

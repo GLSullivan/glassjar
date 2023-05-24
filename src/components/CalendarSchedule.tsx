@@ -82,7 +82,7 @@ const CalendarSchedule: React.FC = () => {
       const observerOptions: IntersectionObserverInit = {
         root: null,
         rootMargin: "0px",
-        threshold: 1.0,
+        threshold: .10,
       };
 
       const observer = new IntersectionObserver(

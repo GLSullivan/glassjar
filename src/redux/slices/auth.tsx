@@ -29,7 +29,6 @@ export const authSlice = createSlice({
     },
     setCurrentUser: (state, action: PayloadAction<UserData | null>) => {
       state.currentUser = action.payload;
-      console.log("???",action.payload)
     }
   },
 });
