@@ -61,7 +61,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       type,
       amount,
       description,
-      fromAccount,
+      fromAccount: accounts[0].id,
       toAccount,
       id: activeTransaction ? activeTransaction.id : new Date().getTime(),
       isRecurring,
@@ -88,8 +88,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   
     onClose();
   };
-  
-  
+    
   useEffect(() => {
     if (!activeTransaction && accounts.length > 1) {
       setFromAccount(accounts[0].id);

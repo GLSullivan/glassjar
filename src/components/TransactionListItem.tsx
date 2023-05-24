@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import React from "react";
+import React                        from "react";
 
-import { setActiveTransaction } from "./../redux/slices/transactions";
-import { openTransactionModal } from "./../redux/slices/modals";
+import { setActiveTransaction }     from "./../redux/slices/transactions";
+import { openTransactionModal }     from "./../redux/slices/modals";
 
-import { Transaction } from "./../models/Transaction";
-import { RootState } from './../redux/store';
-import { colorPalette } from "./../data/ColorPalette";
+import { Transaction }              from "./../models/Transaction";
+import { colorPalette }             from "./../data/ColorPalette";
+import { RootState }                from "./../redux/store";
 
 import "./../css/Panels.css";
 
@@ -20,18 +20,25 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
     let accountColor;
-    // console.log(transaction)
-    // if () {
-    //   accountColor = "#fff"
-    // }
-    // else 
-    if (transaction.type === "deposit") {
-      accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.toAccount)].color]
-    } else {
-      accountColor = colorPalette[accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].color] 
+    let toAccountIndex = accounts.findIndex(account => account.id === transaction.toAccount);
+    let fromAccountIndex = accounts.findIndex(account => account.id === transaction.fromAccount);
+    
+    if (transaction.type === "deposit" && toAccountIndex !== -1) {
+      const toAccountColor = accounts[toAccountIndex].color;
+      if (colorPalette[toAccountColor] !== undefined) {
+        accountColor = colorPalette[toAccountColor];
+      }
+    } else if (fromAccountIndex !== -1) {
+      const fromAccountColor = accounts[fromAccountIndex].color;
+      if (colorPalette[fromAccountColor] !== undefined) {
+        accountColor = colorPalette[fromAccountColor];
+      }
+    } 
+    
+    // If accountColor has not been set, use default
+    if(accountColor === undefined) {
+      accountColor = "#000";
     }
-
-    // accountColor = "#444"
 
     return (
       <div className="glassjar__transaction-list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
@@ -48,10 +55,12 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
         {transaction.type !== "event" && <div className="glassjar__transaction-list-item__second-row">
           <div>
             {(transaction.type === "withdrawal" || transaction.type === "transfer") &&
+              // <span>ERROR</span>
               <span>{accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].name}</span>
             }
             {transaction.type === "transfer" && <i className="fa-light fa-angle-right" />}
             {(transaction.type === "deposit" || transaction.type === "transfer") &&
+              // <span>ERROR</span>
               <span>{accounts[accounts.findIndex(account => account.id === transaction.toAccount)].name}</span>
             }</div>
           {(transaction.category && transaction.category !== "None") ? <span>{transaction.category}</span> : <span></span>}

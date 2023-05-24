@@ -24,10 +24,17 @@ export const accountsSlice = createSlice({
     addAccount: (state, action: PayloadAction<Account>) => {
       const newAccount = {
         ...action.payload,
-        isLiability: isAccountTypeLiability(action.payload.type),
+        // Set default values here
+        name: action.payload.name || "New Account",
+        currentBalance: action.payload.currentBalance || 0,
+        type: action.payload.type || "checking",
+        isLiability: isAccountTypeLiability(action.payload.type || "checking"),
+        lastUpdated: action.payload.lastUpdated || new Date().toISOString(),
+        showInGraph: action.payload.showInGraph || false,
+        color: action.payload.color || 0,
       };
       state.accounts.push(newAccount);
-    },    
+    },
     updateAccount: (state, action: PayloadAction<Account>) => {
       const index = state.accounts.findIndex(
         (account) => account.id === action.payload.id
@@ -35,10 +42,17 @@ export const accountsSlice = createSlice({
       if (index !== -1) {
         // Set the updatedAt property to the current timestamp
         // and update the isLiability property based on the updated account type
+        // Set default values here as well
         state.accounts[index] = {
           ...action.payload,
           updatedAt: Date.now(),
           isLiability: isAccountTypeLiability(action.payload.type),
+          lastUpdated: action.payload.lastUpdated || new Date().toISOString(),
+          showInGraph: action.payload.showInGraph || false,
+          name: action.payload.name || "New Account",
+          currentBalance: action.payload.currentBalance || 0,
+          type: action.payload.type || "checking",
+          color: action.payload.color || 0,
         };
       }
     },

@@ -34,22 +34,22 @@ export const AccountForm: React.FC = () => {
     (state: RootState) => state.accounts.activeAccount
   );
 
+  const generateUniqueId = () => {
+    return new Date().getTime().toString();
+  };
+
   const [account, setAccount] = useState<Account>(
     activeAccount || {
-      id            : '',
+      id            : generateUniqueId(),
       name          : '',
       currentBalance: 0,
       type          : 'checking',
       lastUpdated   : new Date().toISOString(),
       isLiability   : false,
       showInGraph   : true,
-      color         : 1,
+      color         : 0,
     }
   );
-
-  const generateUniqueId = () => {
-    return new Date().getTime().toString();
-  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -95,7 +95,6 @@ export const AccountForm: React.FC = () => {
   return (
     <div className = 'glassjar__form'>
       <h2>{activeAccount ? `${account.name}` : 'New Account'}</h2>
-
       {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
 
       <form className = 'glassjar__account-form' onSubmit = {handleSubmit}>
@@ -103,6 +102,7 @@ export const AccountForm: React.FC = () => {
           {' '}
           <label htmlFor = 'name'>Name:</label>
           <input
+            required 
             placeholder = 'Account Name:'
             type        = 'text'
             id          = 'name'

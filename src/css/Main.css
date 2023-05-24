@@ -41,7 +41,6 @@
     #568371
   ); */
   box-sizing    : border-box;
-  color         : var(--color-primary);
   display       : flex;
   flex-direction: column;
   font-family   : "Space Grotesk", sans-serif;
