@@ -3,19 +3,19 @@ import { configureStore }                   from "@reduxjs/toolkit";
 import firebase                             from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import "firebase/compat/database";
 
-import transactions                         from "./slices/transactions";
-import activeDates                          from "./slices/activedates";
-import projectionsReducer                   from "./slices/projections";
-import userPrefsReducer, { UserPrefsState } from "./slices/userprefs";
-import accounts                             from "./slices/accounts";
-import modalState                           from "./slices/modals";
-import loaderReducer                        from "./slices/loader";
-import viewReducer, { ViewState }           from "./slices/views";
-import auth                                 from "./slices/auth";
+import transactionsReducer, { setTransactions}    from "./slices/transactions";
+import activeDatesReducer                         from "./slices/activedates";
+import projectionsReducer                         from "./slices/projections";
+import userPrefsReducer, { UserPrefsState }       from "./slices/userprefs";
+import accountsReducer, { setAccounts }           from "./slices/accounts";
+import modalStateReducer                          from "./slices/modals";
+import loaderReducer                              from "./slices/loader";
+import viewReducer, { setViewState }              from "./slices/views";
+import authReducer                                from "./slices/auth";
 
-import { Transaction }                      from "../models/Transaction";
-import { Account }                          from "../models/Account";
+let isAppLoaded = 0;
 
 const firebaseConfig = {
   apiKey           : "AIzaSyAlTL5Q1AGIK1bsKz0eWd7d5jwoyNIlLE0",
@@ -28,169 +28,90 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const dbRef = firebase.database().ref();
+const user = firebase.auth().currentUser;
 
-// Validate Transactions
-function validateTransaction(transaction: Transaction): Transaction | null {
-  const defaultTransaction: Transaction = {
-    transactionName : "Default Transaction",
-    id              : new Date().getTime(),
-    type            : "deposit",
-    amount          : 0,
-    date            : new Date().toISOString(),
-    description     : "No description provided",
-    isRecurring     : false,
-    allowOverpayment: false,
-    showInCalendar  : false,
-  };
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    // After the last data dispatch to the Redux store, set the app to be fully loaded
+    dbRef.child('users/' + user.uid + '/accounts').on('value', (snapshot) => {
+      const accounts = snapshot.val() || [];
+      store.dispatch(setAccounts(accounts));
+      console.log("accounts loaded?")
+      isAppLoaded ++;
+    });    
+    dbRef.child('users/' + user.uid + '/transactions').on('value', (snapshot) => {
+      const transactions = snapshot.val() || [];
+      store.dispatch(setTransactions(transactions));
+      console.log("transactions loaded?")
+      isAppLoaded ++;
+    });
+    dbRef.child('users/' + user.uid + '/prefs').on('value', (snapshot) => {
+      // Handle the dispatch of user prefs here
 
-  // Validation: Check if both toAccount and fromAccount are missing.
-  if (!transaction.toAccount && !transaction.fromAccount) {
-    return null;
+      // At this point, the app is fully loaded.
+      console.log("prefs loaded?")
+      isAppLoaded ++;
+    });
+    dbRef.child('users/' + user.uid + '/views').on('value', (snapshot) => {
+      const views = snapshot.val();
+      store.dispatch(setViewState(views));
+      console.log("views loaded?")
+      isAppLoaded ++;
+    });
+  } else {
+    // No user is signed in. Here you can add logic when the user is signed out, e.g., clean the store.
   }
-
-  // If transaction type is deposit or transfer and toAccount does not exist in savedAccounts
-  if (
-    (transaction.type === "deposit" || transaction.type === "transfer") &&
-    (!savedAccounts ||
-      !savedAccounts.some((account) => account.id === transaction.toAccount))
-  ) {
-    // If savedAccounts exists and has at least one account, set toAccount to the ID of the account at the 0 position
-    if (savedAccounts && savedAccounts.length > 0) {
-      transaction.toAccount = savedAccounts[0].id;
-    }
-  }
-
-  // If transaction type is withdrawal and fromAccount does not exist in savedAccounts
-  if (
-    (transaction.type === "withdrawal" || transaction.type === "transfer") &&
-    (!savedAccounts ||
-      !savedAccounts.some((account) => account.id === transaction.fromAccount))
-  ) {
-    // If savedAccounts exists and has at least one account, set fromAccount to the ID of the account at the 0 position
-    if (savedAccounts && savedAccounts.length > 0) {
-      transaction.fromAccount = savedAccounts[0].id;
-    }
-  }
-
-  return { ...defaultTransaction, ...transaction };
-}
-
-// Validate Accounts
-function validateAccount(account: Account): Account | null {
-  const defaultAccount: Account = {
-    name          : "Default Account",
-    id            : new Date().getTime().toString(),   // TODO: Account and transaction should use the same type for id.
-    currentBalance: 0,
-    type          : "checking",
-    isLiability   : false,
-    lastUpdated   : new Date().toISOString(),
-    showInGraph   : true,
-    color         : 0,
-  };
-
-  return { ...defaultAccount, ...account };
-}
-
-// Check if states are in local storage and validate them
-const savedAccountsRaw: Account[] | null = localStorage.getItem("accounts")
-  ? JSON.parse(localStorage.getItem("accounts") as string)
-  : null;
-
-let savedAccounts: Account[] | null;
-
-if (savedAccountsRaw) {
-  savedAccounts = savedAccountsRaw
-    .map((account: Account) => validateAccount(account))
-    // Filter out invalid transactions
-    .filter((account: Account | null): account is Account => account !== null);
-} else {
-  savedAccounts = null;
-}
-
-const savedTransactionsRaw: Transaction[] | null = localStorage.getItem(
-  "transactions"
-)
-  ? JSON.parse(localStorage.getItem("transactions") as string)
-  : null;
-
-let savedTransactions: Transaction[] | null;
-
-if (savedTransactionsRaw) {
-  savedTransactions = savedTransactionsRaw
-    .map((transaction: Transaction) => validateTransaction(transaction))
-    // Filter out invalid transactions
-    .filter(
-      (transaction: Transaction | null): transaction is Transaction =>
-        transaction !== null
-    );
-} else {
-  savedTransactions = null;
-}
-
-let savedViews: ViewState | null = localStorage.getItem("views")
-  ? JSON.parse(localStorage.getItem("views") as string)
-  : null;
-
-let savedPrefsRaw = localStorage.getItem("prefs");
-
-let savedPrefs: UserPrefsState | null;
-if (savedPrefsRaw === "undefined") {
-  savedPrefs = null;
-} else {
-  savedPrefs = savedPrefsRaw ? JSON.parse(savedPrefsRaw as string) : null;
-}
-
-// Preloaded state for transactions and accounts slices
-const preloadedState = {
-  accounts: {
-    accounts: savedAccounts || [],
-    activeAccount: null,
-  },
-  transactions: {
-    transactions: savedTransactions || [],
-    activeTransaction: null,
-  },
-  views: savedViews || {
-    activeView: "calendar",
-    calendarView: "Month",
-  },
-  userPrefs: savedPrefs || {
-    healthRangeTop: 1000000,
-    healthRangeBottom: 0,
-  },
-};
-
-// console.log(firebase);
+});
 
 export const store = configureStore({
   reducer: {
+    accounts    : accountsReducer,
+    activeDates : activeDatesReducer,
+    auth        : authReducer,
     loader      : loaderReducer,
-    activeDates : activeDates,
-    modalState  : modalState,
-    transactions: transactions,
-    accounts    : accounts,
+    modalState  : modalStateReducer,
     projections : projectionsReducer,
-    views       : viewReducer,
+    transactions: transactionsReducer,
     userPrefs   : userPrefsReducer,
-    auth        : auth,
-  },
-  preloadedState,
+    views       : viewReducer,
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export function saveStateToLocalStorage() {
+
+function replaceUndefinedWithNull(value: any): any {
+
+  if (value === undefined) {
+    return null;
+  } else if (typeof value === 'object' && value !== null) {
+    for (let key in value) {
+      try {
+        value[key] = replaceUndefinedWithNull(value[key]);
+      } catch (error) {
+      }
+    }
+  }
+  return value;
+}
+
+function saveStateToDatabase() {
   const state = store.getState();
-  localStorage.setItem("accounts", JSON.stringify(state.accounts.accounts));
-  localStorage.setItem(
-    "transactions",
-    JSON.stringify(state.transactions.transactions)
-  );
-  localStorage.setItem("views", JSON.stringify(state.views));
-  localStorage.setItem("prefs", JSON.stringify(state.userPrefs));
+  const user = firebase.auth().currentUser;
+  if (user) {
+    dbRef.child("users/" + user.uid + "/accounts").set(replaceUndefinedWithNull(state.accounts.accounts));
+    dbRef.child("users/" + user.uid + "/transactions").set(replaceUndefinedWithNull(state.transactions.transactions));
+    dbRef.child("users/" + user.uid + "/views").set(replaceUndefinedWithNull(state.views));
+    dbRef.child("users/" + user.uid + "/prefs").set(replaceUndefinedWithNull(state.userPrefs));
+  }
 }
 
 store.subscribe(() => {
-  saveStateToLocalStorage();
+  const user = firebase.auth().currentUser;
+  if (user && isAppLoaded >= 3) {  // Check if the app is fully loaded before saving state to database
+    console.log("Saving!")
+    saveStateToDatabase();
+  }
 });

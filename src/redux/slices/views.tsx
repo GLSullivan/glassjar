@@ -7,8 +7,8 @@ export interface ViewState {
 }
 
 const initialState: ViewState = {
-  activeView  : "",
-  calendarView: ""
+  activeView  : "calendar",
+  calendarView: "month"
 }
 
 export const views = createSlice({
@@ -20,13 +20,17 @@ export const views = createSlice({
     },
     setCalendarView: (state, action: PayloadAction<string>) => {
       state.calendarView = (action.payload)
+    },
+    setViewState: (state, action: PayloadAction<ViewState>) => {
+      return action.payload; // Here we replace the entire state with the payload
     }
   },
 })
 
 export const { 
   setView,
-  setCalendarView
+  setCalendarView,
+  setViewState
 } = views.actions
 
 export default views.reducer

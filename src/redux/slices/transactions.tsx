@@ -16,6 +16,9 @@ const transactionsSlice = createSlice({
   name: 'transactions',
   initialState,
   reducers: {
+    setTransactions: (state, action: PayloadAction<Transaction[]>) => {
+      state.transactions = action.payload;
+    },
     addTransaction: (state, action: PayloadAction<Transaction>) => {
       const newTransaction = {
         ...action.payload,
@@ -51,10 +54,11 @@ const transactionsSlice = createSlice({
 });
 
 export const { 
+  setTransactions,
   addTransaction, 
   updateTransaction, 
   deleteTransaction,
   setActiveTransaction 
-  } = transactionsSlice.actions;
+} = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

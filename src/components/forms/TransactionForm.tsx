@@ -53,7 +53,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     const isoDate = localDate.toISOString();
   
     const localEndDate = endDate ? new Date(endDate) : undefined;
-    const isoEndDate = localEndDate ? localEndDate.toISOString() : undefined;
+    const isoEndDate = localEndDate ? localEndDate.toISOString() : "";
   
     const transactionData: Transaction = {
       transactionName,
@@ -62,7 +62,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       amount,
       description,
       fromAccount: accounts[0].id,
-      toAccount,
+      toAccount: accounts[0].id,
       id: activeTransaction ? activeTransaction.id : new Date().getTime(),
       isRecurring,
       endDate: isoEndDate,
