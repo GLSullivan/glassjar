@@ -9,8 +9,6 @@ import { DayPanel }                   from './panels/DayPanel';
 import { RootState }                  from '../redux/store';
 import CalendarDay                    from './CalendarDay';
 
-
-
 import './../css/Calendar.css';
 
   // Constants
@@ -130,8 +128,6 @@ const CalendarMonth: React.FC = () => {
         <button onClick={() => changeMonth('next')}>
           <i className='fa-regular fa-chevron-right' />
         </button>
-        {/* <div onClick={() => handleViewChange('Month')} className={`glassjar__calendar-view-button${ calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div> */}
-        {/* <div onClick={() => handleViewChange('Schedule')} className={`glassjar__calendar-view-button${ calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div> */}
       </div>
       <div className='glassjar__calendar__calendar'>
         <div className='glassjar__calendar__seven-row glassjar__calendar__seven-row--header'>

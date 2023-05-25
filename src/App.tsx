@@ -121,9 +121,12 @@ const AppContent: React.FC = () => {
     dispatch(setView(view))
   }
 
-  if (accounts.length < 1) {
-    dispatch(openAccountForm()); // Initial setup. 
-  }
+  useEffect(() => {
+    if (accounts.length < 1) {
+      dispatch(openAccountForm()); // Initial setup. 
+    }
+  }, [accounts, dispatch]);
+  
 
   return (
     <div className='glassjar__root'>

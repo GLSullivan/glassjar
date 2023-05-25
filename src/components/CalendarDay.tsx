@@ -39,6 +39,9 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
     }
     
     const todaysBalance: number = aggregateBalanceOnDate(state, day.toISOString().slice(0, 10));
+    // console.log("!",state.userPrefs)
+
+    
     let dayHealth: number = calculateRelativeBalance(state.userPrefs.healthRangeBottom, state.userPrefs.healthRangeTop,todaysBalance); 
     
     // TODO: Put this in the right place. Either color pallette data or user prefs. 

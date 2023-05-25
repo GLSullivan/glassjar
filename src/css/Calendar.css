@@ -31,7 +31,8 @@
 }
 
 .glassjar__calendar__day-marker {
-  background   : var(--color-primary);
+  /* background   : var(--color-primary); */
+  background   : rgb(238, 54, 54);
   border-radius: 1rem;
   bottom       : 0.5rem;
   height       : 0.4rem;

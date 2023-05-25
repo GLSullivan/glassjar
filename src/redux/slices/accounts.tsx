@@ -20,7 +20,10 @@ const isAccountTypeLiability = (accountType: string): boolean => {
 export const accountsSlice = createSlice({
   name: "accounts",
   initialState,
-  reducers: {
+  reducers: { 
+    setAccounts: (state, action: PayloadAction<Account[]>) => {
+      state.accounts = action.payload;
+    },
     addAccount: (state, action: PayloadAction<Account>) => {
       const newAccount = {
         ...action.payload,
@@ -73,5 +76,11 @@ export const accountsSlice = createSlice({
 
 export default accountsSlice.reducer;
 
-export const { addAccount, updateAccount, setActiveAccount, deleteAccount } = accountsSlice.actions;
+export const { 
+  setAccounts, 
+  addAccount, 
+  updateAccount, 
+  setActiveAccount, 
+  deleteAccount 
+} = accountsSlice.actions;
 export const selectAllAccounts = (state: RootState) => state.accounts.accounts;
