@@ -48,11 +48,11 @@ function getNextOccurrence(dateString: string | undefined) {
   const day = targetDate.getDate();
   
   let daySuffix;
-  if (day % 10 == 1 && day != 11) {
+  if (day % 10 === 1 && day !== 11) {
     daySuffix = 'st';
-  } else if (day % 10 == 2 && day != 12) {
+  } else if (day % 10 === 2 && day !== 12) {
     daySuffix = 'nd';
-  } else if (day % 10 == 3 && day != 13) {
+  } else if (day % 10 === 3 && day !== 13) {
     daySuffix = 'rd';
   } else {
     daySuffix = 'th';
