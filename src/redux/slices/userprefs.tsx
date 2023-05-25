@@ -20,9 +20,12 @@ export const userPrefsSlice = createSlice({
     setHealthRangeBottom: (state, action: PayloadAction<number>) => {
       state.healthRangeBottom = action.payload;
     },
+    setPrefsState: (state, action: PayloadAction<UserPrefsState>) => {
+      return action.payload;
+    }
   },
 });
 
-export const { setHealthRangeTop, setHealthRangeBottom } = userPrefsSlice.actions;
+export const { setPrefsState, setHealthRangeTop, setHealthRangeBottom } = userPrefsSlice.actions;
 
 export default userPrefsSlice.reducer;

@@ -8,7 +8,7 @@ import "firebase/compat/database";
 import transactionsReducer, { setTransactions}    from "./slices/transactions";
 import activeDatesReducer                         from "./slices/activedates";
 import projectionsReducer                         from "./slices/projections";
-import userPrefsReducer, { UserPrefsState }       from "./slices/userprefs";
+import userPrefsReducer, { setPrefsState }        from "./slices/userprefs";
 import accountsReducer, { setAccounts }           from "./slices/accounts";
 import modalStateReducer                          from "./slices/modals";
 import loaderReducer                              from "./slices/loader";
@@ -47,9 +47,8 @@ firebase.auth().onAuthStateChanged((user) => {
       isAppLoaded ++;
     });
     dbRef.child('users/' + user.uid + '/prefs').on('value', (snapshot) => {
-      // Handle the dispatch of user prefs here
-
-      // At this point, the app is fully loaded.
+      const prefs = snapshot.val();
+      store.dispatch(setPrefsState(prefs));
       console.log("prefs loaded?")
       isAppLoaded ++;
     });
