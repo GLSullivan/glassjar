@@ -88,7 +88,6 @@
 }
 
 .glassjar__calendar__month {
-  background: var(--color-brand);
   font-size : 1.2rem;
 }
 
@@ -109,7 +108,7 @@
   pointer-events    : auto;
 }
 
-.glassjar__calendar__week .glassjar__transaction-list {
+.glassjar__calendar__week .glassjar__list {
   box-sizing: border-box;
   height    : 20vh;
   max-height: 20vh;
@@ -148,7 +147,7 @@
 }
 
 .glassjar__schedule__view-control {
-  background     : var(--color-brand);
+  background     : white;
   display        : flex;
   justify-content: flex-end;
   position       : absolute;

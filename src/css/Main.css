@@ -11,14 +11,13 @@
 
 :root {
         /* --primary: #7B9F90ff; */
-  --color-bright   : #ffffff;
+  /* --color-bright   : #ffffff;
   --color-inverse  : #f0f5f3;
   --color-secondary: #258596;
   --color-brand    : #202230;
   --color-tertiary : #ff0000;
   --color-primary  : #ffffff;
-  --color-accent   : #414450;
-
+  --color-accent   : #414450; */
   --gradient-brand    : linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
   --gradient-secondary: linear-gradient(
     160deg,
@@ -30,8 +29,8 @@
 }
 
 .glassjar__root {
-  align-items: center;
-  background: var(--color-brand);
+  /* align-items: center; */
+  /* background: var(--color-brand); */
   /* background : linear-gradient(
     160deg,
     #e0f4e6,
@@ -43,8 +42,9 @@
   box-sizing    : border-box;
   display       : flex;
   flex-direction: column;
-  font-family   : "Space Grotesk", sans-serif;
-  /* gap           : 1rem; */
+  /* font-family   : "Space Grotesk", sans-serif; */
+  font-family: 'Work Sans', sans-serif;
+      /* gap           : 1rem; */
   /* height        : -webkit-fill-available;
   min-height    : 100%; */
   /* max-height    : -webkit-fill-available; */

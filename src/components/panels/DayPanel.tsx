@@ -31,7 +31,7 @@ export const DayPanel: React.FC = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="glassjar__transaction-list">
+    <div className="glassjar__list">
       <div className="glassjar__flex glassjar__flex--justify-between">
         <h2>Account Balances: </h2>
       </div>

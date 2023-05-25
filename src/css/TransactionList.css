@@ -10,8 +10,8 @@
 */
 
 .glassjar__lazy-list__header {
-  background: var(--color-brand);
-  color: var(--color-bright);
+  background:white;
+  /* color: var(--color-bright); */
   margin-top: 0;
   padding   : 1.5rem 0 0.5rem 0;
   position  : sticky;
