@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserPrefsState {
-  healthRangeTop: number;
+  healthRangeTop   : number;
   healthRangeBottom: number;
 }
 
 const initialState: UserPrefsState = {
-  healthRangeTop: 1000000,
+  healthRangeTop   : 1000000,
   healthRangeBottom: 0,
 };
 
@@ -21,11 +21,17 @@ export const userPrefsSlice = createSlice({
       state.healthRangeBottom = action.payload;
     },
     setPrefsState: (state, action: PayloadAction<UserPrefsState>) => {
-      return action.payload;
+      if (action.payload) {
+        return action.payload;
+      }
     }
   },
 });
 
-export const { setPrefsState, setHealthRangeTop, setHealthRangeBottom } = userPrefsSlice.actions;
+export const { 
+  setHealthRangeTop, 
+  setHealthRangeBottom, 
+  setPrefsState
+} = userPrefsSlice.actions;
 
 export default userPrefsSlice.reducer;

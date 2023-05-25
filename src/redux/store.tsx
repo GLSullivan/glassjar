@@ -29,11 +29,9 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const dbRef = firebase.database().ref();
-const user = firebase.auth().currentUser;
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    // After the last data dispatch to the Redux store, set the app to be fully loaded
     dbRef.child('users/' + user.uid + '/accounts').on('value', (snapshot) => {
       const accounts = snapshot.val() || [];
       store.dispatch(setAccounts(accounts));
@@ -59,7 +57,7 @@ firebase.auth().onAuthStateChanged((user) => {
       isAppLoaded ++;
     });
   } else {
-    // No user is signed in. Here you can add logic when the user is signed out, e.g., clean the store.
+    // No user is signed in.
   }
 });
 
@@ -106,6 +104,8 @@ function saveStateToDatabase() {
     dbRef.child("users/" + user.uid + "/prefs").set(replaceUndefinedWithNull(state.userPrefs));
   }
 }
+
+console.log("userPrefsReducer",userPrefsReducer)
 
 store.subscribe(() => {
   const user = firebase.auth().currentUser;

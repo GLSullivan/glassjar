@@ -22,7 +22,9 @@ export const views = createSlice({
       state.calendarView = (action.payload)
     },
     setViewState: (state, action: PayloadAction<ViewState>) => {
-      return action.payload; // Here we replace the entire state with the payload
+      if (action.payload) {
+        return action.payload;
+      }    
     }
   },
 })
