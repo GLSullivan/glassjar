@@ -179,12 +179,12 @@ const AppContent: React.FC = () => {
       }
 
       <div className='glassjar__footer-nav'>
-        <i onClick={() => { setActiveView("calendar") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === "calendar" ? ' active' : '')} />
-        <i onClick={() => { setActiveView("accounts") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === "accounts" ? ' active' : '')} />
-        <i onClick={() => { setActiveView("outlook") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === "outlook" ? ' active' : '')} />
-        <i onClick={() => { setActiveView("categories") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
-        <i onClick={() => { setActiveView("transactions") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === "transactions" ? ' active' : '')} />
-        <i onClick={() => { setActiveView("settings") }} className={'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("calendar") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === "calendar" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("accounts") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === "accounts" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("transactions") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === "transactions" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("outlook") }} className      = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === "outlook" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("categories") }} className   = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView("settings") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
       </div>
       </>}
     </div>

@@ -35,25 +35,21 @@ firebase.auth().onAuthStateChanged((user) => {
     dbRef.child('users/' + user.uid + '/accounts').on('value', (snapshot) => {
       const accounts = snapshot.val() || [];
       store.dispatch(setAccounts(accounts));
-      console.log("accounts loaded?")
       isAppLoaded ++;
     });    
     dbRef.child('users/' + user.uid + '/transactions').on('value', (snapshot) => {
       const transactions = snapshot.val() || [];
       store.dispatch(setTransactions(transactions));
-      console.log("transactions loaded?")
       isAppLoaded ++;
     });
     dbRef.child('users/' + user.uid + '/prefs').on('value', (snapshot) => {
       const prefs = snapshot.val();
       store.dispatch(setPrefsState(prefs));
-      console.log("prefs loaded?")
       isAppLoaded ++;
     });
     dbRef.child('users/' + user.uid + '/views').on('value', (snapshot) => {
       const views = snapshot.val();
       store.dispatch(setViewState(views));
-      console.log("views loaded?")
       isAppLoaded ++;
     });
   } else {
@@ -105,12 +101,10 @@ function saveStateToDatabase() {
   }
 }
 
-console.log("userPrefsReducer",userPrefsReducer)
 
 store.subscribe(() => {
   const user = firebase.auth().currentUser;
   if (user && isAppLoaded >= 3) {  // Check if the app is fully loaded before saving state to database
-    console.log("Saving!")
     saveStateToDatabase();
   }
 });

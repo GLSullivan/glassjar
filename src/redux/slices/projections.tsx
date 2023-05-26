@@ -442,6 +442,7 @@ export const dateHasTransactions = (state: RootState, date: string) => {
 
 // Get categorized spend amounts
 export const getCategorySpend = (state: RootState) => {
+  console.log(state.projections.categorySpend)
   return state.projections.categorySpend;
 };
 

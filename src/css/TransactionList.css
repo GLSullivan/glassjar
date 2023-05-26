@@ -20,3 +20,16 @@
   z-index   : 2;
   text-align: left;
 }
+
+.glassjar__search-sort {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  box-sizing: border-box;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.glassjar__search-sort i {
+  font-size: 1.4rem;
+}

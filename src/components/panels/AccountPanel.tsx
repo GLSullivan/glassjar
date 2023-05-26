@@ -15,7 +15,7 @@ export const AccountList: React.FC = () => {
 
   return (
     <div className="glassjar__account-list">
-      <h1>Accounts</h1>
+      <h2>Accounts</h2>
       {accounts.map((account) => (
         <AccountListItem key={account.id} account={account} />
       ))}

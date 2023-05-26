@@ -45,7 +45,7 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
     let dayHealth: number = calculateRelativeBalance(state.userPrefs.healthRangeBottom, state.userPrefs.healthRangeTop,todaysBalance); 
     
     // TODO: Put this in the right place. Either color pallette data or user prefs. 
-    let colors = ['#43a04719', '#43a04775', '#43a04775', '#43a04775', '#43a047'];
+    let colors = ['#e53935', '#ffffff00', '#ffffff00', '#ffffff00', '#ffffff00'];
     
     // TODO: Make this a utility. 
     function hexToRGB(hex: string): RGBColor {
