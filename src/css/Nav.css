@@ -10,7 +10,7 @@
 */
 
 .glassjar__footer-nav {
-  background     : var(--color-brand);
+  background     : var(--color-bright);
   bottom         : 0;
   box-sizing     : border-box;
   display        : flex;
@@ -46,8 +46,7 @@
 }
 
 .glassjar__footer-nav__button.active {
-  color      : var(--color-bright);
-  text-shadow: 0px 3px 6px rgb(109 150 133 / 50%);
+  color      : var(--color-secondary);
 }
 
 .glassjar__panel-group.glassjar__panel-group--calendar {
@@ -56,6 +55,12 @@
   padding   : 0;
   border-radius: 0;
   margin: 0;
+}
+
+@media (orientation: portrait) {
+  .glassjar__footer-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 @media (orientation: landscape) {

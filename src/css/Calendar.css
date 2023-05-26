@@ -64,6 +64,7 @@
 .glassjar__calendar__day.active {
   background   : none !important;
   border       : 2px solid var(--color-brand);
+  border-bottom: 2px solid transparent;
   opacity      : 1;
 }
 
