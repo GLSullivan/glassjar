@@ -59,14 +59,21 @@
 }
 
 .glassjar__recurring-icon {
-  aspect-ratio : 1;
-  background   : white;
-  border-radius: 10rem;
-  bottom       : -.8rem;
-  font-size    : .8rem;
-  padding      : 0.4rem;
-  position     : absolute;
-  right        : -.8rem;
+  align-items    : center;
+  aspect-ratio   : 1;
+  background     : white;
+  border-radius  : 10rem;
+  bottom         : -.8rem;
+  box-sizing     : border-box;
+  display        : flex;
+  font-size      : .8rem;
+  height         : 1.6rem;
+  justify-content: center;
+  padding        : 0.4rem;
+  position       : absolute;
+  right          : -.8rem;
+  text-align     : center;
+  width          : 1.6rem;
 }
 
 .glassjar__list-item h4 {

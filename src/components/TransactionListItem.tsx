@@ -35,6 +35,12 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       if (colorPalette[toAccountColor] !== undefined) {
         accountColor = colorPalette[toAccountColor];
       }
+    } else if (transaction.type === "transfer" && fromAccountIndex !== -1 && toAccountIndex !== -1) {
+      const fromAccountColor = accounts[fromAccountIndex].color;
+      const toAccountColor   = accounts[toAccountIndex].color;
+      if (colorPalette[fromAccountColor] !== undefined) {
+        accountColor = "linear-gradient(to right, " + colorPalette[fromAccountColor] + "," + colorPalette[fromAccountColor] + "," + colorPalette[toAccountColor] + "," + colorPalette[toAccountColor];
+      }
     } else if (fromAccountIndex !== -1) {
       const fromAccountColor = accounts[fromAccountIndex].color;
       if (colorPalette[fromAccountColor] !== undefined) {
@@ -51,7 +57,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       <div className="glassjar__list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
         <div className="glassjar__list-item__icon">
           <i className={transactionTypeIcons[transaction.type]} />
-          {transaction.isRecurring && (<i style={{ color: accountColor }} className="glassjar__recurring-icon fa-solid fa-repeat" />)} 
+          {!transaction.isRecurring && (<i style={{ color: accountColor }} className="glassjar__recurring-icon fa-solid fa-star" />)} 
           <div className="glassjar__list-icon__backing" style={{ background: accountColor }} />
         </div>
         <div className="glassjar__list-item__body">
