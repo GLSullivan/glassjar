@@ -123,11 +123,7 @@ const TransactionList: React.FC = () => {
             <i className="fa-regular fa-arrow-up-arrow-down"></i>
             <i className="fa-regular fa-filter-list"></i>
           </div>
-
-
-
-
-          {/* <div>
+          <div>
             <label>Sort By:</label>
             <select value={sort || ""} onChange={handleSortChange}>
               <option value="">None</option>
@@ -137,8 +133,8 @@ const TransactionList: React.FC = () => {
                 </option>
               ))}
             </select>
-          </div> */}
-          {/* <div>
+          </div>
+          <div>
             <table>
               <tbody>
                 {options.map((option) => (
@@ -158,7 +154,7 @@ const TransactionList: React.FC = () => {
                 ))}
               </tbody>
             </table>
-          </div> */}
+          </div>
         <div className="glassjar__transaction-view">
           {transactions.map((transaction, index) => (
             <TransactionListItem key={transaction.id} transaction={transaction} />
