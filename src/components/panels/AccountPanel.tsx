@@ -15,18 +15,20 @@ export const AccountList: React.FC = () => {
 
   return (
     <div className="glassjar__account-list">
-      <h2>Accounts</h2>
+      <div className="glassjar__flex glassjar__flex--justify-between">
+        <h2>Accounts</h2>
+        <button
+          onClick={() => {
+            dispatch(setActiveAccount(null));
+            dispatch(openAccountForm());
+          }}
+        >
+          <i className="fa-solid fa-plus-minus" />
+        </button>
+      </div>
       {accounts.map((account) => (
         <AccountListItem key={account.id} account={account} />
       ))}
-      <button
-        onClick={() => {
-          dispatch(setActiveAccount(null));
-          dispatch(openAccountForm());
-        }}
-      >
-        Add Account
-      </button>
     </div>
   );
 };

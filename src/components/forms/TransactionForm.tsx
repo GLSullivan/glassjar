@@ -33,8 +33,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [type, setType]                                       = useState(activeTransaction?.type || 'withdrawal');
   const [category, setCategory]                               = useState(activeTransaction?.category || 'None');
   const [amount, setAmount]                                   = useState(activeTransaction?.amount || 0);
-  const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || '');
-  const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || '');
+  const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || accounts[0].id);
+  const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
   const [description, setDescription]                         = useState(activeTransaction?.description || '');
   const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
   const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
@@ -61,8 +61,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       type,
       amount,
       description,
-      fromAccount: accounts[0].id,
-      toAccount: accounts[0].id,
+      fromAccount: fromAccount, // Use state variable fromAccount
+      toAccount: toAccount, // Use state variable toAccount
       id: activeTransaction ? activeTransaction.id : new Date().getTime(),
       isRecurring,
       endDate: isoEndDate,
@@ -88,6 +88,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   
     onClose();
   };
+  
     
   useEffect(() => {
     if (!activeTransaction && accounts.length > 1) {

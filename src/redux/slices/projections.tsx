@@ -412,6 +412,20 @@ export const projectionsSlice = createSlice({
         iterations++;
       }
 
+      const removeOldTransactions = () => {
+        let today = new Date(new Date().setDate(new Date().getDate()-1));
+
+        today.setHours(0, 0, 0, 0); // To compare only the date part and not the time part
+
+        Object.keys(tempTransactionsOnDate).forEach((date) => {
+          const transactionDate = new Date(date);
+          if (transactionDate < today) {
+            delete tempTransactionsOnDate[date];
+          }
+        });
+      };
+      removeOldTransactions();
+
       state.transactionsOnDate      = tempTransactionsOnDate;
       state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
       state.categorySpend           = tempCategorySpend;

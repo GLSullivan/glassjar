@@ -33,6 +33,22 @@ export const DayPanel: React.FC = () => {
   return (
     <div className="glassjar__list">
       <div className="glassjar__flex glassjar__flex--justify-between">
+    <h2>Transactions: </h2>
+    <button
+      onClick={() => {
+        dispatch(setActiveTransaction(null));
+        dispatch(openTransactionModal());
+      }}
+      className="button__new-transaction"
+    >
+      <i className="fa-solid fa-plus-minus" />
+    </button>
+  </div>
+  {transactionsByDate.map((transaction) => (
+    <TransactionListItem key={transaction.id} transaction={transaction} />
+  ))}
+  <br />
+      <div className="glassjar__flex glassjar__flex--justify-between">
         <h2>Account Balances: </h2>
       </div>
       <div className="account-balances">
@@ -42,22 +58,7 @@ export const DayPanel: React.FC = () => {
             activeDate)}/>
         ))}
       </div>
-      <div className="glassjar__flex glassjar__flex--justify-between">
-        <h2>Transactions: </h2>
-        <button
-          onClick={() => {
-            dispatch(setActiveTransaction(null));
-            dispatch(openTransactionModal());
-          }}
-          className="button__new-transaction"
-        >
-          <i className="fa-solid fa-plus-minus" />
-        </button>
-      </div>
-      {transactionsByDate.map((transaction) => (
-        <TransactionListItem key={transaction.id} transaction={transaction} />
-      ))}
-      <br />
+      
       {/* <TransactionList /> */}
     </div>
   );
