@@ -87,10 +87,6 @@ const AppContent: React.FC = () => {
     return () => unregisterAuthObserver();
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(recalculateProjections({ transactions, accounts, farDate }));
-  }, [transactions, accounts, farDate, dispatch]);
-
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 
@@ -114,11 +110,17 @@ const AppContent: React.FC = () => {
     dispatch(setView(view))
   }
 
-  // useEffect(() => {
-  //   if (accounts.length < 1 && !isLoading) {
-  //     dispatch(openAccountForm()); // Initial setup. 
-  //   }
-  // }, [accounts, dispatch, isLoading]);
+  useEffect(() => {
+    if (accounts.length < 1 && !isLoading) {
+      dispatch(openAccountForm()); // Initial setup. 
+    }
+  }, [accounts, dispatch, isLoading]);
+
+  useEffect(() => {
+    if (accounts.length > 0) {
+      dispatch(recalculateProjections({ transactions, accounts, farDate }));
+    }
+  }, [transactions, accounts, farDate, dispatch]);
 
   return (
     <div className='glassjar__root'>
