@@ -13,7 +13,7 @@
   background:white;
   /* color: var(--color-bright); */
   margin    : 0;
-  padding   : 1.5rem 0 0.5rem 0;
+  /* padding   : 1.5rem 0 0.5rem 0; */
   position  : sticky;
   top       : 0;
   width     : 100%;
@@ -33,3 +33,4 @@
 .glassjar__search-sort i {
   font-size: 1.4rem;
 }
+

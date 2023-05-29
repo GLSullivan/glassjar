@@ -34,20 +34,18 @@ import firebase from 'firebase/compat/app';
 import { setCurrentUser, setSignedIn } from './redux/slices/auth';
 
 const AppContent: React.FC = () => {
-  const transactionOpen = useSelector((state: RootState) => state.modalState.transactionFormOpen)
-  const accountListOpen = useSelector((state: RootState) => state.modalState.accountListOpen)
-  const accountFormOpen = useSelector((state: RootState) => state.modalState.accountFormOpen)
+  const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
+  const accountListOpen       = useSelector((state: RootState) => state.modalState.accountListOpen)
+  const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen)
   const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen)
-  const transactions = useSelector((state: RootState) => state.transactions.transactions);
-  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate)
-  const farDate = useSelector((state: RootState) => state.activeDates.farDate);
-  const accounts = useSelector((state: RootState) => state.accounts.accounts);
-  const activeView = useSelector((state: RootState) => state.views.activeView);
+  const transactions          = useSelector((state: RootState) => state.transactions.transactions);
+  const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate)
+  const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
+  const accounts              = useSelector((state: RootState) => state.accounts.accounts);
+  const activeView            = useSelector((state: RootState) => state.views.activeView);
+  const isLoading             = useSelector((state: RootState) => state.loader.isLoading);
 
   const dispatch = useDispatch()
-
-  
-
 
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
   
@@ -122,10 +120,10 @@ const AppContent: React.FC = () => {
   }
 
   useEffect(() => {
-    if (accounts.length < 1) {
+    if (accounts.length < 1 && !isLoading) {
       dispatch(openAccountForm()); // Initial setup. 
     }
-  }, [accounts, dispatch]);
+  }, [accounts, dispatch, isLoading]);
   
 
   return (

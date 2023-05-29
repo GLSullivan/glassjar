@@ -1,6 +1,6 @@
-import { configureStore }                   from "@reduxjs/toolkit";
+import { configureStore }                         from "@reduxjs/toolkit";
 
-import firebase                             from "firebase/compat/app";
+import firebase                                   from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/database";
@@ -12,10 +12,11 @@ import userPrefsReducer, { setPrefsState }        from "./slices/userprefs";
 import accountsReducer, { setAccounts }           from "./slices/accounts";
 import modalStateReducer                          from "./slices/modals";
 import loaderReducer                              from "./slices/loader";
+import { hideLoader }                             from "./slices/loader";
 import viewReducer, { setViewState }              from "./slices/views";
 import authReducer                                from "./slices/auth";
 
-let isAppLoaded = 0;
+let isAppLoaded = false;
 
 const firebaseConfig = {
   apiKey           : "AIzaSyAlTL5Q1AGIK1bsKz0eWd7d5jwoyNIlLE0",
@@ -32,26 +33,35 @@ const dbRef = firebase.database().ref();
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    dbRef.child('users/' + user.uid + '/accounts').on('value', (snapshot) => {
+    const accountsPromise = dbRef.child('users/' + user.uid + '/accounts').once('value').then((snapshot) => {
       const accounts = snapshot.val() || [];
       store.dispatch(setAccounts(accounts));
-      isAppLoaded ++;
     });    
-    dbRef.child('users/' + user.uid + '/transactions').on('value', (snapshot) => {
+
+    const transactionsPromise = dbRef.child('users/' + user.uid + '/transactions').once('value').then((snapshot) => {
       const transactions = snapshot.val() || [];
       store.dispatch(setTransactions(transactions));
-      isAppLoaded ++;
     });
-    dbRef.child('users/' + user.uid + '/prefs').on('value', (snapshot) => {
+
+    const prefsPromise = dbRef.child('users/' + user.uid + '/prefs').once('value').then((snapshot) => {
       const prefs = snapshot.val();
       store.dispatch(setPrefsState(prefs));
-      isAppLoaded ++;
     });
-    dbRef.child('users/' + user.uid + '/views').on('value', (snapshot) => {
+
+    const viewsPromise = dbRef.child('users/' + user.uid + '/views').once('value').then((snapshot) => {
       const views = snapshot.val();
       store.dispatch(setViewState(views));
-      isAppLoaded ++;
     });
+
+    Promise.all([accountsPromise, transactionsPromise, prefsPromise, viewsPromise])
+      .then(() => {
+        store.dispatch(hideLoader());
+        isAppLoaded = true;
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   } else {
     // No user is signed in.
   }
@@ -73,7 +83,6 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
 
 function replaceUndefinedWithNull(value: any): any {
 
@@ -101,10 +110,9 @@ function saveStateToDatabase() {
   }
 }
 
-
 store.subscribe(() => {
   const user = firebase.auth().currentUser;
-  if (user && isAppLoaded >= 3) {  // Check if the app is fully loaded before saving state to database
+  if (user && isAppLoaded) {  // Check if the app is fully loaded before saving state to database
     saveStateToDatabase();
   }
 });

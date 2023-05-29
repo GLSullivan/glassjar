@@ -33,11 +33,12 @@ const CalendarMonth: React.FC = () => {
     .slice(startDayOfWeek)
     .concat(dayNames.slice(0, startDayOfWeek));
 
-    // Function to change the month based on the given direction
+  // Function to change the month based on the given direction
   const changeMonth = (direction: 'next' | 'previous') => {
+    let newMonth;
     setTimeout(() => {
       if (direction === 'next') {
-        const newMonth = new Date(
+        newMonth = new Date(
           currentMonth.setMonth(currentMonth.getMonth() + 1)
         );
         const farDateMinusTwoMonths = new Date(
@@ -52,11 +53,12 @@ const CalendarMonth: React.FC = () => {
         setCurrentMonth(new Date(newMonth));
         dispatch(setNearDate(new Date(newMonth).toISOString()));
       } else {
-        setCurrentMonth(
-          new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
-        );
+        newMonth = new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+        setCurrentMonth(new Date(newMonth));
+        dispatch(setNearDate(new Date(newMonth).toISOString()));
+
       }
-    }, 600);
+    }, 0);
   };
 
     // Swipe handlers for changing the month

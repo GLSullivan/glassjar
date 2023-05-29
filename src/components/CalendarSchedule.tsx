@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useState, useRef }  from 'react';
-import { useSelector }                                      from 'react-redux';
+import { useDispatch, useSelector }                         from 'react-redux';
 
 import { RootState }                                        from '../redux/store';
 import { getTransactionsByRange }                           from '../redux/slices/projections';
 import TransactionListItem                                  from './TransactionListItem';
 import { Transaction }                                      from '../models/Transaction';
+import { setActiveTransaction }                             from "../redux/slices/transactions";
+import { openTransactionModal }                             from "../redux/slices/modals";
 
 import './../css/TransactionList.css';
 
 function groupTransactionsByDate(
   transactions: { transaction: Transaction; date: string }[]
 ) {
-  
+
   const groupedTransactions: {
     date: string;
     transactions: { transaction: Transaction; date: string }[];
@@ -46,6 +48,7 @@ const CalendarSchedule: React.FC = () => {
   const [hasMoreTransactions, setHasMoreTransactions] = useState(true);
 
   const loader = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch();
 
   const transactions = useSelector((state: RootState) =>
     getTransactionsByRange(state, 0, transactionCount)
@@ -134,7 +137,18 @@ const CalendarSchedule: React.FC = () => {
       {/* <h1>Transactions By Date</h1> */}
       {groupedTransactions.map((group, groupIndex) => (
         <div key={groupIndex} className="glassjar__lazy-list-group">
-          <h2 className="glassjar__calendar__month glassjar__lazy-list__header">{formatDate(group.date)}</h2>
+          <div className=" glassjar__lazy-list__header glassjar__flex">
+          <h2 className="glassjar__calendar__month">{formatDate(group.date)}</h2>
+          <button
+            onClick={() => {
+              dispatch(setActiveTransaction(null));
+              dispatch(openTransactionModal());
+            }}
+            className="button__new-transaction"
+          >
+            <i className="fa-solid fa-plus-minus" />
+          </button>
+          </div>
           {group.transactions.map(({ transaction }, transactionIndex) => (
             <TransactionListItem
               key={`${groupIndex}-${transactionIndex}`}

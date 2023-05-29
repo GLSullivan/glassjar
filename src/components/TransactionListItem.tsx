@@ -39,7 +39,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       const fromAccountColor = accounts[fromAccountIndex].color;
       const toAccountColor   = accounts[toAccountIndex].color;
       if (colorPalette[fromAccountColor] !== undefined) {
-        accountColor = "linear-gradient(to right, " + colorPalette[fromAccountColor] + "," + colorPalette[fromAccountColor] + "," + colorPalette[toAccountColor] + "," + colorPalette[toAccountColor];
+        accountColor = "linear-gradient(70deg, " + colorPalette[fromAccountColor] + " 0%," + colorPalette[fromAccountColor] + " 45%," + colorPalette[toAccountColor] + " 55%," + colorPalette[toAccountColor];
       }
     } else if (fromAccountIndex !== -1) {
       const fromAccountColor = accounts[fromAccountIndex].color;

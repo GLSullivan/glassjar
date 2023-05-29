@@ -81,7 +81,10 @@
     align-items    : center;
     display        : flex;
     justify-content: space-around;
-    padding-right  : 6rem;
+}
+
+.glassjar__calendar__container .glassjar__calendar__navigation {
+  padding-right  : 6rem;
 }
 
 .glassjar__calendar__navigation h2 {
@@ -149,7 +152,6 @@
 }
 
 .glassjar__schedule__view-control {
-  background     : white;
   display        : flex;
   justify-content: flex-end;
   position       : absolute;
@@ -162,4 +164,8 @@
   max-height: 100%;
   overflow  : auto;
   padding   : 0 1rem;
+}
+
+.glassjar__calendar__day.today {
+  border: 2px solid var(--color-tertiary);
 }

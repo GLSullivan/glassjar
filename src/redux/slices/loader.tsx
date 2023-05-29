@@ -5,7 +5,7 @@ interface LoaderState {
 }
 
 const initialState: LoaderState = {
-  isLoading: false,
+  isLoading: true,
 };
 
 export const loaderSlice = createSlice({
@@ -16,6 +16,7 @@ export const loaderSlice = createSlice({
       state.isLoading = true;
     },
     hideLoader: (state) => {
+      console.log("?")
       state.isLoading = false;
     },
   },
