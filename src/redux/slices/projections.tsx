@@ -301,7 +301,6 @@ export const projectionsSlice = createSlice({
         let toAccountBalance = 
           tempBalanceByDateAndAccount[toAccount.id][dateKey];
         let transferAmount = Math.min(transaction.amount, toAccountBalance);
-
         const toAccountSign   = toAccount.isLiability ? -1 : 1;
         const fromAccountSign = fromAccount.isLiability ? 1 : -1;
 

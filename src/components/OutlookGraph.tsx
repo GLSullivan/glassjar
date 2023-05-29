@@ -2,7 +2,8 @@ import React, {
   useState, 
   useEffect, 
   useCallback, 
-  useRef}                               from "react";
+  useRef }                                    from "react";
+
 import {
   LineChart,
   Line,
@@ -14,6 +15,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 }                                             from "recharts";
+
 import { useDispatch, useSelector }           from "react-redux";
 
 import { accountBalancesByDateRange }         from "./../redux/slices/projections";
@@ -50,57 +52,66 @@ const OutlookGraph: React.FC = () => {
 
   const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
 
-  const currencyFormatter = (item: any) =>
-    item.toLocaleString("en-US", {
-      style                : "currency",
-      currency             : "USD",
+  const currencyFormatter = (item: any) => {
+    return Number(item).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
       maximumFractionDigits: 0,
     });
-    const xTicks = useRef<(string | number)[]>([]);
+  }
 
-  const combineAccountBalances = useCallback((
-    accounts: Account[],
-    accountBalances: number[][]
-  ): { combinedData: CombinedData[]; minY: number; maxY: number } => {
-    const combinedData: CombinedData[] = [];
-    let minY = Infinity;
-    let maxY = -Infinity;
-    const today = new Date(Date.parse(state.activeDates.graphNearDate));
+  const xTicks = useRef<(string | number)[]>([]);
 
-    for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
-      const date = new Date(today.getTime() + dayIndex * 24 * 60 * 60 * 1000);
-      const dayData: CombinedData = {
-        date: formatDate(date),
-      };
+  const combineAccountBalances = useCallback(
+    (
+      accounts: Account[],
+      accountBalances: number[][]
+    ): { combinedData: CombinedData[]; minY: number; maxY: number } => {
+      const combinedData: CombinedData[] = [];
+      let minY = Infinity;
+      let maxY = -Infinity;
+      const today = new Date(Date.parse(state.activeDates.graphNearDate));
 
-      for (
-        let accountIndex = 0;
-        accountIndex < accounts.length;
-        accountIndex++
-      ) {
-        if (accounts[accountIndex].showInGraph) {
-          let multiplier = 1;
-          if (accounts[accountIndex].isLiability) {
-            multiplier = -1;
+      for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
+        const date = new Date(today.getTime() + dayIndex * 24 * 60 * 60 * 1000);
+        const dayData: CombinedData = {
+          date: formatDate(date),
+        };
+
+        for (
+          let accountIndex = 0;
+          accountIndex < accounts.length;
+          accountIndex++
+        ) {
+          if (accounts[accountIndex].showInGraph) {
+            let multiplier = 1;
+            if (accounts[accountIndex].isLiability) {
+              multiplier = -1;
+            }
+            const balance = (
+              (accountBalances[accountIndex][dayIndex] * multiplier) /
+              100
+            ).toFixed(2);
+            dayData[accounts[accountIndex].name] = balance;
+
+            minY = Math.min(minY, Number(balance));
+            maxY = Math.max(maxY, Number(balance));
           }
-          const balance = (
-            accountBalances[accountIndex][dayIndex] * multiplier / 100
-          ).toFixed(2);
-          dayData[accounts[accountIndex].name] = balance;
-
-          minY = Math.min(minY, Number(balance));
-          maxY = Math.max(maxY, Number(balance));
         }
+
+        combinedData.push(dayData);
       }
 
-      combinedData.push(dayData);
-    }
-
-    minY = minY - Math.abs(minY) * 0.1;
-    maxY = maxY + Math.abs(maxY) * 0.1;
-    xTicks.current = [combinedData[0].date, combinedData[combinedData.length - 1].date];
-    return { combinedData, minY, maxY };
-  }, [state.activeDates.graphNearDate]);
+      minY = minY - Math.abs(minY) * 0.1;
+      maxY = maxY + Math.abs(maxY) * 0.1;
+      xTicks.current = [
+        combinedData[0].date,
+        combinedData[combinedData.length - 1].date,
+      ];
+      return { combinedData, minY, maxY };
+    },
+    [state.activeDates.graphNearDate]
+  );
 
   useEffect(() => {
     const accountBalances: number[][] = accounts.map(
@@ -139,12 +150,6 @@ const OutlookGraph: React.FC = () => {
     state,
   ]);
 
-  if (accounts.length === 0) {
-    return (
-      <div>No accounts available. Please add an account to see the graph.</div>
-    );
-  }
-
   // Function to change the month based on the given direction
   const changeMonth = (direction: 'next' | 'previous') => {
     let newMonth;
@@ -172,6 +177,38 @@ const OutlookGraph: React.FC = () => {
       }
     }, 0);
   };
+  
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="glassjar__custom-tooltip">
+          <h3 className="label">{`${label}`}</h3>
+          <table>
+            <tbody>
+              {payload.map(
+                (entry: { color: any; name: any; value: any }, index: any) => (
+                  <tr>
+                    <td key={`item-${index}`} style={{ color: entry.color }}>
+                      {`${entry.name}:`}
+                    </td>
+                    <td>{currencyFormatter(entry.value)}</td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  if (accounts.length === 0) {
+    return (
+      <div>No accounts available. Please add an account to see the graph.</div>
+    );
+  }
 
   const renderChart = (
     combinedData: CombinedData[],
@@ -217,7 +254,7 @@ const OutlookGraph: React.FC = () => {
                   domain={[minY, maxY]}
                   tickCount={5}
                 />
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
                 <ReferenceLine
                   position="start"
                   x={formatDate(new Date(state.activeDates.activeDate))}

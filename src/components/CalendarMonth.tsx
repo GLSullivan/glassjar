@@ -16,11 +16,11 @@ const dayNames       = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 
 const CalendarMonth: React.FC = () => {
+  const state = useSelector((state: RootState) => state);
   const dispatch                        = useDispatch();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date(state.activeDates.activeDate));
 
   // Redux store selectors
-  const state = useSelector((state: RootState) => state);
 
   const activeDate = useSelector(
     (state: RootState) => state.activeDates.activeDate

@@ -1,4 +1,4 @@
-  /* 
+    /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -28,8 +28,7 @@
   display       : flex;
   flex-direction: column;
   max-height    : 100%;
-  /* min-height    : 100%; */
-  position      : relative;
+  position: relative;
 }
 
 .glassjar__graph-holder__sub-sub {
@@ -44,10 +43,20 @@
 }
 
 .glassjar__custom-tooltip {
-  background: var(--color-bright);
-  padding: .25rem .5rem;
+  background   : var(--color-bright);
+  border       : 2px solid #ccc;
   border-radius: .5rem;
-  text-align: center;
+  box-sizing   : border-box;
+  padding      : .25rem .5rem;
+  text-align   : center;
+}
+
+.glassjar__custom-tooltip tr td {
+  text-align: left;
+}
+
+.glassjar__custom-tooltip tr td:last-of-type {
+  text-align: right;
 }
 
 .glassjar__custom-tooltip h3 {
@@ -55,6 +64,6 @@ margin: 0;
 }
 
 .glassjar__custom-tooltip h4 {
-  font-weight: 100;
-margin: 0;
+  font-weight: 300;
+  margin     : 0;
 }
