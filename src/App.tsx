@@ -1,37 +1,36 @@
-import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useMemo } from 'react';
+import { useSelector, useDispatch }         from 'react-redux';
+import React, { useEffect, useMemo }        from 'react';
 
-import TransactionHelper from './components/helpers/TransactionHelper';
-import TransactionForm from './components/forms/TransactionForm';
-import { AccountList } from './components/panels/AccountPanel';
-import { AccountForm } from './components/forms/AccountForm';
-import TransactionList from './components/TransactionList';
-import CategoryGraph from './components/CategoryGraph'
-import SettingsPanel from './components/SettingsPanel';
-import OutlookGraph from './components/OutlookGraph'
-import Calendar from './components/Calendar';
-import Loader from './components/Loader';
-import Modal from './components/Modal';
+import TransactionHelper                    from './components/helpers/TransactionHelper';
+import TransactionForm                      from './components/forms/TransactionForm';
+import { AccountList }                      from './components/panels/AccountPanel';
+import { AccountForm }                      from './components/forms/AccountForm';
+import TransactionList                      from './components/TransactionList';
+import CategoryGraph                        from './components/CategoryGraph'
+import SettingsPanel                        from './components/SettingsPanel';
+import OutlookGraph                         from './components/OutlookGraph'
+import Calendar                             from './components/Calendar';
+import Loader                               from './components/Loader';
+import Modal                                from './components/Modal';
 
-import { recalculateProjections } from './redux/slices/projections';
-import { setView } from './redux/slices/views';
-import {
-  closeTransactionModal,
-  closeAccountForm,
-  closeAccountList,
-  openAccountForm,
-  closeTransactionHelper
-} from './redux/slices/modals'
-import { RootState } from './redux/store';
+import { recalculateProjections }           from './redux/slices/projections';
+import { setView }                          from './redux/slices/views';
+import {      
+  closeTransactionModal,      
+  closeAccountForm,     
+  closeAccountList,     
+  openAccountForm,      
+  closeTransactionHelper      
+}                                           from './redux/slices/modals'
+import { RootState }                        from './redux/store';
 
-import './css/Nav.css'
+import './css/Nav.css'      
 
-
-import * as firebaseui from 'firebaseui';
+import firebase                             from 'firebase/compat/app';
+import * as firebaseui                      from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 
-import firebase from 'firebase/compat/app';
-import { setCurrentUser, setSignedIn } from './redux/slices/auth';
+import { setCurrentUser, setSignedIn }      from './redux/slices/auth';
 
 const AppContent: React.FC = () => {
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
@@ -88,10 +87,6 @@ const AppContent: React.FC = () => {
     return () => unregisterAuthObserver();
   }, [dispatch]);
 
-
-
-
-
   useEffect(() => {
     dispatch(recalculateProjections({ transactions, accounts, farDate }));
   }, [transactions, accounts, farDate, dispatch]);
@@ -119,12 +114,11 @@ const AppContent: React.FC = () => {
     dispatch(setView(view))
   }
 
-  useEffect(() => {
-    if (accounts.length < 1 && !isLoading) {
-      dispatch(openAccountForm()); // Initial setup. 
-    }
-  }, [accounts, dispatch, isLoading]);
-  
+  // useEffect(() => {
+  //   if (accounts.length < 1 && !isLoading) {
+  //     dispatch(openAccountForm()); // Initial setup. 
+  //   }
+  // }, [accounts, dispatch, isLoading]);
 
   return (
     <div className='glassjar__root'>

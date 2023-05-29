@@ -12,7 +12,7 @@ import userPrefsReducer, { setPrefsState }        from "./slices/userprefs";
 import accountsReducer, { setAccounts }           from "./slices/accounts";
 import modalStateReducer                          from "./slices/modals";
 import loaderReducer                              from "./slices/loader";
-import { hideLoader }                             from "./slices/loader";
+import { hideLoader, showLoader}                  from "./slices/loader";
 import viewReducer, { setViewState }              from "./slices/views";
 import authReducer                                from "./slices/auth";
 
@@ -33,6 +33,7 @@ const dbRef = firebase.database().ref();
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
+    store.dispatch(showLoader());
     const accountsPromise = dbRef.child('users/' + user.uid + '/accounts').once('value').then((snapshot) => {
       const accounts = snapshot.val() || [];
       store.dispatch(setAccounts(accounts));
@@ -63,7 +64,7 @@ firebase.auth().onAuthStateChanged((user) => {
         console.error(error);
       });
   } else {
-    // No user is signed in.
+    store.dispatch(hideLoader());
   }
 });
 
