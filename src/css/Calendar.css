@@ -14,10 +14,10 @@
   color         : var(--color-primary);
   display       : flex;
   flex-direction: column;
+  height: 100%;
   max-height    : 100%;
   overflow      : hidden;
   position      : relative;
-  height: 100%;
 }
 
 .glassjar__calendar__seven-row {
@@ -30,26 +30,33 @@
   width: 100%;
 }
 
-.glassjar__calendar__day-marker {
-  /* background   : var(--color-primary); */
-  background   : rgb(238, 54, 54);
-  border-radius: 1rem;
-  bottom       : 0.5rem;
-  height       : 0.4rem;
-  position     : absolute;
-  width        : 0.4rem;
-}
-
 .glassjar__calendar__day {
   align-items    : center;
-  aspect-ratio   : .9;
-  border-bottom  : none;
+  aspect-ratio   : 1;
   border         : 2px solid transparent;
   box-sizing     : border-box;
   display        : flex;
   justify-content: center;
   position       : relative;
   text-align     : center;
+  font-weight: 300;
+  border-radius: 1rem;
+}
+
+.glassjar__calendar__day-marker {
+  /* background   : var(--color-primary); */
+  background   : rgb(238, 54, 54);
+  border-radius: 1rem;
+  bottom       : 0.3rem;
+  height       : 0.4rem;
+  position     : absolute;
+  width        : 0.4rem;
+}
+
+.glassjar__calendar__day h1 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
 }
 
 .glassjar__calendar__day.today h1 {
@@ -64,12 +71,7 @@
 .glassjar__calendar__day.active {
   background   : none !important;
   border       : 2px solid var(--color-brand);
-  border-bottom: 2px solid transparent;
   opacity      : 1;
-}
-
-.glassjar__calendar__day h1 {
-    font-size: 1rem;
 }
 
 .glassjar__calendar__seven-row.glassjar__calendar__seven-row--header {
@@ -92,37 +94,11 @@
   text-align: center;
 }
 
-.glassjar__calendar__month {
-  font-size : 1.2rem;
-}
-
-.glassjar__calendar__inline-panel {
-  box-sizing        : border-box;
-  display           : grid;
-  grid-template-rows: 0fr;
-  opacity           : 100%;
-  overflow          : hidden;
-  pointer-events    : none;
-  transition        : grid-template-rows .5s;
-  width             : 100%;
-}
-
-.glassjar__calendar__week.active .glassjar__calendar__inline-panel {
-  bottom            : 0;
-  grid-template-rows: 1fr;
-  pointer-events    : auto;
-}
-
 .glassjar__calendar__week .glassjar__list {
   box-sizing: border-box;
   height    : 20vh;
   max-height: 20vh;
   padding   : 1rem;
-}
-
-.glassjar__calendar__inline-panel > div {
-    overflow: auto;
-    padding : unset;
 }
 
 .glassjar__calendar__week.active {
@@ -168,4 +144,19 @@
 
 .glassjar__calendar__day.today {
   border: 2px solid var(--color-tertiary);
+}
+
+.glassjar__calendar__container {
+  box-sizing    : border-box;
+  display       : flex;
+  flex-direction: column;
+  overflow      : hidden;
+}
+
+.glassjar__calendar__day-panel {
+  box-sizing: border-box;
+  flex      : 1;
+  max-height: 100%;
+  overflow  : auto;
+  padding   : 1rem;
 }

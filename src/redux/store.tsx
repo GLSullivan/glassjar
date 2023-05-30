@@ -1,10 +1,5 @@
 import { configureStore }                         from "@reduxjs/toolkit";
 
-import firebase                                   from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
-import "firebase/compat/database";
-
 import transactionsReducer, { setTransactions}    from "./slices/transactions";
 import activeDatesReducer                         from "./slices/activedates";
 import projectionsReducer                         from "./slices/projections";
@@ -15,6 +10,11 @@ import loaderReducer                              from "./slices/loader";
 import { hideLoader, showLoader}                  from "./slices/loader";
 import viewReducer, { setViewState }              from "./slices/views";
 import authReducer                                from "./slices/auth";
+
+import firebase                                   from "firebase/compat/app";
+import "firebase/compat/firestore";
+import "firebase/compat/database";
+import "firebase/compat/auth";
 
 let isAppLoaded = false;
 
@@ -112,9 +112,31 @@ function saveStateToDatabase() {
   }
 }
 
+let prevState = {
+  accounts: store.getState().accounts,
+  transactions: store.getState().transactions,
+  views: store.getState().views,
+  userPrefs: store.getState().userPrefs,
+};
+
 store.subscribe(() => {
   const user = firebase.auth().currentUser;
-  if (user && isAppLoaded) {  // Check if the app is fully loaded before saving state to database
-    saveStateToDatabase();
+  const newState = {
+    accounts: store.getState().accounts,
+    transactions: store.getState().transactions,
+    views: store.getState().views,
+    userPrefs: store.getState().userPrefs,
+  };
+  
+  if (user && isAppLoaded) {
+    // Check if any of the state properties have changed
+    if (JSON.stringify(newState.accounts) !== JSON.stringify(prevState.accounts)
+      || JSON.stringify(newState.transactions) !== JSON.stringify(prevState.transactions)
+      || JSON.stringify(newState.views) !== JSON.stringify(prevState.views)
+      || JSON.stringify(newState.userPrefs) !== JSON.stringify(prevState.userPrefs)) {
+
+      saveStateToDatabase();
+      prevState = newState;
+    }
   }
 });
