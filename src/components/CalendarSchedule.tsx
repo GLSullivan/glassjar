@@ -7,7 +7,7 @@ import TransactionListItem                                  from './TransactionL
 import { Transaction }                                      from '../models/Transaction';
 import { setActiveTransaction }                             from "../redux/slices/transactions";
 import { openTransactionModal }                             from "../redux/slices/modals";
-import { setNearDate }                                      from '../redux/slices/activedates';
+import { setActiveDate }                                    from '../redux/slices/activedates';
 
 import './../css/TransactionList.css';
 
@@ -107,6 +107,10 @@ const CalendarSchedule: React.FC = () => {
     }
   }, [loader, observerCallback, hasMoreTransactions]);
 
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  
   // New observer to check when a new header is visible
   const observeHeaders = useCallback(() => {
     const scrollContainer = document.querySelector('.glassjar__schedule');
@@ -116,14 +120,19 @@ const CalendarSchedule: React.FC = () => {
     let lastSetDate = '';
   
     const handleScroll = () => {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
+    
       headerRefs.current.forEach((ref, date) => {
         const current = ref.current;
         if (!current) return;
+    
         const rect = current.getBoundingClientRect();
-        if (rect.top <= 20 && rect.top >= 0 && date !== lastSetDate) {
+        const relativeTop = rect.top - containerRect.top;
+        if (relativeTop <= 20 && relativeTop >= 0 && date !== lastSetDate) {
           lastSetDate = date;
           console.log(date)
-          dispatch(setNearDate(new Date(date).toISOString()));
+          dispatch(setActiveDate(new Date(date).toISOString()));
         }
       });
     };
@@ -134,13 +143,10 @@ const CalendarSchedule: React.FC = () => {
       scrollContainer.removeEventListener('scroll', handleScroll);
     };
   }, [dispatch]);
-  
-  
-  
+    
   useEffect(() => {
     return observeHeaders();
   }, [observeHeaders]);
-  
   
   useEffect(() => {
     if (loader.current && hasMoreTransactions) {
@@ -195,7 +201,7 @@ const CalendarSchedule: React.FC = () => {
   }
 
   return (
-    <div className='glassjar__schedule'>
+    <div ref={containerRef} className='glassjar__schedule'>
       {/* <h1>Transactions By Date</h1> */}
       {groupedTransactions.map((group, groupIndex) => {
         if(!headerRefs.current.has(group.date)) {

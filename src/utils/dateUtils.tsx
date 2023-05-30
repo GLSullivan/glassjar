@@ -50,5 +50,6 @@ export function addZoneOffset(dateString: string): string {
 }
 
 export function conformDate(date: string) {
-  return new Date(new Date(date).setHours(0, 0, 0, 0)).toISOString();
+  const [year, month, day] = date.split('-').map((value) => parseInt(value, 10));
+  return new Date(Date.UTC(year, month - 1, day)).toISOString().split('T')[0];
 }

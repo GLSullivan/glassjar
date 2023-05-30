@@ -181,6 +181,10 @@ const AppContent: React.FC = () => {
         <i onClick = {() => { setActiveView("settings") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
       </div>
       </>}
+
+      <div className="glassjar__devtextblock">
+        <h3>{activeDate}</h3>
+      </div>
     </div>
   );
 };

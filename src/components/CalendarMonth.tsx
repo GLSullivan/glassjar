@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 
 import { useSwipeable }               from 'react-swipeable';
 
-import { setFarDate, setNearDate }    from '../redux/slices/activedates';
+import { setFarDate, setActiveDate }  from '../redux/slices/activedates';
 import { dateHasTransactions }        from '../redux/slices/projections';
-import { DayPanel }                   from './panels/DayPanel';
+import OutlookGraph                   from './OutlookGraph';
+// import { DayPanel }                   from './panels/DayPanel';
+import CalendarSchedule               from './CalendarSchedule';
 import { RootState }                  from '../redux/store';
 import CalendarDay                    from './CalendarDay';
 
@@ -16,17 +18,16 @@ const dayNames       = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 
 const CalendarMonth: React.FC = () => {
-  const state = useSelector((state: RootState) => state);
+  const state                           = useSelector((state: RootState) => state);
+  // const [currentMonth, setCurrentMonth] = useState(new Date(state.activeDates.activeDate));
   const dispatch                        = useDispatch();
-  const [currentMonth, setCurrentMonth] = useState(new Date(state.activeDates.activeDate));
 
   // Redux store selectors
-
-  const activeDate = useSelector(
-    (state: RootState) => state.activeDates.activeDate
-  );
-  const today                = useSelector((state: RootState) => state.activeDates.today);
-  const farDate              = useSelector((state: RootState) => state.activeDates.farDate);
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
+  const today      = useSelector((state: RootState) => state.activeDates.today);
+  const farDate    = useSelector((state: RootState) => state.activeDates.farDate);
+console.log("-----",activeDate)
+  const activeDateObj = new Date(activeDate);
 
   // Rotated day names to allow users to choose the first day of the week
   const rotatedDayNames = dayNames
@@ -36,30 +37,19 @@ const CalendarMonth: React.FC = () => {
   // Function to change the month based on the given direction
   const changeMonth = (direction: 'next' | 'previous') => {
     let newMonth;
-    setTimeout(() => {
-      if (direction === 'next') {
-        newMonth = new Date(
-          currentMonth.setMonth(currentMonth.getMonth() + 1)
-        );
-        const farDateMinusTwoMonths = new Date(
-          new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
-        );
-
-        if (newMonth > farDateMinusTwoMonths) {
-          const futureMonth = new Date(newMonth);
-          futureMonth.setMonth(futureMonth.getMonth() + 2);
-          dispatch(setFarDate(futureMonth.toISOString()));
-        }
-        setCurrentMonth(new Date(newMonth));
-        dispatch(setNearDate(new Date(newMonth).toISOString()));
-      } else {
-        newMonth = new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
-        setCurrentMonth(new Date(newMonth));
-        dispatch(setNearDate(new Date(newMonth).toISOString()));
-
-      }
-    }, 0);
+    if (direction === 'next') {
+      newMonth = new Date(activeDateObj.getFullYear(), activeDateObj.getMonth() + 1, 1);
+    } else {
+      newMonth = new Date(activeDateObj.getFullYear(), activeDateObj.getMonth() - 1, 1);
+    }
+    dispatch(setActiveDate(newMonth.toISOString()));
   };
+  
+  // Update days array when the active date changes
+  useEffect(() => {
+    const activeDateObj = new Date(activeDate);
+    setDays(generateDaysArray(activeDateObj, startDayOfWeek));
+  }, [activeDate]);
 
     // Swipe handlers for changing the month
   const swipeHandlers = useSwipeable({
@@ -69,7 +59,8 @@ const CalendarMonth: React.FC = () => {
 
     // Function to generate the days array
   const generateDaysArray = (month: Date, startDay: number) => {
-    const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1, 0, 0, 0, 0);
+    const firstDayOfMonth = new Date(Date.UTC(month.getFullYear(), month.getMonth(), 1));
+    console.log("First = ",firstDayOfMonth)
     const firstDayOfGrid  = new Date(firstDayOfMonth);
     const offset          = (firstDayOfMonth.getDay() - startDay + 7) % 7 || 7;
 
@@ -87,7 +78,7 @@ const CalendarMonth: React.FC = () => {
   };
 
   const [days, setDays] = useState<Date[]>(
-    generateDaysArray(currentMonth, startDayOfWeek)
+    generateDaysArray(activeDateObj, startDayOfWeek)
   );
 
     // Function to check if two dates are the same
@@ -109,11 +100,6 @@ const CalendarMonth: React.FC = () => {
     );
   }
 
-    // Update days array when the current month or start day of the week changes
-  useEffect(() => {
-    setDays(generateDaysArray(currentMonth, startDayOfWeek));
-  }, [currentMonth]);
-
   return (
     <div className='glassjar__calendar__container' {...swipeHandlers}>
       <div className='glassjar__calendar__navigation'>
@@ -122,10 +108,10 @@ const CalendarMonth: React.FC = () => {
         </button>
         <h2
           className='glassjar__calendar__month'
-          onClick={() => { setCurrentMonth(new Date()); dispatch(setNearDate(new Date(new Date()).toISOString())) }}
+          onClick={() => { dispatch(setActiveDate(new Date().toISOString())); }}
         >
-          {currentMonth.toLocaleString('default', { month: 'long' })}{' '}
-          {currentMonth.getFullYear()}
+          {activeDateObj.toLocaleString('default', { month: 'long' })}{' '}
+          {activeDateObj.getFullYear()}
         </h2>
         <button onClick={() => changeMonth('next')}>
           <i className='fa-regular fa-chevron-right' />
@@ -153,7 +139,7 @@ const CalendarMonth: React.FC = () => {
                   <CalendarDay
                     key={day.toISOString()}
                     day={day}
-                    isCurrentMonth={day.getMonth() === currentMonth.getMonth()}
+                    isCurrentMonth={day.getMonth() === activeDateObj.getMonth()}
                     isToday={isSameDay(day, new Date(today))}
                     isActive={isSameDay(day, new Date(activeDate))}
                     hasTransaction={
@@ -166,8 +152,12 @@ const CalendarMonth: React.FC = () => {
           </div>
         ))}
       </div>
+      <div className="glassjar__calendar__day-panel--graph">
+        <OutlookGraph />
+      </div>
       <div className="glassjar__calendar__day-panel">
-        <DayPanel />
+        {/* <DayPanel /> */}
+        <CalendarSchedule />
       </div>
     </div>
   );

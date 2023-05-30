@@ -15,9 +15,9 @@ export interface ActiveDate {
 
 const getInitialDate = () => {
   const now = new Date();
-  const today = new Date(now.setHours(0, 0, 0, 0)).toISOString();
-  const graphFarDate = new Date(now.getFullYear(), now.getMonth() + 3, 0).toISOString();
-  const farDate = new Date(now.getFullYear() + 1, now.getMonth() + 6, 0).toISOString();
+  const today = now.toISOString().split('T')[0];
+  const graphFarDate = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 3, 0)).toISOString().split('T')[0];
+  const farDate = new Date(Date.UTC(now.getFullYear() + 1, now.getMonth() + 6, 0)).toISOString().split('T')[0];
   const graphSpan = 6; // Make this a user setting.
 
   return {
@@ -62,7 +62,9 @@ export const activeDate = createSlice({
       }
     },
     setActiveDate: (state, action: PayloadAction<string>) => {
+      console.log(action.payload)
       state.activeDate = conformDate(action.payload)
+      console.log(state.activeDate)
     },    
     setFarDate: (state, action: PayloadAction<string>) => {
       state.farDate = conformDate(action.payload)

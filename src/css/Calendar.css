@@ -20,6 +20,10 @@
   position      : relative;
 }
 
+.glassjar__calendar__calendar {
+  padding: 0 3rem;
+}
+
 .glassjar__calendar__seven-row {
   display        : flex;
   justify-content: space-around;
@@ -62,6 +66,10 @@
 .glassjar__calendar__day.today h1 {
   font-size  : 1.2rem;
   font-weight: 900;
+}
+
+.glassjar__calendar__day.today {
+  border: 2px solid var(--color-tertiary);
 }
 
 .glassjar__calendar__day.other-month {
@@ -142,10 +150,6 @@
   padding   : 0 1rem;
 }
 
-.glassjar__calendar__day.today {
-  border: 2px solid var(--color-tertiary);
-}
-
 .glassjar__calendar__container {
   box-sizing    : border-box;
   display       : flex;
@@ -158,5 +162,9 @@
   flex      : 1;
   max-height: 100%;
   overflow  : auto;
-  padding   : 1rem;
+  /* padding   : 1rem; */
+}
+
+.glassjar__calendar__day-panel--graph {
+  height: 30vh;
 }
