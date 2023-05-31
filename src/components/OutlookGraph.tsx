@@ -128,8 +128,8 @@ const OutlookGraph: React.FC = () => {
         tempCombinedData.push(dayData);
       }
 
-      setMinY(minY);
-      setMaxY(maxY);
+      setMinY(minY - Math.abs(minY) * 0.1); // Force a wee margin
+      setMaxY(maxY + Math.abs(maxY) * 0.1);
 
       let new_yTicks = [minY];
       if (minY < 0 && maxY > 0) {
@@ -188,6 +188,21 @@ const OutlookGraph: React.FC = () => {
     return null;
   };
 
+  function CustomXAxisTick({ x, y, payload }: any, data: string | any[]) {
+    const isFirstOrLast = payload.value === data[0].date || payload.value === data[data.length - 1].date;
+
+    return (
+      <text 
+        x={x} 
+        y={y + 10} 
+        fill="#666" 
+        textAnchor={isFirstOrLast ? (payload.value === data[0].date ? 'start' : 'end') : 'middle'}
+      >
+        {payload.value}
+      </text>
+    );
+  }
+
   if (accounts.length === 0) {
     return (
       <div>No accounts available. Please add an account to see the graph.</div>
@@ -201,7 +216,10 @@ const OutlookGraph: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={combinedData}>
               {/* <CartesianGrid strokeDasharray="3 3" /> */}
-              <XAxis dataKey="date" ticks={xTicks} />
+              <XAxis 
+                dataKey="date" 
+                tick={(props) => CustomXAxisTick(props, combinedData)}
+                ticks={xTicks} />
               <YAxis
                 ticks={yTicks}
                 tickFormatter={currencyFormatter}
