@@ -109,7 +109,6 @@ const CalendarSchedule: React.FC = () => {
         const relativeTop = rect.top - containerRect.top;
         if (relativeTop <= 20 && relativeTop >= 0 && date !== lastSetDate) {
           lastSetDate = date;
-          console.log(new Date(parseISO(date)).toISOString());
           dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
         }
       });
