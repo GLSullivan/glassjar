@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction }             from '@reduxjs/toolkit';
-import { formatISO, addYears, endOfMonth, addMonths, startOfMonth } from 'date-fns';
+import { formatISO, addYears, isAfter, parseISO } from 'date-fns';
 import { zonedTimeToUtc }                         from 'date-fns-tz';
 
 export interface ActiveDates {
@@ -23,8 +23,10 @@ export const activeDates = createSlice({
   reducers: {
     setActiveDate: (state, action: PayloadAction<string>) => {
       state.activeDate = action.payload;
-      state.farDate = formatISO(zonedTimeToUtc(addYears(new Date(action.payload), 2), getUserTimeZone()));
-    }
+      const newFarDate = zonedTimeToUtc(addYears(parseISO(action.payload), 1), getUserTimeZone());
+      if (isAfter(newFarDate, parseISO(state.farDate))) {
+        state.farDate = formatISO(newFarDate);
+      }    }
   },
 });
 
