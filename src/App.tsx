@@ -13,6 +13,8 @@ import Calendar                             from './components/Calendar';
 import Loader                               from './components/Loader';
 import Modal                                from './components/Modal';
 
+import { parseISO }                         from 'date-fns';
+
 import { recalculateProjections }           from './redux/slices/projections';
 import { setView }                          from './redux/slices/views';
 import {      

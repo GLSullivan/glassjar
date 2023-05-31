@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 import { useSwipeable }               from 'react-swipeable';
 
-import { setFarDate, setActiveDate }  from '../redux/slices/activedates';
+import { setActiveDate }              from '../redux/slices/activedates';
 import { dateHasTransactions }        from '../redux/slices/projections';
 import OutlookGraph                   from './OutlookGraph';
 // import { DayPanel }                   from './panels/DayPanel';
@@ -25,8 +25,8 @@ const CalendarMonth: React.FC = () => {
   // Redux store selectors
   const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
   const today      = useSelector((state: RootState) => state.activeDates.today);
-  const farDate    = useSelector((state: RootState) => state.activeDates.farDate);
-console.log("-----",activeDate)
+  // const farDate    = useSelector((state: RootState) => state.activeDates.farDate);
+// console.log("-----",activeDate)
   const activeDateObj = new Date(activeDate);
 
   // Rotated day names to allow users to choose the first day of the week
@@ -60,7 +60,7 @@ console.log("-----",activeDate)
     // Function to generate the days array
   const generateDaysArray = (month: Date, startDay: number) => {
     const firstDayOfMonth = new Date(Date.UTC(month.getFullYear(), month.getMonth(), 1));
-    console.log("First = ",firstDayOfMonth)
+    // console.log("First = ",firstDayOfMonth)
     const firstDayOfGrid  = new Date(firstDayOfMonth);
     const offset          = (firstDayOfMonth.getDay() - startDay + 7) % 7 || 7;
 
@@ -137,12 +137,12 @@ console.log("-----",activeDate)
               {week.map((day: Date, dayIndex: number) => {
                 return (
                   <CalendarDay
-                    key={day.toISOString()}
-                    day={day}
-                    isCurrentMonth={day.getMonth() === activeDateObj.getMonth()}
-                    isToday={isSameDay(day, new Date(today))}
-                    isActive={isSameDay(day, new Date(activeDate))}
-                    hasTransaction={
+                    key            = {day.toISOString()}
+                    day            = {day}
+                    isCurrentMonth = {day.getMonth() === activeDateObj.getMonth()}
+                    isToday        = {isSameDay(day, new Date(today))}
+                    isActive       = {isSameDay(day, new Date(activeDate))}
+                    hasTransaction = {
                       dateHasTransactions(state, day.toISOString().slice(0, 10))
                     }
                   />

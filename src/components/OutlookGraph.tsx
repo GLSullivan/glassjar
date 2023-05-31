@@ -4,6 +4,16 @@ import React, {
   useCallback, 
   useRef }                                    from "react";
 
+import {  parseISO, 
+  startOfMonth,
+  addDays,
+  formatISO,
+  format, 
+  endOfMonth, 
+  addMonths, 
+  isBefore, 
+  isSameMonth }                               from 'date-fns';
+
 import {
   LineChart,
   Line,
@@ -19,38 +29,28 @@ import {
 import { useDispatch, useSelector }           from "react-redux";
 
 import { accountBalancesByDateRange }         from "./../redux/slices/projections";
-import { setGraphSpan }                       from "./../redux/slices/activedates";
 import { Account }                            from "./../models/Account";
 import { RootState }                          from "./../redux/store";
 import { colorPalette }                       from "../data/ColorPalette";
-import { setFarDate, setNearDate }            from '../redux/slices/activedates';
 
 import "./../css/OutlookGraph.css";
 
 const OutlookGraph: React.FC = () => {
   const state                             = useSelector((state: RootState) => state);
-  const dispatch                          = useDispatch();
-  const [currentMonth, setCurrentMonth]   = useState(new Date());
-  const farDate                           = useSelector((state: RootState) => state.activeDates.farDate);
+  const accounts                          = state.accounts.accounts;
+  const [graphSpan, setGraphSpan]         = useState(6);
+  const activeDate                        = useSelector((state: RootState) => state.activeDates.activeDate);
+  const today                             = useSelector((state: RootState) => state.activeDates.today);
   const [accountColors, setAccountColors] = useState<Record<string, string>>({});
-
-  const [minY, setMinY] = useState<number>(0);
-  const [maxY, setMaxY] = useState<number>(0);
+  const [combinedData, setCombinedData]   = useState<CombinedData[]>([]);
+  const xTicks                            = useRef<(string | number)[]>([]);
+  const [minY, setMinY]                   = useState<number>(0);
+  const [maxY, setMaxY]                   = useState<number>(0);
 
   type CombinedData = {
     date: string;
     [key: string]: number | string;
   };
-
-  const formatDate = (date: Date): string => {
-    const month = date.toLocaleString("en-us", { month: "numeric" });
-    const day = date.getDate();
-    return ` ${month}/${day} `;
-  };
-
-  const accounts = state.accounts.accounts;
-
-  const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
 
   const currencyFormatter = (item: any) => {
     return Number(item).toLocaleString("en-US", {
@@ -60,8 +60,6 @@ const OutlookGraph: React.FC = () => {
     });
   }
 
-  const xTicks = useRef<(string | number)[]>([]);
-
   const combineAccountBalances = useCallback(
     (
       accounts: Account[],
@@ -70,12 +68,15 @@ const OutlookGraph: React.FC = () => {
       const combinedData: CombinedData[] = [];
       let minY = Infinity;
       let maxY = -Infinity;
-      const today = new Date(Date.parse(state.activeDates.graphNearDate));
+
+      if (accountBalances.length <= 0){
+        return { combinedData, minY, maxY };
+      }
 
       for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
-        const date = new Date(today.getTime() + dayIndex * 24 * 60 * 60 * 1000);
+        const date = addDays(new Date(today), dayIndex);
         const dayData: CombinedData = {
-          date: formatDate(date),
+          date: format(date, 'M/d')
         };
 
         for (
@@ -104,23 +105,37 @@ const OutlookGraph: React.FC = () => {
 
       minY = minY - Math.abs(minY) * 0.1;
       maxY = maxY + Math.abs(maxY) * 0.1;
+      // console.log(combinedData[0].date,
+      //   combinedData[combinedData.length - 1].date)
       xTicks.current = [
         combinedData[0].date,
         combinedData[combinedData.length - 1].date,
       ];
       return { combinedData, minY, maxY };
     },
-    [state.activeDates.graphNearDate]
+    [state.activeDates.activeDate]
   );
 
-  useEffect(() => {
+  useEffect(() => {  
+    const todayDate = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()));
+    const theDate = new Date(activeDate)
+    const parsedActiveDate = new Date(Date.UTC(theDate.getUTCFullYear(), theDate.getUTCMonth(), theDate.getUTCDate()));
+    const activeDateStartOfMonth = formatISO(startOfMonth(parsedActiveDate));
+    const futureOrToday = isBefore(todayDate, parsedActiveDate) || !isSameMonth(todayDate, parsedActiveDate) ? activeDateStartOfMonth : formatISO(todayDate);
+    
+
+
+
+    console.log(">>>",todayDate,">>>",parsedActiveDate,">>>",activeDateStartOfMonth,">>>",futureOrToday)
+    
+
     const accountBalances: number[][] = accounts.map(
       (account) =>
         accountBalancesByDateRange(
           state,
           account.id,
-          state.activeDates.graphNearDate,
-          state.activeDates.graphFarDate
+          futureOrToday,
+          formatISO(endOfMonth(addMonths(parsedActiveDate, graphSpan)))
         ) as number[]
     );
 
@@ -143,41 +158,41 @@ const OutlookGraph: React.FC = () => {
     setMinY(minY);
     setMaxY(maxY);
   }, [
-    state.activeDates.graphNearDate,
-    state.activeDates.graphFarDate,
+    state.activeDates.activeDate,
     accounts,
     combineAccountBalances,
     state,
+    graphSpan
   ]);
 
   // Function to change the month based on the given direction
-  const changeMonth = (direction: 'next' | 'previous') => {
-    let newMonth;
-    setTimeout(() => {
-      if (direction === 'next') {
-        newMonth = new Date(
-          currentMonth.setMonth(currentMonth.getMonth() + 1)
-        );
-        const farDateMinusTwoMonths = new Date(
-          new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
-        );
+  // const changeMonth = (direction: 'next' | 'previous') => {
+  //   let newMonth;
+  //   setTimeout(() => {
+  //     if (direction === 'next') {
+  //       newMonth = new Date(
+  //         currentMonth.setMonth(currentMonth.getMonth() + 1)
+  //       );
+  //       const farDateMinusTwoMonths = new Date(
+  //         new Date(farDate).setMonth(new Date(farDate).getMonth() - 2)
+  //       );
 
-        if (newMonth > farDateMinusTwoMonths) {
-          const futureMonth = new Date(newMonth);
-          futureMonth.setMonth(futureMonth.getMonth() + 2);
-          dispatch(setFarDate(futureMonth.toISOString()));
-        }
-        setCurrentMonth(new Date(newMonth));
-        dispatch(setNearDate(new Date(newMonth).toISOString()));
-      } else {
-        newMonth = new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
-        setCurrentMonth(new Date(newMonth));
-        dispatch(setNearDate(new Date(newMonth).toISOString()));
+  //       if (newMonth > farDateMinusTwoMonths) {
+  //         const futureMonth = new Date(newMonth);
+  //         futureMonth.setMonth(futureMonth.getMonth() + 2);
+  //         dispatch(setFarDate(futureMonth.toISOString()));
+  //       }
+  //       setCurrentMonth(new Date(newMonth));
+  //       dispatch(setNearDate(new Date(newMonth).toISOString()));
+  //     } else {
+  //       newMonth = new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+  //       setCurrentMonth(new Date(newMonth));
+  //       dispatch(setNearDate(new Date(newMonth).toISOString()));
 
-      }
-    }, 0);
-  };
-  
+  //     }
+  //   }, 0);
+  // }; 
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -226,7 +241,7 @@ const OutlookGraph: React.FC = () => {
 
     return (
       <div className="glassjar__graph-holder">
-        <div className='glassjar__calendar__navigation'>
+        {/* <div className='glassjar__calendar__navigation'>
           <button onClick={() => changeMonth('previous')}>
             <i className='fa-regular fa-chevron-left' />
           </button>
@@ -240,7 +255,7 @@ const OutlookGraph: React.FC = () => {
           <button onClick={() => changeMonth('next')}>
             <i className='fa-regular fa-chevron-right' />
           </button>
-        </div>
+        </div> */}
         <div className="glassjar__graph-holder__sub">
           <div className="glassjar__graph-holder__sub-sub">
             <ResponsiveContainer width="100%" height="100%">
@@ -257,11 +272,12 @@ const OutlookGraph: React.FC = () => {
                 <Tooltip content={<CustomTooltip />} />
                 <ReferenceLine
                   position="start"
-                  x={formatDate(new Date(state.activeDates.activeDate))}
+                  x={format(new Date(state.activeDates.activeDate), 'M/d')}
                   stroke="#54816F"
                 >
+
                   <Label position={"right"}>
-                    {formatDate(new Date(state.activeDates.activeDate))}
+                    {format(new Date(state.activeDates.activeDate), 'M/d')}
                   </Label>
                 </ReferenceLine>
                 {dataKeys.map((key, index) => (
@@ -273,6 +289,7 @@ const OutlookGraph: React.FC = () => {
                     strokeWidth={2}
                     activeDot={{ r: 8 }}
                     dot={false}
+                    isAnimationActive={false}
                   />
                 ))}
               </LineChart>
@@ -280,9 +297,9 @@ const OutlookGraph: React.FC = () => {
           </div>
         </div>
         <div className="glassjar__flex glassjar__flex--justify-between">
-          <button onClick={() => dispatch(setGraphSpan(3))}>3</button>
-          <button onClick={() => dispatch(setGraphSpan(6))}>6</button>
-          <button onClick={() => dispatch(setGraphSpan(12))}>12</button>
+          <button onClick={() => setGraphSpan(3)}>3</button>
+          <button onClick={() => setGraphSpan(6)}>6</button>
+          <button onClick={() => setGraphSpan(12)}>12</button>
         </div>
       </div>
     );

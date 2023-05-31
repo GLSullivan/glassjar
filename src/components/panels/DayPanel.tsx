@@ -53,9 +53,7 @@ export const DayPanel: React.FC = () => {
       </div>
       <div className="account-balances">
         {accounts.map((account) => (
-          <AccountListItem key={account.id} account={account} balance={accountBalanceOnDate(state,
-            account.id,
-            activeDate)}/>
+          <AccountListItem key={account.id} account={account} balance={accountBalanceOnDate(state, account.id, activeDate)}/>
         ))}
       </div>
       
