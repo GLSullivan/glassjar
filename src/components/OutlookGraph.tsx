@@ -2,7 +2,8 @@ import React, {
   useState, 
   useEffect }                                 from "react";
 
-import { startOfMonth,
+import { 
+  startOfMonth,
   addDays,
   formatISO,
   format, 
@@ -11,11 +12,11 @@ import { startOfMonth,
   isAfter,
   isToday}                                    from 'date-fns';
 
-import { LineChart,
+import { 
+  LineChart,
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Label,
   ResponsiveContainer,

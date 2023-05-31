@@ -1,240 +1,167 @@
 import React, { useCallback, useEffect, useState, useRef }  from 'react';
 import { useDispatch, useSelector }                         from 'react-redux';
 
-import { RootState }                                        from '../redux/store';
-import { getTransactionsByRange }                           from '../redux/slices/projections';
-import TransactionListItem                                  from './TransactionListItem';
-import { Transaction }                                      from '../models/Transaction';
+import { getTransactionsByDateRange }                       from '../redux/slices/projections';
 import { setActiveTransaction }                             from "../redux/slices/transactions";
-import { openTransactionModal }                             from "../redux/slices/modals";
 import { setActiveDate }                                    from '../redux/slices/activedates';
+import { openTransactionModal }                             from "../redux/slices/modals";
+import { RootState }                                        from '../redux/store';
+
+import { Transaction }                                      from '../models/Transaction';
+import TransactionListItem                                  from './TransactionListItem';
 
 import './../css/TransactionList.css';
-
-function groupTransactionsByDate(
-  transactions: { transaction: Transaction; date: string }[]
-) {
-
-  const groupedTransactions: {
-    date: string;
-    transactions: { transaction: Transaction; date: string }[];
-  }[] = [];
-
-  transactions.forEach((transactionItem) => {
-    // Create the date object and adjust for the timezone offset
-    const transactionDate = new Date(transactionItem.date);
-
-    // Store the date string in a variable
-    const dateString = transactionDate.toISOString().split("T")[0];
-
-    const existingGroup = groupedTransactions.find(
-      (group) => group.date === dateString
-    );
-
-    if (existingGroup) {
-      existingGroup.transactions.push(transactionItem);
-    } else {
-      groupedTransactions.push({
-        date: dateString,
-        transactions: [transactionItem],
-      });
-    }
-  });
-  return groupedTransactions;
-}
+import { addMonths, endOfMonth, format, parseISO } from 'date-fns';
 
 const CalendarSchedule: React.FC = () => {
-  const [transactionCount, setTransactionCount]       = useState(10);
-  const [loading, setLoading]                         = useState(false);
-  const [hasMoreTransactions, setHasMoreTransactions] = useState(true);
-  const loader                                        = useRef<HTMLDivElement | null>(null);
-  const headerRefs                                    = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
-  const dispatch                                      = useDispatch();
+  const dispatch                              = useDispatch();
+  const [loading, setLoading]                 = useState(false);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
+  const state                                 = useSelector((state: RootState) => state);
+  const loader                                = useRef<HTMLDivElement | null>(null);
+  const headerRefs                            = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
+  const activeDate                            = useSelector((state: RootState) => state.activeDates.activeDate);
+  const today                                 = useSelector((state: RootState) => state.activeDates.today);
+  const containerRef                          = useRef<HTMLDivElement | null>(null);
 
-  const transactions = useSelector((state: RootState) =>
-    getTransactionsByRange(state, 0, transactionCount)
-  );
+  const [groupedTransactions, setGroupedTransactions] = useState<
+    {
+      date        : string;
+      transactions: { transaction: Transaction; date: string }[];
+    }[]
+  >([]);
 
-  const groupedTransactions = groupTransactionsByDate(transactions);
-
-  const fetchTransactions = useCallback(async () => {
-    setLoading(true);
-    let newTransactionCount = transactionCount + 10;
-
-    if (newTransactionCount >= 1000) {
-      console.log("HALT for some reason.");
-      setLoading(false);
-      setHasMoreTransactions(false);
-      return;
-    }
-
-    setTransactionCount(newTransactionCount);
-  }, [transactionCount]);
-
-  const observerCallback = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const firstEntry = entries[0];
-      if (firstEntry.isIntersecting) {
-        fetchTransactions();
-      }
-    },
-    [fetchTransactions]
-  );
-  
+  // Fetch transactions on mount and when activeDate changes.
   useEffect(() => {
-    if (loader.current && hasMoreTransactions) {
-      const observerOptions: IntersectionObserverInit = {
-        root: null,
-        rootMargin: "0px",
-        threshold: .10,
-      };
+    setLoading(true);
 
-      const observer = new IntersectionObserver(
-        observerCallback,
-        observerOptions
-      );
+    let   theDate        = format(new Date(today), "yyyy-MM-dd");
+    const endOfMonthNext = format(endOfMonth(addMonths(parseISO(activeDate), 1)), "yyyy-MM-dd");
+    const transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
 
-      // Store the current loader reference in a variable
-      const loaderCurrent = loader.current;
-      observer.observe(loaderCurrent);
+    setGroupedTransactions(transactions);
+    setLoading(false);
 
-      return () => {
-        // Use the copied reference in the cleanup function
-        if (loaderCurrent) {
-          observer.unobserve(loaderCurrent);
+  }, [activeDate, today, state]);
+
+  // Detect user scrolling
+  useEffect(() => {
+    const handleUserScroll = () => {
+      setIsUserScrolling(true);
+  
+      if (scrollTimeout !== null) {
+        clearTimeout(scrollTimeout);
+      }
+  
+      setScrollTimeout(setTimeout(() => {
+        setIsUserScrolling(false);
+      }, 150) as unknown as number); // Adjust this delay to fit your needs
+    };
+  
+    window.addEventListener('scroll', handleUserScroll);
+    window.addEventListener('touchmove', handleUserScroll);
+    window.addEventListener('wheel', handleUserScroll);
+  
+    return () => {
+      window.removeEventListener('scroll', handleUserScroll);
+      window.removeEventListener('touchmove', handleUserScroll);
+      window.removeEventListener('wheel', handleUserScroll);
+    };
+  }, [scrollTimeout]);
+  
+  // Scroll to activeDate
+  useEffect(() => {
+    if (activeDate) {
+      const dateId  = new Date(activeDate).toISOString().split("T")[0];
+      const element = document.getElementById(dateId);
+      
+      if (element) {
+        const parent = element.parentElement;
+        if (parent) { // Check if parent is not null
+          element.scrollIntoView({
+            behavior: "smooth",
+            block   : "start",
+            inline  : "nearest",
+          });
         }
-      };
+      }
     }
-  }, [loader, observerCallback, hasMoreTransactions]);
-
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
+  }, [activeDate]);
   
-  // New observer to check when a new header is visible
+  // Set activeDate when user scrolls
   const observeHeaders = useCallback(() => {
-    const scrollContainer = document.querySelector('.glassjar__schedule');
-  
+    const scrollContainer = document.querySelector(".glassjar__schedule");
     if (!scrollContainer) return;
-  
-    let lastSetDate = '';
-  
+
+    let lastSetDate = "";
+
     const handleScroll = () => {
       const containerRect = containerRef.current?.getBoundingClientRect();
-      if (!containerRect) return;
-    
+
+      if (!containerRect || !isUserScrolling) return;
+
       headerRefs.current.forEach((ref, date) => {
         const current = ref.current;
         if (!current) return;
-    
-        const rect = current.getBoundingClientRect();
+
+        const rect        = current.getBoundingClientRect();
         const relativeTop = rect.top - containerRect.top;
         if (relativeTop <= 20 && relativeTop >= 0 && date !== lastSetDate) {
           lastSetDate = date;
-          console.log(date)
-          dispatch(setActiveDate(new Date(date).toISOString()));
+          console.log(new Date(parseISO(date)).toISOString());
+          dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
         }
       });
     };
-  
-    scrollContainer.addEventListener('scroll', handleScroll);
-  
+
+    scrollContainer.addEventListener("scroll", handleScroll);
+
     return () => {
-      scrollContainer.removeEventListener('scroll', handleScroll);
+      scrollContainer.removeEventListener("scroll", handleScroll);
     };
-  }, [dispatch]);
-    
+  }, [dispatch, isUserScrolling]);
+
   useEffect(() => {
     return observeHeaders();
   }, [observeHeaders]);
-  
-  useEffect(() => {
-    if (loader.current && hasMoreTransactions) {
-      const observerOptions: IntersectionObserverInit = {
-        root: null,
-        rootMargin: "0px",
-        threshold: .10,
-      };
-
-      const observer = new IntersectionObserver(
-        observerCallback,
-        observerOptions
-      );
-      const loaderCurrent = loader.current; 
-      observer.observe(loaderCurrent);
-
-      return () => {
-        if (loaderCurrent) {
-          observer.unobserve(loaderCurrent);
-        }
-      };
-    }
-  }, [loader, observerCallback, hasMoreTransactions]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [transactionCount]);
-
-  function formatDate(dateString: string) {
-    const date = new Date(dateString);
-    // eslint-disable-next-line
-    const [year, month, day] = date.toISOString().split('T')[0].split('-');
-  
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June', 'July',
-      'August', 'September', 'October', 'November', 'December',
-    ];
-  
-    const getOrdinalSuffix = (n: number): string => {
-      const mod10 = n % 10;
-      const mod100 = n % 100;
-      if (mod10 === 1 && mod100 !== 11) return 'st';
-      if (mod10 === 2 && mod100 !== 12) return 'nd';
-      if (mod10 === 3 && mod100 !== 13) return 'rd';
-      return 'th';
-    };
-  
-    const monthName = monthNames[parseInt(month, 10) - 1];
-    const dayWithSuffix = parseInt(day, 10) + getOrdinalSuffix(parseInt(day, 10));
-  
-    return `${monthName} ${dayWithSuffix}`;
-  }
 
   return (
-    <div ref={containerRef} className='glassjar__schedule'>
-      {/* <h1>Transactions By Date</h1> */}
+    <div ref = {containerRef} className = "glassjar__schedule">
       {groupedTransactions.map((group, groupIndex) => {
-        if(!headerRefs.current.has(group.date)) {
+        if (!headerRefs.current.has(group.date)) {
           headerRefs.current.set(group.date, React.createRef());
         }
         return (
-          <div key={groupIndex} className="glassjar__lazy-list-group">
-            <div 
-              id={group.date}
-              ref={headerRefs.current.get(group.date)} 
-              className="glassjar__lazy-list__header glassjar__flex"
+          <div id = {group.date} key = {groupIndex} className = "glassjar__lazy-list-group" ref = {headerRefs.current.get(group.date)}>
+            <div
+              className = "glassjar__lazy-list__headerX glassjar__flex"
             >
-            <h2 className="glassjar__calendar__month">{formatDate(group.date)}</h2>
-            <button
-              onClick={() => {
-                dispatch(setActiveTransaction(null));
-                dispatch(openTransactionModal());
-              }}
-              className="button__new-transaction"
-            >
-              <i className="fa-solid fa-plus-minus" />
-            </button>
+              <h2 className = "glassjar__calendar__month">
+                {format(parseISO(group.date), "MMMM do")}
+              </h2>
+              <button
+                onClick={() => {
+                  dispatch(setActiveTransaction(null));
+                  dispatch(openTransactionModal());
+                }}
+                className = "button__new-transaction"
+              >
+                <i className = "fa-solid fa-plus-minus" />
+              </button>
             </div>
-            {group.transactions.map(({ transaction }, transactionIndex) => (
-              <TransactionListItem
-                key={`${groupIndex}-${transactionIndex}`}
-                transaction={transaction}
-              />
-            ))}
+            <div>
+              {group.transactions.map(({ transaction }, transactionIndex) => (
+                <TransactionListItem
+                  key         = {`${groupIndex}-${transactionIndex}`}
+                  transaction = {transaction}
+                />
+              ))}
+            </div>
           </div>
-        )
+        );
       })}
-      <div ref={loader} style={{ minHeight: "1px" }} />
+      <div ref = {loader} style = {{ minHeight: "1px" }} />
       {loading && <p>Loading...</p>}
     </div>
   );

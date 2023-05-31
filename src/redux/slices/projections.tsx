@@ -540,6 +540,37 @@ export const getTransactionsByRange = (
   return allTransactions.slice(startIndex, endIndex);
 };
 
+// Get transactions in date range.
+export const getTransactionsByDateRange = (
+  state: RootState,
+  startDate: string,
+  endDate: string
+) => {
+  const groupedTransactions: {
+    date: string;
+    transactions: { transaction: Transaction; date: string }[];
+  }[] = [];
+
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= new Date(endDate)) {
+    const dateString = currentDate.toISOString().split('T')[0]; // Extract the date part of the ISO string
+    const transactionsOnDate = state.projections.transactionsOnDate[dateString];
+
+    if (transactionsOnDate) {
+      const transactions: { transaction: Transaction; date: string }[] = [];
+      transactionsOnDate.forEach((transaction) => {
+        transactions.push({ transaction, date: dateString });
+      });
+      groupedTransactions.push({ date: dateString, transactions });
+    }
+
+    currentDate.setDate(currentDate.getDate() + 1); // Move to the next date
+  }
+
+  return groupedTransactions;
+};
+
 // Get account balances for a date range
 export const accountBalancesByDateRange = (
   state    : RootState,
