@@ -135,12 +135,9 @@ const CalendarSchedule: React.FC = () => {
     };
   }, [dispatch]);
   
-  
-  
   useEffect(() => {
     return observeHeaders();
   }, [observeHeaders]);
-  
   
   useEffect(() => {
     if (loader.current && hasMoreTransactions) {
