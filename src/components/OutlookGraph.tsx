@@ -1,8 +1,6 @@
 import React, { 
   useState, 
-  useEffect, 
-  useCallback, 
-  useRef }                                    from "react";
+  useEffect }                                 from "react";
 
 import { startOfMonth,
   addDays,
@@ -10,10 +8,8 @@ import { startOfMonth,
   format, 
   endOfMonth, 
   addMonths, 
-  isBefore, 
-  isSameMonth,
   isAfter,
-  isToday}                               from 'date-fns';
+  isToday}                                    from 'date-fns';
 
 import { LineChart,
   Line,
@@ -62,27 +58,28 @@ const OutlookGraph: React.FC = () => {
     });
   }
 
-  function firstOrToday(inputDate: string) {
-    const today = new Date(); // gets today's date
-    const firstDayOfMonth = startOfMonth(new Date(inputDate)); // gets the first day of the month of inputDate
-
-    if (isAfter(firstDayOfMonth, today) || isToday(firstDayOfMonth)) {
-      // If the first day of the inputDate month is later than today, or it is today
-      return formatISO(firstDayOfMonth);
-    } else {
-      // If today's date is later
-      return formatISO(today);
-    }
-  }
-
   useEffect(() => {
+    function firstOrToday(inputDate: string) {
+      const todayDate = new Date(today); // gets today's date
+      const firstDayOfMonth = startOfMonth(new Date(inputDate)); // gets the first day of the month of inputDate
+  
+      if (isAfter(firstDayOfMonth, todayDate) || isToday(firstDayOfMonth)) {
+        // If the first day of the inputDate month is later than today, or it is today
+        return formatISO(firstDayOfMonth);
+      } else {
+        // If today's date is later
+        return formatISO(todayDate);
+      }
+    }
 
     const graphStart = firstOrToday(activeDate);
-    const graphEnd = formatISO(endOfMonth(addMonths(new Date(graphStart), graphSpan)));
+    const graphEnd   = formatISO(endOfMonth(addMonths(new Date(graphStart), graphSpan)));
+
     const colors: Record<string, string> = {};
 
     const accountBalances: number[][] = [];
     const graphingAccounts: Account[] = [];
+
     for (const account of accounts) {
       if (account.showInGraph) {
         const balances = accountBalancesByDateRange(
@@ -99,15 +96,15 @@ const OutlookGraph: React.FC = () => {
 
     setAccountColors(colors);
 
-    const combinedData: CombinedData[] = [];
+    const tempCombinedData: CombinedData[] = [];
     let minY = Infinity;
     let maxY = -Infinity;
 
     if (accountBalances[0] && Array.isArray(accountBalances[0])) {
       for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
-        const date = addDays(new Date(activeDate), dayIndex);
+        const date = addDays(new Date(graphStart), dayIndex);
         const dayData: CombinedData = {
-          date: format(date, 'M/d')
+          date: format(date, 'M/d/yy')
         };
 
         for (
@@ -123,51 +120,46 @@ const OutlookGraph: React.FC = () => {
             (accountBalances[accountIndex][dayIndex] * multiplier) /
             100
           ).toFixed(2);
-          dayData[accounts[accountIndex].name] = balance;
+          dayData[graphingAccounts[accountIndex].name] = balance;
 
           minY = Math.min(minY, Number(balance));
           maxY = Math.max(maxY, Number(balance));
-
         }
-
-        setMinY(minY);
-        setMaxY(maxY);
-
-        let new_yTicks = [minY];
-        if (minY < 0 && maxY > 0) {
-          new_yTicks.push(0);
-        }
-        new_yTicks.push(maxY);
-
-        setYTicks(new_yTicks);
-
-        combinedData.push(dayData);
+        tempCombinedData.push(dayData);
       }
-      setXTicks([
-        combinedData[0].date,
-        combinedData[combinedData.length - 1].date,
-      ]);
-      console.log(xTicks, yTicks)
-      
-      if (combinedData.length > 0) {
-        console.log("!?!")
-        const keys = Object.keys(combinedData[0]).filter(key => key !== 'date');
-        setDataKeys(keys);
-        console.log("Keys",keys)
 
+      setMinY(minY);
+      setMaxY(maxY);
+
+      let new_yTicks = [minY];
+      if (minY < 0 && maxY > 0) {
+        new_yTicks.push(0);
+      }
+      new_yTicks.push(maxY);
+
+      setYTicks(new_yTicks);
+
+      setXTicks([
+        format(new Date(tempCombinedData[0].date), 'M/d/yy'),
+        format(new Date(tempCombinedData[tempCombinedData.length - 1].date), 'M/d/yy')
+      ]);
+
+      if (tempCombinedData.length > 0) {
+        const keys = Object.keys(tempCombinedData[0]).filter(key => key !== 'date');
+        setDataKeys(keys);
       } else {
-        console.log("WHOOPS")
         setDataKeys([]);
       }
-    }
 
-    console.log(accountColors, dataKeys, combinedData)
+      setCombinedData(tempCombinedData)
+    }
 
   }, [
     activeDate,
     accounts,
     state,
-    graphSpan
+    graphSpan,
+    today
   ])
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -179,7 +171,7 @@ const OutlookGraph: React.FC = () => {
             <tbody>
               {payload.map(
                 (entry: { color: any; name: any; value: any }, index: any) => (
-                  <tr>
+                  <tr key={index}>
                     <td key={`item-${index}`} style={{ color: entry.color }}>
                       {`${entry.name}:`}
                     </td>
@@ -202,16 +194,13 @@ const OutlookGraph: React.FC = () => {
     );
   }
 
-
-
-
   return (
     <div className="glassjar__graph-holder">
       <div className="glassjar__graph-holder__sub">
         <div className="glassjar__graph-holder__sub-sub">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={combinedData}>
-              <CartesianGrid strokeDasharray="3 3" />
+              {/* <CartesianGrid strokeDasharray="3 3" /> */}
               <XAxis dataKey="date" ticks={xTicks} />
               <YAxis
                 ticks={yTicks}
@@ -223,7 +212,7 @@ const OutlookGraph: React.FC = () => {
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine
                 position="start"
-                x={format(new Date(state.activeDates.activeDate), 'M/d')}
+                x={format(new Date(state.activeDates.activeDate), 'M/d/yy')}
                 stroke="#54816F"
               >
                 <Label position={"right"}>
@@ -239,6 +228,7 @@ const OutlookGraph: React.FC = () => {
                   strokeWidth={2}
                   activeDot={{ r: 8 }}
                   dot={false}
+                  isAnimationActive={false} 
                 />
               ))}
             </LineChart>
