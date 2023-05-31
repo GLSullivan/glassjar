@@ -61,74 +61,6 @@ const OutlookGraph: React.FC = () => {
     });
   }
 
-//   const combineAccountBalances = useCallback (
-//     (
-//       accounts: Account[],
-//       accountBalances: number[][]
-//     ): { combinedData: CombinedData[]; minY: number; maxY: number } => {
-
-//     console.log("combineAccountBalances") 
-
-//       const combinedData: CombinedData[] = [];
-//       let minY = Infinity;
-//       let maxY = -Infinity;
-
-//       if (accountBalances.length <= 0){
-//         return { combinedData, minY, maxY };
-//       }
-
-//       for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
-//         const date = addDays(new Date(activeDate), dayIndex);
-//         console.log(date)
-//         const dayData: CombinedData = {
-//           date: format(date, 'M/d')
-//         };
-
-//         for (
-//           let accountIndex = 0;
-//           accountIndex < accounts.length;
-//           accountIndex++
-//         ) {
-//           if (accounts[accountIndex].showInGraph) {
-//             let multiplier = 1;
-//             if (accounts[accountIndex].isLiability) {
-//               multiplier = -1;
-//             }
-//             const balance = (
-//               (accountBalances[accountIndex][dayIndex] * multiplier) /
-//               100
-//             ).toFixed(2);
-//             dayData[accounts[accountIndex].name] = balance;
-
-//             minY = Math.min(minY, Number(balance));
-//             maxY = Math.max(maxY, Number(balance));
-//           }
-//         }
-
-//         combinedData.push(dayData);
-//       }
-
-//       minY = minY - Math.abs(minY) * 0.1;
-//       maxY = maxY + Math.abs(maxY) * 0.1;
-      
-//       xTicks.current = [
-//         combinedData[0].date,
-//         combinedData[combinedData.length - 1].date,
-//       ];
-// // console.log(combinedData,xTicks)
-//       let new_yTicks = [minY];
-//       if (minY < 0 && maxY > 0) {
-//         new_yTicks.push(0);
-//       }
-//       new_yTicks.push(maxY);
-    
-//       setYTicks(new_yTicks);
-
-//       return { combinedData, minY, maxY };
-//     },
-//     [today]
-//   );
-
   function firstOrToday(inputDate: string) {
     const today = new Date(); // gets today's date
     const firstDayOfMonth = startOfMonth(new Date(inputDate)); // gets the first day of the month of inputDate
@@ -208,9 +140,6 @@ if (accountBalances.length != undefined) {
                   
                     setYTicks(new_yTicks);
 
-             
-
-
               combinedData.push(dayData);
             }
           }
@@ -227,44 +156,6 @@ console.log(xTicks,yTicks)
         graphSpan
       ])
   
-//   useEffect(() => { 
-//     // console.log("useEffect") 
-//         // console.log(activeDate)
-//     const accountBalances: number[][] = accounts.map(
-//       (account) =>
-//         accountBalancesByDateRange(
-//           state,
-//           account.id,
-//           firstOrToday(activeDate),
-//           formatISO(endOfMonth(addMonths(new Date(activeDate), graphSpan)))
-//         ) as number[]
-//     );
-// // console.log(accountBalances)
-//     const {
-//       combinedData: newCombinedData,
-//       minY,
-//       maxY,
-//     } = combineAccountBalances(accounts, accountBalances);
-
-//     const colors: Record<string, string> = {};
-//     for (let account of accounts) {
-//       if (account.showInGraph) {
-//         colors[account.name] = colorPalette[account.color];
-//       }
-//     }
-// // console.log(newCombinedData)
-//     setAccountColors(colors);
-//     setCombinedData(newCombinedData);
-//     setMinY(minY);
-//     setMaxY(maxY);
-//   }, [
-//     activeDate,
-//     accounts,
-//     combineAccountBalances,
-//     state,
-//     graphSpan
-//   ]);
-
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -297,10 +188,6 @@ console.log(xTicks,yTicks)
     );
   }
 
-  const dataKeys = Object.keys(combinedData[0] || {}).filter(
-    (key) => key !== "date"
-  );
-console.log(dataKeys)
   return (
     <div className="glassjar__graph-holder">
       <div className="glassjar__graph-holder__sub">
@@ -326,7 +213,7 @@ console.log(dataKeys)
                   {format(new Date(state.activeDates.activeDate), 'M/d')}
                 </Label>
               </ReferenceLine>
-              {dataKeys.map((key, index) => (
+              {combinedData.map((key, index) => (
                 <Line
                   key={key}
                   type="monotone"
