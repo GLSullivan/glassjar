@@ -47,6 +47,7 @@ const OutlookGraph: React.FC = () => {
   const [yTicks, setYTicks]               = useState<number[]>([]);
   const [minY, setMinY]                   = useState<number>(0);
   const [maxY, setMaxY]                   = useState<number>(0);
+  const [dataKeys, setDataKeys]           = useState<string[]>([]);
 
   type CombinedData = {
     date: string;
@@ -149,6 +150,19 @@ if (accountBalances.length != undefined) {
           ]);
 console.log(xTicks,yTicks)
 
+  if (combinedData.length > 0) {
+    const keys = Object.keys(combinedData[0]).filter(key => key !== 'date');
+    setDataKeys(keys);
+  } else {
+    console.log("WHOOPS")
+    setDataKeys([]);
+  }
+
+
+
+console.log(dataKeys,combinedData)
+
+
   }, [
         activeDate,
         accounts,
@@ -188,6 +202,9 @@ console.log(xTicks,yTicks)
     );
   }
 
+  
+
+
   return (
     <div className="glassjar__graph-holder">
       <div className="glassjar__graph-holder__sub">
@@ -213,7 +230,7 @@ console.log(xTicks,yTicks)
                   {format(new Date(state.activeDates.activeDate), 'M/d')}
                 </Label>
               </ReferenceLine>
-              {combinedData.map((key, index) => (
+              {dataKeys.map((key, index) => (
                 <Line
                   key={key}
                   type="monotone"
