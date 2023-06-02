@@ -17,6 +17,11 @@
   position      : relative;
 }
 
+.glassjar__calendar__day-panel--graph {
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
 .glassjar__graph-holder__sub {
   box-sizing: border-box;
   flex      : 2 1;
