@@ -43,7 +43,7 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
     let dayHealth: number = calculateRelativeBalance(state.userPrefs.healthRangeBottom, state.userPrefs.healthRangeTop,todaysBalance); 
     
     // TODO: Put this in the right place. Either color pallette data or user prefs. 
-    let colors = ['#e53935', '#ffffff00', '#ffffff00', '#ffffff00', '#ffffff00'];
+    let colors = ['#e53935', '#d1d1d1', '#43a047'];
     
     // TODO: Make this a utility. 
     function hexToRGB(hex: string): RGBColor {
@@ -79,12 +79,12 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
       .replace(/\s{2,}/g, " ");
 
     return (
-      <div className={className} style={{ backgroundColor: getColorFromGradient(colors, dayHealth) }}>
+      <div className={className} >
         <h1 key={day.toISOString()}
           onClick={() => dispatch(setActiveDate(day.toISOString()))} >
           {day.getDate()}
         </h1>
-        {hasTransaction && <div className="glassjar__calendar__day-marker"></div>}
+        {hasTransaction && <div className="glassjar__calendar__day-marker" style={{ backgroundColor: getColorFromGradient(colors, dayHealth) }}></div>}
       </div>
     );
   }
