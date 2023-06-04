@@ -9,7 +9,10 @@ import { stripTime, addZoneOffset }                               from './../../
 import { Account }                                                from './../../models/Account';
 import { RecurringExpenses }                                      from './../../data/RecurringExpenses';
 
+import * as Switch from '@radix-ui/react-switch';
+
 import './../../css/Forms.css';
+import './../../css/Components.css';
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -238,6 +241,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               }
             >
               <option value={category}>{category}</option>
+              <option value="None">None</option>
 
               {RecurringExpenses.map((category, index) => (
                 <option key={index} value={RecurringExpenses[index].category}>{RecurringExpenses[index].category}</option>
@@ -255,16 +259,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-        </div>
 
+    </div>
         <div className="glassjar__form__input-group glassjar__form__input-group--check">
           <label htmlFor="isRecurring">Transaction Repeats:</label>
-          <input
-            type="checkbox"
-            id="isRecurring"
-            checked={isRecurring}
-            onChange={(e) => setIsRecurring(e.target.checked)}
-          />
+          <Switch.Root className="SwitchRoot" id="isRecurring"
+            checked={isRecurring} onCheckedChange={(e) => setIsRecurring(!isRecurring)}>
+        <Switch.Thumb className="SwitchThumb" />
+      </Switch.Root>
         </div>
 
         {isRecurring && (
