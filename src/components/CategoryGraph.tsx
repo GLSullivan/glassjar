@@ -30,10 +30,21 @@ const CategorySpendPieChart = () => {
     return null;
   };
   
-  const formattedData = Object.entries(categorySpendData).map(([category, spend]) => ({
-    name: category + ": " +  ((spend / Object.values(categorySpendData).reduce((acc, curr) => acc + curr, 0)) * 100).toFixed(2) + "%",
-    value: Number(((spend / Object.values(categorySpendData).reduce((acc, curr) => acc + curr, 0)) * 100).toFixed(2)),
-  }));
+  const formattedData = Object.entries(categorySpendData)
+  .filter(([category]) => category !== "None")
+  .map(([category, spend]) => {
+    const total = Object.values(categorySpendData)
+      .reduce((acc, curr) => acc + curr, 0);
+    
+    const percentage = ((spend / total) * 100).toFixed(2);
+    
+    return {
+      name: `${category}: ${percentage}%`,
+      value: Number(percentage),
+    };
+});
+
+
   
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {

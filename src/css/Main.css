@@ -15,9 +15,10 @@
   --color-inverse  : #f0f5f3;
   --color-secondary: #8f8f8f;
   --color-brand    : #202230;
-  --color-tertiary : #e9e9e9;
+  --color-tertiary : #b5b5b5;
   --color-primary  : #202230;
   --color-accent   : #414450;
+  --color-form     : #8d8d8d;
   --gradient-brand    : linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
   --gradient-secondary: linear-gradient(
     160deg,

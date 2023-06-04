@@ -1,4 +1,4 @@
-    /* 
+      /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -35,34 +35,48 @@ label {
 }
 
 input {
-  background   : var(--color-inverse);
-  border       : none;
-  border-radius: 0.5rem;
-  box-sizing   : border-box;
-  font-weight  : 500;
-  outline      : none;
-  padding      : 1rem;
-  width        : 100%;
+background             : var(--color-inverse);
+border                 : none;
+border-radius          : 0.5rem;
+box-sizing             : border-box;
+color                  : var(--color-form);
+font-weight            : 500;
+height                 : 3.2rem;
+opacity                : 1; /* required on iOS */
+outline                : none;
+padding                : 1rem;
+-webkit-text-fill-color: var(--color-form);
+width                  : 100%;
 }
 
 input::-webkit-input-placeholder {
-  color: #cdcdcd;
+  color                  : var(--color-form);
+  opacity                : .5;
+  -webkit-text-fill-color: var(--color-form);
 }
 
 input::-moz-placeholder {
-  color: #cdcdcd;
+  color                  : var(--color-form);
+  opacity                : .5;
+  -webkit-text-fill-color: var(--color-form);
 }
 
 input:-ms-input-placeholder {
-  color: #cdcdcd;
+  color                  : var(--color-form);
+  opacity                : .5;
+  -webkit-text-fill-color: var(--color-form);
 }
 
 input::-ms-input-placeholder {
-  color: #cdcdcd;
+  color                  : var(--color-form);
+  opacity                : .5;
+  -webkit-text-fill-color: var(--color-form);
 }
 
 input::placeholder {
-  color: #cdcdcd;
+  color                  : var(--color-form);
+  opacity                : .5;
+  -webkit-text-fill-color: var(--color-form);
 }
 
 select {
@@ -118,7 +132,7 @@ select option {
   white-space: normal;
 }
 
-      /* Override form defaults */
+        /* Override form defaults */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -144,4 +158,17 @@ input:-webkit-autofill:active {
 .glassjar__day-buttons button.selected {
   background: var(--color-secondary);
   color     : var(--color-inverse);
+}
+
+input::-webkit-date-and-time-value{ 
+  text-align:left; 
+}
+
+input[type="date"]
+{
+  -webkit-appearance: none;
+  -moz-appearance   : none;
+  text-align        : left;
+  text-align        : -webkit-left;
+  vertical-align    : center;
 }

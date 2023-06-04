@@ -127,39 +127,63 @@ const CalendarSchedule: React.FC = () => {
 
   return (
     <div ref = {containerRef} className = "glassjar__schedule">
-      {groupedTransactions.map((group, groupIndex) => {
-        if (!headerRefs.current.has(group.date)) {
-          headerRefs.current.set(group.date, React.createRef());
-        }
-        return (
-          <div id = {group.date} key = {groupIndex} className = "glassjar__lazy-list-group" ref = {headerRefs.current.get(group.date)}>
-            <div
-              className = "glassjar__lazy-list__headerX glassjar__flex"
+
+      {groupedTransactions.length > 0 ?
+        <>
+          {groupedTransactions.map((group, groupIndex) => {
+            if (!headerRefs.current.has(group.date)) {
+              headerRefs.current.set(group.date, React.createRef());
+            }
+            return (
+              <div id={group.date} key={groupIndex} className="glassjar__lazy-list-group" ref={headerRefs.current.get(group.date)}>
+                <div
+                  className="glassjar__lazy-list__headerX glassjar__flex"
+                >
+                  <h2 className="glassjar__calendar__month">
+                    {format(parseISO(group.date), "MMMM do")}
+                  </h2>
+                  <button
+                    onClick={() => {
+                      dispatch(setActiveTransaction(null));
+                      dispatch(openTransactionModal());
+                    }}
+                    className="button__new-transaction"
+                  >
+                    <i className="fa-solid fa-plus-minus" />
+                  </button>
+                </div>
+                <div>
+                  {group.transactions.map(({ transaction }, transactionIndex) => (
+                    <TransactionListItem
+                      key={`${groupIndex}-${transactionIndex}`}
+                      transaction={transaction}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </>
+        :
+        <>
+          <div
+            className="glassjar__lazy-list__headerX glassjar__flex"
+          >
+            <h2 className="glassjar__calendar__month">
+              Create your first transaction!
+            </h2>
+            <button
+              onClick={() => {
+                dispatch(setActiveTransaction(null));
+                dispatch(openTransactionModal());
+              }}
+              className="button__new-transaction"
             >
-              <h2 className = "glassjar__calendar__month">
-                {format(parseISO(group.date), "MMMM do")}
-              </h2>
-              <button
-                onClick={() => {
-                  dispatch(setActiveTransaction(null));
-                  dispatch(openTransactionModal());
-                }}
-                className = "button__new-transaction"
-              >
-                <i className = "fa-solid fa-plus-minus" />
-              </button>
-            </div>
-            <div>
-              {group.transactions.map(({ transaction }, transactionIndex) => (
-                <TransactionListItem
-                  key         = {`${groupIndex}-${transactionIndex}`}
-                  transaction = {transaction}
-                />
-              ))}
-            </div>
+              <i className="fa-solid fa-plus-minus" />
+            </button>
           </div>
-        );
-      })}
+        </>}
+    
       <div ref = {loader} style = {{ minHeight: "1px" }} />
       {loading && <p>Loading...</p>}
     </div>

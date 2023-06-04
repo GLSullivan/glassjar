@@ -9,6 +9,9 @@ import { stripTime, addZoneOffset }                               from './../../
 import { Account }                                                from './../../models/Account';
 import { RecurringExpenses }                                      from './../../data/RecurringExpenses';
 
+import { isPast, add, parseISO }                                  from 'date-fns';
+import { format }                                                 from 'date-fns-tz';
+
 import * as Switch from '@radix-ui/react-switch';
 
 import './../../css/Forms.css';
@@ -40,6 +43,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
   const [description, setDescription]                         = useState(activeTransaction?.description || '');
   const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
+  const [ends, setEnds]                                        = useState(activeTransaction?.isRecurring || false);
   const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
   const [recurrenceFrequency, setRecurrenceFrequency]         = useState(activeTransaction?.recurrenceFrequency || 'monthly');
   const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
@@ -124,6 +128,23 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     });
   };
 
+  const onEndDateChange = (e:any) => {
+    let selectedDate = parseISO(e.target.value); 
+  
+    if (isPast(selectedDate)) {
+      let nextDay = add(parseISO(date), {days: 1});
+      setEndDate(format(nextDay, 'yyyy-MM-dd'));
+    } else {
+      setEndDate(e.target.value);
+    }
+  };
+
+  useEffect(() => {
+    if (!ends) {
+        setEndDate('');
+    }
+  }, [ends]);
+
   return (
     <div className="glassjar__form">
       <h2>
@@ -143,7 +164,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
           />
         </div>
 
-        <div className="glassjar__form__input-group">
+        <div className="glassjar__form__input-group glassjar__form__input-group--date">
           <label htmlFor="date">Date:</label>
           <input
             type="date"
@@ -171,25 +192,29 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             >
               <option value="deposit">Income</option>
               <option value="withdrawal">Expense</option>
-              {accounts.length > 1 && (<option value="transfer">Transfer</option>)}              
+              {accounts.length > 1 && (
+                <option value="transfer">Transfer</option>
+              )}
               <option value="event">Event</option>
             </select>
           </div>
 
-          {type !== "event" && <div className="glassjar__form__input-group">
-            <label htmlFor="amount">Amount:</label>
-            <CurrencyInput
-              id="amount"
-              prefix="$"
-              name="amount"
-              placeholder="Transaction Amount:"
-              defaultValue={amount / 100} // Convert cents to dollars for display
-              decimalsLimit={2} // Allow decimal input
-              onValueChange={(value) =>
-                setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
-              }
-            />
-          </div>}
+          {type !== "event" && (
+            <div className="glassjar__form__input-group">
+              <label htmlFor="amount">Amount:</label>
+              <CurrencyInput
+                id="amount"
+                prefix="$"
+                name="amount"
+                placeholder="Transaction Amount:"
+                defaultValue={amount / 100} // Convert cents to dollars for display
+                decimalsLimit={2} // Allow decimal input
+                onValueChange={(value) =>
+                  setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
+                }
+              />
+            </div>
+          )}
         </div>
 
         {(type === "withdrawal" || type === "transfer") && (
@@ -228,27 +253,27 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
           </div>
         )}
 
-        {(type === "withdrawal" || type === "transfer") && <div className="glassjar__flex">
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="category">Category:</label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) =>
-                setCategory(
-                  e.target.value
-                )
-              }
-            >
-              <option value={category}>{category}</option>
-              <option value="None">None</option>
+        {(type === "withdrawal" || type === "transfer") && (
+          <div className="glassjar__flex">
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="category">Category:</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value={category}>{category}</option>
+                <option value="None">None</option>
 
-              {RecurringExpenses.map((category, index) => (
-                <option key={index} value={RecurringExpenses[index].category}>{RecurringExpenses[index].category}</option>
-              ))}
-            </select>
+                {RecurringExpenses.map((category, index) => (
+                  <option key={index} value={RecurringExpenses[index].category}>
+                    {RecurringExpenses[index].category}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>}
+        )}
 
         <div className="glassjar__form__input-group">
           <label htmlFor="description">Description (optional):</label>
@@ -259,86 +284,87 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-
-    </div>
-        <div className="glassjar__form__input-group glassjar__form__input-group--check">
+        </div>
+        <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
           <label htmlFor="isRecurring">Transaction Repeats:</label>
-          <Switch.Root className="SwitchRoot" id="isRecurring"
-            checked={isRecurring} onCheckedChange={(e) => setIsRecurring(!isRecurring)}>
-        <Switch.Thumb className="SwitchThumb" />
-      </Switch.Root>
+          <Switch.Root
+            className="glassjar__switch"
+            id="isRecurring"
+            checked={isRecurring}
+            onCheckedChange={(e) => setIsRecurring(!isRecurring)}
+          >
+            <Switch.Thumb className="glassjar__switch__thumb" />
+          </Switch.Root>
         </div>
 
         {isRecurring && (
           <>
-              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-                <label htmlFor="recurrenceFrequency">Repeats:</label>
-                <select
-                  id="recurrenceFrequency"
-                  value={recurrenceFrequency}
-                  onChange={(e) =>
-                    setRecurrenceFrequency(
-                      e.target.value as
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="recurrenceFrequency">Repeats:</label>
+              <select
+                id="recurrenceFrequency"
+                value={recurrenceFrequency}
+                onChange={(e) =>
+                  setRecurrenceFrequency(
+                    e.target.value as
                       | "daily"
                       | "weekly"
                       | "monthly"
                       | "yearly"
-                      | "given days" 
+                      | "given days"
                       | "twice monthly"
                       | "custom"
-                    )
-                  }
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="yearly">Yearly</option>
-                  <option value="given days">Certain Days</option>
-                  <option value="twice monthly">Twice Monthly</option>
-                  <option value="custom">Custom</option>
-                </select>
-              </div>
+                  )
+                }
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="given days">Certain Days</option>
+                <option value="twice monthly">Twice Monthly</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
 
-              {recurrenceFrequency === "given days" && (
-                <div className="glassjar__form__input-group">
-                  <label>Days:</label>
-                  <div className='glassjar__day-buttons'>
-                    {["S", "M", "T", "W", "T", "F", "S"].map(
-                      (dayName, index) => (
-                        <button
-                          key={`${dayName}-${index}`}
-                          type="button"
-                          className={selectedDays.includes(index) ? "selected" : ""}
-                          onClick={() => toggleDay(index)}
-                        >
-                          {dayName}
-                        </button>
-                      )
-                    )}
-                  </div>
+            {recurrenceFrequency === "given days" && (
+              <div className="glassjar__form__input-group">
+                <label>Days:</label>
+                <div className="glassjar__day-buttons">
+                  {["S", "M", "T", "W", "T", "F", "S"].map((dayName, index) => (
+                    <button
+                      key={`${dayName}-${index}`}
+                      type="button"
+                      className={selectedDays.includes(index) ? "selected" : ""}
+                      onClick={() => toggleDay(index)}
+                    >
+                      {dayName}
+                    </button>
+                  ))}
                 </div>
-              )
-            }
+              </div>
+            )}
 
-            {recurrenceFrequency === 'custom' && (
+            {recurrenceFrequency === "custom" && (
               <>
-                <div className='glassjar__flex'>
+                <div className="glassjar__flex">
                   <label htmlFor="recurrenceInterval">Every:</label>
                   <div className="glassjar__form__input-group">
-                  <input
-                    type="number"
-                    id="recurrenceInterval"
-                    value={recurrenceIntervalInput}
-                    min="1"
-                    onChange={handleRecurrenceIntervalChange}
-                  />
-
+                    <input
+                      type="number"
+                      id="recurrenceInterval"
+                      value={recurrenceIntervalInput}
+                      min="1"
+                      onChange={handleRecurrenceIntervalChange}
+                    />
                   </div>
                   <div className="glassjar__form__input-group glassjar__form__input-group--drop">
                     <select
                       value={customIntervalType}
                       onChange={(e) =>
-                        setCustomIntervalType(e.target.value as 'day' | 'week' | 'month' | 'year')
+                        setCustomIntervalType(
+                          e.target.value as "day" | "week" | "month" | "year"
+                        )
                       }
                     >
                       <option value="day">Day(s)</option>
@@ -351,16 +377,28 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               </>
             )}
 
-            
-            <div className="glassjar__form__input-group">
-              <label htmlFor="endDate">End Date (optional):</label>
-              <input
-                type="date"
-                id="endDate"
-                value={endDate ? stripTime(endDate) : ""}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+            <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
+              <label htmlFor="ends">End Date:</label>
+              <Switch.Root
+                className="glassjar__switch"
+                id="ends"
+                checked={ends}
+                onCheckedChange={(e) => setEnds(!ends)}
+              >
+                <Switch.Thumb className="glassjar__switch__thumb" />
+              </Switch.Root>
             </div>
+            {ends && (
+              <div className="glassjar__form__input-group">
+                <label htmlFor="endDate">End Date:</label>
+                <input
+                  type="date"
+                  id="endDate"
+                  value={endDate ? stripTime(endDate) : ""}
+                  onChange={onEndDateChange}
+                />
+              </div>
+            )}
           </>
         )}
 
