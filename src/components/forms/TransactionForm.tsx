@@ -13,6 +13,9 @@ import { isPast, add, parseISO }                                  from 'date-fns
 import { format }                                                 from 'date-fns-tz';
 
 import * as Switch from '@radix-ui/react-switch';
+import * as Select from '@radix-ui/react-select';
+import * as Trigger from '@radix-ui/react-select';
+import * as Option from '@radix-ui/react-select';
 
 import './../../css/Forms.css';
 import './../../css/Components.css';
@@ -43,7 +46,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
   const [description, setDescription]                         = useState(activeTransaction?.description || '');
   const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
-  const [ends, setEnds]                                        = useState(activeTransaction?.isRecurring || false);
+  const [ends, setEnds]                                       = useState(activeTransaction?.isRecurring || false);
   const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
   const [recurrenceFrequency, setRecurrenceFrequency]         = useState(activeTransaction?.recurrenceFrequency || 'monthly');
   const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
@@ -145,6 +148,30 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     }
   }, [ends]);
 
+
+
+  type SelectItemProps = React.ComponentPropsWithoutRef<typeof Select.Item>;
+
+
+  const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(({ children, ...props }, forwardedRef) => {
+    return (
+      <Select.Item {...props} ref={forwardedRef}>
+        <Select.ItemText>{children}</Select.ItemText>
+      </Select.Item>
+    );
+  });
+  
+
+
+type TransactionType = "deposit" | "withdrawal" | "transfer" | "event";
+
+const handleValueChange = (value: string) => {
+  if (["deposit", "withdrawal", "transfer", "event"].includes(value)) {
+    setType(value as TransactionType);
+  }
+};
+
+
   return (
     <div className="glassjar__form">
       <h2>
@@ -175,9 +202,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
         </div>
 
         <div className="glassjar__flex">
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+          {/* <div className="glassjar__form__input-group glassjar__form__input-group--drop"> */}
+          <div className="glassjar__form__input-group">
             <label htmlFor="type">Type:</label>
-            <select
+            {/* <select
               id="type"
               value={type}
               onChange={(e) =>
@@ -196,7 +224,31 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 <option value="transfer">Transfer</option>
               )}
               <option value="event">Event</option>
-            </select>
+            </select> */}
+<br />
+            <Select.Root value={type} onValueChange={handleValueChange}>
+              <Select.Trigger className="glassjar__select" >
+                <Select.Value placeholder="Select a type..." />
+                <Select.Icon>
+                  <i className="fa-solid fa-chevron-down" />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal className="SelectViewport">
+                <Select.Content>
+                  <Select.Viewport>
+                    <Select.Group>
+                      <SelectItem value="deposit">Income</SelectItem>
+                      <SelectItem value="withdrawal">Expense</SelectItem>
+                      {accounts.length > 1 && (
+                        <SelectItem value="transfer">Transfer</SelectItem>
+                      )}
+                      <SelectItem value="event">Event</SelectItem>
+                    </Select.Group>
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
+
           </div>
 
           {type !== "event" && (
