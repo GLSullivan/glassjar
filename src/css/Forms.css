@@ -80,18 +80,20 @@ input::placeholder {
 }
 
 select {
-  -webkit-appearance: none;
-  -moz-appearance   : none;
-  appearance        : none;
-  background        : var(--color-inverse);
-  background-image  : none;
-  border            : none;
-  border-radius     : 0.5rem;
-  font-weight       : 500 ;
-  outline           : none;
-  padding           : 1rem;
-  position          : relative;
-  width             : 100%;
+  -webkit-appearance     : none;
+  -moz-appearance        : none;
+  appearance             : none;
+  background             : var(--color-inverse);
+  background-image       : none;
+  border                 : none;
+  border-radius          : 0.5rem;
+  color                  : var(--color-form);
+  font-weight            : 500 ;
+  outline                : none;
+  padding                : 1rem;
+  position               : relative;
+  -webkit-text-fill-color: var(--color-form);
+  width                  : 100%;
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--drop label::after {

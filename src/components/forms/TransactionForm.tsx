@@ -262,9 +262,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                <option value={category}>{category}</option>
-                <option value="None">None</option>
-
                 {RecurringExpenses.map((category, index) => (
                   <option key={index} value={RecurringExpenses[index].category}>
                     {RecurringExpenses[index].category}

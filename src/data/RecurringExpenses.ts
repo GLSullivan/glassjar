@@ -1,5 +1,10 @@
 export const RecurringExpenses: { category: string; expenses: string[]; percentage: string }[] = [
   {
+    category: "None",
+    expenses: [],
+    percentage: "0",
+  },  
+  {
     category: "Housing",
     expenses: [
       "Rent",
