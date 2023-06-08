@@ -45,6 +45,7 @@
   justify-content: center;
   position       : relative;
   text-align     : center;
+  transition     : .5s ease;
 }
 
 .glassjar__calendar__day-marker {
@@ -163,8 +164,13 @@
   max-height: 100%;
   overflow  : auto;
   /* padding   : 1rem; */
+
+  -webkit-overflow-scrolling: auto;
+
 }
 
 .glassjar__calendar__day-panel--graph {
-  height: 30vh;
+  height: 20vh;
+  padding: .5rem 1rem;
+  box-sizing: border-box;
 }

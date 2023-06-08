@@ -3,12 +3,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface ViewState {
   activeView  : string,
   calendarView: string,
+  graphRange: number,
   // Future views state goes here
 }
 
 const initialState: ViewState = {
   activeView  : "calendar",
-  calendarView: "month"
+  calendarView: "month",
+  graphRange  : 3
 }
 
 export const views = createSlice({
@@ -21,6 +23,9 @@ export const views = createSlice({
     setCalendarView: (state, action: PayloadAction<string>) => {
       state.calendarView = (action.payload)
     },
+    setGraphRange: (state, action: PayloadAction<number>) => {
+      state.graphRange = (action.payload)
+    },
     setViewState: (state, action: PayloadAction<ViewState>) => {
       if (action.payload) {
         return action.payload;
@@ -32,7 +37,8 @@ export const views = createSlice({
 export const { 
   setView,
   setCalendarView,
-  setViewState
+  setViewState,
+  setGraphRange
 } = views.actions
 
 export default views.reducer

@@ -23,7 +23,7 @@ import {
   ReferenceLine,
 }                                             from "recharts";
 
-import { useSelector }                        from "react-redux";
+import { useDispatch, useSelector }                        from "react-redux";
 
 import { accountBalancesByDateRange }         from "./../redux/slices/projections";
 import { Account }                            from "./../models/Account";
@@ -31,9 +31,13 @@ import { RootState }                          from "./../redux/store";
 import { colorPalette }                       from "../data/ColorPalette";
 
 import "./../css/OutlookGraph.css";
+import { setGraphRange } from "../redux/slices/views";
 
 const OutlookGraph: React.FC = () => {
-  const [graphSpan, setGraphSpan]         = useState(6);
+  const dispatch = useDispatch()
+  const graphRange = useSelector((state: RootState) => state.views.graphRange);
+
+  const rangeChoices: number[]            = [1,3,6,12];
   const state                             = useSelector((state: RootState) => state);
   const accounts                          = useSelector((state: RootState) => state.accounts.accounts);
   const activeDate                        = useSelector((state: RootState) => state.activeDates.activeDate);
@@ -74,7 +78,7 @@ const OutlookGraph: React.FC = () => {
     }
 
     const graphStart = firstOrToday(activeDate);
-    const graphEnd   = formatISO(endOfMonth(addMonths(new Date(graphStart), graphSpan)));
+    const graphEnd   = formatISO(endOfMonth(addMonths(new Date(graphStart), graphRange || 6)));
 
     const colors: Record<string, string> = {};
 
@@ -159,7 +163,7 @@ const OutlookGraph: React.FC = () => {
     activeDate,
     accounts,
     state,
-    graphSpan,
+    graphRange,
     today
   ])
 
@@ -194,15 +198,23 @@ const OutlookGraph: React.FC = () => {
 
     return (
       <text 
-        x={x} 
-        y={y + 10} 
-        fill="#666" 
-        textAnchor={isFirstOrLast ? (payload.value === data[0].date ? 'start' : 'end') : 'middle'}
+        x          = {x}
+        y          = {y + 10}
+        fill       = "#666"
+        textAnchor = {isFirstOrLast ? (payload.value === data[0].date ? 'start' : 'end') : 'middle'}
       >
         {payload.value}
       </text>
     );
   }
+
+  const handleSpanChange = () => {
+    console.log("WTF?")
+    let currentIndex = rangeChoices.findIndex(value => value === graphRange);
+    let nextIndex    = (currentIndex + 1) % rangeChoices.length;
+    dispatch(setGraphRange(rangeChoices[nextIndex]))
+    console.log(rangeChoices[nextIndex])
+  };
 
   if (accounts.length === 0) {
     return (
@@ -218,21 +230,21 @@ const OutlookGraph: React.FC = () => {
             <LineChart data={combinedData}>
               {/* <CartesianGrid strokeDasharray="3 3" /> */}
               <XAxis 
-                dataKey="date" 
-                tick={(props) => CustomXAxisTick(props, combinedData)}
-                ticks={xTicks} />
+                dataKey = "date"
+                tick    = {(props) => CustomXAxisTick(props, combinedData)}
+                ticks   = {xTicks} />
               <YAxis
-                ticks={yTicks}
-                tickFormatter={currencyFormatter}
-                width={75}
-                domain={[minY, maxY]}
-                tickCount={5}
+                ticks         = {yTicks}
+                tickFormatter = {currencyFormatter}
+                width         = {75}
+                domain        = {[minY, maxY]}
+                tickCount     = {5}
               />
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine
-                position="start"
-                x={format(new Date(state.activeDates.activeDate), 'M/d/yy')}
-                stroke="#54816F"
+                position = "start"
+                x        = {format(new Date(state.activeDates.activeDate), 'M/d/yy')}
+                stroke   = "#54816F"
               >
                 <Label position={"right"}>
                   {format(new Date(state.activeDates.activeDate), 'M/d')}
@@ -240,24 +252,22 @@ const OutlookGraph: React.FC = () => {
               </ReferenceLine>
               {dataKeys.map((key, index) => (
                 <Line
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  stroke={accountColors[key]}
-                  strokeWidth={2}
-                  activeDot={{ r: 8 }}
-                  dot={false}
-                  isAnimationActive={false} 
+                  key               = {key}
+                  type              = "monotone"
+                  dataKey           = {key}
+                  stroke            = {accountColors[key]}
+                  strokeWidth       = {2}
+                  activeDot         = {{ r: 8 }}
+                  dot               = {false}
+                  isAnimationActive = {false}
                 />
               ))}
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="glassjar__flex glassjar__flex--justify-between">
-        <button onClick={() => setGraphSpan(3)}>3</button>
-        <button onClick={() => setGraphSpan(6)}>6</button>
-        <button onClick={() => setGraphSpan(12)}>12</button>
+      <div className="glassjar__glassjar__graph-holder__range-change">
+        <button onClick={() => handleSpanChange()}>{graphRange}</button>
       </div>
     </div>
   );
