@@ -137,7 +137,7 @@ const CalendarSchedule: React.FC = () => {
             return (
               <div id={group.date} key={groupIndex} className="glassjar__lazy-list-group" ref={headerRefs.current.get(group.date)}>
                 <div
-                  className="glassjar__lazy-list__headerX glassjar__flex"
+                  className="glassjar__lazy-list__header glassjar__flex"
                 >
                   <h2 className="glassjar__calendar__month">
                     {format(parseISO(group.date), "MMMM do")}
@@ -167,7 +167,7 @@ const CalendarSchedule: React.FC = () => {
         :
         <>
           <div
-            className="glassjar__lazy-list__headerX glassjar__flex"
+            className="glassjar__lazy-list__header glassjar__flex"
           >
             <h2 className="glassjar__calendar__month">
               Create your first transaction!

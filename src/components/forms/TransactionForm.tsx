@@ -297,7 +297,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
         {isRecurring && (
           <>
             <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-              <label htmlFor="recurrenceFrequency">Repeats:</label>
+              {/* <label htmlFor="recurrenceFrequency">Repeats:</label> */}
               <select
                 id="recurrenceFrequency"
                 value={recurrenceFrequency}
@@ -387,7 +387,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             </div>
             {ends && (
               <div className="glassjar__form__input-group">
-                <label htmlFor="endDate">End Date:</label>
+                {/* <label htmlFor="endDate">End Date:</label> */}
                 <input
                   type="date"
                   id="endDate"

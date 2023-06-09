@@ -9,101 +9,11 @@
 
 */
 
-      /* 
-.glassjar__panel-group h1 {
-  font-size  : 1.8rem;
-  font-weight: 100;
-  margin     : 0;
-  margin-top : 0;
-  text-align : center;
+.glassjar__graph-holder h2,
+.glassjar__account-list__header h2 {
+  margin-top: 0;
 }
 
-.glassjar__list-item,
-.glassjar__account-list-item {
-  align-items    : center;
-  box-sizing     : border-box;
-  cursor         : pointer;
-  display        : flex;
-  gap            : .5rem;
-  justify-content: space-between;
-  padding        : 0.5rem;
-  width          : 100%;
+.glassjar__account-list__header {
+  margin-bottom: 1rem;
 }
-
-.glassjar__list-item {
-  align-items    : center;
-  flex-direction : column;
-  justify-content: space-between;
-}
-
-.glassjar__list-item > div {
-  display        : flex;
-  gap            : .5rem;
-  justify-content: space-between;
-  width          : 100%;
-}
-
-.glassjar__list-item span {
-  flex: 2;
-}
-
-
-.glassjar__list-item > div {
-  display: flex;
-  gap    : 0.5rem;
-}
-
-.button__new-transaction {
-  align-items    : center;
-  aspect-ratio   : 1;
-  border-radius  : 100rem;
-  display        : flex;
-  height         : 1.8rem;
-  justify-content: center;
-  padding        : 1rem;
-  width          : 0.8rem;
-}
-
-.glassjar__list-item h2 {
-  font-size  : 1.2rem;
-  font-weight: 500;
-  margin     : 0;
-}
-
-.glassjar__account-list-item i {
-  font-size: 1.4em;
-}
-
-.glassjar__schedule .glassjar__list-item {
-  color: var(--color-bright);
-}
-
-.glassjar__list-item__second-row i {
-  font-size: 1rem;
-}
-
-.glassjar__list-item__second-row {
-  font-size: 0.8rem;
-}
-
-.glassjar__list-item__second-row span {
-  text-overflow: ellipsis;
-  white-space  : nowrap;
-}
-
-.glassjar__list-item__second-row > span:last-of-type {
-  flex      : 2;
-  text-align: right;
-  width     : 100%;
-}
-
-.glassjar__list-item__second-row div {
-  display: flex;
-  flex   : 2;
-  gap    : .25rem;
-  width  : 100%;
-}
-
-.glassjar__recurring-icon {
-  font-size: .8rem;
-} */

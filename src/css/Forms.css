@@ -119,6 +119,7 @@ select {
   display       : flex;
   flex-direction: row;
   gap           : 1rem;
+  align-items: center;
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--check input {

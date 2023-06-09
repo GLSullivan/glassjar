@@ -94,10 +94,11 @@ h2 {
 
 button {
   align-self    : center;
-  background    : var(--color-secondary);
+  background    : var(--color-bright);
   border        : none;
   border-radius : 10rem;
-  color         : var(--color-bright);
+  color         : var(--color-secondary);
+  border        : 1px solid var(--color-secondary);
   cursor        : pointer;
   font-weight   : 900;
   outline       : none;

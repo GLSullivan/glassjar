@@ -12,17 +12,14 @@
       /* reset */
     button.glassjar__switch  {
       all: unset;
-    }
-
-    button.glassjar__switch {
       background-color           : var(--color-inverse);
       border-radius              : 100rem;
       /* box-shadow                 : 0 2px 10px orange; */
       box-sizing                 : border-box;
-      height                     : 25px;
+      height                     : 2rem;
       position                   : relative;
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-      width                      : 42px;
+      width                      : 4rem;
     }
 
     .glassjar__switch:focus {
@@ -40,13 +37,14 @@
       border: 2px solid #cdcdcd;
       /* box-shadow      : 0 2px 2px var(--color-brand); */
       display         : block;
-      height          : 21px;
+      height          : 1.8rem;
       transform       : translateX(2px);
       transition      : transform 100ms;
-      width           : 21px;
+      /* width           : 21px; */
+      aspect-ratio: 1;
       will-change     : transform;
     }
 
     .glassjar__switch__thumb[data-state='checked'] {
-      transform: translateX(19px);
+      transform: translateX(calc(4rem - 1.8rem - 2px));
     }

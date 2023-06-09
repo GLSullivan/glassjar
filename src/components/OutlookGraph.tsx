@@ -224,6 +224,7 @@ const OutlookGraph: React.FC = () => {
 
   return (
     <div className="glassjar__graph-holder">
+      <h2>Balance Outlook</h2>
       <div className="glassjar__graph-holder__sub">
         <div className="glassjar__graph-holder__sub-sub">
           <ResponsiveContainer width="100%" height="100%">

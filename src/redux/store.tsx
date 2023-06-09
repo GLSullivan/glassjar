@@ -8,6 +8,7 @@ import accountsReducer, { setAccounts }           from "./slices/accounts";
 import modalStateReducer                          from "./slices/modals";
 import loaderReducer                              from "./slices/loader";
 import { hideLoader, showLoader}                  from "./slices/loader";
+import searchReducer                              from "./slices/search";
 import viewReducer, { setViewState }              from "./slices/views";
 import authReducer                                from "./slices/auth";
 
@@ -79,6 +80,7 @@ export const store = configureStore({
     transactions: transactionsReducer,
     userPrefs   : userPrefsReducer,
     views       : viewReducer,
+    search      : searchReducer,
   }
 });
 

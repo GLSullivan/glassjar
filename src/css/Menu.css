@@ -1,0 +1,50 @@
+  /* 
+  ____ _                   _            
+ / ___| | __ _ ___ ___    | | __ _ _ __ 
+| |  _| |/ _` / __/ __|_  | |/ _` | '__|
+| |_| | | (_| \__ \__ \ |_| | (_| | |   
+ \____|_|\__,_|___/___/\___/ \__,_|_|    
+
+© 2024 Greg Sullivan
+
+*/
+
+.glassjar__menu__body {
+  position: absolute;
+  background: var(--color-bright);
+  z-index: 100;
+  top: 100%;
+  right: 0;
+  border       : 1px solid var(--color-bright);
+  border-radius: 1rem;
+  box-shadow   : 0 10px 10px rgb(0 0 0 / 20%);
+  padding: 1rem;
+  pointer-events: none;
+  transform: translateY(-2rem);
+  opacity: 0;
+  transition: .1s ease-out;
+}
+
+.glassjar__menu {
+  position: relative;
+}
+
+.glassjar__menu__body.glassjar__menu__body--open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.glassjar__menu__button {
+  display: flex;
+  cursor: pointer;
+  width: 2.6rem;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 2.6rem;
+}
+
+.glassjar__menu__button i {
+  font-size: 1.6rem;
+}

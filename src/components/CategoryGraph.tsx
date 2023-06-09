@@ -9,17 +9,11 @@ import {
   ResponsiveContainer,
 }                             from "recharts";
 import { RecurringExpenses }  from "../data/RecurringExpenses";
+import { colorPalette } from "../data/ColorPalette";
 
 const CategorySpendPieChart = () => {
   const categorySpendData = useSelector(getCategorySpend);
-  const COLORS = [
-    "#0088FE",
-    "#00C49F",
-    "#FFBB28",
-    "#FF8042",
-    "#8884D8",
-    "#8dd1e1",
-  ];
+  const COLORS = colorPalette;
 
   const getCategoryPercentage = (categoryName: any) => {
     const [beforeColon] = categoryName.split(':');
@@ -66,6 +60,7 @@ const CategorySpendPieChart = () => {
 
   return (
     <div className="glassjar__graph-holder">
+      <h2>Spending Categories</h2>
       <div className="glassjar__graph-holder__sub">
         <div className="glassjar__graph-holder__sub-sub">
           <ResponsiveContainer width="100%" height="100%">
@@ -73,8 +68,8 @@ const CategorySpendPieChart = () => {
               <Pie
                 data        = {formattedData}
                 labelLine   = {true}
-                outerRadius = {100}
-                innerRadius = {60}
+                outerRadius = {120}
+                innerRadius = {10}
                 fill        = "#8884d8"
                 dataKey     = "value"
               >

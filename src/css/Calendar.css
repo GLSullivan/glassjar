@@ -174,3 +174,7 @@
   padding: .5rem 1rem;
   box-sizing: border-box;
 }
+
+.glassjar__calendar__day-panel--graph h2 {
+  display: none;
+}

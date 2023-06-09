@@ -12,6 +12,7 @@ import "./../css/ListItems.css";
 
 interface TransactionListItem {
   transaction: Transaction;
+  showSearch?: boolean;
 }
 
 const transactionTypeIcons = {
@@ -22,8 +23,9 @@ const transactionTypeIcons = {
 };
 
 const CalendarDay: React.FC<TransactionListItem> = React.memo(
-  ({ transaction }) => {
+  ({ transaction, showSearch = false }) => {
     const dispatch = useDispatch();
+    const activeSearch = useSelector((state: RootState) => state.search.search);
     const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
     let accountColor;
@@ -53,6 +55,24 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       accountColor = "#000";
     }
 
+    const highlightTransactionName = (name: string, search: string) => {
+      // Escape special characters in the search string
+      search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  
+      // Split the name by the search string
+      const parts = name.split(new RegExp(`(${search})`, 'gi'));
+  
+      return (
+        <>
+          {parts.map((part, index) => 
+            part.toLowerCase() === search.toLowerCase() ? 
+            (<strong key={index}>{part}</strong>) : 
+            (part)
+          )}
+        </>
+      );
+    };
+
     return (
       <div className="glassjar__list-item" onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
         <div className="glassjar__list-item__icon">
@@ -62,8 +82,12 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
         </div>
         <div className="glassjar__list-item__body">
           <div className="glassjar__list-item-row glassjar__list-item__row--row1">
-            <h4>{transaction.transactionName}</h4>
-            {transaction.type !== "event" && <h4>{(transaction.amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</h4>}
+          <h4>
+              {showSearch ? 
+                highlightTransactionName(transaction.transactionName, activeSearch) : 
+                transaction.transactionName}
+            </h4>
+          {transaction.type !== "event" && <h4>{(transaction.amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD", })}</h4>}
           </div>
           {transaction.type !== "event" && <div className="glassjar__list-item-row glassjar__list-item__row--row2">
             <h5>

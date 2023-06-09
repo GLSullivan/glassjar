@@ -15,7 +15,7 @@ export const AccountList: React.FC = () => {
 
   return (
     <div className="glassjar__account-list">
-      <div className="glassjar__flex glassjar__flex--justify-between">
+      <div className="glassjar__account-list__header glassjar__flex glassjar__flex--justify-between">
         <h2>Accounts</h2>
         <button
           onClick={() => {
