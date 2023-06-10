@@ -30,10 +30,6 @@
   margin-bottom: 1rem;
 }
 
-.glassjar__search-sort i {
-  font-size: 1.4rem;
-}
-
 .glassjar__search-sort__field {
   flex: 2;
   width: 100%;
@@ -50,6 +46,13 @@
 
 .glassjar__menu.glassjar__sort-menu .glassjar__menu__body {
   width: 50vw;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.glassjar__menu.glassjar__sort-menu .glassjar__menu__body p {
+  margin: 0;
 }
 
 .glassjar__panel-group.glassjar__panel-group--transactions {
@@ -72,4 +75,11 @@
 
 .glassjar__transaction-list__header {
   padding: 0 1rem;
+}
+
+.glassjar__sort-menu__filter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
 }

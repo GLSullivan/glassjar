@@ -1,68 +1,73 @@
-import { useDispatch, useSelector }                 from "react-redux";
-import React                                        from "react";
+import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 
-import { setHealthRangeTop, setHealthRangeBottom }  from "../redux/slices/userprefs";
-import { openTransactionHelper }                    from "./../redux/slices/modals";
+import {
+  setHealthRangeTop,
+  setHealthRangeBottom,
+} from "../redux/slices/userprefs";
 
+import { openTransactionHelper } from "./../redux/slices/modals";
 import { RootState } from "../redux/store";
 
-import "./../css/TransactionList.css";
 import CurrencyInput from "react-currency-input-field";
-import firebase from 'firebase/compat/app';
+import firebase from "firebase/compat/app";
+import "./../css/SettingsPanel.css";
 
 const SettingsPanel: React.FC = () => {
   const dispatch = useDispatch();
 
-  function clearLocalStorage() {
-    localStorage.clear();
-  }
-
-  const { healthRangeTop, healthRangeBottom } = useSelector((state: RootState) => state.userPrefs);
+  const { healthRangeTop, healthRangeBottom } = useSelector(
+    (state: RootState) => state.userPrefs
+  );
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
 
   return (
-    <>
-      <h1>Dev Tools Menu</h1>
-      <h2>Welcome, {currentUser?.displayName}</h2>
-      <h3 onClick={() => clearLocalStorage()}>
-        Clear Local Storage{" "}
-        <i className="fa-solid fa-floppy-disk-circle-xmark" />
-      </h3>
-      <h3 onClick={() => dispatch(openTransactionHelper())}>
-        Run Transaction Helper
-      </h3>
-
+    <div className="glassjar__settings-panel">
+      <div>
+        <h2>Dev Tools Menu</h2>
+        <p>Welcome, {currentUser?.displayName}</p>
+      </div>
+      <div>
+        <button onClick={() => dispatch(openTransactionHelper())}>
+          Run Transaction Helper
+        </button>
+      </div>
       <label>
         Health Range Top:
         <CurrencyInput
-              id="amount"
-              prefix="$"
-              name="amount"
-              placeholder="Transaction Amount:"
-              defaultValue={healthRangeTop / 100} // Convert cents to dollars for display
-              decimalsLimit={2} // Allow decimal input
-              onValueChange={(value) =>
-                dispatch(setHealthRangeTop(value ? Math.round(parseFloat(value) * 100) : 0))
-              }
-            />
+          id="amount"
+          prefix="$"
+          name="amount"
+          placeholder="Transaction Amount:"
+          defaultValue={healthRangeTop / 100}
+          decimalsLimit={2} 
+          onValueChange={(value) =>
+            dispatch(
+              setHealthRangeTop(value ? Math.round(parseFloat(value) * 100) : 0)
+            )
+          }
+        />
       </label>
       <label>
-        Health Range Bottom:        
+        Health Range Bottom:
         <CurrencyInput
-              id="amount"
-              prefix="$"
-              name="amount"
-              placeholder="Transaction Amount:"
-              defaultValue={healthRangeBottom / 100} // Convert cents to dollars for display
-              decimalsLimit={2} // Allow decimal input
-              onValueChange={(value) =>
-                dispatch(setHealthRangeBottom(value ? Math.round(parseFloat(value) * 100) : 0))
-              }
-            />
+          id="amount"
+          prefix="$"
+          name="amount"
+          placeholder="Transaction Amount:"
+          defaultValue={healthRangeBottom / 100} 
+          decimalsLimit={2}
+          onValueChange={(value) =>
+            dispatch(
+              setHealthRangeBottom(
+                value ? Math.round(parseFloat(value) * 100) : 0
+              )
+            )
+          }
+        />
       </label>
       <button onClick={() => firebase.auth().signOut()}>Sign out</button>
-
-    </>
+    </div>
   );
 };
 

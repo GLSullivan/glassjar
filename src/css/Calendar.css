@@ -151,6 +151,13 @@
   padding   : 0 1rem;
 }
 
+.glassjar__schedule button {
+  padding: 0.5rem;
+  aspect-ratio: 1;
+  height: 2.2rem;
+  font-size: 1rem;
+}
+
 .glassjar__calendar__container {
   box-sizing    : border-box;
   display       : flex;

@@ -5,9 +5,11 @@ import { RootState } from "../redux/store";
 import { setSearchString } from "./../redux/slices/search";
 
 import TransactionListItem from "./TransactionListItem";
+import Menu from "./Menu";
+
+import * as Checkbox from "@radix-ui/react-checkbox";
 
 import "./../css/TransactionList.css";
-import Menu from "./Menu";
 
 type FilterOption = {
   id: number;
@@ -130,7 +132,7 @@ const TransactionList: React.FC = () => {
 
   return (
     <div className="glassjar__transaction-list">
-      <div className="glassjar__transaction-list__header"> 
+      <div className="glassjar__transaction-list__header">
         <h2>Transactions</h2>
         <div className="glassjar__search-sort">
           <div className="glassjar__search-sort__field">
@@ -149,47 +151,49 @@ const TransactionList: React.FC = () => {
               </div>
             )}
           </div>
-        <Menu className="glassjar__sort-menu">
-          <Menu.Button>
-            <i className="fa-regular fa-bars-filter" />
-          </Menu.Button>
-          <Menu.Body>
-            <div>
-              <label>Sort By:</label>
-              <select value={sort || ""} onChange={handleSortChange}>
-                <option value="">None</option>
-                {sortOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <table>
-                <tbody>
-                  {options.map((option) => (
-                    <tr key={option.id}>
-                      <td>
-                        <label>{option.label}</label>
-                      </td>
-                      <td>
-                        <input
-                          type="checkbox"
-                          value={option.id}
-                          checked={filter.includes(option.id)}
-                          onChange={() =>
-                            option.id && handleCheckboxChange(option.id)
-                          }
-                        />
-                      </td>
-                    </tr>
+          <Menu className="glassjar__sort-menu">
+            <Menu.Button>
+              <i className="fa-regular fa-bars-filter" />
+            </Menu.Button>
+            <Menu.Body>
+              <p>Sort By</p>
+              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+                <label htmlFor=""></label>
+                <select value={sort || ""} onChange={handleSortChange}>
+                  <option value="">None</option>
+                  {sortOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </Menu.Body>
-        </Menu>
+                </select>
+              </div>
+              <br />
+              <p>Show Only</p>
+              <div className="glassjar__sort-menu__filter">
+                {options.map((option) => (
+                  <div className="glassjar__flex glassjar__flex--justify-between">
+                    <label htmlFor={"filter" + option.id}>{option.label}</label>
+
+                    <Checkbox.Root
+                      className="glassjar__checkbox"
+                      value={option.id}
+                      checked={filter.includes(option.id)}
+                      // defaultChecked
+                      id={"filter" + option.id}
+                      onCheckedChange={() =>
+                        option.id && handleCheckboxChange(option.id)
+                      }
+                    >
+                      <Checkbox.Indicator className="glassjar__checkbox__indicator">
+                        <i className="fa-solid fa-check"></i>
+                      </Checkbox.Indicator>
+                    </Checkbox.Root>
+                  </div>
+                ))}
+              </div>
+            </Menu.Body>
+          </Menu>
         </div>
       </div>
 

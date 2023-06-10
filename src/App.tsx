@@ -167,7 +167,7 @@ const AppContent: React.FC = () => {
       {activeView === "transactions" && <div className='glassjar__panel-group glassjar__panel-group--transactions'>
         <TransactionList />
       </div>}
-      {activeView === "settings" && <div className='glassjar__panel-group'>
+      {activeView === "settings" && <div className='glassjar__panel-group glassjar__panel-group--settings'>
         <SettingsPanel />
       </div>
       }

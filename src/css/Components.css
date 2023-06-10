@@ -48,3 +48,21 @@
     .glassjar__switch__thumb[data-state='checked'] {
       transform: translateX(calc(4rem - 1.8rem - 2px));
     }
+
+
+
+    .glassjar__checkbox {
+      border: 1px solid var(--color-tertiary);
+      padding: unset;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.8rem;
+      aspect-ratio: 1;
+      border-radius: .5rem;
+    }
+    
+    .glassjar__checkbox__indicator i {
+      font-size: 1rem;
+      padding: .2rem 0 0 .1rem;
+    }

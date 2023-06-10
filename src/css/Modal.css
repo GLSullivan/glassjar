@@ -31,8 +31,8 @@
 }
 
 .glassjar__modal__backing {
-  backdrop-filter: blur(2px);
-  background     : rgb(255 255 255 / 70%);
+  backdrop-filter: blur(4px);
+  background     : rgb(123 159 144 / 75%);
   bottom         : 0;
   height         : 100%;
   left           : 0;

@@ -2,28 +2,53 @@ import React                 from "react";
 import MiniTransactionForm   from "../forms/MiniTransactionForm";
 import { RecurringExpenses } from "../../data/RecurringExpenses";
 
+import Tabs from "../Tabs";
+import HolidayHelper from "./HolidayHelper";
+
 const Loader: React.FC = () => {
 
   return (
     <>
-      <h2>Let's get you started.</h2>
+      <h2>Transaction Helper</h2>
       <p>
-        Enter your recurring transactions. Not sure about something? Just guess!
+        This tool helps you quickly fill out your recurring transactions, birthdays, and holiday expenses.
       </p>
-      <p>
-        If you don't see something here, adding it later is easy. No worries.
-      </p>
-
-      {RecurringExpenses.map((categoryItem, index) => (
-          <div key={index}>
-            <h3>{categoryItem.category}</h3>
-            <div>
-              {categoryItem.expenses.map((expense, expenseIndex) => (
-                <MiniTransactionForm key={expenseIndex} initialCategory={categoryItem.category} initialName={expense} initialDay="1" />
-              ))}
+      <Tabs>
+        <Tabs.Item heading = "Expenses">
+          {RecurringExpenses.map((categoryItem, index) => (
+            <div key = {index}>
+              {categoryItem.category !== "None" && (
+                <p>{categoryItem.category}</p>
+              )}
+              <div>
+                {categoryItem.expenses.map(
+                  (expense, expenseIndex) => 
+                    categoryItem.category !== "None" && (
+                      <MiniTransactionForm
+                        key             = {expenseIndex}
+                        initialCategory = {categoryItem.category}
+                        initialName     = {expense}
+                        initialDay      = "1"
+                      />
+                    )
+                )}
+              </div>
             </div>
-          </div>
-      ))}
+          ))}
+        </Tabs.Item>
+        <Tabs.Item heading = "Holidays">
+
+
+
+<HolidayHelper />
+
+
+
+        </Tabs.Item>
+        <Tabs.Item heading = "Birthdays">
+          <p>Coming soon...</p>
+        </Tabs.Item>
+      </Tabs>
     </>
   );
 };

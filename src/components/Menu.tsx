@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./../css/Menu.css";
 
 interface MenuProps {
@@ -18,7 +18,6 @@ interface MenuButtonProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const MenuButton: React.FC<MenuButtonProps> = ({ children, menuClick }) => {
   const handleClick = () => {
-    console.log("1");
     if (menuClick) {
       menuClick();
     }
@@ -47,10 +46,23 @@ const Menu: React.FC<MenuProps> & { Button: React.FC<MenuButtonProps> } & {
   Body: React.FC<MenuBodyProps>;
 } = ({ children, className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const menuClick = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []); // End of useEffect block
 
   let theClassName = "glassjar__menu"
   if (className) {
@@ -76,7 +88,7 @@ const Menu: React.FC<MenuProps> & { Button: React.FC<MenuButtonProps> } & {
       }
     });
 
-  return <div className={theClassName}>{renderChildren()}</div>;
+  return <div ref={menuRef} className={theClassName}>{renderChildren()}</div>;
 };
 
 Menu.Button = MenuButton;

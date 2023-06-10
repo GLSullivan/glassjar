@@ -57,6 +57,10 @@
   margin: 0;
 }
 
+.glassjar__panel-group.glassjar__panel-group--settings {
+  padding-top: 0;
+}
+
 @media (orientation: portrait) {
   .glassjar__footer-nav {
     padding-bottom: env(safe-area-inset-bottom);
