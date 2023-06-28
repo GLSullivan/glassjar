@@ -60,6 +60,8 @@ export const projectionsSlice = createSlice({
 
       // Populate the arrays for transactionsOnDay and dayHasTransaction;
       const populateTransactionsOnDate = () => {
+
+
         transactions.forEach((transaction) => {
           let count: number = 0;
           let transactionDate    = new Date(transaction.date);
@@ -73,7 +75,9 @@ export const projectionsSlice = createSlice({
                 )
               : calculateThruDate
             : transactionDate;
-      
+
+            let arrayPosition: number = 0;
+
           while (
             transactionDate <= transactionEndDate && count < maxIterations
           ) {
@@ -82,7 +86,9 @@ export const projectionsSlice = createSlice({
             if (!tempTransactionsOnDate[dateString]) {
               tempTransactionsOnDate[dateString] = [];
             }
-      
+            
+
+
             tempTransactionsOnDate[dateString].push(transaction);
       
             if (transaction.isRecurring) {
@@ -185,10 +191,10 @@ export const projectionsSlice = createSlice({
                   break;
                   case "arbitrary":  
                   if (transaction.arbitraryDates && transaction.arbitraryDates.length > 0) {
-                    const nextDateIndex = transaction.arbitraryDates.findIndex(date => new Date(date) > transactionDate);
-                    if (nextDateIndex !== -1) {
-                      transactionDate = new Date(transaction.arbitraryDates[nextDateIndex]);
+                    if (arrayPosition < transaction.arbitraryDates.length) {
+                      transactionDate = new Date(transaction.arbitraryDates[arrayPosition]);
                       caseFound = true;
+                      arrayPosition ++;
                     }
                   }
                   break;
