@@ -106,7 +106,6 @@ function saveStateToDatabase() {
   const state = store.getState();
   const user = firebase.auth().currentUser;
   if (user) {
-    console.log("Saving Changes")
     dbRef.child("users/" + user.uid + "/accounts").set(replaceUndefinedWithNull(state.accounts.accounts));
     dbRef.child("users/" + user.uid + "/transactions").set(replaceUndefinedWithNull(state.transactions.transactions));
     dbRef.child("users/" + user.uid + "/views").set(replaceUndefinedWithNull(state.views));
