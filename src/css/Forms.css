@@ -175,3 +175,9 @@ input[type="date"]
   text-align        : -webkit-left;
   vertical-align    : center;
 }
+
+.glassjar__flex.glassjar__flex--arbitrary {
+    flex-direction: column;
+    gap           : .5rem;
+    margin-bottom : 1rem;
+}

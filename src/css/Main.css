@@ -105,3 +105,10 @@ button {
   padding       : 0.5rem 2rem;
   text-transform: uppercase;
 }
+
+.glassjar__button.glassjar__button--small {
+  padding: 0.5rem;
+  aspect-ratio: 1;
+  height: 2.2rem;
+  font-size: 1rem;
+}

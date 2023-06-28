@@ -9,60 +9,60 @@
 
 */
 
-      /* reset */
-    button.glassjar__switch  {
-      all: unset;
-      background-color           : var(--color-inverse);
-      border-radius              : 100rem;
-      /* box-shadow                 : 0 2px 10px orange; */
-      box-sizing                 : border-box;
-      height                     : 2rem;
-      position                   : relative;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-      width                      : 4rem;
-    }
+/* reset */
+button.glassjar__switch {
+  all: unset;
+  background-color: var(--color-inverse);
+  border-radius: 100rem;
+  /* box-shadow                 : 0 2px 10px orange; */
+  box-sizing: border-box;
+  height: 2rem;
+  position: relative;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  width: 4rem;
+}
 
-    .glassjar__switch:focus {
-      /* box-shadow: 0 0 0 2px black; */
-    }
+.glassjar__switch:focus {
+  /* box-shadow: 0 0 0 2px black; */
+}
 
-    .glassjar__switch[data-state='checked'] {
-      /* background-color: black; */
-    }
+.glassjar__switch[data-state='checked'] {
+  /* background-color: black; */
+}
 
-    .glassjar__switch__thumb {
-      background-color: var(--color-brand);
-      border-radius   : 9999px;
-      box-sizing: border-box;
-      border: 2px solid #cdcdcd;
-      /* box-shadow      : 0 2px 2px var(--color-brand); */
-      display         : block;
-      height          : 1.8rem;
-      transform       : translateX(2px);
-      transition      : transform 100ms;
-      /* width           : 21px; */
-      aspect-ratio: 1;
-      will-change     : transform;
-    }
+.glassjar__switch__thumb {
+  background-color: var(--color-brand);
+  border-radius: 9999px;
+  box-sizing: border-box;
+  border: 2px solid #cdcdcd;
+  /* box-shadow      : 0 2px 2px var(--color-brand); */
+  display: block;
+  height: 1.8rem;
+  transform: translateX(2px);
+  transition: transform 100ms;
+  /* width           : 21px; */
+  aspect-ratio: 1;
+  will-change: transform;
+}
 
-    .glassjar__switch__thumb[data-state='checked'] {
-      transform: translateX(calc(4rem - 1.8rem - 2px));
-    }
+.glassjar__switch__thumb[data-state='checked'] {
+  transform: translateX(calc(4rem - 1.8rem - 2px));
+}
 
 
 
-    .glassjar__checkbox {
-      border: 1px solid var(--color-tertiary);
-      padding: unset;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.8rem;
-      aspect-ratio: 1;
-      border-radius: .5rem;
-    }
-    
-    .glassjar__checkbox__indicator i {
-      font-size: 1rem;
-      padding: .2rem 0 0 .1rem;
-    }
+.glassjar__checkbox {
+  border: 1px solid var(--color-tertiary);
+  padding: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  aspect-ratio: 1;
+  border-radius: .5rem;
+}
+
+.glassjar__checkbox__indicator i {
+  font-size: 1rem;
+  padding: .2rem 0 0 .1rem;
+}

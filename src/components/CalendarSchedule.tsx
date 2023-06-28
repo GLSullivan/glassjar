@@ -147,7 +147,7 @@ const CalendarSchedule: React.FC = () => {
                       dispatch(setActiveTransaction(null));
                       dispatch(openTransactionModal());
                     }}
-                    className="button__new-transaction"
+                    className="glassjar__button glassjar__button--small" 
                   >
                     <i className="fa-solid fa-plus-minus" />
                   </button>
@@ -177,7 +177,7 @@ const CalendarSchedule: React.FC = () => {
                 dispatch(setActiveTransaction(null));
                 dispatch(openTransactionModal());
               }}
-              className="button__new-transaction"
+              className="glassjar__button glassjar__button--small" 
             >
               <i className="fa-solid fa-plus-minus" />
             </button>

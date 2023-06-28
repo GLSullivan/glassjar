@@ -389,28 +389,34 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             {recurrenceFrequency === "arbitrary" && (
               <div className="glassjar__form__input-group">
                 <label>Arbitrary Dates:</label>
-                {arbitraryDates.map((date, index) => (
-                  <div key={index}>
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) =>
-                        setArbitraryDates(arbitraryDates.map((d, i) =>
-                          i === index ? e.target.value : d
-                        ))
-                      }
-                    />
-                    <button type="button" onClick={() => removeArbitraryDate(date)}>
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button type="button" onClick={() => addArbitraryDate('')}>
-                  Add date
+                <div className="glassjar__flex glassjar__flex--arbitrary">
+                  {arbitraryDates.map((date, index) => (
+                    <div className="glassjar__flex" key={index}>
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={(e) =>
+                          setArbitraryDates(
+                            arbitraryDates.map((d, i) =>
+                              i === index ? e.target.value : d
+                            )
+                          )
+                        }
+                      />
+                      <button className="glassjar__button glassjar__button--small" 
+                        type="button"
+                        onClick={() => removeArbitraryDate(date)}
+                      >
+                        <i className="fa-solid fa-xmark-large" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button type="button" onClick={() => addArbitraryDate("")}>
+                  Add Date
                 </button>
               </div>
             )}
-
 
             <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
               <label htmlFor="ends">End Date:</label>
