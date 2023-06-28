@@ -50,6 +50,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [customIntervalType, setCustomIntervalType]           = useState(activeTransaction?.customIntervalType || 'week');
   const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || '1');
   const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
+  const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || []);
+
+  const addArbitraryDate = (date: string) => {
+    setArbitraryDates((prevState) => [...prevState, date]);
+  };
+
+  const removeArbitraryDate = (date: string) => {
+    setArbitraryDates((prevState) => prevState.filter((d) => d !== date));
+  };
 
   const dispatch = useDispatch();
 
@@ -79,6 +88,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       allowOverpayment: false,
       showInCalendar: true,
       category,
+      arbitraryDates,
     };
   
     // Include givenDays in the transaction data when the recurrenceFrequency is set to 'given days'
@@ -311,6 +321,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                       | "given days"
                       | "twice monthly"
                       | "custom"
+                      | "arbitrary"
                   )
                 }
               >
@@ -321,6 +332,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 <option value="given days">Certain Days</option>
                 <option value="twice monthly">Twice Monthly</option>
                 <option value="custom">Custom</option>
+                <option value="arbitrary">Arbitrary</option>
               </select>
             </div>
 
@@ -373,6 +385,32 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 </div>
               </>
             )}
+
+            {recurrenceFrequency === "arbitrary" && (
+              <div className="glassjar__form__input-group">
+                <label>Arbitrary Dates:</label>
+                {arbitraryDates.map((date, index) => (
+                  <div key={index}>
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(e) =>
+                        setArbitraryDates(arbitraryDates.map((d, i) =>
+                          i === index ? e.target.value : d
+                        ))
+                      }
+                    />
+                    <button type="button" onClick={() => removeArbitraryDate(date)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => addArbitraryDate('')}>
+                  Add date
+                </button>
+              </div>
+            )}
+
 
             <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
               <label htmlFor="ends">End Date:</label>

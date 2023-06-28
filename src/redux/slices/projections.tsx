@@ -62,7 +62,7 @@ export const projectionsSlice = createSlice({
       const populateTransactionsOnDate = () => {
         transactions.forEach((transaction) => {
           let count: number = 0;
-          const transactionDate    = new Date(transaction.date);
+          let transactionDate    = new Date(transaction.date);
           const transactionEndDate = transaction.isRecurring
             ? transaction.endDate
               ? new Date(
@@ -180,6 +180,15 @@ export const projectionsSlice = createSlice({
                         break;
                       default:
                         break;
+                    }
+                  }
+                  break;
+                  case "arbitrary":  
+                  if (transaction.arbitraryDates && transaction.arbitraryDates.length > 0) {
+                    const nextDateIndex = transaction.arbitraryDates.findIndex(date => new Date(date) > transactionDate);
+                    if (nextDateIndex !== -1) {
+                      transactionDate = new Date(transaction.arbitraryDates[nextDateIndex]);
+                      caseFound = true;
                     }
                   }
                   break;
@@ -431,11 +440,7 @@ export const projectionsSlice = createSlice({
 
       const endTime = performance.now();
 
-      console.log(
-        `Recalculating Projections took ${(endTime - startTime).toFixed(
-          2
-        )} milliseconds to execute.`
-      );
+      console.log(`Recalculating Projections took ${(endTime - startTime).toFixed(2)} milliseconds to execute.`);
     },
   },
 });

@@ -209,11 +209,9 @@ const OutlookGraph: React.FC = () => {
   }
 
   const handleSpanChange = () => {
-    console.log("WTF?")
     let currentIndex = rangeChoices.findIndex(value => value === graphRange);
     let nextIndex    = (currentIndex + 1) % rangeChoices.length;
     dispatch(setGraphRange(rangeChoices[nextIndex]))
-    console.log(rangeChoices[nextIndex])
   };
 
   if (accounts.length === 0) {
