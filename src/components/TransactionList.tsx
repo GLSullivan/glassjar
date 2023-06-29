@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "../redux/store";
 import { setSearchString } from "./../redux/slices/search";
+import { TransactionType } from './../utils/constants';
 
 import TransactionListItem from "./TransactionListItem";
 import Menu from "./Menu";
@@ -14,7 +15,7 @@ import "./../css/TransactionList.css";
 type FilterOption = {
   id: number;
   label: string;
-  type: "deposit" | "withdrawal" | "transfer" | "event";
+  type: TransactionType;
 };
 
 type SortOption = {
@@ -172,7 +173,7 @@ const TransactionList: React.FC = () => {
               <p>Show Only</p>
               <div className="glassjar__sort-menu__filter">
                 {options.map((option) => (
-                  <div className="glassjar__flex glassjar__flex--justify-between">
+                  <div key={option.id} className="glassjar__flex glassjar__flex--justify-between">
                     <label htmlFor={"filter" + option.id}>{option.label}</label>
 
                     <Checkbox.Root

@@ -5,6 +5,7 @@ import { setActiveAccount }           from '../redux/slices/accounts';
 import { openAccountForm }            from '../redux/slices/modals';
 import { Account }                    from "../models/Account";
 import { colorPalette }               from "./../data/ColorPalette";
+import { AccountType }                from './../utils/constants';
 
 import "./../css/Panels.css";
 
@@ -13,7 +14,7 @@ interface AccountListItem {
   balance          ?: number;
 }
 
-const accountTypeIcons = {
+const accountTypeIcons: { [K in AccountType]: string } = {
   "checking"     : "glassjar__list-icon fa-solid fa-fw fa-money-check-dollar-pen",
   "savings"      : "glassjar__list-icon fa-solid fa-fw fa-piggy-bank",
   "credit card"  : "glassjar__list-icon fa-solid fa-fw fa-credit-card",
@@ -67,7 +68,7 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
     const dispatch = useDispatch();
 
     return (
-      <div className="glassjar__list-item" onClick={() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key={account.id}      >
+      <div className="glassjar__list-item" onClick={() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key={account.id}>
         <div className="glassjar__list-item__icon">
           <i className={accountTypeIcons[account.type]} />
           <div className="glassjar__list-icon__backing" style={{ background: colorPalette[account.color] }} />

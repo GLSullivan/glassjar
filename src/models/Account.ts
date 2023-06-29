@@ -1,8 +1,10 @@
+import { AccountType } from './../utils/constants';
+
 export interface Account {
   id             : string;
   name           : string;
   currentBalance : number;
-  type           : 'checking' | 'savings' | 'credit card' | 'loan' | 'mortgage' | 'cash';
+  type           : AccountType;
   isLiability    : boolean;
   lastUpdated    : string;
   showInGraph    : boolean;

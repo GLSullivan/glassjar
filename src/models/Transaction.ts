@@ -1,15 +1,17 @@
+import { RecurrenceFrequency, TransactionType, CustomIntervalType } from './../utils/constants';
+
 export interface Transaction {
   transactionName     : string;
-  id                  : number;
-  type                : 'deposit' | 'withdrawal' | 'transfer' | 'event';
-  amount              : number;
+  id                  : number; // UID. Time stamp at point of creation.
+  type                : TransactionType;
+  amount              : number; // All amounts are in whole cents
   date                : string;
   description         : string;
   isRecurring         : boolean;
   allowOverpayment    : boolean;
-  showInCalendar      : boolean;
-  recurrenceFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'given days' | 'twice monthly' | 'custom' | 'arbitrary';
-  customIntervalType ?: 'day' | 'week' | 'month' | 'year';
+  showInCalendar      : boolean; // Future feature for omitting high-frequency events from the calendar.
+  recurrenceFrequency?: RecurrenceFrequency;
+  customIntervalType ?: CustomIntervalType;
   givenDays          ?: number[];
   recurrenceInterval ?: number;  
   endDate            ?: string;
@@ -17,7 +19,8 @@ export interface Transaction {
   toAccount          ?: string;
   updatedAt          ?: number;
   category           ?: string;
-  skippedDates       ?: [];
-  arbitraryDates     ?: string[]; // Future feature for holidays and anything with arbitrary recurrences. 
+  skippedDates       ?: string[]; // Future feature for skipping instances of an event.
+  arbitraryDates     ?: string[]; 
   discretionary      ?: boolean; // Future feature for sorting, showing things that are required.
+  fromHelper         ?: string;
 }

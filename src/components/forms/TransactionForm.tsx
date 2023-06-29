@@ -23,7 +23,7 @@ interface TransactionFormProps {
   initialArbitraryDates?: string[];
 }
 
-const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate, initialArbitraryDates }) => {
+const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate }) => {
   const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
   const accounts          = useSelector((state: RootState) => state.accounts.accounts);
 
@@ -52,11 +52,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate,
   const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || '1');
   const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
   const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || []);
-
-if (initialArbitraryDates) {
-  console.log("We got dates, son!")
-}
-
 
   const addArbitraryDate = (date: string) => {
     setArbitraryDates((prevState) => [...prevState, date]);

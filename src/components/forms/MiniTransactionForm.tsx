@@ -45,17 +45,7 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
   const [transactionName, setTransactionName]         = useState(initialName);
   const [day, setDay]                                 = useState(initialDay);
   const [amount, setAmount]                           = useState(initialAmount);
-  // const [category, setCategory]                       = useState(initialCategory);
-  // const [transactionType, setTransactionType]         = useState(initialType);
-  // const [description, setDescription]                 = useState(initialDescription);
-  // const [fromAccount, setFromAccount]                 = useState(initialFromAccount || firstAccountId);
-  // const [toAccount, setToAccount]                     = useState(initialToAccount);
-  // const [isRecurring, setIsRecurring]                 = useState(initialIsRecurring);
-  // const [endDate, setEndDate]                         = useState(initialEndDate);
-  // const [recurrenceFrequency, setRecurrenceFrequency] = useState(initialRecurrenceFrequency);
-  // const [allowOverpayment, setAllowOverpayment]       = useState(initialAllowOverpayment);
-  // const [showInCalendar, setShowInCalendar]           = useState(initialShowInCalendar);
-
+  
   const dispatch = useDispatch();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -93,9 +83,6 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
 
     dispatch(addTransaction(transactionData));
     // Isn't this a place to set a state for success? 
-    // setTransactionName("");
-    // setDay("");
-    // setAmount(0);
   };
 
   return (
@@ -151,13 +138,13 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
         <div className="glassjar__form__input-group">
           <label htmlFor="amount">Amount:</label>
           <CurrencyInput
-            prefix="$"
-            id="amount"
-            name="amount"
-            placeholder="Amount"
-            defaultValue={amount / 100}
-            decimalsLimit={2}
-            onValueChange={(value) =>
+            prefix        = "$"
+            id            = "amount"
+            name          = "amount"
+            placeholder   = "Amount"
+            defaultValue  = {amount / 100}
+            decimalsLimit = {2}
+            onValueChange = {(value) =>
               setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
             }
           />
