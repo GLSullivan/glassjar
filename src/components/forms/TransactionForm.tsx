@@ -20,9 +20,10 @@ import './../../css/Components.css';
 interface TransactionFormProps {
   onClose: () => void;
   initialDate?: string;
+  initialArbitraryDates?: string[];
 }
 
-const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate }) => {
+const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate, initialArbitraryDates }) => {
   const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
   const accounts          = useSelector((state: RootState) => state.accounts.accounts);
 
@@ -43,7 +44,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
   const [description, setDescription]                         = useState(activeTransaction?.description || '');
   const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
-  const [ends, setEnds]                                        = useState(activeTransaction?.isRecurring || false);
+  const [ends, setEnds]                                       = useState(activeTransaction?.isRecurring || false);
   const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
   const [recurrenceFrequency, setRecurrenceFrequency]         = useState(activeTransaction?.recurrenceFrequency || 'monthly');
   const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
@@ -51,6 +52,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
   const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || '1');
   const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
   const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || []);
+
+if (initialArbitraryDates) {
+  console.log("We got dates, son!")
+}
+
 
   const addArbitraryDate = (date: string) => {
     setArbitraryDates((prevState) => [...prevState, date]);
