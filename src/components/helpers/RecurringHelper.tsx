@@ -1,15 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
 
-import { RootState } from "../../redux/store";
 import MiniTransactionForm from "../forms/MiniTransactionForm";
 import { RecurringExpenses } from "../../data/RecurringExpenses";
 
 const RecurringHelper: React.FC = () => {
-
-  const allTransactions = useSelector(
-    (state: RootState) => state.transactions.transactions
-  );
 
   return (
     <>
