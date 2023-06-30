@@ -4,6 +4,7 @@ import { RecurringExpenses } from "../../data/RecurringExpenses";
 
 import Tabs from "../Tabs";
 import HolidayHelper from "./HolidayHelper";
+import BirthdayHelper from "./BirthdayHelper";
 
 const Loader: React.FC = () => {
   return (
@@ -40,7 +41,7 @@ const Loader: React.FC = () => {
           <HolidayHelper />
         </Tabs.Item>
         <Tabs.Item heading="Birthdays">
-          <p>Coming soon...</p>
+          <BirthdayHelper />
         </Tabs.Item>
       </Tabs>
     </>

@@ -1,21 +1,22 @@
-import React, { useEffect, useState }                             from 'react';
-import { useDispatch, useSelector }                               from 'react-redux';
-import CurrencyInput                                              from 'react-currency-input-field';
+import React, { useEffect, useState }                               from 'react';
+import { useDispatch, useSelector }                                 from 'react-redux';
+import CurrencyInput                                                from 'react-currency-input-field';
+  
+import { Transaction }                                              from './../../models/Transaction';
+import { addTransaction, updateTransaction, deleteTransaction }     from './../../redux/slices/transactions';
+import { RootState }                                                from './../../redux/store';
+import { stripTime, addZoneOffset }                                 from './../../utils/dateUtils';
+import { Account }                                                  from './../../models/Account';
+import { RecurringExpenses }                                        from './../../data/RecurringExpenses';
+import { RecurrenceFrequency, CustomIntervalType,TransactionType }  from './../../utils/constants';
 
-import { Transaction }                                            from './../../models/Transaction';
-import { addTransaction, updateTransaction, deleteTransaction }   from './../../redux/slices/transactions';
-import { RootState }                                              from './../../redux/store';
-import { stripTime, addZoneOffset }                               from './../../utils/dateUtils';
-import { Account }                                                from './../../models/Account';
-import { RecurringExpenses }                                      from './../../data/RecurringExpenses';
-
-import { isPast, add, parseISO }                                  from 'date-fns';
-import { format }                                                 from 'date-fns-tz';
+import { format }                                                   from 'date-fns-tz';
+import { isPast, add, parseISO }                                    from 'date-fns';
 
 import * as Switch from '@radix-ui/react-switch';
 
-import './../../css/Forms.css';
 import './../../css/Components.css';
+import './../../css/Forms.css';
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -78,8 +79,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
       type,
       amount,
       description,
-      fromAccount: fromAccount, // Use state variable fromAccount
-      toAccount: toAccount, // Use state variable toAccount
+      fromAccount: fromAccount, 
+      toAccount: toAccount, 
       id: activeTransaction ? activeTransaction.id : new Date().getTime(),
       isRecurring,
       endDate: isoEndDate,
@@ -193,11 +194,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               value={type}
               onChange={(e) =>
                 setType(
-                  e.target.value as
-                    | "deposit"
-                    | "withdrawal"
-                    | "transfer"
-                    | "event"
+                  e.target.value as TransactionType
                 )
               }
             >
@@ -314,15 +311,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 value={recurrenceFrequency}
                 onChange={(e) =>
                   setRecurrenceFrequency(
-                    e.target.value as
-                      | "daily"
-                      | "weekly"
-                      | "monthly"
-                      | "yearly"
-                      | "given days"
-                      | "twice monthly"
-                      | "custom"
-                      | "arbitrary"
+                    e.target.value as RecurrenceFrequency
                   )
                 }
               >
@@ -373,7 +362,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                       value={customIntervalType}
                       onChange={(e) =>
                         setCustomIntervalType(
-                          e.target.value as "day" | "week" | "month" | "year"
+                          e.target.value as CustomIntervalType
                         )
                       }
                     >
@@ -432,7 +421,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             </div>
             {ends && (
               <div className="glassjar__form__input-group">
-                {/* <label htmlFor="endDate">End Date:</label> */}
                 <input
                   type="date"
                   id="endDate"
@@ -448,6 +436,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
           {/* <button onClick={onClose}>Close</button> */}
           {activeTransaction && (
             <button
+              className='glassjar__button glassjar__button--danger'
               type="button"
               onClick={() => {
                 dispatch(deleteTransaction(activeTransaction.id));

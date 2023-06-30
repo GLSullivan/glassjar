@@ -19,6 +19,7 @@
   --color-primary  : #202230;
   --color-accent   : #414450;
   --color-form     : #8d8d8d;
+  --color-danger   : #8b0000;
   --gradient-brand    : linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
   --gradient-secondary: linear-gradient(
     160deg,
@@ -111,4 +112,10 @@ button {
   aspect-ratio: 1;
   height: 2.2rem;
   font-size: 1rem;
+}
+
+.glassjar__button.glassjar__button--danger {
+  font-weight: 900;
+  color: var(--color-bright);
+  background-color: var(--color-danger);
 }

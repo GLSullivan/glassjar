@@ -26,18 +26,20 @@ interface HolidayTransactionFormProps {
   initialCategory            ?: string;
   initialArbitraryDates      ?: string[];
   isActive                   ?: boolean;
-  initialActiveTransaction   ?: Transaction
+  initialActiveTransaction   ?: Transaction;
+  initialFromHelper          ?: string;
 }
 
 const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
   initialName           = "",
   initialAmount         = 0,
-  initialCategory       = "None",
+  initialCategory       = "Charity and Gifts",
   initialArbitraryDates = [],
   isActive              = false,
   initialActiveTransaction,
   initialDate,
-  initialRecurrenceFrequency
+  initialRecurrenceFrequency,
+  initialFromHelper
 }) => {
   const accounts                = useSelector((state: RootState) => state.accounts.accounts);
 
@@ -55,53 +57,22 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
     initialRecurrenceFrequency = 'yearly'
   }
   
-    // const [transactionName, setTransactionName]                 = useState(activeTransaction?.transactionName || initialName);
-    // const [date, setDate]                                       = useState(() => {
-    //                                                               if (activeTransaction?.date) {
-    //                                                                 return new Date(activeTransaction.date).toISOString();
-    //                                                               }
-    //                                                               if (initialDate) {
-    //                                                                 return new Date(initialDate).toISOString();
-    //                                                               }
-    //                                                               if (initialArbitraryDates.length > 0) {
-    //                                                                 return new Date(initialArbitraryDates[0]).toISOString();
-    //                                                               }
-    //                                                               return '';
-    //                                                             });
-    // const [type, setType]                                       = useState(activeTransaction?.type || 'withdrawal');
-    // const [category, setCategory]                               = useState(activeTransaction?.category || 'None');
     const [amount, setAmount]                                   = useState(activeTransaction?.amount || initialAmount);
-    // const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || accounts[0].id);
-    // const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
-    // const [description, setDescription]                         = useState(activeTransaction?.description || '');
-    // const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || true);
-    // const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
-    // const [recurrenceFrequency, setRecurrenceFrequency]         = useState(activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency);
-    // const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
-    // const [customIntervalType, setCustomIntervalType]           = useState(activeTransaction?.customIntervalType || 'week');
-    // const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || '1');
-    // const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
-    // const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || initialArbitraryDates);
 
-    const transactionName         = activeTransaction?.transactionName || initialName;
-    const date                    = activeTransaction?.date ? new Date(activeTransaction.date).toISOString() :
+    const transactionName     = activeTransaction?.transactionName || initialName;
+    const date                = activeTransaction?.date ? new Date(activeTransaction.date).toISOString() :
                                     initialDate                  ? new Date(initialDate).toISOString()                 : 
                                     initialArbitraryDates.length > 0 ? new Date(initialArbitraryDates[0]).toISOString(): 
                                     '';
-    const type                    = activeTransaction?.type || 'withdrawal';
-    const category                = activeTransaction?.category || 'None';
-    // const amount                  = activeTransaction?.amount || initialAmount;
-    const fromAccount             = activeTransaction?.fromAccount || accounts[0].id;
-    const toAccount               = activeTransaction?.toAccount || accounts[0].id;
-    const description             = activeTransaction?.description || '';
-    const isRecurring             = activeTransaction?.isRecurring || true;
-    const endDate                 = activeTransaction?.endDate || '';
-    let recurrenceFrequency     = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
-    // const recurrenceInterval      = activeTransaction?.recurrenceInterval || 1;
-    const customIntervalType      = activeTransaction?.customIntervalType || 'week';
-    // const recurrenceIntervalInput = activeTransaction?.recurrenceInterval?.toString() || '1';
-    // const selectedDays            = activeTransaction?.givenDays || [];
-    let arbitraryDates          = activeTransaction?.arbitraryDates || initialArbitraryDates;
+    const type                = activeTransaction?.type || 'withdrawal';
+    const fromAccount         = activeTransaction?.fromAccount || accounts[0].id;
+    const toAccount           = activeTransaction?.toAccount || accounts[0].id;
+    const description         = activeTransaction?.description || '';
+    const isRecurring         = activeTransaction?.isRecurring || true;
+    const endDate             = activeTransaction?.endDate || '';
+    let   recurrenceFrequency = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
+    const customIntervalType  = activeTransaction?.customIntervalType || 'week';
+    let   arbitraryDates      = activeTransaction?.arbitraryDates || initialArbitraryDates;
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
@@ -123,22 +94,22 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
     
         const transactionData: Transaction = {
           transactionName,
-          date: isoDate,
           type,
           amount,
           description,
-          fromAccount: fromAccount,
-          toAccount: toAccount,
-          id: activeTransaction ? activeTransaction.id : new Date().getTime(),
           isRecurring,
-          endDate: endDate,
           recurrenceFrequency,
-          // ...(recurrenceFrequency === "custom" && { recurrenceInterval }),
           customIntervalType,
+          date            : isoDate,
+          fromAccount     : fromAccount,
+          toAccount       : toAccount,
+          id              : activeTransaction ? activeTransaction.id: new Date().getTime(),
+          endDate         : endDate,
           allowOverpayment: false,
-          showInCalendar: true,
-          category,
-          arbitraryDates: newArbitraryDates,
+          showInCalendar  : true,
+          category        : initialCategory,
+          arbitraryDates  : newArbitraryDates,
+          fromHelper      : initialFromHelper
         };
     
         if (activeTransaction) {
@@ -149,11 +120,9 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
     
       };
 
-
   return (
     <form  className={`glassjar__mini-transaction ${isActive ? "active" : ""}`} onSubmit={handleSubmit}>
       <div className="glassjar__form__input-group">
-        {/* <label htmlFor="Name">Transaction Name:</label> */}
         <h3>{transactionName}</h3>
       </div>
 

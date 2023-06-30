@@ -15,7 +15,8 @@ const HolidayHelper: React.FC = () => {
     <>
       {FutureHolidays.map((holiday, index) => {
         const activeTransaction = allTransactions.find(
-          (transaction) => transaction.transactionName === holiday.name
+          (transaction) => 
+            transaction.transactionName === holiday.name && transaction.fromHelper === "holiday"
         );
         const isActive = Boolean(activeTransaction);
         return (
@@ -26,6 +27,7 @@ const HolidayHelper: React.FC = () => {
             initialArbitraryDates={holiday.next_occurrence}
             isActive={isActive}
             initialActiveTransaction={activeTransaction}
+            initialFromHelper="holiday"
           />
         );
       })}

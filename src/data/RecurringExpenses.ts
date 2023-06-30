@@ -47,11 +47,6 @@ export const RecurringExpenses: { category: string; expenses: string[]; percenta
     category: "Food",
     expenses: [
       "Groceries",
-      "Dining Out",
-      "Fast Food",
-      "Coffee Shops",
-      "Alcohol",
-      "Tobacco",
     ],
     percentage: ".15",
   },
@@ -60,11 +55,9 @@ export const RecurringExpenses: { category: string; expenses: string[]; percenta
     expenses: [
       "Car Payment",
       "Car Insurance",
-      "Gasoline",
       "Car Maintenance",
       "Public Transportation",
       "Ride-Sharing",
-      "Bicycle Maintenance",
     ],
     percentage: ".15",
   },
@@ -83,8 +76,6 @@ export const RecurringExpenses: { category: string; expenses: string[]; percenta
     category: "Fitness",
     expenses: [
       "Gym Membership",
-      "Fitness Classes",
-      "Sports Equipment",
     ],
     percentage: ".02",
   },
