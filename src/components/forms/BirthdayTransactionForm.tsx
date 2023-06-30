@@ -41,6 +41,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   isActive              = false,
   initialActiveTransaction,
   initialDate,
+  initialFromAccount,
   initialRecurrenceFrequency = "yearly",
   initialFromHelper,
   onSubmit,
@@ -69,7 +70,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
 
   const type        = activeTransaction?.type || "withdrawal";
   const category    = activeTransaction?.category || initialCategory;
-  const fromAccount = activeTransaction?.fromAccount || accounts[0].id;
+  const fromAccount = activeTransaction?.fromAccount || initialFromAccount || accounts[0].id;
   const toAccount   = activeTransaction?.toAccount || accounts[0].id;
   const description = activeTransaction?.description || "";
   const isRecurring = activeTransaction?.isRecurring || true;

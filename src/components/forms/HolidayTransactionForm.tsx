@@ -76,7 +76,6 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      console.log(arbitraryDates);
     
       if (arbitraryDates.length > 1) {
         recurrenceFrequency = "arbitrary";

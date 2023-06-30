@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import CurrencyInput from 'react-currency-input-field';
 
 import BirthdayTransactionForm from "../forms/BirthdayTransactionForm";
 import { Transaction } from './../../models/Transaction';
 import { RootState } from "./../../redux/store";
+import { Account } from "../../models/Account";
 
 interface Form {
   key                     ?: number;
@@ -15,7 +17,13 @@ interface Form {
 }
 
 const BirthdayHelper: React.FC = () => {
-  const [forms, setForms] = useState<Form[]>([]);
+  const accounts                      = useSelector((state: RootState) => state.accounts.accounts);
+
+  const [forms, setForms]             = useState<Form[]>([]);
+  const [amount, setAmount]           = useState(1000);
+  const [fromAccount, setFromAccount] = useState(accounts[0].id);
+
+  const today = new Date();
 
   const [initialForm, setInitialForm] = useState<Form>({
       key                     : Date.now(),
@@ -67,6 +75,36 @@ const BirthdayHelper: React.FC = () => {
   
   return (
     <>
+     <div className="glassjar__form__input-group">
+              <label htmlFor="amount">Amount:</label>
+              <CurrencyInput
+                id="amount"
+                prefix="$"
+                name="amount"
+                placeholder="Transaction Amount:"
+                defaultValue={amount / 100} // Convert cents to dollars for display
+                decimalsLimit={2} // Allow decimal input
+                onValueChange={(value) =>
+                  setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
+                }
+              />
+            </div>
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+            <label htmlFor="fromAccount">From Account:</label>
+            <select
+              id="fromAccount"
+              value={fromAccount}
+              onChange={(e) => {
+                setFromAccount(e.target.value);
+              }}
+            >
+              {accounts.map((account: Account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
+          </div>
       <BirthdayTransactionForm
         key                      = {initialForm.key}
         initialCategory          = {initialForm.initialCategory}
@@ -74,7 +112,10 @@ const BirthdayHelper: React.FC = () => {
         initialActiveTransaction = {initialForm.initialActiveTransaction}
         initialFromHelper        = "birthday"
         onSubmit                 = {handleFormSubmit}
-      />
+        initialAmount            = {amount}
+        initialFromAccount       = {fromAccount}
+        initialDate              = { today.toISOString()}
+              />
       {forms.map((form, index) => (
         <BirthdayTransactionForm
           key                      = {form.key || index} // Using index as a fallback
