@@ -21,7 +21,8 @@ import {
   closeAccountList,     
   openAccountForm,      
   closeTransactionHelper      
-}                                           from './redux/slices/modals'
+}                                           from './redux/slices/modals';
+import Landing                              from './components/Landing';
 import { RootState }                        from './redux/store';
 
 import './css/Nav.css'      
@@ -128,6 +129,8 @@ const AppContent: React.FC = () => {
       {!isSignedIn && <div id="firebaseui-auth-container" />}
       {isSignedIn && <>
       {/* <h1>{currentUser?.displayName}</h1> */}
+
+      <Landing />
 
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
