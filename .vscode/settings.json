@@ -5,6 +5,7 @@
         "firebaseapp",
         "firebaseui",
         "firestore",
+        "formik",
         "glassjar",
         "immer",
         "jarstore",

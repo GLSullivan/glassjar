@@ -12,6 +12,7 @@ import { RootState } from "../redux/store";
 import CurrencyInput from "react-currency-input-field";
 import firebase from "firebase/compat/app";
 import "./../css/SettingsPanel.css";
+import { setSignedIn } from "../redux/slices/auth";
 
 const SettingsPanel: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,11 @@ const SettingsPanel: React.FC = () => {
     (state: RootState) => state.userPrefs
   );
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+
+const signOut = () => {
+  dispatch(setSignedIn(false))
+  firebase.auth().signOut()
+}
 
   return (
     <div className="glassjar__settings-panel">
@@ -66,7 +72,7 @@ const SettingsPanel: React.FC = () => {
           }
         />
       </label>
-      <button onClick={() => firebase.auth().signOut()}>Sign out</button>
+      <button onClick={() => signOut()}>Sign out</button>
     </div>
   );
 };

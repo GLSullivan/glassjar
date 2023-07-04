@@ -1,5 +1,5 @@
 import { useSelector, useDispatch }         from 'react-redux';
-import React, { useEffect, useMemo }        from 'react';
+import React, { useEffect }        from 'react';
 
 import TransactionHelper                    from './components/helpers/TransactionHelper';
 import TransactionForm                      from './components/forms/TransactionForm';
@@ -27,11 +27,6 @@ import { RootState }                        from './redux/store';
 
 import './css/Nav.css'      
 
-import firebase                             from 'firebase/compat/app';
-import * as firebaseui                      from 'firebaseui';
-import 'firebaseui/dist/firebaseui.css';
-
-import { setCurrentUser, setSignedIn }      from './redux/slices/auth';
 
 const AppContent: React.FC = () => {
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
@@ -48,45 +43,6 @@ const AppContent: React.FC = () => {
   const dispatch = useDispatch()
 
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
-  
-  const ui = useMemo(() => {
-    return firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
-  }, []);
-  
-  const uiConfig = useMemo(() => ({
-    signInFlow: 'popup',
-    signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    ],
-    callbacks: {
-      signInSuccessWithAuthResult: () => false,
-    },
-  }), []);
-  
-  useEffect(() => {
-    if (!isSignedIn) {
-      ui.start('#firebaseui-auth-container', uiConfig);
-    }
-  }, [isSignedIn, ui, uiConfig]);
-
-  useEffect(() => {
-    const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
-      dispatch(setSignedIn(!!user));
-      if(user) {
-        dispatch(setCurrentUser({
-          uid: user.uid,
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-        }));
-      } else {
-        dispatch(setCurrentUser(null));
-      }
-    });
-
-    return () => unregisterAuthObserver();
-  }, [dispatch]);
 
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -126,11 +82,11 @@ const AppContent: React.FC = () => {
   return (
     <div className='glassjar__root'>
       <Loader />
-      {!isSignedIn && <div id="firebaseui-auth-container" />}
+      {!isSignedIn && <Landing />}
       {isSignedIn && <>
       {/* <h1>{currentUser?.displayName}</h1> */}
 
-      <Landing />
+
 
       <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
         <AccountList />
