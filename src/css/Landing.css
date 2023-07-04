@@ -170,6 +170,10 @@
   transition: .25s ease;
 }
 
+.glassjar__landing input.error {
+  border: 1px solid var(--color-danger);
+}
+
 span.glassjar__input-group__error:empty {
   opacity: 0;
 }

@@ -127,7 +127,7 @@ function Landing() {
                 <h1>Welcome</h1>
                 <div>
                   <div className="glassjar__input-group">
-                    <Field name="email" type="email" placeholder="Email" />
+                    <Field name="email" type="email" placeholder="Email" className={errors.email ? "error" : ""} />
                     <label htmlFor="email">Email{" "}
                       <span className="glassjar__input-group__error">
                         <ErrorMessage name="email" />
@@ -139,13 +139,13 @@ function Landing() {
                       name="password"
                       type="password"
                       placeholder="Password"
+                      className={errors.password ? "error" : ""} 
                     />
                     <label htmlFor="password">Password{" "}
                       <span className="glassjar__input-group__error">
                         <ErrorMessage name="password" />
                       </span>
                     </label>
-                    
                   </div>
                   {firebaseError && <div>{firebaseError}</div>}
                   <div className="glassjar__flex">
