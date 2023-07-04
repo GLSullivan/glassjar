@@ -165,21 +165,13 @@
 }
 
 .glassjar__input-group__error {
-  position     : absolute;
-  top          : 100%;
-  right        : 0;
-  font-size    : .7rem;
   color        : var(--color-danger);
-  background   : var(--color-bright);
-  padding      : 0.5rem 0.5rem 0 0.5rem;
-  margin-top   : -0.5rem;
-  z-index      : -1;
-  border-radius: 0 0 0.25rem 0.25rem;
+  opacity: 1;
   transition: .25s ease;
 }
 
 span.glassjar__input-group__error:empty {
-  top: 50%;
+  opacity: 0;
 }
 
 .glassjar__landing__form .glassjar__flex > * {

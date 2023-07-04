@@ -22,7 +22,7 @@ function Landing() {
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
+      .min(6, "Must be > 6 characters")
       .required("Required"),
   });
 
@@ -128,10 +128,11 @@ function Landing() {
                 <div>
                   <div className="glassjar__input-group">
                     <Field name="email" type="email" placeholder="Email" />
-                    <label htmlFor="email">Email</label>
-                    <span className="glassjar__input-group__error">
-                      <ErrorMessage name="email" />
-                    </span>
+                    <label htmlFor="email">Email{" "}
+                      <span className="glassjar__input-group__error">
+                        <ErrorMessage name="email" />
+                      </span>
+                    </label>
                   </div>
                   <div className="glassjar__input-group">
                     <Field
@@ -139,10 +140,12 @@ function Landing() {
                       type="password"
                       placeholder="Password"
                     />
-                    <label htmlFor="password">Password</label>
-                    <span className="glassjar__input-group__error">
-                      <ErrorMessage name="password" />
-                    </span>
+                    <label htmlFor="password">Password{" "}
+                      <span className="glassjar__input-group__error">
+                        <ErrorMessage name="password" />
+                      </span>
+                    </label>
+                    
                   </div>
                   {firebaseError && <div>{firebaseError}</div>}
                   <div className="glassjar__flex">
@@ -156,6 +159,11 @@ function Landing() {
                     <span className="glassjar__text-link">
                     {/* <span onClick={signUp} className="glassjar__text-link"> */}
                       Sign up
+                    </span>
+                  </p>
+                  <p>
+                    <span className="glassjar__text-link">
+                      Forgot Your Password?
                     </span>
                   </p>
                 </div>
