@@ -29,12 +29,13 @@ import './css/Nav.css'
 
 
 const AppContent: React.FC = () => {
-  const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen)
-  const accountListOpen       = useSelector((state: RootState) => state.modalState.accountListOpen)
-  const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen)
-  const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen)
+  const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen);
+  const accountListOpen       = useSelector((state: RootState) => state.modalState.accountListOpen);
+  const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen);
+  const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
   const transactions          = useSelector((state: RootState) => state.transactions.transactions);
-  const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate)
+  const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate);
+  const loadingAuthState      = useSelector((state: RootState) => state.auth.loadingAuthState);
   const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
   const accounts              = useSelector((state: RootState) => state.accounts.accounts);
   const activeView            = useSelector((state: RootState) => state.views.activeView);
@@ -68,10 +69,10 @@ const AppContent: React.FC = () => {
   }
 
   useEffect(() => {
-    if (accounts.length < 1 && !isLoading) {
-      dispatch(openAccountForm()); // Initial setup. 
+    if (!loadingAuthState && accounts.length < 1 && !isLoading) {
+      dispatch(openAccountForm());
     }
-  }, [accounts, dispatch, isLoading]);
+  }, [accounts, dispatch, isLoading, loadingAuthState]);
 
   useEffect(() => {
     if (accounts.length > 0) {

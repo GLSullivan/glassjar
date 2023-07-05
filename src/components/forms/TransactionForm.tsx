@@ -291,7 +291,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
         )}
 
-        <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
+        <div className="glassjar__form__input-group glassjar__form__input-group--check">
           <input
             type="checkbox"
             id="isRecurring"
@@ -412,7 +412,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               </>
             )}
 
-            <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
+            <div className="glassjar__form__input-group glassjar__form__input-group--check">
               <input
                 type="checkbox"
                 id="ends"
@@ -467,7 +467,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           />
           <label htmlFor="description">Description (optional):</label>
         </div>
-
+        <br />
         <div className="glassjar__flex glassjar__flex--justify-center">
           {activeTransaction && (
             <button

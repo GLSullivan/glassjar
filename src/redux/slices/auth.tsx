@@ -13,17 +13,22 @@ interface UserData {
 interface AuthState {
   isSignedIn: boolean;
   currentUser: UserData | null;
+  loadingAuthState: boolean; // new state variable
 }
 
 const initialState: AuthState = {
   isSignedIn: false,
-  currentUser: null
+  currentUser: null,
+  loadingAuthState: true, 
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setLoadingAuthState: (state, action: PayloadAction<boolean>) => {
+      state.loadingAuthState = action.payload;
+    },
     setSignedIn: (state, action: PayloadAction<boolean>) => {
       state.isSignedIn = action.payload;
     },
@@ -33,7 +38,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setSignedIn, setCurrentUser } = authSlice.actions;
+export const { setSignedIn, setCurrentUser, setLoadingAuthState } = authSlice.actions;
 
 export const selectAuth = (state: RootState) => state.auth;
 

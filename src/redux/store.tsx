@@ -10,7 +10,7 @@ import loaderReducer                              from "./slices/loader";
 import { hideLoader, showLoader}                  from "./slices/loader";
 import searchReducer                              from "./slices/search";
 import viewReducer, { setViewState }              from "./slices/views";
-import authReducer                                from "./slices/auth";
+import authReducer, { setLoadingAuthState }       from "./slices/auth";
 
 import firebase                                   from "firebase/compat/app";
 import "firebase/compat/firestore";
@@ -59,13 +59,14 @@ firebase.auth().onAuthStateChanged((user) => {
       .then(() => {
         store.dispatch(hideLoader());
         isAppLoaded = true;
-        
+        store.dispatch(setLoadingAuthState(false));
       })
       .catch((error) => {
         console.error(error);
       });
   } else {
     store.dispatch(hideLoader());
+    store.dispatch(setLoadingAuthState(false));
   }
 });
 

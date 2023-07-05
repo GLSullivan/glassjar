@@ -42,9 +42,9 @@
 
   backdrop-filter: blur(4px) saturate(0.0);
   background     : rgba(54, 110, 121, 0.8);
-background: url('./../media/images/landing_hero.jpg');
+background: url('./../media/images/backing.jpg');
 background-size: cover;
-background-position: top center;
+background-position: bottom left;
   box-shadow     : 0px 4px 16px 0px rgba(17, 17, 26, 0.25),
                     0px 8px 32px 0px rgba(17, 17, 26, 0.25); 
 }
