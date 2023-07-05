@@ -19,14 +19,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   };
 
   return (
-    <div className="color-picker">
+    <div className="glassjar__color-picker">
       {colorPalette.map((color, index) => (
         <button
           key={index}
-          className={`color-picker__color${
-            index === selectedIndex ? " color-picker__color--selected" : ""
+          className={`glassjar__color-picker__color${
+            index === selectedIndex ? " glassjar__color-picker__color--selected" : ""
           }`}
-          style={{ backgroundColor: color }}
+          style={{ background: color }}
           onClick={(event) => handleColorSelect(event, index)}
           type="button"
         ></button>

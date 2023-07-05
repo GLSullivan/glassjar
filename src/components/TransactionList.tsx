@@ -136,13 +136,15 @@ const TransactionList: React.FC = () => {
       <div className="glassjar__transaction-list__header">
         <h2>Transactions</h2>
         <div className="glassjar__search-sort">
-          <div className="glassjar__search-sort__field">
+          <div className="glassjar__search-sort__field  glassjar__form__input-group">
             <input
               type="text"
+              id="searchTerm"
               placeholder="Search..."
               value={search || ""}
               onChange={(event) => handleSearchChange(event.target.value)}
             />
+            <label htmlFor="searchTerm">Search...</label>
             {search !== "" && (
               <div
                 className="glassjar__search-sort__field-clear"

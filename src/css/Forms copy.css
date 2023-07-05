@@ -115,27 +115,11 @@ select {
   display: block;
 }
 
-.glassjar__form__input-group.glassjar__form__input-group--check {
-  display       : flex;
-  flex-direction: row;
-  gap           : 1rem;
-  align-items: center;
-}
-
-.glassjar__form__input-group.glassjar__form__input-group--check input {
-  height: 1rem;
-  width : unset;
-}
-
-.glassjar__form__input-group.glassjar__form__input-group--check label{
-  display: inline-block;
-}
-
 select option {
   white-space: normal;
 }
 
-        /* Override form defaults */
+/* Override form defaults */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

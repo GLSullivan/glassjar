@@ -1,22 +1,27 @@
-import React, { useEffect, useState }                               from 'react';
-import { useDispatch, useSelector }                                 from 'react-redux';
-import CurrencyInput                                                from 'react-currency-input-field';
-  
-import { Transaction }                                              from './../../models/Transaction';
-import { addTransaction, updateTransaction, deleteTransaction }     from './../../redux/slices/transactions';
-import { RootState }                                                from './../../redux/store';
-import { stripTime, addZoneOffset }                                 from './../../utils/dateUtils';
-import { Account }                                                  from './../../models/Account';
-import { RecurringExpenses }                                        from './../../data/RecurringExpenses';
-import { RecurrenceFrequency, CustomIntervalType,TransactionType }  from './../../utils/constants';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CurrencyInput from "react-currency-input-field";
 
-import { format }                                                   from 'date-fns-tz';
-import { isPast, add, parseISO }                                    from 'date-fns';
+import { Transaction } from "./../../models/Transaction";
+import {
+  addTransaction,
+  updateTransaction,
+  deleteTransaction,
+} from "./../../redux/slices/transactions";
+import { RootState } from "./../../redux/store";
+import { stripTime, addZoneOffset } from "./../../utils/dateUtils";
+import { Account } from "./../../models/Account";
+import { RecurringExpenses } from "./../../data/RecurringExpenses";
+import {
+  RecurrenceFrequency,
+  CustomIntervalType,
+  TransactionType,
+} from "./../../utils/constants";
 
-import * as Switch from '@radix-ui/react-switch';
+import { format } from "date-fns-tz";
+import { isPast, add, parseISO } from "date-fns";
 
-import './../../css/Components.css';
-import './../../css/Forms.css';
+import "./../../css/Forms.css";
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -24,35 +29,63 @@ interface TransactionFormProps {
   initialArbitraryDates?: string[];
 }
 
-const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate }) => {
-  const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
-  const accounts          = useSelector((state: RootState) => state.accounts.accounts);
+const TransactionForm: React.FC<TransactionFormProps> = ({
+  onClose,
+  initialDate,
+}) => {
+  const activeTransaction = useSelector(
+    (state: RootState) => state.transactions.activeTransaction
+  );
+  const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
-  const [transactionName, setTransactionName]                 = useState(activeTransaction?.transactionName || '');
-  const [date, setDate]                                       = useState(() => {
-                                                                if (activeTransaction?.date) {
-                                                                  return new Date(activeTransaction.date).toISOString();
-                                                                }
-                                                                if (initialDate) {
-                                                                  return new Date(initialDate).toISOString();
-                                                                }
-                                                                return '';
-                                                              });
-  const [type, setType]                                       = useState(activeTransaction?.type || 'withdrawal');
-  const [category, setCategory]                               = useState(activeTransaction?.category || 'None');
-  const [amount, setAmount]                                   = useState(activeTransaction?.amount || 0);
-  const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || accounts[0].id);
-  const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
-  const [description, setDescription]                         = useState(activeTransaction?.description || '');
-  const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
-  const [ends, setEnds]                                       = useState(activeTransaction?.isRecurring || false);
-  const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
-  const [recurrenceFrequency, setRecurrenceFrequency]         = useState(activeTransaction?.recurrenceFrequency || 'monthly');
-  const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
-  const [customIntervalType, setCustomIntervalType]           = useState(activeTransaction?.customIntervalType || 'week');
-  const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || '1');
-  const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
-  const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || []);
+  const [transactionName, setTransactionName] = useState(
+    activeTransaction?.transactionName || ""
+  );
+  const [date, setDate] = useState(() => {
+    if (activeTransaction?.date) {
+      return new Date(activeTransaction.date).toISOString();
+    }
+    if (initialDate) {
+      return new Date(initialDate).toISOString();
+    }
+    return "";
+  });
+  const [type, setType] = useState(activeTransaction?.type || "withdrawal");
+  const [category, setCategory] = useState(
+    activeTransaction?.category || "None"
+  );
+  const [amount, setAmount] = useState(activeTransaction?.amount || 0);
+  const [fromAccount, setFromAccount] = useState(
+    activeTransaction?.fromAccount || accounts[0].id
+  );
+  const [toAccount, setToAccount] = useState(
+    activeTransaction?.toAccount || accounts[0].id
+  );
+  const [description, setDescription] = useState(
+    activeTransaction?.description || ""
+  );
+  const [isRecurring, setIsRecurring] = useState(
+    activeTransaction?.isRecurring || false
+  );
+  const [ends, setEnds] = useState(activeTransaction?.isRecurring || false);
+  const [endDate, setEndDate] = useState(activeTransaction?.endDate || "");
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState(
+    activeTransaction?.recurrenceFrequency || "monthly"
+  );
+  const [recurrenceInterval, setRecurrenceInterval] = useState<number>(
+    activeTransaction?.recurrenceInterval || 1
+  );
+  const [customIntervalType, setCustomIntervalType] = useState(
+    activeTransaction?.customIntervalType || "week"
+  );
+  const [recurrenceIntervalInput, setRecurrenceIntervalInput] =
+    useState<string>(activeTransaction?.recurrenceInterval?.toString() || "1");
+  const [selectedDays, setSelectedDays] = useState<number[]>(
+    activeTransaction?.givenDays || []
+  );
+  const [arbitraryDates, setArbitraryDates] = useState<string[]>(
+    activeTransaction?.arbitraryDates || []
+  );
 
   const addArbitraryDate = (date: string) => {
     setArbitraryDates((prevState) => [...prevState, date]);
@@ -66,49 +99,48 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const localDate = new Date(date);
     const isoDate = localDate.toISOString();
-  
+
     const localEndDate = endDate ? new Date(endDate) : undefined;
     const isoEndDate = localEndDate ? localEndDate.toISOString() : "";
-  
+
     const transactionData: Transaction = {
       transactionName,
       date: isoDate,
       type,
       amount,
       description,
-      fromAccount: fromAccount, 
-      toAccount: toAccount, 
+      fromAccount: fromAccount,
+      toAccount: toAccount,
       id: activeTransaction ? activeTransaction.id : new Date().getTime(),
       isRecurring,
       endDate: isoEndDate,
       recurrenceFrequency,
-      ...(recurrenceFrequency === 'custom' && { recurrenceInterval }),
+      ...(recurrenceFrequency === "custom" && { recurrenceInterval }),
       customIntervalType,
       allowOverpayment: false,
       showInCalendar: true,
       category,
       arbitraryDates,
     };
-  
+
     // Include givenDays in the transaction data when the recurrenceFrequency is set to 'given days'
-    if (recurrenceFrequency === 'given days') {
+    if (recurrenceFrequency === "given days") {
       const sortedGivenDays = [...selectedDays].sort((a, b) => a - b);
       transactionData.givenDays = sortedGivenDays;
     }
-  
+
     if (activeTransaction) {
       dispatch(updateTransaction(transactionData));
     } else {
       dispatch(addTransaction(transactionData));
     }
-  
+
     onClose();
   };
-  
-    
+
   useEffect(() => {
     if (!activeTransaction && accounts.length > 1) {
       setFromAccount(accounts[0].id);
@@ -116,7 +148,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     }
   }, [activeTransaction, accounts]);
 
-  const handleRecurrenceIntervalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRecurrenceIntervalChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = e.target.value;
     setRecurrenceIntervalInput(value);
     setRecurrenceInterval(value === "" ? 1 : parseInt(value));
@@ -140,12 +174,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
     });
   };
 
-  const onEndDateChange = (e:any) => {
-    let selectedDate = parseISO(e.target.value); 
-  
+  const onEndDateChange = (e: any) => {
+    let selectedDate = parseISO(e.target.value);
+
     if (isPast(selectedDate)) {
-      let nextDay = add(parseISO(date), {days: 1});
-      setEndDate(format(nextDay, 'yyyy-MM-dd'));
+      let nextDay = add(parseISO(date), { days: 1 });
+      setEndDate(format(nextDay, "yyyy-MM-dd"));
     } else {
       setEndDate(e.target.value);
     }
@@ -153,20 +187,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
 
   useEffect(() => {
     if (!ends) {
-        setEndDate('');
+      setEndDate("");
     }
   }, [ends]);
 
   return (
-    <div className="glassjar__form">
+    <>
       <h2>
         {activeTransaction
           ? `${activeTransaction.transactionName}`
           : "New Transaction"}
       </h2>
-      <form onSubmit={handleSubmit}>
+      <form className="glassjar__form" onSubmit={handleSubmit}>
         <div className="glassjar__form__input-group">
-          <label htmlFor="transactionName">Transaction Name:</label>
           <input
             placeholder="Transaction Name"
             type="text"
@@ -174,16 +207,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             value={transactionName}
             onChange={(e) => setTransactionName(e.target.value)}
           />
+          <label htmlFor="transactionName">Transaction Name:</label>
         </div>
 
         <div className="glassjar__form__input-group glassjar__form__input-group--date">
-          <label htmlFor="date">Date:</label>
           <input
             type="date"
             id="date"
             value={stripTime(date)}
             onChange={(e) => setDate(addZoneOffset(e.target.value))}
           />
+          <label htmlFor="date">Date:</label>
         </div>
 
         <div className="glassjar__flex">
@@ -192,11 +226,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             <select
               id="type"
               value={type}
-              onChange={(e) =>
-                setType(
-                  e.target.value as TransactionType
-                )
-              }
+              onChange={(e) => setType(e.target.value as TransactionType)}
             >
               <option value="deposit">Income</option>
               <option value="withdrawal">Expense</option>
@@ -209,7 +239,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
 
           {type !== "event" && (
             <div className="glassjar__form__input-group">
-              <label htmlFor="amount">Amount:</label>
               <CurrencyInput
                 id="amount"
                 prefix="$"
@@ -221,6 +250,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                   setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
                 }
               />
+              <label htmlFor="amount">Amount:</label>
             </div>
           )}
         </div>
@@ -261,45 +291,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
           </div>
         )}
 
-        {(type === "withdrawal" || type === "transfer") && (
-          <div className="glassjar__flex">
-            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-              <label htmlFor="category">Category:</label>
-              <select
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                {RecurringExpenses.map((category, index) => (
-                  <option key={index} value={RecurringExpenses[index].category}>
-                    {RecurringExpenses[index].category}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
-
-        <div className="glassjar__form__input-group">
-          <label htmlFor="description">Description (optional):</label>
-          <input
-            placeholder="Description (optional)"
-            type="text"
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
         <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
-          <label htmlFor="isRecurring">Transaction Repeats:</label>
-          <Switch.Root
-            className="glassjar__switch"
+          <input
+            type="checkbox"
             id="isRecurring"
             checked={isRecurring}
-            onCheckedChange={(e) => setIsRecurring(!isRecurring)}
-          >
-            <Switch.Thumb className="glassjar__switch__thumb" />
-          </Switch.Root>
+            onChange={(e) => setIsRecurring(!isRecurring)}
+          />
+          <label htmlFor="isRecurring">Transaction Repeats:</label>
         </div>
 
         {isRecurring && (
@@ -310,9 +309,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 id="recurrenceFrequency"
                 value={recurrenceFrequency}
                 onChange={(e) =>
-                  setRecurrenceFrequency(
-                    e.target.value as RecurrenceFrequency
-                  )
+                  setRecurrenceFrequency(e.target.value as RecurrenceFrequency)
                 }
               >
                 <option value="daily">Daily</option>
@@ -324,6 +321,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 <option value="custom">Custom</option>
                 <option value="arbitrary">Arbitrary</option>
               </select>
+              <label htmlFor="recurrenceFrequency">Repeats:</label>
             </div>
 
             {recurrenceFrequency === "given days" && (
@@ -377,23 +375,29 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
             )}
 
             {recurrenceFrequency === "arbitrary" && (
-              <div className="glassjar__form__input-group">
-                <label>Arbitrary Dates:</label>
-                <div className="glassjar__flex glassjar__flex--arbitrary">
+              <>
+                <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                   {arbitraryDates.map((date, index) => (
-                    <div className="glassjar__flex" key={index}>
-                      <input
-                        type="date"
-                        value={date}
-                        onChange={(e) =>
-                          setArbitraryDates(
-                            arbitraryDates.map((d, i) =>
-                              i === index ? e.target.value : d
+                    <div
+                      className="glassjar__flex glassjar__flex--tight glassjar__flex--align-center"
+                      key={index}
+                    >
+                      <div className="glassjar__form__input-group">
+                        <input
+                          type="date"
+                          value={date}
+                          onChange={(e) =>
+                            setArbitraryDates(
+                              arbitraryDates.map((d, i) =>
+                                i === index ? e.target.value : d
+                              )
                             )
-                          )
-                        }
-                      />
-                      <button className="glassjar__button glassjar__button--small" 
+                          }
+                        />
+                        <label>Arbitrary Dates:</label>
+                      </div>
+                      <button
+                        className="glassjar__button glassjar__button--small glassjar__button--warn"
                         type="button"
                         onClick={() => removeArbitraryDate(date)}
                       >
@@ -405,19 +409,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                 <button type="button" onClick={() => addArbitraryDate("")}>
                   Add Date
                 </button>
-              </div>
+              </>
             )}
 
             <div className="glassjar__form__input-group glassjar__form__input-group--check glassjar__flex glassjar__flex--justify-between">
-              <label htmlFor="ends">End Date:</label>
-              <Switch.Root
-                className="glassjar__switch"
+              <input
+                type="checkbox"
                 id="ends"
                 checked={ends}
-                onCheckedChange={(e) => setEnds(!ends)}
-              >
-                <Switch.Thumb className="glassjar__switch__thumb" />
-              </Switch.Root>
+                onChange={(e) => setEnds(!ends)}
+              />
+              <label htmlFor="ends">End Date:</label>
             </div>
             {ends && (
               <div className="glassjar__form__input-group">
@@ -427,16 +429,49 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
                   value={endDate ? stripTime(endDate) : ""}
                   onChange={onEndDateChange}
                 />
+                <label htmlFor="endDate">Transaction Ends:</label>
               </div>
             )}
           </>
         )}
 
+        {(type === "withdrawal" || type === "transfer") && (
+          <div className="glassjar__flex">
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="category">Category:</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {RecurringExpenses.map((category, index) => (
+                  <option key={index} value={RecurringExpenses[index].category}>
+                    {RecurringExpenses[index].category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        <div className="glassjar__form__input-group">
+          <textarea
+            placeholder="Description (optional)"
+            // type="text"
+            id="description"
+            value={description}
+            data-gramm="false"
+            data-gramm_editor="false"
+            data-enable-grammarly="false"
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <label htmlFor="description">Description (optional):</label>
+        </div>
+
         <div className="glassjar__flex glassjar__flex--justify-center">
-          {/* <button onClick={onClose}>Close</button> */}
           {activeTransaction && (
             <button
-              className='glassjar__button glassjar__button--danger'
+              className="glassjar__button glassjar__button--warn"
               type="button"
               onClick={() => {
                 dispatch(deleteTransaction(activeTransaction.id));
@@ -446,10 +481,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, initialDate 
               Delete
             </button>
           )}
-          <button type="submit">Submit</button>
+          <button
+            className="glassjar__button glassjar__button--full-width glassjar__button--primary"
+            type="submit"
+          >
+            Save
+          </button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

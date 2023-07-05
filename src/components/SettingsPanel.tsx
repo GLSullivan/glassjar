@@ -22,10 +22,10 @@ const SettingsPanel: React.FC = () => {
   );
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
 
-const signOut = () => {
-  dispatch(setSignedIn(false))
-  firebase.auth().signOut()
-}
+  const signOut = () => {
+    dispatch(setSignedIn(false));
+    firebase.auth().signOut();
+  };
 
   return (
     <div className="glassjar__settings-panel">
@@ -34,34 +34,33 @@ const signOut = () => {
         <p>Welcome, {currentUser?.displayName}</p>
       </div>
       <div>
-        <button onClick={() => dispatch(openTransactionHelper())}>
+        <button className="glassjar__button glassjar__button--full-width glassjar__button--primary" onClick={() => dispatch(openTransactionHelper())}>
           Run Transaction Helper
         </button>
       </div>
-      <label>
-        Health Range Top:
+      <div className="glassjar__form__input-group">
         <CurrencyInput
           id="amount"
           prefix="$"
           name="amount"
           placeholder="Transaction Amount:"
           defaultValue={healthRangeTop / 100}
-          decimalsLimit={2} 
+          decimalsLimit={2}
           onValueChange={(value) =>
             dispatch(
               setHealthRangeTop(value ? Math.round(parseFloat(value) * 100) : 0)
             )
           }
         />
-      </label>
-      <label>
-        Health Range Bottom:
+        <label>Health Range Top:</label>
+      </div>
+      <div className="glassjar__form__input-group">
         <CurrencyInput
           id="amount"
           prefix="$"
           name="amount"
           placeholder="Transaction Amount:"
-          defaultValue={healthRangeBottom / 100} 
+          defaultValue={healthRangeBottom / 100}
           decimalsLimit={2}
           onValueChange={(value) =>
             dispatch(
@@ -71,8 +70,11 @@ const signOut = () => {
             )
           }
         />
+      <label>
+        Health Range Bottom:
       </label>
-      <button onClick={() => signOut()}>Sign out</button>
+      </div>
+      <button className="glassjar__button glassjar__button--warn" onClick={() => signOut()}>Sign Out</button>
     </div>
   );
 };

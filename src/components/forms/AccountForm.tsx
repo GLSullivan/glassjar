@@ -93,14 +93,13 @@ export const AccountForm: React.FC = () => {
   };
 
   return (
-    <div className = 'glassjar__form'>
+    <>
       <h2>{activeAccount ? `${account.name}` : 'New Account'}</h2>
       {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
 
-      <form className = 'glassjar__account-form' onSubmit = {handleSubmit}>
+      <form className = 'glassjar__form' onSubmit = {handleSubmit}>
       <div  className = 'glassjar__form__input-group'>
           {' '}
-          <label htmlFor = 'name'>Name:</label>
           <input
             required 
             placeholder = 'Account Name:'
@@ -110,10 +109,10 @@ export const AccountForm: React.FC = () => {
             value       = {account.name}
             onChange    = {handleChange}
           />
+          <label htmlFor = 'name'>Name:</label>
         </div>
 
         <div   className = 'glassjar__form__input-group'>
-        <label htmlFor   = 'currentBalance'>Current Balance:</label>
           <CurrencyInput
             id            = 'currentBalance'
             prefix        = '$'
@@ -123,6 +122,7 @@ export const AccountForm: React.FC = () => {
             decimalsLimit = {0}
             onValueChange = {handleCurrencyChange}
           />
+          <label htmlFor   = 'currentBalance'>Current Balance:</label>
 
         </div>
 
@@ -146,7 +146,6 @@ export const AccountForm: React.FC = () => {
           account.type
         ) && (
           <div   className = 'glassjar__form__input-group'>
-          <label htmlFor   = 'interestRate'>Interest Rate:</label>
             <input
               type     = 'number'
               id       = 'interestRate'
@@ -154,18 +153,9 @@ export const AccountForm: React.FC = () => {
               value    = {account.interestRate || ''}
               onChange = {handleChange}
             />
+            <label htmlFor   = 'interestRate'>Interest Rate:</label>
           </div>
         )}
-        <div className="glassjar__form__input-group glassjar__form__input-group--check">
-          <label htmlFor="showInGraph">Show In Graph:</label>
-          <input
-            type="checkbox"
-            id="showInGraph"
-            name="showInGraph"
-            checked={account.showInGraph}
-            onChange={handleChange}
-          />
-        </div>
         <div className='glassjar__form__input-group'>
           <label>Account Color: </label>
           <ColorPicker onSelect={handleColorSelect} selectedIndex={account.color} />
@@ -174,7 +164,6 @@ export const AccountForm: React.FC = () => {
         account.type === 'mortgage' ||
         account.type === 'credit card' ? (
           <div   className = 'glassjar__form__input-group'>
-          <label htmlFor   = 'dueDate'>Due Date:</label>
             <input
               type     = 'date'
               id       = 'dueDate'
@@ -182,13 +171,25 @@ export const AccountForm: React.FC = () => {
               value    = {account.dueDate || ''}
               onChange = {handleChange}
             />
+            <label htmlFor   = 'dueDate'>Due Date:</label>
           </div>
         ) : null}
+        <div className="glassjar__form__input-group glassjar__form__input-group--check">
+          <input
+            type="checkbox"
+            id="showInGraph"
+            name="showInGraph"
+            checked={account.showInGraph}
+            onChange={handleChange}
+          />
+          <label htmlFor="showInGraph">Show In Graph:</label>
+        </div>
+        <br />
         <div className="glassjar__flex glassjar__flex--justify-center">
-          {activeAccount && accounts.length > 1 ? <button onClick={handleDelete}>Delete</button> : null}
-          <button type = 'submit'>Save</button>
+          {activeAccount && accounts.length > 1 ? <button className='glassjar__button glassjar__button--warn glassjar__button--full-width' onClick={handleDelete}>Delete</button> : null}
+          <button className='glassjar__button glassjar__button--full-width glassjar__button--primary' type = 'submit'>Save</button>
         </div>
       </form>
-    </div>
+    </>
   );
 };

@@ -11,6 +11,8 @@
 
 :root {
         /* --primary: #7B9F90ff; */
+
+  --color-border   : #b7c2c4;
   --color-bright   : #ffffff;
   --color-inverse  : #f0f5f3;
   --color-secondary: #8f8f8f;
@@ -61,13 +63,22 @@
 }
 
 h2 {
-  font-size : 1.2rem;
+  font-size : 1.6rem;
+  font-weight: 300;
 }
 
 .glassjar__flex {
   display: flex;
   gap    : 1rem;
   width  : 100%;
+}
+
+.glassjar__flex.glassjar__flex--column {
+  flex-direction: column;
+}
+
+.glassjar__flex.glassjar__flex--tight {
+  gap    : .5rem;
 }
 
 .glassjar__flex.glassjar__flex--justify-center {
@@ -82,6 +93,10 @@ h2 {
   justify-content: space-between;
 }
 
+.glassjar__flex.glassjar__flex--align-center {
+  align-items: center;
+}
+
 .glassjar__swiper {
   background   : var(--color-bright);
   border-radius: 1rem;
@@ -90,4 +105,9 @@ h2 {
   height       : calc(40vh - 1rem);
   max-width    : 100vw;
   width        : calc(100% - 2rem);
+}
+
+.glassjar__text-link {
+  color : #bd7a46;
+  cursor: pointer;
 }

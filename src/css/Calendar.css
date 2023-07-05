@@ -178,3 +178,7 @@
 .glassjar__calendar__day-panel--graph h2 {
   display: none;
 }
+
+.glassjar__calendar__month {
+  margin: 0;
+}

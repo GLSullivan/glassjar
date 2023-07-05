@@ -9,20 +9,20 @@
 
 */
 
-.color-picker {
+.glassjar__color-picker {
   display              : grid;
-  grid-gap             : 1rem;
+  grid-gap             : .5rem;
   grid-template-columns: repeat(4, 1fr);
 }
 
-.color-picker__color {
-  border    : 2px solid transparent;
+.glassjar__color-picker__color {
+  border    : 1px solid var(--color-border);
   height    : 2rem;
   padding   : 0;
   transition: .5s ease;
   width     : 100%;
 }
 
-.color-picker__color.color-picker__color--selected {
-  border: 2px solid var(--color-brand)
+.glassjar__color-picker__color.glassjar__color-picker__color--selected {
+  border: 1px solid var(--color-brand)
 }

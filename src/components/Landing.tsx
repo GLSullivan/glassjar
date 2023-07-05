@@ -126,15 +126,15 @@ function Landing() {
               <Form className="glassjar__landing__form">
                 <h1>Welcome</h1>
                 <div>
-                  <div className="glassjar__input-group">
+                  <div className="glassjar__form__input-group">
                     <Field name="email" type="email" placeholder="Email" className={errors.email ? "error" : ""} />
                     <label htmlFor="email">Email{" "}
-                      <span className="glassjar__input-group__error">
+                      <span className="glassjar__form__input-group__error">
                         <ErrorMessage name="email" />
                       </span>
                     </label>
                   </div>
-                  <div className="glassjar__input-group">
+                  <div className="glassjar__form__input-group">
                     <Field
                       name="password"
                       type="password"
@@ -142,17 +142,17 @@ function Landing() {
                       className={errors.password ? "error" : ""} 
                     />
                     <label htmlFor="password">Password{" "}
-                      <span className="glassjar__input-group__error">
+                      <span className="glassjar__form__input-group__error">
                         <ErrorMessage name="password" />
                       </span>
                     </label>
                   </div>
                   {firebaseError && <div>{firebaseError}</div>}
                   <div className="glassjar__flex">
-                    <button onClick={signInWithGoogle}>
+                    <button className="glassjar__button glassjar__button--primary" onClick={signInWithGoogle}>
                       <i className="fa-brands fa-google" />
                     </button>
-                    <button type="submit">Sign In</button>
+                    <button className="glassjar__button glassjar__button--primary" type="submit">Sign In</button>
                   </div>
                   <p>
                     Don't have an account?{" "}
