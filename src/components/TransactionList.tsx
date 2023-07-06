@@ -8,8 +8,6 @@ import { TransactionType } from './../utils/constants';
 import TransactionListItem from "./TransactionListItem";
 import Menu from "./Menu";
 
-import * as Checkbox from "@radix-ui/react-checkbox";
-
 import "./../css/TransactionList.css";
 
 type FilterOption = {
@@ -159,10 +157,9 @@ const TransactionList: React.FC = () => {
               <i className="fa-regular fa-bars-filter" />
             </Menu.Button>
             <Menu.Body>
-              <p>Sort By</p>
+              <p>Sort Transactions</p>
               <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-                <label htmlFor=""></label>
-                <select value={sort || ""} onChange={handleSortChange}>
+                <select value={sort || ""} onChange={handleSortChange} id="sort">
                   <option value="">None</option>
                   {sortOptions.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -170,28 +167,25 @@ const TransactionList: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                  <label htmlFor="sort">Sort:</label>
               </div>
               <br />
               <p>Show Only</p>
               <div className="glassjar__sort-menu__filter">
                 {options.map((option) => (
-                  <div key={option.id} className="glassjar__flex glassjar__flex--justify-between">
-                    <label htmlFor={"filter" + option.id}>{option.label}</label>
-
-                    <Checkbox.Root
+                  <div key={option.id} className="glassjar__form__input-group glassjar__form__input-group--check">
+                    <input
+                      type="checkbox"
                       className="glassjar__checkbox"
                       value={option.id}
                       checked={filter.includes(option.id)}
                       // defaultChecked
                       id={"filter" + option.id}
-                      onCheckedChange={() =>
+                      onChange={() =>
                         option.id && handleCheckboxChange(option.id)
                       }
-                    >
-                      <Checkbox.Indicator className="glassjar__checkbox__indicator">
-                        <i className="fa-solid fa-check"></i>
-                      </Checkbox.Indicator>
-                    </Checkbox.Root>
+                    />
+                    <label htmlFor={"filter" + option.id}>{option.label}</label>
                   </div>
                 ))}
               </div>

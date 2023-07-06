@@ -19,7 +19,11 @@
   width     : 100%;
   z-index   : 2;
   text-align: left;
-  padding: .2rem 0;
+  padding: .2rem 4rem .2rem 0;
+}
+
+.glassjar__calendar__container .glassjar__lazy-list__header {
+  padding: .2rem 0 .2rem 0;
 }
 
 .glassjar__search-sort {

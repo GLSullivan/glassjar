@@ -27,7 +27,7 @@
   box-sizing   : border-box;
   flex         : 2;
   flex-grow    : 1;
-  /* margin       : 1rem 0;  */
+  height       : 100%;
   overflow-y   : auto;
   padding      : 1rem;
   position     : relative;
@@ -39,9 +39,9 @@
 }
 
 .glassjar__footer-nav__button {
-  color      : var(--color-accent);
-  padding      : 1rem;
-  cursor     : pointer;
+  color     : var(--color-accent);
+  padding   : 1rem;
+  cursor    : pointer;
   transition: .5s ease;
 }
 

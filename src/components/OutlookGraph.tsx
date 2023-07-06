@@ -265,8 +265,8 @@ const OutlookGraph: React.FC = () => {
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="glassjar__glassjar__graph-holder__range-change">
-        <button onClick={() => handleSpanChange()}>{graphRange}</button>
+      <div className="glassjar__graph-holder__range-change">
+        <button className="glassjar__button glassjar__button--small" onClick={() => handleSpanChange()}>{graphRange}</button>
       </div>
     </div>
   );

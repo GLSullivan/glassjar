@@ -8,6 +8,7 @@ export interface Transaction {
   date                : string;
   description         : string;
   isRecurring         : boolean;
+  ends?               : boolean;
   allowOverpayment    : boolean; // This should be an account value, not a transaction value.
   showInCalendar      : boolean; // Future feature for omitting high-frequency events from the calendar.
   recurrenceFrequency?: RecurrenceFrequency;

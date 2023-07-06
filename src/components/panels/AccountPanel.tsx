@@ -18,6 +18,7 @@ export const AccountList: React.FC = () => {
       <div className="glassjar__account-list__header glassjar__flex glassjar__flex--justify-between">
         <h2>Accounts</h2>
         <button
+          className="glassjar__button glassjar__button--small"
           onClick={() => {
             dispatch(setActiveAccount(null));
             dispatch(openAccountForm());

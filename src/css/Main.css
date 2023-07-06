@@ -30,6 +30,10 @@
     #b6806cff,
     #7a4a3fff
   );
+--shadow-main : 0px 4px 16px 0px rgba(17, 17, 26, 0.05),
+0px 8px 32px 0px rgba(17, 17, 26, 0.05); 
+
+
 }
 
 .glassjar__root {
@@ -68,9 +72,16 @@ h2 {
 }
 
 .glassjar__flex {
+  box-sizing: border-box;
   display: flex;
   gap    : 1rem;
   width  : 100%;
+  max-width: 100%;
+}
+
+.glassjar__flex.glassjar__flex--even > * {
+  flex: 2;
+  width: 100%;
 }
 
 .glassjar__flex.glassjar__flex--column {
@@ -110,4 +121,53 @@ h2 {
 .glassjar__text-link {
   color : #bd7a46;
   cursor: pointer;
+}
+
+/* Auto Height */
+
+.glassjar__auto-height {
+  display           : grid;
+  grid-template-rows: 0fr;
+  transition        : 0.5s ease;
+}
+
+.glassjar__auto-height > div {
+  overflow: hidden;
+  transition        : 0.5s ease;
+}
+
+/* .glassjar__auto-height > div:before {
+  visibility: hidden;
+  height: .5rem;
+  content: " ";
+  box-sizing: border-box;
+  display: block;
+} */
+
+.glassjar__auto-height.open > div {
+  margin-top: .5rem;
+}
+
+.glassjar__auto-height.glassjar__auto-height--top > div {
+  margin-top: 0;
+}
+
+.glassjar__auto-height.open {
+  grid-template-rows: 1fr;
+}
+
+.glassjar__margin-gap > * {
+  margin-bottom: .5rem;
+}
+
+.glassjar__margin-gap > .glassjar__auto-height {
+  margin-bottom: 0;
+}
+
+.glassjar__margin-gap > .glassjar__auto-height.open {
+  margin-bottom: .5rem;
+}
+
+.glassjar__margin-gap > *:last-child {
+  margin-bottom: 0;
 }
