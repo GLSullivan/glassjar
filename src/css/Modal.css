@@ -40,13 +40,13 @@
   width          : 100%;
   z-index        : 9998;
 
-  backdrop-filter: blur(4px) saturate(0.0);
-  background     : rgba(54, 110, 121, 0.8);
-background: url('./../media/images/backing.jpg');
+  backdrop-filter: blur(2px) saturate(0.0);
+  background     : rgb(108 101 100 / 70%);
+/* background: url('./../media/images/backing.jpg');
 background-size: cover;
 background-position: bottom left;
   box-shadow     : 0px 4px 16px 0px rgba(17, 17, 26, 0.25),
-                    0px 8px 32px 0px rgba(17, 17, 26, 0.25); 
+                    0px 8px 32px 0px rgba(17, 17, 26, 0.25);  */
 }
 
 .glassjar__modal__body {
