@@ -115,19 +115,6 @@
   text-align: center;
 }
 
-.glassjar__calendar__week .glassjar__list {
-  box-sizing: border-box;
-  height    : 20vh;
-  max-height: 20vh;
-  padding   : 1rem;
-}
-
-.glassjar__calendar__week.active {
-  position: sticky;
-  top     : 77px;
-  z-index : 2;
-}
-
 .glassjar__calendar__navigation button {
   background: none;
   border    : none;

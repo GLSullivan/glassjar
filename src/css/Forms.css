@@ -77,7 +77,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   border: 1px solid #8c5c38;
 }
 

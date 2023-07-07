@@ -79,12 +79,7 @@
   box-shadow     : 0px 4px 16px 0px rgba(17, 17, 26, 0.25),
                     0px 8px 32px 0px rgba(17, 17, 26, 0.25); 
   box-sizing     : border-box;
-  display        : flex;
-  flex-direction : column;
-  flex-direction : column;
-  gap            : 1rem;
-  justify-content: space-between;
-  padding        : 1.5rem;
+  padding        : 1rem;
   width          : 100%;
 }
 
@@ -104,7 +99,7 @@
   text-align: center;
 }
 
-.glassjar__input-group__error {
+.glassjar__form__input-group__error {
   color        : var(--color-danger);
   opacity: 1;
   transition: .25s ease;
@@ -114,10 +109,14 @@
   border: 1px solid var(--color-danger);
 }
 
-.glassjar__input-group__error:empty {
+.glassjar__form__input-group__error:empty {
   opacity: 0;
 }
 
 .glassjar__landing__form .glassjar__flex > * {
   flex: 2;
+}
+
+.glassjar__error-block {
+  padding: 0 1.5rem .5rem 1.5rem;
 }
