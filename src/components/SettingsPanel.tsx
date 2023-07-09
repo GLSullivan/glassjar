@@ -26,9 +26,10 @@ const SettingsPanel: React.FC = () => {
 
   const signOut = async () => {
     try {
+      dispatch(setView("calendar"));      
       await firebase.auth().signOut();
-      dispatch(setView("calendar"));
       dispatch(setSignedIn(false));
+      window.location.reload();
     } catch (error) {
       console.error("Error signing out: ", error);
     }
