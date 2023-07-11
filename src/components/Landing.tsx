@@ -20,47 +20,28 @@ function Landing() {
   const [firebaseSignInError, setFirebaseSignInError] = useState<string | null>( null );
   const [firebaseSignUpError, setFirebaseSignUPError] = useState<string | null>( null );
 
-  const [mode, setMode] = useState("signIn");
-  const [email, setEmail] = useState<string>('');
+  const [mode, setMode]                         = useState("signIn");
   const [emailHasBeenSent, setEmailHasBeenSent] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError]                       = useState<string>("");
 
-  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.currentTarget;
-
-    if (name === 'userEmail') {
-      setEmail(value);
-    }
-  };
-
-  const sendResetEmail = async (
-    values: { userEmail: string },
-    { setSubmitting }: any
-  ) => {  
-    console.log("Reset Password?")
+  const sendResetEmail = async (values: { email: string }) => {
     try {
-      await firebase
-        .auth()
-        .sendPasswordResetEmail(values.userEmail);
+      await firebase.auth().sendPasswordResetEmail(values.email);
       setEmailHasBeenSent(true);
-      setTimeout(() => { setEmailHasBeenSent(false) }, 3000);
+      setTimeout(() => {
+        setEmailHasBeenSent(false);
+      }, 3000);
+    } catch (error) {
+      setError("Error resetting password");
     }
-    catch (error) {
-      setError('Error resetting password');
-    }
-    setSubmitting(false);
   };
-
-  const forgotPasswordValidationSchema = Yup.object({
-    userEmail: Yup.string()
-      .email("Invalid email format")
-      .required("Required"),
-});
   
+  const forgotPasswordValidationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email format").required("Required"),
+  });
+
   const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Required"),
+    email: Yup.string().email("Invalid email format").required("Required"),
     password: Yup.string()
       .min(6, "Must be > 6 characters")
       .required("Required"),
@@ -100,10 +81,8 @@ function Landing() {
     } catch (error: any) {
       // An error happened.
       const friendlyErrors: { [key: string]: string } = {
-        "auth/account-exists-with-different-credential":
-          "An account already exists with the same email address but different sign-in credentials.",
-        "auth/popup-closed-by-user":
-          "The popup has been closed before authentication could complete.",
+        "auth/account-exists-with-different-credential": "An account already exists with the same email address but different sign-in credentials.",
+        "auth/popup-closed-by-user"                    : "The popup has been closed before authentication could complete.",
         // add other error codes and messages that you want to handle
       };
 
@@ -113,9 +92,7 @@ function Landing() {
     }
   };
 
-  const signUp = async (
-    values: { email: string; password: string },
-  ) => {
+  const signUp = async (values: { email: string; password: string }) => {
     try {
       await firebase
         .auth()
@@ -125,9 +102,8 @@ function Landing() {
     } catch (error: any) {
       // An error happened.
       const friendlyErrors: { [key: string]: string } = {
-        "auth/email-already-in-use":
-          "The email address is already in use by another account.",
-        "auth/weak-password": "The password is too weak.",
+        "auth/email-already-in-use": "The email address is already in use by another account.",
+        "auth/weak-password"       : "The password is too weak.",
         // add other error codes and messages that you want to handle
       };
 
@@ -145,10 +121,10 @@ function Landing() {
         if (user) {
           dispatch(
             setCurrentUser({
-              uid: user.uid,
+              uid        : user.uid,
               displayName: user.displayName,
-              email: user.email,
-              photoURL: user.photoURL,
+              email      : user.email,
+              photoURL   : user.photoURL,
             })
           );
         } else {
@@ -167,8 +143,9 @@ function Landing() {
             <h1>Welcome</h1>
             <div>
               <div
-                className={`glassjar__auto-height glassjar__auto-height--top ${mode === "signIn" ? "open" : ""
-                  }`}
+                className={`glassjar__auto-height glassjar__auto-height--top ${
+                  mode === "signIn" ? "open" : ""
+                }`}
               >
                 <div>
                   <Formik
@@ -209,8 +186,9 @@ function Landing() {
                           </div>
                           <div>
                             <div
-                              className={`glassjar__auto-height glassjar__auto-height--top ${firebaseSignInError ? "open" : ""
-                                }`}
+                              className={`glassjar__auto-height glassjar__auto-height--top ${
+                                firebaseSignInError ? "open" : ""
+                              }`}
                             >
                               <div className="glassjar__error-block">
                                 <p>{firebaseSignInError}</p>
@@ -256,8 +234,9 @@ function Landing() {
               </div>
 
               <div
-                className={`glassjar__auto-height glassjar__auto-height--top ${mode === "signUp" ? "open" : ""
-                  }`}
+                className={`glassjar__auto-height glassjar__auto-height--top ${
+                  mode === "signUp" ? "open" : ""
+                }`}
               >
                 <div>
                   <Formik
@@ -298,8 +277,9 @@ function Landing() {
                           </div>
                           <div>
                             <div
-                              className={`glassjar__auto-height glassjar__auto-height--top ${firebaseSignUpError ? "open" : ""
-                                }`}
+                              className={`glassjar__auto-height glassjar__auto-height--top ${
+                                firebaseSignUpError ? "open" : ""
+                              }`}
                             >
                               <div className="glassjar__error-block">
                                 <p>{firebaseSignUpError}</p>
@@ -331,43 +311,52 @@ function Landing() {
               </div>
 
               <div
-                className={`glassjar__auto-height glassjar__auto-height--top ${mode === "forgot" ? "open" : ""
-                  }`}
+                className={`glassjar__auto-height glassjar__auto-height--top ${
+                  mode === "forgot" ? "open" : ""
+                }`}
               >
                 <div>
                   <Formik
-                    initialValues={{ userEmail: "" } as any}
+                    initialValues={{ email: "" } as any}
                     validationSchema={forgotPasswordValidationSchema}
                     onSubmit={sendResetEmail}
                   >
-                    {({ errors }) => (
+                    {({ errors, isSubmitting }) => (
                       <Form>
                         <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                           <p>Reset your Password</p>
-                          {emailHasBeenSent && (
-                            <div>An email has been sent to you!</div>
-                          )}
+                          <div
+                            className={`glassjar__auto-height glassjar__auto-height--top ${
+                              emailHasBeenSent ? "open" : ""
+                            }`}
+                          >
+                            <div>
+                              <p>
+                                An email has been sent to you! <br />
+                                You might need to check your spam folder.
+                              </p>
+                            </div>
+                          </div>
                           {error !== "" && <div>{error}</div>}
                           <div className="glassjar__form__input-group">
                             <Field
                               type="email"
-                              name="userEmail"
-                              id="userEmail"
-                              value={email}
+                              name="email"
+                              id="email"
                               placeholder="Your Email"
-                              onChange={onChangeHandler}
-                              className={errors.userEmail ? "error" : ""}
+                              className={errors.email ? "error" : ""}
                             />
-                            <label htmlFor="userEmail">Email:{" "}
+                            <label htmlFor="email">
+                              Email:{" "}
                               <span className="glassjar__form__input-group__error">
-                                <ErrorMessage name="userEmail" />
+                                <ErrorMessage name="email" />
                               </span>
                             </label>
                           </div>
                           <button
-                            type="submit"
                             className="glassjar__button glassjar__button--primary"
-                          // onClick={sendResetEmail}
+                            type="submit"
+                            disabled={isSubmitting}
                           >
                             Send Reset Link
                           </button>
