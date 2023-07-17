@@ -29,15 +29,15 @@ const TransactionList: React.FC = () => {
   );
 
   const [transactions, setTransactions] = useState(allTransactions);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<number[]>([]);
-  const [sort, setSort] = useState<number | null>(2);
+  const [search, setSearch]             = useState("");
+  const [filter, setFilter]             = useState<number[]>([]);
+  const [sort, setSort]                 = useState<number | null>(2);
 
   const options: FilterOption[] = [
-    { id: 1, label: "Deposit", type: "deposit" },
-    { id: 2, label: "Withdrawal", type: "withdrawal" },
-    { id: 3, label: "Transfer", type: "transfer" },
-    { id: 4, label: "Event", type: "event" },
+    { id: 1, label: "Deposit", type: TransactionType.DEPOSIT },
+    { id: 2, label: "Withdrawal", type: TransactionType.WITHDRAWAL },
+    { id: 3, label: "Transfer", type: TransactionType.TRANSFER },
+    { id: 4, label: "Event", type: TransactionType.EVENT },
   ];
 
   const sortOptions: SortOption[] = [

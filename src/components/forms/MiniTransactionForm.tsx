@@ -7,6 +7,7 @@ import { RootState } from "../../redux/store";
 import { Transaction } from "../../models/Transaction";
 
 import "./../../css/MiniForms.css";
+import { RecurrenceFrequency, TransactionType } from "../../utils/constants";
 
 interface MiniTransactionFormProps {
   initialName               ?: string;
@@ -28,13 +29,13 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
   initialName                = "",
   initialAmount              = 0,
   initialDay                 = "",
-  initialType                = "withdrawal",
+  initialType                = TransactionType.WITHDRAWAL,
   initialDescription         = "",
   initialFromAccount         = "",
   initialToAccount           = "",
   initialIsRecurring         = true,
   initialEndDate             = "",
-  initialRecurrenceFrequency = "monthly",
+  initialRecurrenceFrequency = RecurrenceFrequency.MONTHLY,
   initialAllowOverpayment    = false,
   initialShowInCalendar      = true,
   initialCategory            = "None"
@@ -68,14 +69,14 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
       transactionName,
       amount,
       date               : isoDate,
-      type               : "withdrawal",
+      type               : TransactionType.WITHDRAWAL,
       description        : "",
       fromAccount        : firstAccountId,
       toAccount          : "",
       id                 : new Date().getTime(),
       isRecurring        : true,
       endDate            : "",
-      recurrenceFrequency: "monthly",
+      recurrenceFrequency: RecurrenceFrequency.MONTHLY,
       allowOverpayment   : false,
       showInCalendar     : true,
       category           : initialCategory,

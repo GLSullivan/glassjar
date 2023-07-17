@@ -12,16 +12,17 @@
 :root {
         /* --primary: #7B9F90ff; */
 
-  --color-border   : #b7c2c4;
-  --color-bright   : #ffffff;
-  --color-inverse  : #f0f5f3;
-  --color-secondary: #8f8f8f;
-  --color-brand    : #202230;
-  --color-tertiary : #b5b5b5;
-  --color-primary  : #202230;
-  --color-accent   : #414450;
-  --color-form     : #8d8d8d;
-  --color-danger   : #8b0000;
+  --color-border      : #b7c2c4;
+  --color-bright      : #ffffff;
+  --color-inverse     : #f0f5f3;
+  --color-secondary   : #8f8f8f;
+  --color-brand       : #202230;
+  --color-interaction : #8c5c38;
+  --color-tertiary    : #b5b5b5;
+  --color-primary     : #202230;
+  --color-accent      : #414450;
+  --color-form        : #8d8d8d;
+  --color-danger      : #ff0000;
   --gradient-brand    : linear-gradient(160deg, #dff3e5, #6e9c88, #6e9c88, #3a6454);
   --gradient-secondary: linear-gradient(
     160deg,
@@ -30,9 +31,8 @@
     #b6806cff,
     #7a4a3fff
   );
---shadow-main : 0px 4px 16px 0px rgba(17, 17, 26, 0.05),
-0px 8px 32px 0px rgba(17, 17, 26, 0.05); 
-
+--shadow-main : 0px 1px 4px 0px rgba(17, 17, 26, 0.025),
+0px 2px 8px 0px rgba(17, 17, 26, 0.025); 
 
 }
 
@@ -170,4 +170,8 @@ h2 {
 
 .glassjar__margin-gap > *:last-child {
   margin-bottom: 0;
+}
+
+.glassjar__padding {
+  padding: 1rem;
 }

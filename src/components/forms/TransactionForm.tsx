@@ -12,16 +12,18 @@ import { RootState } from "./../../redux/store";
 import { stripTime, addZoneOffset } from "./../../utils/dateUtils";
 import { Account } from "./../../models/Account";
 import { RecurringExpenses } from "./../../data/RecurringExpenses";
-import {
-  RecurrenceFrequency,
-  CustomIntervalType,
-  TransactionType,
-} from "./../../utils/constants";
+import PanelHeader from "../PanelHeader"; 
 
 import { format } from "date-fns-tz";
 import { isPast, add, parseISO } from "date-fns";
 
 import "./../../css/Forms.css";
+
+import {
+  RecurrenceFrequency,
+  CustomIntervalType,
+  TransactionType,
+} from "./../../utils/constants";
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -50,55 +52,29 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
     return "";
   });
-  const [type, setType] = useState(activeTransaction?.type || "withdrawal");
-  const [category, setCategory] = useState(
-    activeTransaction?.category || "None"
-  );
-  const [amount, setAmount] = useState(activeTransaction?.amount || 0);
-  const [fromAccount, setFromAccount] = useState(
-    activeTransaction?.fromAccount || accounts[0].id
-  );
-  const [toAccount, setToAccount] = useState(
-    activeTransaction?.toAccount || accounts[0].id
-  );
-  const [description, setDescription] = useState(
-    activeTransaction?.description || ""
-  );
-  const [isRecurring, setIsRecurring] = useState(
-    activeTransaction?.isRecurring || false
-  );
-  const [ends, setEnds] = useState(activeTransaction?.ends || false);
-  const [endDate, setEndDate] = useState(activeTransaction?.endDate || "");
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState(
-    activeTransaction?.recurrenceFrequency || "monthly"
-  );
-  const [recurrenceInterval, setRecurrenceInterval] = useState<number>(
-    activeTransaction?.recurrenceInterval || 1
-  );
-  const [customIntervalType, setCustomIntervalType] = useState(
-    activeTransaction?.customIntervalType || "week"
-  );
-  const [recurrenceIntervalInput, setRecurrenceIntervalInput] =
-    useState<string>(activeTransaction?.recurrenceInterval?.toString() || "1");
-  const [selectedDays, setSelectedDays] = useState<number[]>(
-    activeTransaction?.givenDays || []
-  );
-  const [arbitraryDates, setArbitraryDates] = useState<string[]>(
-    activeTransaction?.arbitraryDates || []
-  );
 
-  const addArbitraryDate = (date: string) => {
-    setArbitraryDates((prevState) => [...prevState, date]);
-  };
+  const [type, setType]                                       = useState<TransactionType>(activeTransaction?.type || TransactionType.WITHDRAWAL);
+  const [category, setCategory]                               = useState(activeTransaction?.category || "None");
+  const [amount, setAmount]                                   = useState(activeTransaction?.amount || 0);
+  const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || accounts[0].id);
+  const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
+  const [description, setDescription]                         = useState(activeTransaction?.description || "");
+  const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
+  const [ends, setEnds]                                       = useState(activeTransaction?.ends || false);
+  const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || "");
+  const [customIntervalType, setCustomIntervalType]           = useState<CustomIntervalType>(activeTransaction?.customIntervalType || CustomIntervalType.DAY);
+  const [recurrenceFrequency, setRecurrenceFrequency]         = useState<RecurrenceFrequency>(activeTransaction?.recurrenceFrequency || RecurrenceFrequency.MONTHLY);
 
-  const removeArbitraryDate = (date: string) => {
-    setArbitraryDates((prevState) => prevState.filter((d) => d !== date));
-  };
+  const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
+  const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || "1");
+  const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
+  const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || []);
+
+  const addArbitraryDate    = (date: string) => {setArbitraryDates((prevState) => [...prevState, date]);};
+  const removeArbitraryDate = (date: string) => {setArbitraryDates((prevState) => prevState.filter((d) => d !== date));};
 
   const dispatch = useDispatch();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = () => {
 
     const localDate = new Date(date);
     const isoDate = localDate.toISOString();
@@ -140,6 +116,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
 
     onClose();
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSave();
   };
 
   useEffect(() => {
@@ -200,329 +181,323 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   return (
     <>
-      <h2>
-        {activeTransaction
-          ? `${activeTransaction.transactionName}`
-          : "New Transaction"}
-      </h2>
-      <form className="glassjar__margin-gap" onSubmit={handleSubmit}>
-        <div className="glassjar__form__input-group">
-          <input
-            placeholder="Transaction Name"
-            type="text"
-            id="transactionName"
-            value={transactionName}
-            onChange={(e) => setTransactionName(e.target.value)}
-          />
-          <label htmlFor="transactionName">Transaction Name:</label>
-        </div>
 
-        <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-          <label htmlFor="type">Type:</label>
-          <select
-            id="type"
-            value={type}
-            onChange={(e) => setType(e.target.value as TransactionType)}
-          >
-            <option value="deposit">Income</option>
-            <option value="withdrawal">Expense</option>
-            {accounts.length > 1 && <option value="transfer">Transfer</option>}
-            <option value="event">Event</option>
-          </select>
-        </div>
+      <PanelHeader
+        title={activeTransaction ? `Update Transaction` : "New Transaction"}
+        onSecondaryAction={onClose}
+        secondaryActionLabel="Cancel"
+        onPrimaryAction={handleSave}
+        primaryActionLabel="Save"
+      />
 
-        <div className="glassjar__flex glassjar__flex--tight">
-          <div className="glassjar__form__input-group glassjar__form__input-group--date">
+      <div className="glassjar__padding">
+        <form className="glassjar__margin-gap" onSubmit={handleSubmit}>
+          <div className="glassjar__form__input-group">
             <input
-              type="date"
-              id="date"
-              value={stripTime(date)}
-              onChange={(e) => setDate(addZoneOffset(e.target.value))}
+              placeholder="Transaction Name"
+              type="text"
+              id="transactionName"
+              value={transactionName}
+              onChange={(e) => setTransactionName(e.target.value)}
             />
-            <label htmlFor="date">Date:</label>
+            <label htmlFor="transactionName">Transaction Name:</label>
+          </div>
+
+          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+            <label htmlFor="type">Type:</label>
+            <select
+              id="type"
+              value={type}
+              onChange={(e) => setType(e.target.value as TransactionType)}
+            >
+              <option value="deposit">Income</option>
+              <option value="withdrawal">Expense</option>
+              {accounts.length > 1 && <option value="transfer">Transfer</option>}
+              <option value="event">Event</option>
+            </select>
+          </div>
+
+          <div className="glassjar__flex glassjar__flex--tight">
+            <div className="glassjar__form__input-group glassjar__form__input-group--date">
+              <input
+                type="date"
+                id="date"
+                value={stripTime(date)}
+                onChange={(e) => setDate(addZoneOffset(e.target.value))}
+              />
+              <label htmlFor="date">Date:</label>
+            </div>
+
+            <div
+              className={`glassjar__auto-height glassjar__auto-height--top ${type !== "event" ? "open" : ""
+                }`}
+            >
+              <div className="glassjar__form__input-group">
+                <CurrencyInput
+                  id="amount"
+                  prefix="$"
+                  name="amount"
+                  placeholder="Transaction Amount:"
+                  defaultValue={amount / 100} 
+                  decimalsLimit={2}
+                  onValueChange={(value) =>
+                    setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
+                  }
+                />
+                <label htmlFor="amount">Amount:</label>
+              </div>
+            </div>
           </div>
 
           <div
-            className={`glassjar__auto-height glassjar__auto-height--top ${
-              type !== "event" ? "open" : ""
-            }`}
+            className={`glassjar__auto-height glassjar__auto-height--top ${type === "withdrawal" || type === "transfer" ? "open" : ""
+              }`}
           >
-            <div className="glassjar__form__input-group">
-              <CurrencyInput
-                id="amount"
-                prefix="$"
-                name="amount"
-                placeholder="Transaction Amount:"
-                defaultValue={amount / 100} // Convert cents to dollars for display
-                decimalsLimit={2} // Allow decimal input
-                onValueChange={(value) =>
-                  setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
-                }
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="fromAccount">From Account:</label>
+              <select
+                id="fromAccount"
+                value={fromAccount}
+                onChange={(e) => {
+                  setFromAccount(e.target.value);
+                }}
+              >
+                {accounts.map((account: Account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div
+            className={`glassjar__auto-height glassjar__auto-height--top ${type === "deposit" || type === "transfer" ? "open" : ""
+              }`}
+          >
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="toAccount">To Account:</label>
+              <select
+                id="toAccount"
+                value={toAccount}
+                onChange={(e) => setToAccount(e.target.value)}
+              >
+                {accounts.map((account: Account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="glassjar__form__input-sub-group">
+            <div className="glassjar__form__input-group glassjar__form__input-group--check">
+              <input
+                type="checkbox"
+                id="isRecurring"
+                checked={isRecurring}
+                onChange={(e) => setIsRecurring(!isRecurring)}
               />
-              <label htmlFor="amount">Amount:</label>
+              <label htmlFor="isRecurring">Transaction Repeats:</label>
             </div>
-          </div>
-        </div>
 
-        <div
-          className={`glassjar__auto-height glassjar__auto-height--top ${
-            type === "withdrawal" || type === "transfer" ? "open" : ""
-          }`}
-        >
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="fromAccount">From Account:</label>
-            <select
-              id="fromAccount"
-              value={fromAccount}
-              onChange={(e) => {
-                setFromAccount(e.target.value);
-              }}
-            >
-              {accounts.map((account: Account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div
-          className={`glassjar__auto-height glassjar__auto-height--top ${
-            type === "deposit" || type === "transfer" ? "open" : ""
-          }`}
-        >
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="toAccount">To Account:</label>
-            <select
-              id="toAccount"
-              value={toAccount}
-              onChange={(e) => setToAccount(e.target.value)}
-            >
-              {accounts.map((account: Account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="glassjar__form__input-sub-group">
-          <div className="glassjar__form__input-group glassjar__form__input-group--check">
-            <input
-              type="checkbox"
-              id="isRecurring"
-              checked={isRecurring}
-              onChange={(e) => setIsRecurring(!isRecurring)}
-            />
-            <label htmlFor="isRecurring">Transaction Repeats:</label>
-          </div>
-
-          <div className={`glassjar__auto-height ${isRecurring ? "open" : ""}`}>
-            <div className="glassjar__margin-gap">
-              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-                <select
-                  id="recurrenceFrequency"
-                  value={recurrenceFrequency}
-                  onChange={(e) =>
-                    setRecurrenceFrequency(
-                      e.target.value as RecurrenceFrequency
-                    )
-                  }
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="yearly">Yearly</option>
-                  <option value="given days">Certain Days</option>
-                  <option value="twice monthly">Twice Monthly</option>
-                  <option value="custom">Custom</option>
-                  <option value="arbitrary">Arbitrary</option>
-                </select>
-                <label htmlFor="recurrenceFrequency">Repeats:</label>
-              </div>
-              <div
-                className={`glassjar__auto-height ${
-                  recurrenceFrequency === "given days" ? "open" : ""
-                }`}
-              >
-                <div className="glassjar__form__input-group">
-                  <label>Days:</label>
-                  <div className="glassjar__flex glassjar__flex--even glassjar__flex--tight">
-                    {["S", "M", "T", "W", "T", "F", "S"].map(
-                      (dayName, index) => (
-                        <button
-                          key={`${dayName}-${index}`}
-                          type="button"
-                          className={
-                            selectedDays.includes(index) ? "selected" : ""
-                          }
-                          onClick={() => toggleDay(index)}
-                        >
-                          {dayName}
-                        </button>
+            <div className={`glassjar__auto-height ${isRecurring ? "open" : ""}`}>
+              <div className="glassjar__margin-gap">
+                <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+                  <select
+                    id="recurrenceFrequency"
+                    value={recurrenceFrequency}
+                    onChange={(e) =>
+                      setRecurrenceFrequency(
+                        e.target.value as RecurrenceFrequency
                       )
-                    )}
-                  </div>
+                    }
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="given days">Certain Days</option>
+                    <option value="twice monthly">Twice Monthly</option>
+                    <option value="custom">Custom</option>
+                    <option value="arbitrary">Arbitrary</option>
+                  </select>
+                  <label htmlFor="recurrenceFrequency">Repeats:</label>
                 </div>
-              </div>
-
-              <div
-                className={`glassjar__auto-height ${
-                  recurrenceFrequency === "custom" ? "open" : ""
-                }`}
-              >
-                <div className="glassjar__flex">
-                  <label htmlFor="recurrenceInterval">Every:</label>
+                <div
+                  className={`glassjar__auto-height ${recurrenceFrequency === "given days" ? "open" : ""
+                    }`}
+                >
                   <div className="glassjar__form__input-group">
-                    <input
-                      type="number"
-                      id="recurrenceInterval"
-                      value={recurrenceIntervalInput}
-                      min="1"
-                      onChange={handleRecurrenceIntervalChange}
-                    />
-                  </div>
-                  <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-                    <select
-                      value={customIntervalType}
-                      onChange={(e) =>
-                        setCustomIntervalType(
-                          e.target.value as CustomIntervalType
+                    <label>Days:</label>
+                    <div className="glassjar__flex glassjar__flex--even glassjar__flex--tight">
+                      {["S", "M", "T", "W", "T", "F", "S"].map(
+                        (dayName, index) => (
+                          <button
+                            key={`${dayName}-${index}`}
+                            type="button"
+                            className={
+                              selectedDays.includes(index) ? "selected" : ""
+                            }
+                            onClick={() => toggleDay(index)}
+                          >
+                            {dayName}
+                          </button>
                         )
-                      }
-                    >
-                      <option value="day">Day(s)</option>
-                      <option value="week">Week(s)</option>
-                      <option value="month">Month(s)</option>
-                      <option value="year">Year(s)</option>
-                    </select>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div
-                className={`glassjar__auto-height ${
-                  recurrenceFrequency === "arbitrary" ? "open" : ""
-                }`}
-              >
-                <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
-                  {arbitraryDates.map((date, index) => (
-                    <div
-                      className="glassjar__flex glassjar__flex--tight glassjar__flex--align-center"
-                      key={index}
-                    >
-                      <div className="glassjar__form__input-group">
-                        <input
-                          type="date"
-                          value={date}
-                          onChange={(e) =>
-                            setArbitraryDates(
-                              arbitraryDates.map((d, i) =>
-                                i === index ? e.target.value : d
-                              )
-                            )
-                          }
-                        />
-                        <label>Arbitrary Date:</label>
-                      </div>
-                      <button
-                        className="glassjar__button glassjar__button--small glassjar__button--warn"
-                        type="button"
-                        onClick={() => removeArbitraryDate(date)}
-                      >
-                        <i className="fa-solid fa-xmark-large" />
-                      </button>
+
+                <div
+                  className={`glassjar__auto-height ${recurrenceFrequency === "custom" ? "open" : ""
+                    }`}
+                >
+                  <div className="glassjar__flex">
+                    <label htmlFor="recurrenceInterval">Every:</label>
+                    <div className="glassjar__form__input-group">
+                      <input
+                        type="number"
+                        id="recurrenceInterval"
+                        value={recurrenceIntervalInput}
+                        min="1"
+                        onChange={handleRecurrenceIntervalChange}
+                      />
                     </div>
-                  ))}
-                  <button type="button" onClick={() => addArbitraryDate("")}>
-                    Add Date
-                  </button>
+                    <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+                      <select
+                        value={customIntervalType}
+                        onChange={(e) =>
+                          setCustomIntervalType(
+                            e.target.value as CustomIntervalType
+                          )
+                        }
+                      >
+                        <option value="day">Day(s)</option>
+                        <option value="week">Week(s)</option>
+                        <option value="month">Month(s)</option>
+                        <option value="year">Year(s)</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <div className="glassjar__form__input-group glassjar__form__input-group--check">
-                  <input
-                    type="checkbox"
-                    id="ends"
-                    checked={ends}
-                    onChange={(e) => setEnds(!ends)}
-                  />
-                  <label htmlFor="ends">End Date:</label>
+                <div
+                  className={`glassjar__auto-height ${recurrenceFrequency === "arbitrary" ? "open" : ""
+                    }`}
+                >
+                  <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
+                    {arbitraryDates.map((date, index) => (
+                      <div
+                        className="glassjar__flex glassjar__flex--tight glassjar__flex--align-center"
+                        key={index}
+                      >
+                        <div className="glassjar__form__input-group">
+                          <input
+                            type="date"
+                            value={date}
+                            onChange={(e) =>
+                              setArbitraryDates(
+                                arbitraryDates.map((d, i) =>
+                                  i === index ? e.target.value : d
+                                )
+                              )
+                            }
+                          />
+                          <label>Arbitrary Date:</label>
+                        </div>
+                        <button
+                          className="glassjar__button glassjar__button--small glassjar__button--warn"
+                          type="button"
+                          onClick={() => removeArbitraryDate(date)}
+                        >
+                          <i className="fa-solid fa-xmark-large" />
+                        </button>
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => addArbitraryDate("")}>
+                      Add Date
+                    </button>
+                  </div>
                 </div>
 
-                <div className={`glassjar__auto-height ${ends ? "open" : ""}`}>
-                  <div className="glassjar__form__input-group">
+                <div>
+                  <div className="glassjar__form__input-group glassjar__form__input-group--check">
                     <input
-                      type="date"
-                      id="endDate"
-                      value={endDate ? stripTime(endDate) : ""}
-                      onChange={onEndDateChange}
+                      type="checkbox"
+                      id="ends"
+                      checked={ends}
+                      onChange={(e) => setEnds(!ends)}
                     />
-                    <label htmlFor="endDate">Transaction Ends:</label>
+                    <label htmlFor="ends">End Date:</label>
+                  </div>
+
+                  <div className={`glassjar__auto-height ${ends ? "open" : ""}`}>
+                    <div className="glassjar__form__input-group">
+                      <input
+                        type="date"
+                        id="endDate"
+                        value={endDate ? stripTime(endDate) : ""}
+                        onChange={onEndDateChange}
+                      />
+                      <label htmlFor="endDate">Transaction Ends:</label>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div
-          className={`glassjar__auto-height glassjar__auto-height--top ${
-            type === "withdrawal" || type === "transfer" ? "open" : ""
-          }`}
-        >
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="category">Category:</label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {RecurringExpenses.map((category, index) => (
-                <option key={index} value={RecurringExpenses[index].category}>
-                  {RecurringExpenses[index].category}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="glassjar__form__input-group">
-          <textarea
-            placeholder="Description (optional)"
-            // type="text"
-            id="description"
-            value={description}
-            data-gramm="false"
-            data-gramm_editor="false"
-            data-enable-grammarly="false"
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <label htmlFor="description">Description (optional):</label>
-        </div>
-
-        <div className="glassjar__flex glassjar__flex--justify-center">
-          {activeTransaction && (
-            <button
-              className="glassjar__button glassjar__button--warn"
-              type="button"
-              onClick={() => {
-                dispatch(deleteTransaction(activeTransaction.id));
-                onClose();
-              }}
-            >
-              Delete
-            </button>
-          )}
-          <button
-            className="glassjar__button glassjar__button--full-width glassjar__button--primary"
-            type="submit"
+          <div
+            className={`glassjar__auto-height glassjar__auto-height--top ${type === "withdrawal" || type === "transfer" ? "open" : ""
+              }`}
           >
-            Save
-          </button>
-        </div>
-      </form>
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="category">Category:</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {RecurringExpenses.map((category, index) => (
+                  <option key={index} value={RecurringExpenses[index].category}>
+                    {RecurringExpenses[index].category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="glassjar__form__input-group">
+            <textarea
+              placeholder="Description (optional)"
+              id="description"
+              value={description}
+              data-gramm="false"
+              data-gramm_editor="false"
+              data-enable-grammarly="false"
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <label htmlFor="description">Description (optional):</label>
+          </div>
+
+          <div className="glassjar__flex glassjar__flex--justify-center">
+
+            {activeTransaction && (
+              <button
+                className="glassjar__text-button glassjar__text-button--warn"
+                type="button"
+                onClick={() => {
+                  dispatch(deleteTransaction(activeTransaction.id));
+                  onClose();
+                }}
+              >
+                Delete Transaction
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
     </>
   );
 };

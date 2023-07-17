@@ -5,7 +5,7 @@ import CurrencyInput from "react-currency-input-field";
 import { addTransaction, updateTransaction, } from "../../redux/slices/transactions";
 import { RootState } from "../../redux/store";
 import { Transaction } from "../../models/Transaction";
-import { RecurrenceFrequency } from "../../utils/constants";
+import { CustomIntervalType, RecurrenceFrequency, TransactionType } from "../../utils/constants";
 import { addZoneOffset, stripTime } from "../../utils/dateUtils";
 
 import "./../../css/MiniForms.css";
@@ -16,7 +16,7 @@ interface BirthdayTransactionFormProps {
   initialAmount              ?: number;
   initialDay                 ?: string;
   initialDate                ?: string;
-  initialType                ?: string;
+  initialType                ?: TransactionType;
   initialDescription         ?: string;
   initialFromAccount         ?: string;
   initialToAccount           ?: string;
@@ -42,7 +42,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   initialActiveTransaction,
   initialDate,
   initialFromAccount,
-  initialRecurrenceFrequency = "yearly",
+  initialRecurrenceFrequency = RecurrenceFrequency.YEARLY,
   initialFromHelper,
   onSubmit,
 }) => {
@@ -68,7 +68,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
     activeTransaction?.amount || initialAmount
   );
 
-  const type        = activeTransaction?.type || "withdrawal";
+  const type        = activeTransaction?.type || TransactionType.WITHDRAWAL;
   const category    = activeTransaction?.category || initialCategory;
   const fromAccount = activeTransaction?.fromAccount || initialFromAccount || accounts[0].id;
   const toAccount   = activeTransaction?.toAccount || accounts[0].id;
@@ -77,7 +77,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   const endDate     = activeTransaction?.endDate || "";
 
   let   recurrenceFrequency = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
-  const customIntervalType  = activeTransaction?.customIntervalType || "week";
+  const customIntervalType  = activeTransaction?.customIntervalType || CustomIntervalType.WEEK;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

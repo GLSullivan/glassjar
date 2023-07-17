@@ -5,7 +5,7 @@ import CurrencyInput from "react-currency-input-field";
 import { addTransaction, updateTransaction } from "../../redux/slices/transactions";
 import { RootState } from "../../redux/store";
 import { Transaction } from "../../models/Transaction";
-import { RecurrenceFrequency } from './../../utils/constants';
+import { CustomIntervalType, RecurrenceFrequency, TransactionType } from './../../utils/constants';
 
 import "./../../css/MiniForms.css";
 
@@ -14,7 +14,7 @@ interface HolidayTransactionFormProps {
   initialAmount              ?: number;
   initialDay                 ?: string;
   initialDate                ?: string;
-  initialType                ?: string;
+  initialType                ?: TransactionType;
   initialDescription         ?: string;
   initialFromAccount         ?: string;
   initialToAccount           ?: string;
@@ -52,9 +52,9 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
   const dispatch = useDispatch();
 
   if (initialArbitraryDates.length > 1) {
-    initialRecurrenceFrequency = 'arbitrary'
+    initialRecurrenceFrequency = RecurrenceFrequency.ARBITRARY
   } else {
-    initialRecurrenceFrequency = 'yearly'
+    initialRecurrenceFrequency = RecurrenceFrequency.YEARLY
   }
   
     const [amount, setAmount]                                   = useState(activeTransaction?.amount || initialAmount);
@@ -64,21 +64,21 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
                                     initialDate                  ? new Date(initialDate).toISOString()                 : 
                                     initialArbitraryDates.length > 0 ? new Date(initialArbitraryDates[0]).toISOString(): 
                                     '';
-    const type                = activeTransaction?.type || 'withdrawal';
+    const type                = activeTransaction?.type || TransactionType.WITHDRAWAL;
     const fromAccount         = activeTransaction?.fromAccount || accounts[0].id;
     const toAccount           = activeTransaction?.toAccount || accounts[0].id;
     const description         = activeTransaction?.description || '';
     const isRecurring         = activeTransaction?.isRecurring || true;
     const endDate             = activeTransaction?.endDate || '';
     let   recurrenceFrequency = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
-    const customIntervalType  = activeTransaction?.customIntervalType || 'week';
+    const customIntervalType  = activeTransaction?.customIntervalType || CustomIntervalType.WEEK;
     let   arbitraryDates      = activeTransaction?.arbitraryDates || initialArbitraryDates;
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
     
       if (arbitraryDates.length > 1) {
-        recurrenceFrequency = "arbitrary";
+        recurrenceFrequency = RecurrenceFrequency.ARBITRARY;
       } else {
         arbitraryDates = [];
       }

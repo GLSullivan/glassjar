@@ -1,5 +1,5 @@
 import { useSelector, useDispatch }         from 'react-redux';
-import React, { useEffect }        from 'react';
+import React, { useEffect }                 from 'react';
 
 import TransactionHelper                    from './components/helpers/TransactionHelper';
 import TransactionForm                      from './components/forms/TransactionForm';
@@ -18,7 +18,6 @@ import { setView }                          from './redux/slices/views';
 import {      
   closeTransactionModal,      
   closeAccountForm,     
-  closeAccountList,     
   openAccountForm,      
   closeTransactionHelper      
 }                                           from './redux/slices/modals';
@@ -30,7 +29,6 @@ import './css/Nav.css'
 
 const AppContent: React.FC = () => {
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen);
-  const accountListOpen       = useSelector((state: RootState) => state.modalState.accountListOpen);
   const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen);
   const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
   const transactions          = useSelector((state: RootState) => state.transactions.transactions);
@@ -50,10 +48,6 @@ const AppContent: React.FC = () => {
 
   const closeTheTransactionModal = () => {
     dispatch(closeTransactionModal())
-  }
-
-  const closeTheAccountList = () => {
-    dispatch(closeAccountList())
   }
 
   const closeTheAccountForm = () => {
@@ -87,11 +81,6 @@ const AppContent: React.FC = () => {
       {isSignedIn && <>
       {/* <h1>{currentUser?.displayName}</h1> */}
 
-
-
-      <Modal isOpen={accountListOpen} onClose={closeTheAccountList}>
-        <AccountList />
-      </Modal>
       <Modal
         isOpen={accountFormOpen}
         onClose={closeTheAccountForm}
@@ -99,12 +88,14 @@ const AppContent: React.FC = () => {
       >
         <AccountForm />
       </Modal>
+
       <Modal
         isOpen={transactionHelperOpen}
         onClose={closeTheTransactionHelper}
       >
         <TransactionHelper />
       </Modal>
+
       <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>
         <TransactionForm
           initialDate={activeDate}

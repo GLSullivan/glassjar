@@ -12,6 +12,8 @@ import {
 }                                   from './../../redux/slices/accounts';
 import { Account }                  from './../../models/Account';
 import ColorPicker                  from './../ColorPicker';
+import PanelHeader                  from '../PanelHeader';
+import { AccountType } from '../../utils/constants';
 
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -43,7 +45,7 @@ export const AccountForm: React.FC = () => {
       id            : generateUniqueId(),
       name          : '',
       currentBalance: 0,
-      type          : 'checking',
+      type          : AccountType.CHECKING,
       lastUpdated   : new Date().toISOString(),
       isLiability   : false,
       showInGraph   : true,
@@ -51,14 +53,16 @@ export const AccountForm: React.FC = () => {
     }
   );
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-  
-    // Ensuring the account has the correct balance
+  const handleClose = () => {
+    dispatch(setActiveAccount(null));
+    dispatch(closeAccountForm())
+  }
+
+  const handleSave = () => {
     const updatedAccount = {
       ...account,
       currentBalance: parseFloat(account.currentBalance.toFixed(2)),
-      color: account.color // Add this line to include the color information
+      color: account.color
     };
   
     if (activeAccount) {
@@ -66,8 +70,12 @@ export const AccountForm: React.FC = () => {
     } else {
       dispatch(addAccount({ ...updatedAccount, id: generateUniqueId() }));
     }
-    dispatch(setActiveAccount(null));
-    dispatch(closeAccountForm());
+    handleClose();
+  }
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    handleSave()  
   };
   
   const handleChange = (
@@ -94,102 +102,122 @@ export const AccountForm: React.FC = () => {
 
   return (
     <>
-      <h2>{activeAccount ? `${account.name}` : 'New Account'}</h2>
-      {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
+      <PanelHeader
+        title={activeAccount ? `Update Account` : "New Account"}
+        onSecondaryAction={handleClose}
+        secondaryActionLabel="Cancel"
+        onPrimaryAction={handleSave}
+        primaryActionLabel="Save"
+      />
 
-      <form className = 'glassjar__form' onSubmit = {handleSubmit}>
-      <div  className = 'glassjar__form__input-group'>
-          {' '}
-          <input
-            required 
-            placeholder = 'Account Name:'
-            type        = 'text'
-            id          = 'name'
-            name        = 'name'
-            value       = {account.name}
-            onChange    = {handleChange}
-          />
-          <label htmlFor = 'name'>Name:</label>
-        </div>
+      <div className="glassjar__padding">
+        {/* <h2>{activeAccount ? `${account.name}` : 'New Account'}</h2> */}
+        {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
 
-        <div   className = 'glassjar__form__input-group'>
-          <CurrencyInput
-            id            = 'currentBalance'
-            prefix        = '$'
-            name          = 'currentBalance'
-            placeholder   = 'Current Balance:'
-            defaultValue  = {account.currentBalance / 100}
-            decimalsLimit = {0}
-            onValueChange = {handleCurrencyChange}
-          />
-          <label htmlFor   = 'currentBalance'>Current Balance:</label>
-
-        </div>
-
-        <div   className = 'glassjar__form__input-group glassjar__form__input-group--drop'>
-        <label htmlFor   = 'type'>Type:</label>
-          <select
-            id       = 'type'
-            name     = 'type'
-            value    = {account.type}
-            onChange = {handleChange}
-          >
-            <option value = 'checking'>Checking</option>
-            <option value = 'savings'>Savings</option>
-            <option value = 'credit card'>Credit Card</option>
-            <option value = 'loan'>Loan</option>
-            <option value = 'mortgage'>Mortgage</option>
-            <option value = 'cash'>Cash</option>
-          </select>
-        </div>
-        {['loan', 'savings', 'mortgage', 'credit card'].includes(
-          account.type
-        ) && (
-          <div   className = 'glassjar__form__input-group'>
+        <form className="glassjar__form" onSubmit={handleSubmit}>
+          <div className="glassjar__form__input-group">
+            {" "}
             <input
-              type     = 'number'
-              id       = 'interestRate'
-              name     = 'interestRate'
-              value    = {account.interestRate || ''}
-              onChange = {handleChange}
+              required
+              placeholder="Account Name:"
+              type="text"
+              id="name"
+              name="name"
+              value={account.name}
+              onChange={handleChange}
             />
-            <label htmlFor   = 'interestRate'>Interest Rate:</label>
+            <label htmlFor="name">Name:</label>
           </div>
-        )}
-        <div className='glassjar__form__input-group'>
-          <label>Account Color: </label>
-          <ColorPicker onSelect={handleColorSelect} selectedIndex={account.color} />
-        </div>
-        {account.type === 'loan' ||
-        account.type === 'mortgage' ||
-        account.type === 'credit card' ? (
-          <div   className = 'glassjar__form__input-group'>
+
+          <div className="glassjar__form__input-group">
+            <CurrencyInput
+              id="currentBalance"
+              prefix="$"
+              name="currentBalance"
+              placeholder="Current Balance:"
+              defaultValue={account.currentBalance / 100}
+              decimalsLimit={0}
+              onValueChange={handleCurrencyChange}
+            />
+            <label htmlFor="currentBalance">Current Balance:</label>
+          </div>
+
+          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+            <label htmlFor="type">Type:</label>
+            <select
+              id="type"
+              name="type"
+              value={account.type}
+              onChange={handleChange}
+            >
+              <option value="checking">Checking</option>
+              <option value="savings">Savings</option>
+              <option value="credit card">Credit Card</option>
+              <option value="loan">Loan</option>
+              <option value="mortgage">Mortgage</option>
+              <option value="cash">Cash</option>
+            </select>
+          </div>
+          {["loan", "savings", "mortgage", "credit card"].includes(
+            account.type
+          ) && (
+            <div className="glassjar__form__input-group">
+              <input
+                type="number"
+                id="interestRate"
+                name="interestRate"
+                value={account.interestRate || ""}
+                onChange={handleChange}
+              />
+              <label htmlFor="interestRate">Interest Rate:</label>
+            </div>
+          )}
+          <div className="glassjar__form__input-group">
+            <label>Account Color: </label>
+            <ColorPicker
+              onSelect={handleColorSelect}
+              selectedIndex={account.color}
+            />
+          </div>
+          {account.type === "loan" ||
+          account.type === "mortgage" ||
+          account.type === "credit card" ? (
+            <div className="glassjar__form__input-group">
+              <input
+                type="date"
+                id="dueDate"
+                name="dueDate"
+                value={account.dueDate || ""}
+                onChange={handleChange}
+              />
+              <label htmlFor="dueDate">Due Date:</label>
+            </div>
+          ) : null}
+          <div className="glassjar__form__input-group glassjar__form__input-group--check">
             <input
-              type     = 'date'
-              id       = 'dueDate'
-              name     = 'dueDate'
-              value    = {account.dueDate || ''}
-              onChange = {handleChange}
+              type="checkbox"
+              id="showInGraph"
+              name="showInGraph"
+              checked={account.showInGraph}
+              onChange={handleChange}
             />
-            <label htmlFor   = 'dueDate'>Due Date:</label>
+            <label htmlFor="showInGraph">Show In Graph:</label>
           </div>
-        ) : null}
-        <div className="glassjar__form__input-group glassjar__form__input-group--check">
-          <input
-            type="checkbox"
-            id="showInGraph"
-            name="showInGraph"
-            checked={account.showInGraph}
-            onChange={handleChange}
-          />
-          <label htmlFor="showInGraph">Show In Graph:</label>
-        </div>
-        <br />
-        <div className="glassjar__flex glassjar__flex--justify-center">
-          {activeAccount && accounts.length > 1 ? <button className='glassjar__button glassjar__button--warn glassjar__button--full-width' onClick={handleDelete}>Delete</button> : null}
-          <button className='glassjar__button glassjar__button--full-width glassjar__button--primary' type = 'submit'>Save</button>
-        </div>
-      </form>
+          {activeAccount && accounts.length > 1 && (
+            <>
+              <br />
+              <div className="glassjar__flex glassjar__flex--justify-center">
+                <button
+                  className="glassjar__text-button glassjar__text-button--warn"
+                  onClick={handleDelete}
+                >
+                  Delete Account
+                </button>
+              </div>
+            </>
+          )}
+        </form>
+      </div>
     </>
   );
 };

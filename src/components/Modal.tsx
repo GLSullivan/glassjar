@@ -17,16 +17,13 @@ function Modal(props: { children?: any; onClose: any; isOpen: boolean, hideClose
       <div className='glassjar__modal'>
         <div className="glassjar__modal__backing" onClick={closeTheModal}></div>
         <div className="glassjar__modal__body">
-          {!hideCloseButton && <div className="glassjar__modal__close" onClick={closeTheModal}><i className="fa-solid fa-xmark" /></div>}
-          <div className="glassjar__modal__content">
-            {theChildren?.map((child: any, index: number) => {
-              return (
-                <div key={index}>
-                  {child}
-                </div>
-              )
-            })}
-          </div>
+          {theChildren?.map((child: any, index: number) => {
+            return (
+              <div key={index}>
+                {child}
+              </div>
+            )
+          })}
         </div>
       </div>
     }</>

@@ -17,7 +17,6 @@ button {
   box-sizing    : border-box;
   color         : var(--color-brand);
   font-weight   : 300;
-  letter-spacing: 1.1px;
   outline       : none;
   padding       : .5rem;
   position      : relative;
@@ -60,6 +59,7 @@ button.selected,
 
 input,
 textarea {
+  background   : var(--color-bright);
   border       : 1px solid var(--color-border);
   border-radius: 0.5rem;
   box-sizing   : border-box;
@@ -224,11 +224,8 @@ select {
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--check input[type="checkbox"]:checked+label::before {
-
   background  : var(--color-secondary);
   border-color: transparent;
-
-
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--check label::after {
@@ -250,6 +247,28 @@ select {
 .glassjar__form__input-group.glassjar__form__input-group--check input[type="checkbox"]:checked+label::after {
   opacity  : 1;
   transform: scale(1);
+}
+
+.glassjar__text-button {
+  background: none;
+  border: none;
+  color: var(--color-interaction);
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.glassjar__text-button.glassjar__text-button--warn {
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+.glassjar__text-button.glassjar__text-button--primary {
+  font-weight: 500;
+}
+
+button.glassjar__text-button.glassjar__text-button--hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 
   /* Override form defaults */
