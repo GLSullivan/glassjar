@@ -17,13 +17,28 @@ import { setCurrentUser, setSignedIn } from "./../redux/slices/auth";
 
 function Landing() {
   const dispatch = useDispatch();
-  const [firebaseSignInError, setFirebaseSignInError] = useState<string | null>(
-    null
-  );
-  const [firebaseSignUpError, setFirebaseSignUPError] = useState<string | null>(
-    null
-  );
-  const [mode, setMode] = useState("signIn");
+  const [firebaseSignInError, setFirebaseSignInError] = useState<string | null>( null );
+  const [firebaseSignUpError, setFirebaseSignUPError] = useState<string | null>( null );
+
+  const [mode, setMode]                         = useState("signIn");
+  const [emailHasBeenSent, setEmailHasBeenSent] = useState<boolean>(false);
+  const [error, setError]                       = useState<string>("");
+
+  const sendResetEmail = async (values: { email: string }) => {
+    try {
+      await firebase.auth().sendPasswordResetEmail(values.email);
+      setEmailHasBeenSent(true);
+      setTimeout(() => {
+        setEmailHasBeenSent(false);
+      }, 3000);
+    } catch (error) {
+      setError("Error resetting password");
+    }
+  };
+  
+  const forgotPasswordValidationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email format").required("Required"),
+  });
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -31,9 +46,6 @@ function Landing() {
       .min(6, "Must be > 6 characters")
       .required("Required"),
   });
-
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
 
   const signIn = async (
     values: { email: string; password: string },
@@ -69,10 +81,8 @@ function Landing() {
     } catch (error: any) {
       // An error happened.
       const friendlyErrors: { [key: string]: string } = {
-        "auth/account-exists-with-different-credential":
-          "An account already exists with the same email address but different sign-in credentials.",
-        "auth/popup-closed-by-user":
-          "The popup has been closed before authentication could complete.",
+        "auth/account-exists-with-different-credential": "An account already exists with the same email address but different sign-in credentials.",
+        "auth/popup-closed-by-user"                    : "The popup has been closed before authentication could complete.",
         // add other error codes and messages that you want to handle
       };
 
@@ -82,10 +92,7 @@ function Landing() {
     }
   };
 
-  const signUp = async (
-    values: { email: string; password: string },
-    { setSubmitting }: any
-  ) => {
+  const signUp = async (values: { email: string; password: string }) => {
     try {
       await firebase
         .auth()
@@ -95,9 +102,8 @@ function Landing() {
     } catch (error: any) {
       // An error happened.
       const friendlyErrors: { [key: string]: string } = {
-        "auth/email-already-in-use":
-          "The email address is already in use by another account.",
-        "auth/weak-password": "The password is too weak.",
+        "auth/email-already-in-use": "The email address is already in use by another account.",
+        "auth/weak-password"       : "The password is too weak.",
         // add other error codes and messages that you want to handle
       };
 
@@ -115,10 +121,10 @@ function Landing() {
         if (user) {
           dispatch(
             setCurrentUser({
-              uid: user.uid,
+              uid        : user.uid,
               displayName: user.displayName,
-              email: user.email,
-              photoURL: user.photoURL,
+              email      : user.email,
+              photoURL   : user.photoURL,
             })
           );
         } else {
@@ -311,14 +317,57 @@ function Landing() {
               >
                 <div>
                   <Formik
-                    initialValues={{ email: "", password: "" } as any}
-                    validationSchema={validationSchema}
-                    onSubmit={signIn}
+                    initialValues={{ email: "" } as any}
+                    validationSchema={forgotPasswordValidationSchema}
+                    onSubmit={sendResetEmail}
                   >
-                    {({ errors }) => (
+                    {({ errors, isSubmitting }) => (
                       <Form>
                         <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
-                          <h1>Sucks to be you!</h1>
+                          <p>Reset your Password</p>
+                          <div
+                            className={`glassjar__auto-height glassjar__auto-height--top ${
+                              emailHasBeenSent ? "open" : ""
+                            }`}
+                          >
+                            <div>
+                              <p>
+                                An email has been sent to you! <br />
+                                You might need to check your spam folder.
+                              </p>
+                            </div>
+                          </div>
+                          {error !== "" && <div>{error}</div>}
+                          <div className="glassjar__form__input-group">
+                            <Field
+                              type="email"
+                              name="email"
+                              id="email"
+                              placeholder="Your Email"
+                              className={errors.email ? "error" : ""}
+                            />
+                            <label htmlFor="email">
+                              Email:{" "}
+                              <span className="glassjar__form__input-group__error">
+                                <ErrorMessage name="email" />
+                              </span>
+                            </label>
+                          </div>
+                          <button
+                            className="glassjar__button glassjar__button--primary"
+                            type="submit"
+                            disabled={isSubmitting}
+                          >
+                            Send Reset Link
+                          </button>
+                          <p>
+                            <span
+                              onClick={() => setMode("signIn")}
+                              className="glassjar__text-link"
+                            >
+                              Back To Sign In
+                            </span>
+                          </p>{" "}
                         </div>
                       </Form>
                     )}
