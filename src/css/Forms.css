@@ -288,7 +288,28 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 30px var(--color-bright) inset !important;
 }
 
+/* Errors */
+.glassjar__form__input-group__error {
+  color        : var(--color-danger);
+  opacity: 1;
+  transition: .25s ease;
+}
 
+.glassjar__form__input-group input.error {
+  border: 1px solid var(--color-danger);
+}
+
+.glassjar__form__input-group__error:empty {
+  opacity: 0;
+}
+
+.glassjar__landing__form .glassjar__flex > * {
+  flex: 2;
+}
+
+.glassjar__error-block {
+  padding: 0 1.5rem .5rem 1.5rem;
+}
 
 
 

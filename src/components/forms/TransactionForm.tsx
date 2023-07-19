@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import CurrencyInput from "react-currency-input-field";
 
@@ -16,8 +17,6 @@ import PanelHeader from "../PanelHeader";
 
 import { format } from "date-fns-tz";
 import { isPast, add, parseISO } from "date-fns";
-
-import * as Yup from "yup";
 
 import "./../../css/Forms.css";
 
@@ -38,11 +37,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   initialDate,
 }) => {
 
+  const [saveReady,setSaveReady]                              = useState<boolean>(false);
+
   const activeTransaction                                     = useSelector((state: RootState) => state.transactions.activeTransaction);
   const accounts                                              = useSelector((state: RootState) => state.accounts.accounts);
-
-  const [testError, setTestError]                             = useState("");
-  const [saveReady, setSaveReady]                             = useState(false);
 
   const [transactionName, setTransactionName]                 = useState(activeTransaction?.transactionName || "");
   const [category, setCategory]                               = useState(activeTransaction?.category || "None");
@@ -83,28 +81,36 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const localEndDate = endDate ? new Date(endDate) : undefined;
   const isoEndDate = localEndDate ? localEndDate.toISOString() : "";
 
-  const transactionData: Transaction = {
-    transactionName,
-    date: isoDate,
-    type,
-    amount,
-    description,
-    fromAccount: fromAccount,
-    toAccount: toAccount,
-    id: activeTransaction ? activeTransaction.id : new Date().getTime(),
-    isRecurring,
-    endDate: isoEndDate,
-    recurrenceFrequency,
-    ...(recurrenceFrequency === RecurrenceFrequency.CUSTOM && { recurrenceInterval }),
-    customIntervalType,
-    allowOverpayment: false,
-    showInCalendar: true,
-    category,
-    arbitraryDates,
-    ends,
-  };
+  const transactionData: Transaction = useMemo(() => {
+    return {
+      transactionName,
+      date: isoDate,
+      type,
+      amount,
+      description,
+      fromAccount: fromAccount,
+      toAccount: toAccount,
+      id: activeTransaction ? activeTransaction.id : new Date().getTime(),
+      isRecurring,
+      endDate: isoEndDate,
+      recurrenceFrequency,
+      ...(recurrenceFrequency === RecurrenceFrequency.CUSTOM && { recurrenceInterval }),
+      customIntervalType,
+      allowOverpayment: false,
+      showInCalendar: true,
+      category,
+      arbitraryDates,
+      ends,
+    };
+  }, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends]); // Include all variables that transactionData depends on
+  
 
+  const [initialTransactionData, setInitialTransactionData] = useState(JSON.parse(JSON.stringify(transactionData)));
 
+  useEffect(() => {
+    setInitialTransactionData(JSON.parse(JSON.stringify(transactionData)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = () => {
 
@@ -125,10 +131,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     onClose();
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSave();
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   handleSave();
+  // };
 
   useEffect(() => {
     if (!activeTransaction && accounts.length > 1) {
@@ -186,43 +192,69 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   }, [recurrenceFrequency, arbitraryDates.length]);
 
-  const validationSchema = Yup.object().shape({
-    transactionName: Yup.string()
-      .required('Transaction Name is required')
-  });
 
 
 
+// Validation (Formik was too complex for Yup and Formik)
 
+interface ErrorState {
+  transactionName: string | null;
+  amount: string | null;
+  // add more fields as needed...
+}
 
-// Validation
+const [errors, setErrors] = useState<ErrorState>({
+  transactionName: null,
+  amount: null,
+  // initialize other fields...
+});
 
-  useEffect(() => {
-    if (transactionData) {
- console.log("?")
-      if (typeof transactionName === 'string' && transactionName !== "") {
-        setTestError("That sure looks like a string!")
-        setSaveReady(true)
-      } else {
-        setTestError("Yo, put in a name, bitch!")
-        setSaveReady(false)
-      }
-      
-      console.log("transactionData has changed", transactionData);
-    }
-  }, [transactionData]);
+useEffect(() => {
+  if (!transactionData) {
+    return; // return early if there's no transaction data
+  }
 
+  console.log("0")
+  let newErrors: ErrorState = {
+    transactionName: null,
+    amount: null,
+    // initialize other fields...
+  };
 
+  console.log("1")
+  if (
+    typeof transactionData.transactionName !== 'string' || 
+    !transactionData.transactionName || 
+    transactionData.transactionName.trim() === '') {
+      console.log("2")
 
+      newErrors.transactionName = "Name is required.";
+      console.log("3",newErrors.transactionName)
 
+  }
 
+  if (
+    typeof transactionData.amount !== 'number' || 
+    !Number.isInteger(transactionData.amount) || 
+    transactionData.amount <= 0) {
+      newErrors.amount = "Amount required.";
+  }
 
+  const conditions = Object.values(newErrors).map(error => error === null);
+  const isSaveReady = conditions.every(Boolean);
 
+  console.log(newErrors)
+  setErrors({ ...newErrors });
 
-
-
-
-
+  if (JSON.stringify(transactionData) !== JSON.stringify(initialTransactionData) && isSaveReady) {
+    setSaveReady(true);
+  } else {
+    setSaveReady(false);
+  }
+}, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends]); // Include all variables that transactionData depends on
+useEffect(() => {
+  console.log(errors);
+}, [errors]);
 
   return (
     <>
@@ -236,7 +268,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         primaryActionLabel="Save"
         />
 
-        <h1>{testError}</h1>
       <div className="glassjar__padding">
         <form className="glassjar__margin-gap" onSubmit={handleSave}>
           <div className="glassjar__form__input-group">
@@ -245,10 +276,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               type="text"
               id="transactionName"
               value={transactionName}
+              className={errors.transactionName ? 'error' : ''}
               onChange={(e) => setTransactionName(e.target.value)}
             />
-            <label htmlFor="transactionName">Transaction Name:</label>
+            <label htmlFor="transactionName">
+              Transaction Name:{" "}
+                <span className="glassjar__form__input-group__error">
+                  {errors.transactionName}
+                </span>
+              </label>
           </div>
+
+
+          <div className="glassjar__flex glassjar__flex--tight">
+
 
           <div className="glassjar__form__input-group glassjar__form__input-group--drop">
             <label htmlFor="type">Type:</label>
@@ -264,16 +305,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             </select>
           </div>
 
-          <div className="glassjar__flex glassjar__flex--tight">
             <div className="glassjar__form__input-group glassjar__form__input-group--date">
               <input
                 type="date"
                 id="date"
                 value={stripTime(date)}
+                className={errors.amount ? 'error' : ''}
                 onChange={(e) => setDate(addZoneOffset(e.target.value))}
               />
               <label htmlFor="date">Date:</label>
             </div>
+
+
+
+          </div>
 
             <div
               className={`glassjar__auto-height glassjar__auto-height--top ${type !== "event" ? "open" : ""
@@ -291,10 +336,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
                   }
                 />
-                <label htmlFor="amount">Amount:</label>
+                <label htmlFor="amount">
+                  Amount:{" "}
+                  <span className="glassjar__form__input-group__error">
+                    {errors.amount}
+                  </span>
+                </label>
               </div>
             </div>
-          </div>
 
           <div
             className={`glassjar__auto-height glassjar__auto-height--top ${type === "withdrawal" || type === "transfer" ? "open" : ""
