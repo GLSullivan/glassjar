@@ -154,6 +154,7 @@ select {
   -webkit-text-fill-color: var(--color-brand);
   text-overflow          : ellipsis;
   width                  : 100%;
+  height: 48px;
 
 }
 

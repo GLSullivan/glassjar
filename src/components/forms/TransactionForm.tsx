@@ -489,7 +489,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   }`}
                 >
                   <div className="glassjar__flex">
-                    <label htmlFor="recurrenceInterval">Every:</label>
                     <div className="glassjar__form__input-group">
                       <input
                         type="number"
@@ -498,6 +497,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                         min="1"
                         onChange={handleRecurrenceIntervalChange}
                       />
+                    <label htmlFor="recurrenceInterval">Every:</label>
                     </div>
                     <div className="glassjar__form__input-group glassjar__form__input-group--drop">
                       <select

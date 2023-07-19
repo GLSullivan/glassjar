@@ -108,6 +108,11 @@ h2 {
   align-items: center;
 }
 
+.glassjar__flex > * {
+  flex: 2;
+  width: 100%;
+}
+
 .glassjar__swiper {
   background   : var(--color-bright);
   border-radius: 1rem;
