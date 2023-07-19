@@ -123,6 +123,18 @@ h2 {
   cursor: pointer;
 }
 
+.glassjar__margin-gap > * {
+  margin-bottom: .5rem;
+}
+
+.glassjar__margin-gap > *:last-child {
+  margin-bottom: 0;
+}
+
+.glassjar__padding {
+  padding: 1rem;
+}
+
 /* Auto Height */
 
 .glassjar__auto-height {
@@ -136,14 +148,6 @@ h2 {
   transition        : 0.5s ease;
 }
 
-/* .glassjar__auto-height > div:before {
-  visibility: hidden;
-  height: .5rem;
-  content: " ";
-  box-sizing: border-box;
-  display: block;
-} */
-
 .glassjar__auto-height.open > div {
   margin-top: .5rem;
 }
@@ -156,22 +160,10 @@ h2 {
   grid-template-rows: 1fr;
 }
 
-.glassjar__margin-gap > * {
-  margin-bottom: .5rem;
-}
-
 .glassjar__margin-gap > .glassjar__auto-height {
   margin-bottom: 0;
 }
 
 .glassjar__margin-gap > .glassjar__auto-height.open {
   margin-bottom: .5rem;
-}
-
-.glassjar__margin-gap > *:last-child {
-  margin-bottom: 0;
-}
-
-.glassjar__padding {
-  padding: 1rem;
 }

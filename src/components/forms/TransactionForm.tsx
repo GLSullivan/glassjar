@@ -13,10 +13,10 @@ import { RootState } from "./../../redux/store";
 import { stripTime, addZoneOffset } from "./../../utils/dateUtils";
 import { Account } from "./../../models/Account";
 import { RecurringExpenses } from "./../../data/RecurringExpenses";
-import PanelHeader from "../PanelHeader"; 
+import PanelHeader from "../PanelHeader";
 
 import { format } from "date-fns-tz";
-import { isPast, add, parseISO } from "date-fns";
+import { isPast, add, parseISO, isValid } from "date-fns";
 
 import "./../../css/Forms.css";
 
@@ -73,6 +73,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                                                                 return "";
                                                               });
 
+
   const dispatch = useDispatch();
 
   const localDate = new Date(date);
@@ -94,7 +95,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       isRecurring,
       endDate: isoEndDate,
       recurrenceFrequency,
-      ...(recurrenceFrequency === RecurrenceFrequency.CUSTOM && { recurrenceInterval }),
+      ...(recurrenceFrequency === RecurrenceFrequency.CUSTOM && {
+        recurrenceInterval,
+      }),
       customIntervalType,
       allowOverpayment: false,
       showInCalendar: true,
@@ -102,39 +105,57 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       arbitraryDates,
       ends,
     };
-  }, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends]); // Include all variables that transactionData depends on
-  
+  }, [
+    transactionName,
+    isoDate,
+    type,
+    amount,
+    description,
+    fromAccount,
+    toAccount,
+    activeTransaction,
+    isRecurring,
+    isoEndDate,
+    recurrenceFrequency,
+    recurrenceInterval,
+    customIntervalType,
+    category,
+    arbitraryDates,
+    ends,
+  ]); 
 
-  const [initialTransactionData, setInitialTransactionData] = useState(JSON.parse(JSON.stringify(transactionData)));
+  const [initialTransactionData, setInitialTransactionData] = useState(
+    JSON.parse(JSON.stringify(transactionData))
+  );
 
-  useEffect(() => {
+  useEffect(() => { // Create initial copy for form dirt checking
     setInitialTransactionData(JSON.parse(JSON.stringify(transactionData)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = () => {
+    if (saveReady){
 
-
-
-    // Include givenDays in the transaction data when the recurrenceFrequency is set to 'given days'
-    if (recurrenceFrequency === RecurrenceFrequency.GIVEN_DAYS) {
+      // Include givenDays in the transaction data when the recurrenceFrequency is set to 'given days'
+      if (recurrenceFrequency === RecurrenceFrequency.GIVEN_DAYS) {
       const sortedGivenDays = [...selectedDays].sort((a, b) => a - b);
       transactionData.givenDays = sortedGivenDays;
     }
-
+    
     if (activeTransaction) {
       dispatch(updateTransaction(transactionData));
     } else {
       dispatch(addTransaction(transactionData));
     }
-
+    
     onClose();
   }
+  };
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   handleSave();
-  // };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSave();
+  };
 
   useEffect(() => {
     if (!activeTransaction && accounts.length > 1) {
@@ -187,78 +208,79 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   }, [ends]);
 
   useEffect(() => {
-    if (recurrenceFrequency === RecurrenceFrequency.ARBITRARY && arbitraryDates.length === 0) {
+    if (
+      recurrenceFrequency === RecurrenceFrequency.ARBITRARY &&
+      arbitraryDates.length === 0
+    ) {
       addArbitraryDate("");
     }
   }, [recurrenceFrequency, arbitraryDates.length]);
 
+  // Validation (Formik was too complex for Yup and Formik)
 
-
-
-// Validation (Formik was too complex for Yup and Formik)
-
-interface ErrorState {
-  transactionName: string | null;
-  amount: string | null;
-  // add more fields as needed...
-}
-
-const [errors, setErrors] = useState<ErrorState>({
-  transactionName: null,
-  amount: null,
-  // initialize other fields...
-});
-
-useEffect(() => {
-  if (!transactionData) {
-    return; // return early if there's no transaction data
+  interface ErrorState {
+    transactionName: string | null;
+    amount: string | null;
+    transfer: string | null;
   }
 
-  console.log("0")
-  let newErrors: ErrorState = {
+  const [errors, setErrors] = useState<ErrorState>({
     transactionName: null,
     amount: null,
-    // initialize other fields...
-  };
+    transfer: null,
+  });
 
-  console.log("1")
-  if (
-    typeof transactionData.transactionName !== 'string' || 
-    !transactionData.transactionName || 
-    transactionData.transactionName.trim() === '') {
-      console.log("2")
+  useEffect(() => {
+    if (!transactionData) {
+      return; 
+    }
 
+    let newErrors: ErrorState = {
+      transactionName: null,
+      amount: null,
+      transfer: null,
+    };
+
+    if (
+      typeof transactionData.transactionName !== "string" ||
+      !transactionData.transactionName ||
+      transactionData.transactionName.trim() === ""
+    ) {
       newErrors.transactionName = "Name is required.";
-      console.log("3",newErrors.transactionName)
+    }
 
-  }
-
-  if (
-    typeof transactionData.amount !== 'number' || 
-    !Number.isInteger(transactionData.amount) || 
-    transactionData.amount <= 0) {
+    if (
+      typeof transactionData.amount !== "number" ||
+      !Number.isInteger(transactionData.amount) ||
+      transactionData.amount <= 0
+    ) {
       newErrors.amount = "Amount required.";
-  }
+    }
 
-  const conditions = Object.values(newErrors).map(error => error === null);
-  const isSaveReady = conditions.every(Boolean);
+    if (
+      transactionData.type === TransactionType.TRANSFER &&
+      transactionData.toAccount === transactionData.fromAccount
+    ) {
+      newErrors.transfer = "From and To Account can't match.";
+    }
 
-  console.log(newErrors)
-  setErrors({ ...newErrors });
+    const conditions = Object.values(newErrors).map((error) => error === null);
+    const isSaveReady = conditions.every(Boolean);
 
-  if (JSON.stringify(transactionData) !== JSON.stringify(initialTransactionData) && isSaveReady) {
-    setSaveReady(true);
-  } else {
-    setSaveReady(false);
-  }
-}, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends]); // Include all variables that transactionData depends on
-useEffect(() => {
-  console.log(errors);
-}, [errors]);
+    setErrors({ ...newErrors });
 
+    if (
+      JSON.stringify(transactionData) !== JSON.stringify(initialTransactionData) && isSaveReady
+    ) {
+      setSaveReady(true);
+    } else {
+      setSaveReady(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends,]); 
+  
   return (
     <>
-
       <PanelHeader
         title={activeTransaction ? `Update Transaction` : "New Transaction"}
         onSecondaryAction={onClose}
@@ -266,126 +288,133 @@ useEffect(() => {
         onPrimaryAction={handleSave}
         disablePrimaryButton={!saveReady}
         primaryActionLabel="Save"
-        />
+      />
 
       <div className="glassjar__padding">
-        <form className="glassjar__margin-gap" onSubmit={handleSave}>
+        <form className="glassjar__margin-gap" onSubmit={handleSubmit}>
           <div className="glassjar__form__input-group">
             <input
               placeholder="Transaction Name"
               type="text"
               id="transactionName"
               value={transactionName}
-              className={errors.transactionName ? 'error' : ''}
+              className={errors.transactionName ? "error" : ""}
               onChange={(e) => setTransactionName(e.target.value)}
             />
             <label htmlFor="transactionName">
               Transaction Name:{" "}
-                <span className="glassjar__form__input-group__error">
-                  {errors.transactionName}
-                </span>
-              </label>
+              <span className="glassjar__form__input-group__error">
+                {errors.transactionName}
+              </span>
+            </label>
           </div>
-
 
           <div className="glassjar__flex glassjar__flex--tight">
-
-
-          <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="type">Type:</label>
-            <select
-              id="type"
-              value={type}
-              onChange={(e) => setType(e.target.value as TransactionType)}
-            >
-              <option value="deposit">Income</option>
-              <option value="withdrawal">Expense</option>
-              {accounts.length > 1 && <option value="transfer">Transfer</option>}
-              <option value="event">Event</option>
-            </select>
-          </div>
+            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+              <label htmlFor="type">Type:</label>
+              <select
+                id="type"
+                value={type}
+                onChange={(e) => setType(e.target.value as TransactionType)}
+              >
+                <option value="deposit">Income</option>
+                <option value="withdrawal">Expense</option>
+                {accounts.length > 1 && (
+                  <option value="transfer">Transfer</option>
+                )}
+                <option value="event">Event</option>
+              </select>
+            </div>
 
             <div className="glassjar__form__input-group glassjar__form__input-group--date">
               <input
                 type="date"
                 id="date"
                 value={stripTime(date)}
-                className={errors.amount ? 'error' : ''}
-                onChange={(e) => setDate(addZoneOffset(e.target.value))}
-              />
+                onChange={(e) => {
+                  if (isValid(new Date(e.target.value))) {
+                    setDate(addZoneOffset(e.target.value))
+                  } 
+                }}        
+                />
               <label htmlFor="date">Date:</label>
             </div>
-
-
-
           </div>
 
-            <div
-              className={`glassjar__auto-height glassjar__auto-height--top ${type !== "event" ? "open" : ""
-                }`}
-            >
-              <div className="glassjar__form__input-group">
-                <CurrencyInput
-                  id="amount"
-                  prefix="$"
-                  name="amount"
-                  placeholder="Transaction Amount:"
-                  defaultValue={amount / 100} 
-                  decimalsLimit={2}
-                  onValueChange={(value) =>
-                    setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
-                  }
-                />
-                <label htmlFor="amount">
-                  Amount:{" "}
-                  <span className="glassjar__form__input-group__error">
-                    {errors.amount}
-                  </span>
-                </label>
+          <div
+            className={`glassjar__auto-height glassjar__auto-height--top ${
+              type !== "event" ? "open" : ""
+            }`}
+          >
+            <div className="glassjar__form__input-group">
+              <CurrencyInput
+                id="amount"
+                prefix="$"
+                name="amount"
+                placeholder="Transaction Amount:"
+                defaultValue={amount / 100}
+                className={errors.amount ? "error" : ""}
+                decimalsLimit={2}
+                onValueChange={(value) =>
+                  setAmount(value ? Math.round(parseFloat(value) * 100) : 0)
+                }
+              />
+              <label htmlFor="amount">
+                Amount:{" "}
+                <span className="glassjar__form__input-group__error">
+                  {errors.amount}
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div className={`glassjar__auto-height glassjar__auto-height--top ${errors.transfer ? "open" : ""}`}>
+            <span className="glassjar__form__input-group__error">
+              {errors.transfer ? <>{errors.transfer}</> : <>{" "}</>}
+            </span>
+          </div>
+
+          <div className="glassjar__flex glassjar__flex--tight">
+            {(type === TransactionType.WITHDRAWAL || type === TransactionType.TRANSFER) && 
+              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+                <label htmlFor="fromAccount">From Account:</label>
+                <select
+                  id="fromAccount"
+                  className={errors.transfer ? "error" : ""}
+                  value={fromAccount}
+                  onChange={(e) => {
+                    setFromAccount(e.target.value);
+                  }}
+                >
+                  {accounts.map((account: Account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
+            }
 
-          <div
-            className={`glassjar__auto-height glassjar__auto-height--top ${type === "withdrawal" || type === "transfer" ? "open" : ""
-              }`}
-          >
-            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-              <label htmlFor="fromAccount">From Account:</label>
-              <select
-                id="fromAccount"
-                value={fromAccount}
-                onChange={(e) => {
-                  setFromAccount(e.target.value);
-                }}
-              >
-                {accounts.map((account: Account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {(type === TransactionType.DEPOSIT || type === TransactionType.TRANSFER) && 
+              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+                <label htmlFor="toAccount">To Account:</label>
+                <select
+                  id="toAccount"
+                  className={errors.transfer ? "error" : ""}
+                  value={toAccount}
+                  onChange={(e) => setToAccount(e.target.value)}
+                >
+                  {accounts.map((account: Account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            }
+
           </div>
 
-          <div
-            className={`glassjar__auto-height glassjar__auto-height--top ${type === "deposit" || type === "transfer" ? "open" : ""
-              }`}
-          >
-            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-              <label htmlFor="toAccount">To Account:</label>
-              <select
-                id="toAccount"
-                value={toAccount}
-                onChange={(e) => setToAccount(e.target.value)}
-              >
-                {accounts.map((account: Account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
           <div className="glassjar__form__input-sub-group">
             <div className="glassjar__form__input-group glassjar__form__input-group--check">
               <input
@@ -397,7 +426,9 @@ useEffect(() => {
               <label htmlFor="isRecurring">Transaction Repeats:</label>
             </div>
 
-            <div className={`glassjar__auto-height ${isRecurring ? "open" : ""}`}>
+            <div
+              className={`glassjar__auto-height ${isRecurring ? "open" : ""}`}
+            >
               <div className="glassjar__margin-gap">
                 <div className="glassjar__form__input-group glassjar__form__input-group--drop">
                   <select
@@ -416,14 +447,18 @@ useEffect(() => {
                     <option value={RecurrenceFrequency.GIVEN_DAYS}>Certain Days</option>
                     <option value={RecurrenceFrequency.TWICE_MONTHLY}>Twice Monthly</option>
                     <option value={RecurrenceFrequency.CUSTOM}>Custom</option>
-                    <option value={RecurrenceFrequency.ARBITRARY}>Arbitrary</option>
-
+                    <option value={RecurrenceFrequency.ARBITRARY}>
+                      Arbitrary
+                    </option>
                   </select>
                   <label htmlFor="recurrenceFrequency">Repeats:</label>
                 </div>
                 <div
-                  className={`glassjar__auto-height ${recurrenceFrequency === RecurrenceFrequency.GIVEN_DAYS ? "open" : ""
-                    }`}
+                  className={`glassjar__auto-height ${
+                    recurrenceFrequency === RecurrenceFrequency.GIVEN_DAYS
+                      ? "open"
+                      : ""
+                  }`}
                 >
                   <div className="glassjar__form__input-group">
                     <label>Days:</label>
@@ -447,8 +482,11 @@ useEffect(() => {
                 </div>
 
                 <div
-                  className={`glassjar__auto-height ${recurrenceFrequency === RecurrenceFrequency.CUSTOM ? "open" : ""
-                    }`}
+                  className={`glassjar__auto-height ${
+                    recurrenceFrequency === RecurrenceFrequency.CUSTOM
+                      ? "open"
+                      : ""
+                  }`}
                 >
                   <div className="glassjar__flex">
                     <label htmlFor="recurrenceInterval">Every:</label>
@@ -478,7 +516,13 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
-                <div className={`glassjar__auto-height ${recurrenceFrequency === RecurrenceFrequency.ARBITRARY ? "open" : ""}`} >
+                <div
+                  className={`glassjar__auto-height ${
+                    recurrenceFrequency === RecurrenceFrequency.ARBITRARY
+                      ? "open"
+                      : ""
+                  }`}
+                >
                   <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                     {arbitraryDates.map((date, index) => (
                       <div
@@ -525,7 +569,9 @@ useEffect(() => {
                     <label htmlFor="ends">End Date:</label>
                   </div>
 
-                  <div className={`glassjar__auto-height ${ends ? "open" : ""}`}>
+                  <div
+                    className={`glassjar__auto-height ${ends ? "open" : ""}`}
+                  >
                     <div className="glassjar__form__input-group">
                       <input
                         type="date"
@@ -542,8 +588,9 @@ useEffect(() => {
           </div>
 
           <div
-            className={`glassjar__auto-height glassjar__auto-height--top ${type === "withdrawal" || type === "transfer" ? "open" : ""
-              }`}
+            className={`glassjar__auto-height glassjar__auto-height--top ${
+              type === "withdrawal" || type === "transfer" ? "open" : ""
+            }`}
           >
             <div className="glassjar__form__input-group glassjar__form__input-group--drop">
               <label htmlFor="category">Category:</label>
@@ -575,7 +622,6 @@ useEffect(() => {
           </div>
 
           <div className="glassjar__flex glassjar__flex--justify-center">
-
             {activeTransaction && (
               <button
                 className="glassjar__text-button glassjar__text-button--warn"
@@ -589,6 +635,7 @@ useEffect(() => {
               </button>
             )}
           </div>
+          <input type="submit" hidden />
         </form>
       </div>
     </>

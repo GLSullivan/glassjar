@@ -37,3 +37,7 @@
   text-align: right; 
 }
 
+.glassjar__panel-header button:first-of-type {
+  text-align: left; 
+}
+
