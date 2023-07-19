@@ -17,6 +17,8 @@ import PanelHeader from "../PanelHeader";
 import { format } from "date-fns-tz";
 import { isPast, add, parseISO } from "date-fns";
 
+import * as Yup from "yup";
+
 import "./../../css/Forms.css";
 
 import {
@@ -35,25 +37,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   onClose,
   initialDate,
 }) => {
-  const activeTransaction = useSelector(
-    (state: RootState) => state.transactions.activeTransaction
-  );
-  const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
-  const [transactionName, setTransactionName] = useState(
-    activeTransaction?.transactionName || ""
-  );
-  const [date, setDate] = useState(() => {
-    if (activeTransaction?.date) {
-      return new Date(activeTransaction.date).toISOString();
-    }
-    if (initialDate) {
-      return new Date(initialDate).toISOString();
-    }
-    return "";
-  });
+  const activeTransaction                                     = useSelector((state: RootState) => state.transactions.activeTransaction);
+  const accounts                                              = useSelector((state: RootState) => state.accounts.accounts);
 
-  const [type, setType]                                       = useState<TransactionType>(activeTransaction?.type || TransactionType.WITHDRAWAL);
+  const [testError, setTestError]                             = useState("");
+  const [saveReady, setSaveReady]                             = useState(false);
+
+  const [transactionName, setTransactionName]                 = useState(activeTransaction?.transactionName || "");
   const [category, setCategory]                               = useState(activeTransaction?.category || "None");
   const [amount, setAmount]                                   = useState(activeTransaction?.amount || 0);
   const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || accounts[0].id);
@@ -62,6 +53,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
   const [ends, setEnds]                                       = useState(activeTransaction?.ends || false);
   const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || "");
+  const [type, setType]                                       = useState<TransactionType>(activeTransaction?.type || TransactionType.WITHDRAWAL);
   const [customIntervalType, setCustomIntervalType]           = useState<CustomIntervalType>(activeTransaction?.customIntervalType || CustomIntervalType.DAY);
   const [recurrenceFrequency, setRecurrenceFrequency]         = useState<RecurrenceFrequency>(activeTransaction?.recurrenceFrequency || RecurrenceFrequency.MONTHLY);
 
@@ -70,41 +62,56 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
   const [arbitraryDates, setArbitraryDates]                   = useState<string[]>(activeTransaction?.arbitraryDates || []);
 
-  const addArbitraryDate    = (date: string) => {setArbitraryDates((prevState) => [...prevState, date]);};
-  const removeArbitraryDate = (date: string) => {setArbitraryDates((prevState) => prevState.filter((d) => d !== date));};
+  const addArbitraryDate                                      = (date: string) => {setArbitraryDates((prevState) => [...prevState, date]);};
+  const removeArbitraryDate                                   = (date: string) => {setArbitraryDates((prevState) => prevState.filter((d) => d !== date));};
+
+  const [date, setDate]                                       = useState(() => {
+                                                                if (activeTransaction?.date) {
+                                                                  return new Date(activeTransaction.date).toISOString();
+                                                                }
+                                                                if (initialDate) {
+                                                                  return new Date(initialDate).toISOString();
+                                                                }
+                                                                return "";
+                                                              });
 
   const dispatch = useDispatch();
+
+  const localDate = new Date(date);
+  const isoDate = localDate.toISOString();
+
+  const localEndDate = endDate ? new Date(endDate) : undefined;
+  const isoEndDate = localEndDate ? localEndDate.toISOString() : "";
+
+  const transactionData: Transaction = {
+    transactionName,
+    date: isoDate,
+    type,
+    amount,
+    description,
+    fromAccount: fromAccount,
+    toAccount: toAccount,
+    id: activeTransaction ? activeTransaction.id : new Date().getTime(),
+    isRecurring,
+    endDate: isoEndDate,
+    recurrenceFrequency,
+    ...(recurrenceFrequency === RecurrenceFrequency.CUSTOM && { recurrenceInterval }),
+    customIntervalType,
+    allowOverpayment: false,
+    showInCalendar: true,
+    category,
+    arbitraryDates,
+    ends,
+  };
+
+
+
   const handleSave = () => {
 
-    const localDate = new Date(date);
-    const isoDate = localDate.toISOString();
 
-    const localEndDate = endDate ? new Date(endDate) : undefined;
-    const isoEndDate = localEndDate ? localEndDate.toISOString() : "";
-
-    const transactionData: Transaction = {
-      transactionName,
-      date: isoDate,
-      type,
-      amount,
-      description,
-      fromAccount: fromAccount,
-      toAccount: toAccount,
-      id: activeTransaction ? activeTransaction.id : new Date().getTime(),
-      isRecurring,
-      endDate: isoEndDate,
-      recurrenceFrequency,
-      ...(recurrenceFrequency === "custom" && { recurrenceInterval }),
-      customIntervalType,
-      allowOverpayment: false,
-      showInCalendar: true,
-      category,
-      arbitraryDates,
-      ends,
-    };
 
     // Include givenDays in the transaction data when the recurrenceFrequency is set to 'given days'
-    if (recurrenceFrequency === "given days") {
+    if (recurrenceFrequency === RecurrenceFrequency.GIVEN_DAYS) {
       const sortedGivenDays = [...selectedDays].sort((a, b) => a - b);
       transactionData.givenDays = sortedGivenDays;
     }
@@ -174,10 +181,48 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   }, [ends]);
 
   useEffect(() => {
-    if (recurrenceFrequency === "arbitrary" && arbitraryDates.length === 0) {
+    if (recurrenceFrequency === RecurrenceFrequency.ARBITRARY && arbitraryDates.length === 0) {
       addArbitraryDate("");
     }
   }, [recurrenceFrequency, arbitraryDates.length]);
+
+  const validationSchema = Yup.object().shape({
+    transactionName: Yup.string()
+      .required('Transaction Name is required')
+  });
+
+
+
+
+
+// Validation
+
+  useEffect(() => {
+    if (transactionData) {
+ console.log("?")
+      if (typeof transactionName === 'string' && transactionName !== "") {
+        setTestError("That sure looks like a string!")
+        setSaveReady(true)
+      } else {
+        setTestError("Yo, put in a name, bitch!")
+        setSaveReady(false)
+      }
+      
+      console.log("transactionData has changed", transactionData);
+    }
+  }, [transactionData]);
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <>
@@ -187,11 +232,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         onSecondaryAction={onClose}
         secondaryActionLabel="Cancel"
         onPrimaryAction={handleSave}
+        disablePrimaryButton={!saveReady}
         primaryActionLabel="Save"
-      />
+        />
 
+        <h1>{testError}</h1>
       <div className="glassjar__padding">
-        <form className="glassjar__margin-gap" onSubmit={handleSubmit}>
+        <form className="glassjar__margin-gap" onSubmit={handleSave}>
           <div className="glassjar__form__input-group">
             <input
               placeholder="Transaction Name"
@@ -313,19 +360,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                       )
                     }
                   >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
-                    <option value="given days">Certain Days</option>
-                    <option value="twice monthly">Twice Monthly</option>
-                    <option value="custom">Custom</option>
-                    <option value="arbitrary">Arbitrary</option>
+                    <option value={RecurrenceFrequency.DAILY}>Daily</option>
+                    <option value={RecurrenceFrequency.WEEKLY}>Weekly</option>
+                    <option value={RecurrenceFrequency.MONTHLY}>Monthly</option>
+                    <option value={RecurrenceFrequency.YEARLY}>Yearly</option>
+                    <option value={RecurrenceFrequency.GIVEN_DAYS}>Certain Days</option>
+                    <option value={RecurrenceFrequency.TWICE_MONTHLY}>Twice Monthly</option>
+                    <option value={RecurrenceFrequency.CUSTOM}>Custom</option>
+                    <option value={RecurrenceFrequency.ARBITRARY}>Arbitrary</option>
+
                   </select>
                   <label htmlFor="recurrenceFrequency">Repeats:</label>
                 </div>
                 <div
-                  className={`glassjar__auto-height ${recurrenceFrequency === "given days" ? "open" : ""
+                  className={`glassjar__auto-height ${recurrenceFrequency === RecurrenceFrequency.GIVEN_DAYS ? "open" : ""
                     }`}
                 >
                   <div className="glassjar__form__input-group">
@@ -350,7 +398,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 </div>
 
                 <div
-                  className={`glassjar__auto-height ${recurrenceFrequency === "custom" ? "open" : ""
+                  className={`glassjar__auto-height ${recurrenceFrequency === RecurrenceFrequency.CUSTOM ? "open" : ""
                     }`}
                 >
                   <div className="glassjar__flex">
@@ -381,10 +429,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     </div>
                   </div>
                 </div>
-                <div
-                  className={`glassjar__auto-height ${recurrenceFrequency === "arbitrary" ? "open" : ""
-                    }`}
-                >
+                <div className={`glassjar__auto-height ${recurrenceFrequency === RecurrenceFrequency.ARBITRARY ? "open" : ""}`} >
                   <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                     {arbitraryDates.map((date, index) => (
                       <div
@@ -497,7 +542,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
         </form>
       </div>
-
     </>
   );
 };

@@ -58,7 +58,8 @@ button.selected,
 }
 
 input,
-textarea {
+textarea,
+input[type="date"] {
   background   : var(--color-bright);
   border       : 1px solid var(--color-border);
   border-radius: 0.5rem;
@@ -78,7 +79,8 @@ textarea {
 
 input:focus,
 textarea:focus,
-select:focus {
+select,
+input[type="date"]:focus {
   border: 1px solid #8c5c38;
 }
 
@@ -255,6 +257,7 @@ select {
   color: var(--color-interaction);
   cursor: pointer;
   font-weight: 300;
+  transition: .15s ease;
 }
 
 .glassjar__text-button.glassjar__text-button--warn {
@@ -266,8 +269,14 @@ select {
   font-weight: 500;
 }
 
-button.glassjar__text-button.glassjar__text-button--hidden {
+.glassjar__text-button.glassjar__text-button--hidden {
   visibility: hidden;
+  pointer-events: none;
+}
+
+.glassjar__text-button:disabled {
+  opacity: .25;
+  color: var(--color-brand);
   pointer-events: none;
 }
 
@@ -276,15 +285,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px var(--color-inverse) inset !important;
+  box-shadow: 0 0 0 30px var(--color-bright) inset !important;
 }
-
-
-
-
-
-
-
 
 
 
