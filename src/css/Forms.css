@@ -58,7 +58,8 @@ button.selected,
 }
 
 input,
-textarea {
+textarea,
+input[type="date"] {
   background   : var(--color-bright);
   border       : 1px solid var(--color-border);
   border-radius: 0.5rem;
@@ -78,7 +79,8 @@ textarea {
 
 input:focus,
 textarea:focus,
-select:focus {
+select,
+input[type="date"]:focus {
   border: 1px solid #8c5c38;
 }
 
@@ -126,11 +128,11 @@ textarea+label {
 /* Sub Groups */
 
 .glassjar__form__input-sub-group {
-  padding: 0.5rem;
-  box-sizing: border-box;
+  background: var(--color-bright);
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  background: var(--color-bright);
+  box-sizing: border-box;
+  padding: 0.5rem;
 }
 
   /* Select */
@@ -147,9 +149,10 @@ select {
   color                  : var(--color-brand);
   font-weight            : 500;
   outline                : none;
-  padding                : 1.1rem .5rem 0.4rem .5rem;
+  padding                : 1.1rem 1.5rem 0.4rem .5rem;
   position               : relative;
   -webkit-text-fill-color: var(--color-brand);
+  text-overflow          : ellipsis;
   width                  : 100%;
 
 }
@@ -255,6 +258,7 @@ select {
   color: var(--color-interaction);
   cursor: pointer;
   font-weight: 300;
+  transition: .15s ease;
 }
 
 .glassjar__text-button.glassjar__text-button--warn {
@@ -266,8 +270,14 @@ select {
   font-weight: 500;
 }
 
-button.glassjar__text-button.glassjar__text-button--hidden {
+.glassjar__text-button.glassjar__text-button--hidden {
+  pointer-events: none;
   visibility: hidden;
+}
+
+.glassjar__text-button:disabled {
+  color: var(--color-brand);
+  opacity: .25;
   pointer-events: none;
 }
 
@@ -276,17 +286,34 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px var(--color-inverse) inset !important;
+  box-shadow: 0 0 0 30px var(--color-bright) inset !important;
 }
 
+/* Errors */
+.glassjar__form__input-group__error {
+  color      : var(--color-danger);
+  font-size  : .8rem;
+  font-weight: 500;
+  opacity    : 1;
+  transition : .25s ease;
+}
 
+.glassjar__form__input-group input.error,
+.glassjar__form__input-group select.error {
+  border: 1px solid var(--color-danger);
+}
 
+.glassjar__form__input-group__error:empty {
+  opacity: 0;
+}
 
+.glassjar__landing__form .glassjar__flex > * {
+  flex: 2;
+}
 
-
-
-
-
+.glassjar__error-block {
+  padding: 0 1.5rem .5rem 1.5rem;
+}
 
 
 
