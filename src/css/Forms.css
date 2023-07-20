@@ -75,6 +75,10 @@ input[type="date"] {
   min-width         : 100%;
 }
 
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 textarea {
   resize: vertical;
 }
