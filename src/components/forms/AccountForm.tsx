@@ -106,13 +106,14 @@ export const AccountForm: React.FC = () => {
         title={activeAccount ? `Update Account` : "New Account"}
         onSecondaryAction={handleClose}
         secondaryActionLabel="Cancel"
+        showSecondaryButton={accounts.length > 0}
         onPrimaryAction={handleSave}
         primaryActionLabel="Save"
       />
 
       <div className="glassjar__padding">
         {/* <h2>{activeAccount ? `${account.name}` : 'New Account'}</h2> */}
-        {accounts.length < 1 && <h3>Let's setup your first account.</h3>}
+        {accounts.length < 1 && <h3>Welcome, let's setup your first account.</h3>}
 
         <form className="glassjar__form" onSubmit={handleSubmit}>
           <div className="glassjar__form__input-group">

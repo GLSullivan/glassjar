@@ -5,7 +5,7 @@ import activeDatesReducer                         from "./slices/activedates";
 import projectionsReducer                         from "./slices/projections";
 import userPrefsReducer, { setPrefsState }        from "./slices/userprefs";
 import accountsReducer, { setAccounts }           from "./slices/accounts";
-import modalStateReducer                          from "./slices/modals";
+import modalStateReducer, { openAccountForm }     from "./slices/modals";
 import loaderReducer                              from "./slices/loader";
 import { hideLoader, showLoader}                  from "./slices/loader";
 import searchReducer                              from "./slices/search";
@@ -38,6 +38,11 @@ firebase.auth().onAuthStateChanged((user) => {
     const accountsPromise = dbRef.child('users/' + user.uid + '/accounts').once('value').then((snapshot) => {
       const accounts = snapshot.val() || [];
       store.dispatch(setAccounts(accounts));
+
+      if (accounts.length < 1) {
+        store.dispatch(openAccountForm());
+      }
+
     });    
 
     const transactionsPromise = dbRef.child('users/' + user.uid + '/transactions').once('value').then((snapshot) => {
@@ -57,9 +62,9 @@ firebase.auth().onAuthStateChanged((user) => {
 
     Promise.all([accountsPromise, transactionsPromise, prefsPromise, viewsPromise])
       .then(() => {
-        store.dispatch(hideLoader());
         isAppLoaded = true;
         store.dispatch(setLoadingAuthState(false));
+        store.dispatch(hideLoader());
       })
       .catch((error) => {
         console.error(error);
@@ -89,7 +94,6 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 function replaceUndefinedWithNull(value: any): any {
-
   if (value === undefined) {
     return null;
   } else if (typeof value === 'object' && value !== null) {
@@ -131,7 +135,6 @@ store.subscribe(() => {
   };
   
   if (user && isAppLoaded) {
-    // Check if any of the state properties have changed
     if (JSON.stringify(newState.accounts) !== JSON.stringify(prevState.accounts)
       || JSON.stringify(newState.transactions) !== JSON.stringify(prevState.transactions)
       || JSON.stringify(newState.views) !== JSON.stringify(prevState.views)

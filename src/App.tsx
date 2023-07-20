@@ -18,27 +18,24 @@ import { setView }                          from './redux/slices/views';
 import {      
   closeTransactionModal,      
   closeAccountForm,     
-  openAccountForm,      
   closeTransactionHelper      
 }                                           from './redux/slices/modals';
 import Landing                              from './components/Landing';
 import { RootState }                        from './redux/store';
 
-import './css/Nav.css'      
+import './css/Main.css'      
+import './css/Nav.css'  
 
-
-const AppContent: React.FC = () => {
+const App: React.FC = () => {
+  const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen);
   const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen);
-  const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
   const transactions          = useSelector((state: RootState) => state.transactions.transactions);
   const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate);
-  const loadingAuthState      = useSelector((state: RootState) => state.auth.loadingAuthState);
   const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
   const accounts              = useSelector((state: RootState) => state.accounts.accounts);
   const activeView            = useSelector((state: RootState) => state.views.activeView);
-  const isLoading             = useSelector((state: RootState) => state.loader.isLoading);
-
+  
   const dispatch = useDispatch()
 
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
@@ -63,12 +60,6 @@ const AppContent: React.FC = () => {
   }
 
   useEffect(() => {
-    if (!loadingAuthState && accounts.length < 1 && !isLoading) {
-      dispatch(openAccountForm());
-    }
-  }, [accounts, dispatch, isLoading, loadingAuthState]);
-
-  useEffect(() => {
     if (accounts.length > 0) {
       dispatch(recalculateProjections({ transactions, accounts, farDate }));
     }
@@ -79,7 +70,6 @@ const AppContent: React.FC = () => {
       <Loader />
       {!isSignedIn && <Landing />}
       {isSignedIn && <>
-      {/* <h1>{currentUser?.displayName}</h1> */}
 
       <Modal
         isOpen={accountFormOpen}
@@ -131,14 +121,9 @@ const AppContent: React.FC = () => {
         <i onClick = {() => { setActiveView("categories") }} className   = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
         <i onClick = {() => { setActiveView("settings") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
       </div>
+      
       </>}
     </div>
-  );
-};
-
-const App: React.FC = () => {
-  return (
-    <AppContent />
   );
 };
 

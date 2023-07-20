@@ -309,7 +309,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             </label>
           </div>
 
-          <div className="glassjar__flex glassjar__flex--tight">
+          <div className="glassjar__flex glassjar__flex--even glassjar__flex--tight">
             <div className="glassjar__form__input-group glassjar__form__input-group--drop">
               <label htmlFor="type">Type:</label>
               <select

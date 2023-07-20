@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 
-import landing from "./../media/images/landing_hero.jpg";
+import landing from "./../media/images/landing_hero.webp";
 import logo from "./../media/images/glassjar_logo1.svg";
 import copyright from "./../media/images/copyright.svg";
 
@@ -20,6 +20,8 @@ function Landing() {
   const [firebaseSignInError, setFirebaseSignInError] = useState<string | null>( null );
   const [firebaseSignUpError, setFirebaseSignUPError] = useState<string | null>( null );
 
+  
+  const [showPassword, setShowPassword]         = useState(false);
   const [mode, setMode]                         = useState("signIn");
   const [emailHasBeenSent, setEmailHasBeenSent] = useState<boolean>(false);
   const [error, setError]                       = useState<string>("");
@@ -55,14 +57,10 @@ function Landing() {
       await firebase
         .auth()
         .signInWithEmailAndPassword(values.email, values.password);
-      // User signed in successfully.
-      // Redirect to homepage or show a success message.
     } catch (error: any) {
-      // An error happened.
       const friendlyErrors: { [key: string]: string } = {
         "auth/user-not-found": "No user with this email found.",
         "auth/wrong-password": "Wrong password.",
-        // add other error codes and messages that you want to handle
       };
 
       setFirebaseSignInError(
@@ -76,14 +74,11 @@ function Landing() {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       await firebase.auth().signInWithPopup(provider);
-      // User signed in with Google successfully.
-      // Redirect to homepage or show a success message.
     } catch (error: any) {
       // An error happened.
       const friendlyErrors: { [key: string]: string } = {
         "auth/account-exists-with-different-credential": "An account already exists with the same email address but different sign-in credentials.",
         "auth/popup-closed-by-user"                    : "The popup has been closed before authentication could complete.",
-        // add other error codes and messages that you want to handle
       };
 
       setFirebaseSignUPError(
@@ -97,14 +92,10 @@ function Landing() {
       await firebase
         .auth()
         .createUserWithEmailAndPassword(values.email, values.password);
-      // User signed up successfully.
-      // Redirect to homepage or show a success message.
     } catch (error: any) {
-      // An error happened.
       const friendlyErrors: { [key: string]: string } = {
         "auth/email-already-in-use": "The email address is already in use by another account.",
         "auth/weak-password"       : "The password is too weak.",
-        // add other error codes and messages that you want to handle
       };
 
       setFirebaseSignUPError(
@@ -158,10 +149,10 @@ function Landing() {
                         <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                           <div className="glassjar__form__input-group">
                             <Field
-                              name="email"
-                              type="email"
-                              placeholder="Email"
-                              className={errors.email ? "error" : ""}
+                              name        = "email"
+                              type        = "email"
+                              placeholder = "Email"
+                              className   = {errors.email ? "error" : ""}
                             />
                             <label htmlFor="email">
                               Email{" "}
@@ -171,11 +162,18 @@ function Landing() {
                             </label>
                           </div>
                           <div className="glassjar__form__input-group">
+                            <button
+                              className = "glassjar__password-toggle"
+                              type      = "button"
+                              onClick   = {() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <i className="fa-solid fa-fw fa-eye-slash" /> : <i className="fa-solid fa-fw fa-eye" />}
+                            </button>
                             <Field
-                              name="password"
-                              type="password"
-                              placeholder="Password"
-                              className={errors.password ? "error" : ""}
+                              name        = "password"
+                              type        = {showPassword ? "text" : "password"}
+                              placeholder = "Password"
+                              className   = {errors.password ? "error" : ""}
                             />
                             <label htmlFor="password">
                               Password{" "}
@@ -249,10 +247,10 @@ function Landing() {
                         <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                           <div className="glassjar__form__input-group">
                             <Field
-                              name="email"
-                              type="email"
-                              placeholder="Email"
-                              className={errors.email ? "error" : ""}
+                              name        = "email"
+                              type        = "email"
+                              placeholder = "Email"
+                              className   = {errors.email ? "error" : ""}
                             />
                             <label htmlFor="email">
                               Email{" "}
@@ -262,11 +260,18 @@ function Landing() {
                             </label>
                           </div>
                           <div className="glassjar__form__input-group">
+                            <button
+                              className = "glassjar__password-toggle"
+                              type      = "button"
+                              onClick   = {() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <i className="fa-solid fa-fw fa-eye-slash" /> : <i className="fa-solid fa-fw fa-eye" />}
+                            </button>
                             <Field
-                              name="password"
-                              type="password"
-                              placeholder="Password"
-                              className={errors.password ? "error" : ""}
+                              name        = "password"
+                              type        = {showPassword ? "text" : "password"}
+                              placeholder = "Password"
+                              className   = {errors.password ? "error" : ""}
                             />
                             <label htmlFor="password">
                               Password{" "}
@@ -340,11 +345,11 @@ function Landing() {
                           {error !== "" && <div>{error}</div>}
                           <div className="glassjar__form__input-group">
                             <Field
-                              type="email"
-                              name="email"
-                              id="email"
-                              placeholder="Your Email"
-                              className={errors.email ? "error" : ""}
+                              type        = "email"
+                              name        = "email"
+                              id          = "email"
+                              placeholder = "Your Email"
+                              className   = {errors.email ? "error" : ""}
                             />
                             <label htmlFor="email">
                               Email:{" "}

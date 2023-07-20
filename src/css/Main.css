@@ -108,7 +108,7 @@ h2 {
   align-items: center;
 }
 
-.glassjar__flex > * {
+.glassjar__flex.glassjar__flex--even > * {
   flex: 2;
   width: 100%;
 }

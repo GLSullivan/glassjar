@@ -75,6 +75,21 @@ input[type="date"] {
   min-width         : 100%;
 }
 
+button.glassjar__password-toggle {
+  background: none;
+  border    : none;
+  outline   : none;
+  position  : absolute;
+  right     : 0;
+  z-index   : 1;
+  top       : 50%;
+  transform : translateY(-50%);
+}
+
+::-ms-reveal {
+  display: none;
+}
+
 input::-webkit-date-and-time-value {
   text-align: left;
 }
