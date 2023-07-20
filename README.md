@@ -1,46 +1,51 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Glass Jar: The Future of Financial Planning by Greg Sullivan
 
-## Available Scripts
+Hello there! I'm Greg Sullivan, the brains behind the development of Glass Jar. If you've stumbled upon this page, you might be a prospective client or employer, seeking a glimpse into my programming prowess. **Guess what? You're in for a treat!** Bear in mind, though, that Glass Jar is an ongoing project, only recently made public. So, bring your spirit of understanding and exploratory mindset along as you delve into the depths of this repository.
 
-In the project directory, you can run:
+## What is Glass Jar?
 
-### `npm start`
+Glass Jar is a financial calendar envisioned to help you plan your financial future, years in advance. Each of your accounts represents a separate calendar, while each transaction resembles an event. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Features of Glass Jar include efficient tools to quickly input your financial information, extraordinarily versatile tools to repeat events, catering to the specific needs of financial transactions (think accurately scheduling twice monthly events as in Google Calendar) and a user interface that's evolving towards visual delight!
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Limitations and Opportunities
 
-### `npm test`
+Glass Jar is a living, breathing project under **vigorous development**. Currently, it has a mobile-friendly design focus. (I haven't written line 1 for the desktop experience.) While some features have been meticulously outlined, others are just starting to take shape. Despite being a work-in-progress, it's already **a potent and efficient application**. So, stay tuned for regular updates.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+As a solo developer, there might have been occasions where my commit messages or code comments could've been more explicit. Bear with me! I aim to improve these aspects shortly.
 
-### `npm run build`
+### The Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Glass Jar is written in React and TypeScript. State management is handled using Redux Toolkit. The CSS employs the BEM model with a unique prefix (glassjar__). Google Firebase provides the backbone for database and user management. Formik and Yup play a role in form construction, except for the more complex and interactive ones, which rely on proprietary validation code. You'll also notice extensive use of date-fns and other standard libraries. Bonus fun fact: All art was made with MidJourney!
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Key Features
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Versatile Accounts**:
+  - Users can create diverse accounts: checking, savings, credit card, loan, mortgage, and cash, each customizable with unique attributes like interest rates, due dates, etc.
+  
+- **Dynamic Transactions**: 
+  - Highly flexible event repetition tools, tailored for financial transactions.
+  - Optional categories to classify transactions.
+  - Seamless account transfers.
+  
+- **Graphical Analysis**: 
+  - Early stage graphs allow for visualizing spending categories and account trends.
+  
+- **Transaction Helpers** (accessible via the Settings panel):
+  - Quick setup for recurring expenses (rent, cell service).
+  - Easy addition of expenditures for popular US holidays (including movable ones like Thanksgiving and Easter).
+  - Birthday reminders for loved ones (or anyone else – no judgments here!).
+  
+### Future Upgrades
 
-### `npm run eject`
+- Enhanced account features, such as setting credit limits on credit cards.
+- Informative alerts, e.g., due date for student loan payoff or potential overdraft warnings.
+- Improved graphing tools for a deeper understanding of spending habits.
+- Streamlined onboarding for first-time users.
+- Easier access to real-time account balances.
+- Desktop experience for a wider user base.
+- Comprehensive accessibility updates.
+- Extensive testing and safety validations. 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Stay tuned for the exciting journey ahead!
