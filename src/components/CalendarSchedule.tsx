@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState, useRef }  from 'react';
 import { useDispatch, useSelector }                         from 'react-redux';
 
-import { getTransactionsByDateRange }                       from '../redux/slices/projections';
-import { setActiveTransaction }                             from "../redux/slices/transactions";
-import { setActiveDate }                                    from '../redux/slices/activedates';
-import { openTransactionModal }                             from "../redux/slices/modals";
-import { RootState }                                        from '../redux/store';
+import { setActiveTransaction }                             from "./../redux/slices/transactions";
+import { getTransactionsByDateRange }                       from './../redux/slices/projections';
+import { setActiveDate }                                    from './../redux/slices/activedates';
+import { openTransactionModal }                             from "./../redux/slices/modals";
+import { RootState }                                        from './../redux/store';
 
-import { Transaction }                                      from '../models/Transaction';
+import { Transaction }                                      from './../models/Transaction';
 import TransactionListItem                                  from './TransactionListItem';
 
 import './../css/TransactionList.css';
-import { addMonths, endOfMonth, format, parseISO } from 'date-fns';
+import { addMonths, endOfMonth, format, parseISO }          from 'date-fns';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                              = useDispatch();

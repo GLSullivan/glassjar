@@ -132,13 +132,13 @@ const CalendarMonth: React.FC = () => {
           ))}
         </div>
         {chunk(days, 7).map((week: Date[], weekIndex: number) => (
-          <div
-            key={weekIndex}
-            className={`glassjar__calendar__week glassjar__auto-height${isDateInWeek(week[0], new Date(activeDate))
-                ? ' open'
-                : ''
-              }`}
-          >
+          // <div
+          //   key={weekIndex}
+          //   className={`glassjar__calendar__week glassjar__auto-height${isDateInWeek(week[0], new Date(activeDate))
+          //       ? ' open'
+          //       : ''
+          //     }`}
+          // >
             <div className="glassjar__calendar__seven-row">
               {week.map((day: Date, dayIndex: number) => {
                 return (
@@ -155,7 +155,7 @@ const CalendarMonth: React.FC = () => {
                 );
               })}
             </div>
-          </div>
+          // </div>
         ))}
       </div>
       <div className="glassjar__calendar__day-panel--graph">

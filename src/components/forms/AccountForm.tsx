@@ -1,19 +1,19 @@
-import React, { useState }          from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import CurrencyInput                from 'react-currency-input-field';
+import { useSelector, useDispatch } from 'react-redux';
+import React, { useState }          from 'react';
 
-import { RootState }                from './../../redux/store';
 import { closeAccountForm }         from './../../redux/slices/modals';
+import { RootState }                from './../../redux/store';
 import {
   addAccount,
   updateAccount,
   setActiveAccount,
   deleteAccount,
 }                                   from './../../redux/slices/accounts';
+import { AccountType }              from './../../utils/constants';
 import { Account }                  from './../../models/Account';
 import ColorPicker                  from './../ColorPicker';
-import PanelHeader                  from '../PanelHeader';
-import { AccountType } from '../../utils/constants';
+import PanelHeader                  from './../PanelHeader';
 
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();

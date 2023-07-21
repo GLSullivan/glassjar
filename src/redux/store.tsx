@@ -39,7 +39,7 @@ firebase.auth().onAuthStateChanged((user) => {
       const accounts = snapshot.val() || [];
       store.dispatch(setAccounts(accounts));
 
-      if (accounts.length < 1) {
+      if (accounts.length < 1) { // Placeholder new user experience. 
         store.dispatch(openAccountForm());
       }
 

@@ -27,6 +27,7 @@ import './css/Main.css'
 import './css/Nav.css'  
 
 const App: React.FC = () => {
+  
   const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen);
   const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen);

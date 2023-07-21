@@ -152,6 +152,7 @@ function Landing() {
                               name        = "email"
                               type        = "email"
                               placeholder = "Email"
+                              autoComplete= "username"
                               className   = {errors.email ? "error" : ""}
                             />
                             <label htmlFor="email">
@@ -170,10 +171,11 @@ function Landing() {
                               {showPassword ? <i className="fa-solid fa-fw fa-eye-slash" /> : <i className="fa-solid fa-fw fa-eye" />}
                             </button>
                             <Field
-                              name        = "password"
-                              type        = {showPassword ? "text" : "password"}
-                              placeholder = "Password"
-                              className   = {errors.password ? "error" : ""}
+                              name         = "password"
+                              type         = {showPassword ? "text" : "password"}
+                              placeholder  = "Password"
+                              autoComplete = "current-password"
+                              className    = {errors.password ? "error" : ""}
                             />
                             <label htmlFor="password">
                               Password{" "}
@@ -194,6 +196,7 @@ function Landing() {
                             </div>
                             <div className="glassjar__flex">
                               <button
+                                type="button"
                                 className="glassjar__button glassjar__button--primary"
                                 onClick={signInWithGoogle}
                               >
@@ -250,6 +253,7 @@ function Landing() {
                               name        = "email"
                               type        = "email"
                               placeholder = "Email"
+                              autoComplete= "username"
                               className   = {errors.email ? "error" : ""}
                             />
                             <label htmlFor="email">
@@ -268,10 +272,11 @@ function Landing() {
                               {showPassword ? <i className="fa-solid fa-fw fa-eye-slash" /> : <i className="fa-solid fa-fw fa-eye" />}
                             </button>
                             <Field
-                              name        = "password"
-                              type        = {showPassword ? "text" : "password"}
-                              placeholder = "Password"
-                              className   = {errors.password ? "error" : ""}
+                              name         = "password"
+                              type         = {showPassword ? "text" : "password"}
+                              placeholder  = "Password"
+                              className    = {errors.password ? "error" : ""}
+                              autoComplete = "new-password"
                             />
                             <label htmlFor="password">
                               Password{" "}
