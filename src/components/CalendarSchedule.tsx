@@ -18,6 +18,7 @@ const CalendarSchedule: React.FC = () => {
 
   const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
   const [loading, setLoading]                 = useState(false);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
 
   const activeDate                            = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                                 = useSelector((state: RootState) => state.activeDates.today);
@@ -55,12 +56,14 @@ const CalendarSchedule: React.FC = () => {
   // Detect user scrolling
   useEffect(() => {
     const handleUserScroll = () => {
+      setIsUserScrolling(true);
   
       if (scrollTimeout !== null) {
         clearTimeout(scrollTimeout);
       }
   
       setScrollTimeout(setTimeout(() => {
+        setIsUserScrolling(false);
       }, 150) as unknown as number); 
     };
   
@@ -81,7 +84,6 @@ const CalendarSchedule: React.FC = () => {
  
       const dateElements = Array.from(document.querySelectorAll('[data-date]'));
       const targetDate = new Date(activeDate).getTime();
-      
       const sortedDateElements = dateElements.map(el => ({
         el,
         date: new Date(el.getAttribute('data-date') || '').getTime(),
@@ -104,56 +106,33 @@ const CalendarSchedule: React.FC = () => {
   const observeHeaders = useCallback(() => {
     const scrollContainer = document.querySelector('.glassjar__schedule');
     if (!scrollContainer) return;
-  
+
     let lastSetDate = '';
-  
-    const observer = new IntersectionObserver(entries => {
-      const intersectingEntries = entries.filter(entry => entry.isIntersecting);
-    
-      if (intersectingEntries.length > 0) {
-        let closestEntryBelowTop: IntersectionObserverEntry | null = null;
-        let smallestDistanceBelowTop = Infinity;
-    
-        intersectingEntries.forEach(entry => {
-          const distanceBelowTop = entry.boundingClientRect.top - scrollContainer.getBoundingClientRect().top;
-          if (distanceBelowTop >= 0 && distanceBelowTop < smallestDistanceBelowTop) {
-            closestEntryBelowTop = entry;
-            smallestDistanceBelowTop = distanceBelowTop;
-          }
-        });
-    
-        if (closestEntryBelowTop) {
-          const date = Array.from(headerRefs.current.entries()).find(([_, ref]) => ref.current === closestEntryBelowTop?.target)?.[0];
-          if (date && date !== lastSetDate) {
-            lastSetDate = date;
-            dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
-          }
-        }
-      }
-    }, {
-      root: scrollContainer,
-      threshold: 0.1
-    });
-    
-  
-    headerRefs.current.forEach((ref, date) => {
-      const current = ref.current;
-      if (current) {
-        observer.observe(current);
-      }
-    });
-  
-    return () => {
+
+    const handleScroll = () => {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+
+      if (!containerRect || !isUserScrolling) return;
+
       headerRefs.current.forEach((ref, date) => {
         const current = ref.current;
-        if (current) {
-          observer.unobserve(current);
+        if (!current) return;
+
+        const rect        = current.getBoundingClientRect();
+        const relativeTop = rect.top - containerRect.top;
+        if (relativeTop <= 20 && relativeTop >= 0 && date !== lastSetDate) {
+          lastSetDate = date;
+          dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
         }
       });
     };
-  }, [dispatch]);
-  
-  
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, [dispatch, isUserScrolling]);
 
   useEffect(() => {
     return observeHeaders();
