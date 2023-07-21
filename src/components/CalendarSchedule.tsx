@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef }  from 'react';
+import React, { useEffect, useState, useRef }  from 'react';
 import { useDispatch, useSelector }                         from 'react-redux';
 
 import { setActiveTransaction }                             from './../redux/slices/transactions';
@@ -11,53 +11,43 @@ import { Transaction }                                      from './../models/Tr
 import TransactionListItem                                  from './TransactionListItem';
 
 import './../css/TransactionList.css';
-import { addMonths, endOfMonth, format, parseISO }          from 'date-fns';
+import { addDays, endOfMonth, format, parseISO }            from 'date-fns';
 
 import _ from 'lodash';
 
 const CalendarSchedule: React.FC = () => {
-  const dispatch                              = useDispatch();
+  const dispatch                                      = useDispatch();
 
-  // const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
-  const [loading, setLoading]                 = useState(false);
-  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [loading, setLoading]                         = useState(false);
 
-  const activeDate                            = useSelector((state: RootState) => state.activeDates.activeDate);
-  const today                                 = useSelector((state: RootState) => state.activeDates.today);
-  const state                                 = useSelector((state: RootState) => state);
+  const activeDate                                    = useSelector((state: RootState) => state.activeDates.activeDate);
+  const today                                         = useSelector((state: RootState) => state.activeDates.today);
+  const state                                         = useSelector((state: RootState) => state);
 
-  const headerRefs                            = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
-  const loader                                = useRef<HTMLDivElement | null>(null);
-  const containerRef                          = useRef<HTMLDivElement | null>(null);
+  const headerRefs                                    = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
 
-  const [groupedTransactions, setGroupedTransactions] = useState<
-    {
-      date        : string;
-      transactions: { transaction: Transaction; date: string }[];
-    }[]
-  >([]);
+  const loader                                        = useRef<HTMLDivElement | null>(null);
+  const containerRef                                  = useRef<HTMLDivElement | null>(null);
+  const scrollTimeout                                 = useRef<NodeJS.Timeout | null>(null);
+
+  const [groupedTransactions, setGroupedTransactions] = useState<{ date: string; transactions: { transaction: Transaction; date: string }[]; }[]>([]);
 
   // Fetch transactions on mount and when activeDate changes.
   useEffect(() => {
     setLoading(true);
-    let limit = 36; // limiting to 36 months to avoid infinite loop.
 
-    let   theDate        = format(new Date(today), 'yyyy-MM-dd');
-    let   endOfMonthNext = format(endOfMonth(addMonths(parseISO(activeDate), 6)), 'yyyy-MM-dd');
-    let   transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
-    while (limit > 0 && (transactions.length < 20)) {
-      endOfMonthNext = format(endOfMonth(addMonths(parseISO(endOfMonthNext), 1)), 'yyyy-MM-dd');
-      transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
-      limit--;
-    }    
+    let startDate = format(new Date(today), 'yyyy-MM-dd');
+    let endDate   = format(addDays(endOfMonth(parseISO(activeDate)), 10), 'yyyy-MM-dd');
+
+    let transactions = getTransactionsByDateRange(state,startDate,endDate);
+
     setGroupedTransactions(transactions);
     setLoading(false);
 
   }, [activeDate, today, state]);
 
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  const getClosestDataDate = useCallback((): string | null => {
+  // Find the date closest to the top of the container
+  const getClosestDataDate = () => {
     const container = containerRef.current;
   
     if (!container) {
@@ -80,19 +70,23 @@ const CalendarSchedule: React.FC = () => {
   
       return currentTop < closestTop ? current : closest;
     });
+    
+    const closestDataDate = closestDiv.getAttribute('data-date')
+    
+    if (closestDataDate !== null && closestDataDate !== activeDate) {
+      dispatch(setActiveDate(closestDataDate));
+    }
 
-    return closestDiv.getAttribute('data-date') || null; 
-  }, []);
+  };
 
+  // React to user interaction with the list  
   const handleUserScroll = () => {
-    setIsUserScrolling(true);
-
     if (scrollTimeout.current !== null) {
       clearTimeout(scrollTimeout.current);
     }
 
     scrollTimeout.current = setTimeout(() => {
-      setIsUserScrolling(false);
+      getClosestDataDate();
     }, 150);
   };
 
@@ -107,6 +101,7 @@ const CalendarSchedule: React.FC = () => {
     };
   }, [throttledHandleUserScroll]);
 
+  // Scroll to the active date when it is changed
   useEffect(() => {
     if (activeDate) {
       const dateElements = Array.from(document.querySelectorAll('[data-date]'));
@@ -128,18 +123,6 @@ const CalendarSchedule: React.FC = () => {
       }
     }
   }, [activeDate]);
-
-  const observeHeaders = useCallback(() => {
-    const closestDataDate = getClosestDataDate();
-    if (closestDataDate !== null && isUserScrolling) {
-      dispatch(setActiveDate(closestDataDate));
-    }
-  }, [dispatch, isUserScrolling, getClosestDataDate]);
-
-  useEffect(() => {
-    return observeHeaders();
-  }, [observeHeaders]);
-
 
   return (
     <div ref = {containerRef} className = 'glassjar__schedule'>
