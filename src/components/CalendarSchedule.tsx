@@ -15,14 +15,17 @@ import { addMonths, endOfMonth, format, parseISO }          from 'date-fns';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                              = useDispatch();
+
+  const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
   const [loading, setLoading]                 = useState(false);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
-  const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
-  const state                                 = useSelector((state: RootState) => state);
-  const loader                                = useRef<HTMLDivElement | null>(null);
-  const headerRefs                            = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
+
   const activeDate                            = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                                 = useSelector((state: RootState) => state.activeDates.today);
+  const state                                 = useSelector((state: RootState) => state);
+
+  const headerRefs                            = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
+  const loader                                = useRef<HTMLDivElement | null>(null);
   const containerRef                          = useRef<HTMLDivElement | null>(null);
 
   const [groupedTransactions, setGroupedTransactions] = useState<
@@ -35,11 +38,16 @@ const CalendarSchedule: React.FC = () => {
   // Fetch transactions on mount and when activeDate changes.
   useEffect(() => {
     setLoading(true);
+    let limit = 36; // limiting to 36 months to avoid infinite loop.
 
     let   theDate        = format(new Date(today), 'yyyy-MM-dd');
-    const endOfMonthNext = format(endOfMonth(addMonths(parseISO(activeDate), 1)), 'yyyy-MM-dd');
-    const transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
-
+    let   endOfMonthNext = format(endOfMonth(addMonths(parseISO(activeDate), 6)), 'yyyy-MM-dd');
+    let   transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
+    while (limit > 0 && (transactions.length < 20)) {
+      endOfMonthNext = format(endOfMonth(addMonths(parseISO(endOfMonthNext), 1)), 'yyyy-MM-dd');
+      transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
+      limit--;
+    }    
     setGroupedTransactions(transactions);
     setLoading(false);
 
@@ -56,7 +64,7 @@ const CalendarSchedule: React.FC = () => {
   
       setScrollTimeout(setTimeout(() => {
         setIsUserScrolling(false);
-      }, 150) as unknown as number); // Adjust this delay to fit your needs
+      }, 150) as unknown as number); 
     };
   
     window.addEventListener('scroll', handleUserScroll);
@@ -73,19 +81,25 @@ const CalendarSchedule: React.FC = () => {
   // Scroll to activeDate
   useEffect(() => {
     if (activeDate) {
-      const dateId  = new Date(activeDate).toISOString().split('T')[0];
-      const element = document.getElementById(dateId);
+ 
+      const dateElements = Array.from(document.querySelectorAll('[data-date]'));
+      const targetDate = new Date(activeDate).getTime();
       
-      if (element) {
-        const parent = element.parentElement;
-        if (parent) { // Check if parent is not null
-          element.scrollIntoView({
+      const sortedDateElements = dateElements.map(el => ({
+        el,
+        date: new Date(el.getAttribute('data-date') || '').getTime(),
+      })).sort((a, b) => (
+        Math.abs(targetDate - a.date) - Math.abs(targetDate - b.date)
+      ));
+
+      if (sortedDateElements.length > 0) {
+        const nearestDateElement = sortedDateElements[0].el;
+        nearestDateElement.scrollIntoView({
             behavior: 'smooth',
             block   : 'start',
             inline  : 'nearest',
           });
         }
-      }
     }
   }, [activeDate]);
   
@@ -127,7 +141,6 @@ const CalendarSchedule: React.FC = () => {
 
   return (
     <div ref = {containerRef} className = 'glassjar__schedule'>
-
       {groupedTransactions.length > 0 ?
         <>
           {groupedTransactions.map((group, groupIndex) => {
@@ -135,7 +148,7 @@ const CalendarSchedule: React.FC = () => {
               headerRefs.current.set(group.date, React.createRef());
             }
             return (
-              <div id={group.date} key={groupIndex} className='glassjar__lazy-list-group' ref={headerRefs.current.get(group.date)}>
+              <div id={group.date} data-date={group.date} key={groupIndex} className='glassjar__lazy-list-group' ref={headerRefs.current.get(group.date)}>
                 <div
                   className='glassjar__lazy-list__header glassjar__flex glassjar__flex--justify-between'
                 >
