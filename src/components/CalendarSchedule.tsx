@@ -28,7 +28,7 @@ const CalendarSchedule: React.FC = () => {
 
   const loader                                        = useRef<HTMLDivElement | null>(null);
   const containerRef                                  = useRef<HTMLDivElement | null>(null);
-  const scrollTimeout                                 = useRef<NodeJS.Timeout | null>(null);
+  // const scrollTimeout                                 = useRef<NodeJS.Timeout | null>(null);
 
   const [groupedTransactions, setGroupedTransactions] = useState<{ date: string; transactions: { transaction: Transaction; date: string }[]; }[]>([]);
 
@@ -80,20 +80,20 @@ const CalendarSchedule: React.FC = () => {
   };
 
   // React to user interaction with the list  
-  const handleUserScroll = () => {
+  // const handleUserScroll = () => {
 
-    getClosestDataDate();
+  //   getClosestDataDate();
 
-    if (scrollTimeout.current !== null) {
-      clearTimeout(scrollTimeout.current);
-    }
+  //   if (scrollTimeout.current !== null) {
+  //     clearTimeout(scrollTimeout.current);
+  //   }
 
-    scrollTimeout.current = setTimeout(() => {
-      getClosestDataDate();
-    }, 300);
-  };
+  //   scrollTimeout.current = setTimeout(() => {
+  //     getClosestDataDate();
+  //   }, 300);
+  // };
 
-  const throttledHandleUserScroll = _.throttle(handleUserScroll, 200);
+  const throttledHandleUserScroll = _.throttle(getClosestDataDate, 200);
 
   useEffect(() => {
     const events = ['scroll', 'touchmove', 'wheel'];
