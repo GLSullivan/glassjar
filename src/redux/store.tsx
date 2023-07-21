@@ -1,32 +1,32 @@
-import { configureStore }                         from "@reduxjs/toolkit";
+import { configureStore }                         from '@reduxjs/toolkit';
 
-import transactionsReducer, { setTransactions}    from "./slices/transactions";
-import activeDatesReducer                         from "./slices/activedates";
-import projectionsReducer                         from "./slices/projections";
-import userPrefsReducer, { setPrefsState }        from "./slices/userprefs";
-import accountsReducer, { setAccounts }           from "./slices/accounts";
-import modalStateReducer, { openAccountForm }     from "./slices/modals";
-import loaderReducer                              from "./slices/loader";
-import { hideLoader, showLoader}                  from "./slices/loader";
-import searchReducer                              from "./slices/search";
-import viewReducer, { setViewState }              from "./slices/views";
-import authReducer, { setLoadingAuthState }       from "./slices/auth";
+import transactionsReducer, { setTransactions}    from './slices/transactions';
+import activeDatesReducer                         from './slices/activedates';
+import projectionsReducer                         from './slices/projections';
+import userPrefsReducer, { setPrefsState }        from './slices/userprefs';
+import accountsReducer, { setAccounts }           from './slices/accounts';
+import modalStateReducer, { openAccountForm }     from './slices/modals';
+import loaderReducer                              from './slices/loader';
+import { hideLoader, showLoader}                  from './slices/loader';
+import searchReducer                              from './slices/search';
+import viewReducer, { setViewState }              from './slices/views';
+import authReducer, { setLoadingAuthState }       from './slices/auth';
 
-import firebase                                   from "firebase/compat/app";
-import "firebase/compat/firestore";
-import "firebase/compat/database";
-import "firebase/compat/auth";
+import firebase                                   from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import 'firebase/compat/database';
+import 'firebase/compat/auth';
 
 let isAppLoaded = false;
 
 const firebaseConfig = {
-  apiKey           : "AIzaSyAlTL5Q1AGIK1bsKz0eWd7d5jwoyNIlLE0",
-  authDomain       : "glassjar-jarstore.firebaseapp.com",
-  projectId        : "glassjar-jarstore",
-  storageBucket    : "glassjar-jarstore.appspot.com",
-  messagingSenderId: "485993136920",
-  appId            : "1:485993136920:web:cf2c6312a276293ca2946d",
-  measurementId    : "G-MWSVVY6GTK",
+  apiKey           : 'AIzaSyAlTL5Q1AGIK1bsKz0eWd7d5jwoyNIlLE0',
+  authDomain       : 'glassjar-jarstore.firebaseapp.com',
+  projectId        : 'glassjar-jarstore',
+  storageBucket    : 'glassjar-jarstore.appspot.com',
+  messagingSenderId: '485993136920',
+  appId            : '1:485993136920:web:cf2c6312a276293ca2946d',
+  measurementId    : 'G-MWSVVY6GTK',
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -111,10 +111,10 @@ function saveStateToDatabase() {
   const state = store.getState();
   const user = firebase.auth().currentUser;
   if (user) {
-    dbRef.child("users/" + user.uid + "/accounts").set(replaceUndefinedWithNull(state.accounts.accounts));
-    dbRef.child("users/" + user.uid + "/transactions").set(replaceUndefinedWithNull(state.transactions.transactions));
-    dbRef.child("users/" + user.uid + "/views").set(replaceUndefinedWithNull(state.views));
-    dbRef.child("users/" + user.uid + "/prefs").set(replaceUndefinedWithNull(state.userPrefs));
+    dbRef.child('users/' + user.uid + '/accounts').set(replaceUndefinedWithNull(state.accounts.accounts));
+    dbRef.child('users/' + user.uid + '/transactions').set(replaceUndefinedWithNull(state.transactions.transactions));
+    dbRef.child('users/' + user.uid + '/views').set(replaceUndefinedWithNull(state.views));
+    dbRef.child('users/' + user.uid + '/prefs').set(replaceUndefinedWithNull(state.userPrefs));
   }
 }
 

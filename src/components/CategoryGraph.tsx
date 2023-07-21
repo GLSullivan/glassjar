@@ -1,5 +1,5 @@
-import { useSelector }        from "react-redux";
-import { getCategorySpend }   from "../redux/slices/projections";
+import { useSelector }        from 'react-redux';
+import { getCategorySpend }   from '../redux/slices/projections';
 import {
   PieChart,
   Pie,
@@ -7,9 +7,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-}                             from "recharts";
-import { RecurringExpenses }  from "../data/RecurringExpenses";
-import { colorPalette } from "../data/ColorPalette";
+}                             from 'recharts';
+import { RecurringExpenses }  from '../data/RecurringExpenses';
+import { colorPalette } from '../data/ColorPalette';
 
 const CategorySpendPieChart = () => {
   const categorySpendData = useSelector(getCategorySpend);
@@ -25,7 +25,7 @@ const CategorySpendPieChart = () => {
   };
   
   const formattedData = Object.entries(categorySpendData)
-  .filter(([category]) => category !== "None")
+  .filter(([category]) => category !== 'None')
   .map(([category, spend]) => {
     const total = Object.values(categorySpendData)
       .reduce((acc, curr) => acc + curr, 0);
@@ -47,7 +47,7 @@ const CategorySpendPieChart = () => {
       return (
         <div
           style={{ border: `2px solid ${fill}` }}
-          className="glassjar__custom-tooltip"
+          className='glassjar__custom-tooltip'
         >
           <h3>{payload[0].name}</h3>
           <h4>Recommended: {Number(targetPercentage) * 100}%</h4>
@@ -59,19 +59,19 @@ const CategorySpendPieChart = () => {
   };
 
   return (
-    <div className="glassjar__graph-holder">
+    <div className='glassjar__graph-holder'>
       <h2>Spending Categories</h2>
-      <div className="glassjar__graph-holder__sub">
-        <div className="glassjar__graph-holder__sub-sub">
-          <ResponsiveContainer width="100%" height="100%">
+      <div className='glassjar__graph-holder__sub'>
+        <div className='glassjar__graph-holder__sub-sub'>
+          <ResponsiveContainer width='100%' height='100%'>
             <PieChart>
               <Pie
                 data        = {formattedData}
                 labelLine   = {true}
                 outerRadius = {120}
                 innerRadius = {10}
-                fill        = "#8884d8"
-                dataKey     = "value"
+                fill        = '#8884d8'
+                dataKey     = 'value'
               >
                 {formattedData.map((entry, index) => (
                   <Cell

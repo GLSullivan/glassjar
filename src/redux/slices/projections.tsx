@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Transaction }                from "./../../models/Transaction";
-import { Account }                    from "./../../models/Account";
-import { RootState }                  from "./../store";
+import { Transaction }                from './../../models/Transaction';
+import { Account }                    from './../../models/Account';
+import { RootState }                  from './../store';
 
 interface ProjectionsState {
   transactionsOnDate     : { [date: string]: Transaction[] };
@@ -21,7 +21,7 @@ let allAccounts: Account[];
 const maxIterations: number = 1000;
 
 export const projectionsSlice = createSlice({
-  name: "projections",
+  name: 'projections',
   initialState,
   reducers: {
     recalculateProjections: (
@@ -50,7 +50,7 @@ export const projectionsSlice = createSlice({
 
       accounts.forEach((account) => {
         const currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
-        const dateKey = currentDay.toISOString().split("T")[0];
+        const dateKey = currentDay.toISOString().split('T')[0];
 
         if (!tempBalanceByDateAndAccount[account.id]) {
           tempBalanceByDateAndAccount[account.id] = {};
@@ -82,7 +82,7 @@ export const projectionsSlice = createSlice({
             transactionDate <= transactionEndDate && count < maxIterations
           ) {
             count++;
-            const dateString = transactionDate.toISOString().split("T")[0];
+            const dateString = transactionDate.toISOString().split('T')[0];
             if (!tempTransactionsOnDate[dateString]) {
               tempTransactionsOnDate[dateString] = [];
             }
@@ -97,25 +97,25 @@ export const projectionsSlice = createSlice({
       
               // Increase date based on recurrence interval
               switch (transaction.recurrenceFrequency) {
-                case "daily":
+                case 'daily':
                   transactionDate.setDate(transactionDate.getDate() + 1);
                   caseFound = true;
                   break;
-                case "weekly":
+                case 'weekly':
                   transactionDate.setDate(transactionDate.getDate() + 7);
                   caseFound = true;
                   break;
-                case "monthly":
+                case 'monthly':
                   transactionDate.setMonth(transactionDate.getMonth() + 1);
                   caseFound = true;
                   break;
-                case "yearly":
+                case 'yearly':
                   transactionDate.setFullYear(
                     transactionDate.getFullYear() + 1
                   );
                   caseFound = true;
                   break;
-                case "given days":
+                case 'given days':
                   if (transaction.givenDays && transaction.givenDays.length > 0) {
                     const currentDayOfWeek = transactionDate.getDay();
                     let   closestDayOfWeek = null;
@@ -135,7 +135,7 @@ export const projectionsSlice = createSlice({
                     }
                   }
                   break;
-                case "twice monthly":
+                case 'twice monthly':
                   const initialDate = new Date(transaction.date).getDate();
 
                   const currentDay = transactionDate.getDate();
@@ -165,22 +165,22 @@ export const projectionsSlice = createSlice({
                   }
                   caseFound = true;
                   break;
-                case "custom":
+                case 'custom':
                   if (transaction.recurrenceInterval) {
                     switch (transaction.customIntervalType) {
-                      case "day":
+                      case 'day':
                         transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval);
                         caseFound = true;
                         break;
-                      case "week":
+                      case 'week':
                         transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval * 7);
                         caseFound = true;
                         break;
-                      case "month":
+                      case 'month':
                         transactionDate.setMonth(transactionDate.getMonth() + transaction.recurrenceInterval);
                         caseFound = true;
                         break;
-                      case "year":
+                      case 'year':
                         transactionDate.setFullYear(transactionDate.getFullYear() + transaction.recurrenceInterval);
                         caseFound = true;
                         break;
@@ -189,7 +189,7 @@ export const projectionsSlice = createSlice({
                     }
                   }
                   break;
-                  case "arbitrary":  
+                  case 'arbitrary':  
                   if (transaction.arbitraryDates && transaction.arbitraryDates.length > 0) {
                     if (arrayPosition < transaction.arbitraryDates.length) {
                       transactionDate = new Date(transaction.arbitraryDates[arrayPosition]);
@@ -226,11 +226,11 @@ export const projectionsSlice = createSlice({
           let interest = 0;
           if (interestRate) {
             // eslint-disable-next-line eqeqeq
-            if (accountType == "credit card" || accountType == "loan" || accountType == "savings") {
+            if (accountType == 'credit card' || accountType == 'loan' || accountType == 'savings') {
               // Calculate interest on daily compounding accounts.
               interest = balance * ((interestRate * 0.01) / 365);
             // eslint-disable-next-line eqeqeq
-            } else if (accountType == "mortgage") {
+            } else if (accountType == 'mortgage') {
               // Calculate interest for mortgage (monthly compounding)
               const annualInterestRateDecimal = interestRate / 100;
               const monthlyInterestRate       = annualInterestRateDecimal / 12;
@@ -261,9 +261,9 @@ export const projectionsSlice = createSlice({
 
           if (
             activeBalance > 0 &&
-            (account.type  === "savings" ||
-              account.type === "credit card" ||
-              account.type === "loan" ||
+            (account.type  === 'savings' ||
+              account.type === 'credit card' ||
+              account.type === 'loan' ||
               isMortgageDue(account, currentDay))
           ) {
             const interest = calculateInterest(
@@ -292,7 +292,7 @@ export const projectionsSlice = createSlice({
 
       function sumUpCategories(amount: number, category?: string) {
         if (!category) {
-          category = "Uncategorized"
+          category = 'Uncategorized'
         }
 
         if (!tempCategorySpend[category]) {
@@ -365,9 +365,9 @@ export const projectionsSlice = createSlice({
       }
 
       const TRANSACTION_TYPES = {
-        TRANSFER  : "transfer",
-        WITHDRAWAL: "withdrawal",
-        DEPOSIT   : "deposit",
+        TRANSFER  : 'transfer',
+        WITHDRAWAL: 'withdrawal',
+        DEPOSIT   : 'deposit',
       };
 
       const transactionTypeHandlers = {
@@ -382,11 +382,11 @@ export const projectionsSlice = createSlice({
       let iterations = 0;
 
       while (currentDay <= calculateThruDate && iterations < maxIterations) {
-        const dateKey = currentDay.toISOString().split("T")[0];
+        const dateKey = currentDay.toISOString().split('T')[0];
 
         var tempDate = new Date(dateKey);
         tempDate.setDate(tempDate.getDate() - 1);
-        const prevDateKey = tempDate.toISOString().split("T")[0];
+        const prevDateKey = tempDate.toISOString().split('T')[0];
 
         // Set start balance for each account on this date
         accounts.forEach((account) => {
@@ -398,7 +398,7 @@ export const projectionsSlice = createSlice({
 
         // Get a list of transactions on today's date
         const transactionsForCurrentDay =
-          tempTransactionsOnDate[currentDay.toISOString().split("T")[0]] || [];
+          tempTransactionsOnDate[currentDay.toISOString().split('T')[0]] || [];
 
         for (const transaction of transactionsForCurrentDay) {
           let toAccount = accounts.find(
@@ -482,13 +482,13 @@ export const accountBalanceOnDate = (
   const accountBalance          = balanceByDateAndAccount[accountID] || {};
 
   const today                   = new Date(state.activeDates.today);
-  const todayISOString          = today.toISOString().split("T")[0];
+  const todayISOString          = today.toISOString().split('T')[0];
   const inputDate               = new Date(date);
 
   if (inputDate <= today) {
     date = todayISOString;
   } else {
-    date = inputDate.toISOString().split("T")[0];
+    date = inputDate.toISOString().split('T')[0];
   }
 
   return accountBalance[date] || 0;
@@ -502,13 +502,13 @@ export const aggregateBalanceOnDate = (
   const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
   
   const today                   = new Date(state.activeDates.today);
-  const todayISOString          = today.toISOString().split("T")[0];
+  const todayISOString          = today.toISOString().split('T')[0];
   const inputDate               = new Date(date);
 
   if (inputDate <= today) {
     date = todayISOString;
   } else {
-    date = inputDate.toISOString().split("T")[0];
+    date = inputDate.toISOString().split('T')[0];
   }
 
   let totalBalance = 0;
@@ -599,7 +599,7 @@ export const accountBalancesByDateRange = (
   const balances: number[]      = [];
 
   while (start <= end) {
-    const dateKey = start.toISOString().split("T")[0];
+    const dateKey = start.toISOString().split('T')[0];
     balances.push(accountBalance[dateKey] || 0);
     start.setDate(start.getDate() + 1);
   }

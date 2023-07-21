@@ -22,7 +22,7 @@ const transactionsSlice = createSlice({
     addTransaction: (state, action: PayloadAction<Transaction>) => {
       const newTransaction = {
         ...action.payload,
-        transactionName     : action.payload.transactionName || "New Transaction",
+        transactionName     : action.payload.transactionName || 'New Transaction',
         type                : action.payload.type || 'withdrawal',
         amount              : action.payload.amount || 0,
         date                : action.payload.date || new Date().toISOString(),

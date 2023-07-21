@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import { colorPalette } from "./../data/ColorPalette";
+import { colorPalette } from './../data/ColorPalette';
 
-import "./../css/ColorPicker.css";
+import './../css/ColorPicker.css';
 
 interface ColorPickerProps {
   onSelect: (selectedIndex: number) => void;
@@ -19,16 +19,16 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   };
 
   return (
-    <div className="glassjar__color-picker">
+    <div className='glassjar__color-picker'>
       {colorPalette.map((color, index) => (
         <button
           key={index}
           className={`glassjar__color-picker__color${
-            index === selectedIndex ? " glassjar__color-picker__color--selected" : ""
+            index === selectedIndex ? ' glassjar__color-picker__color--selected' : ''
           }`}
           style={{ background: color }}
           onClick={(event) => handleColorSelect(event, index)}
-          type="button"
+          type='button'
         ></button>
       ))}
     </div>

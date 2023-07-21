@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState, useRef }  from 'react';
 import { useDispatch, useSelector }                         from 'react-redux';
 
-import { setActiveTransaction }                             from "./../redux/slices/transactions";
+import { setActiveTransaction }                             from './../redux/slices/transactions';
 import { getTransactionsByDateRange }                       from './../redux/slices/projections';
 import { setActiveDate }                                    from './../redux/slices/activedates';
-import { openTransactionModal }                             from "./../redux/slices/modals";
+import { openTransactionModal }                             from './../redux/slices/modals';
 import { RootState }                                        from './../redux/store';
 
 import { Transaction }                                      from './../models/Transaction';
@@ -36,8 +36,8 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     setLoading(true);
 
-    let   theDate        = format(new Date(today), "yyyy-MM-dd");
-    const endOfMonthNext = format(endOfMonth(addMonths(parseISO(activeDate), 1)), "yyyy-MM-dd");
+    let   theDate        = format(new Date(today), 'yyyy-MM-dd');
+    const endOfMonthNext = format(endOfMonth(addMonths(parseISO(activeDate), 1)), 'yyyy-MM-dd');
     const transactions   = getTransactionsByDateRange(state,theDate,endOfMonthNext);
 
     setGroupedTransactions(transactions);
@@ -73,16 +73,16 @@ const CalendarSchedule: React.FC = () => {
   // Scroll to activeDate
   useEffect(() => {
     if (activeDate) {
-      const dateId  = new Date(activeDate).toISOString().split("T")[0];
+      const dateId  = new Date(activeDate).toISOString().split('T')[0];
       const element = document.getElementById(dateId);
       
       if (element) {
         const parent = element.parentElement;
         if (parent) { // Check if parent is not null
           element.scrollIntoView({
-            behavior: "smooth",
-            block   : "start",
-            inline  : "nearest",
+            behavior: 'smooth',
+            block   : 'start',
+            inline  : 'nearest',
           });
         }
       }
@@ -91,10 +91,10 @@ const CalendarSchedule: React.FC = () => {
   
   // Set activeDate when user scrolls
   const observeHeaders = useCallback(() => {
-    const scrollContainer = document.querySelector(".glassjar__schedule");
+    const scrollContainer = document.querySelector('.glassjar__schedule');
     if (!scrollContainer) return;
 
-    let lastSetDate = "";
+    let lastSetDate = '';
 
     const handleScroll = () => {
       const containerRect = containerRef.current?.getBoundingClientRect();
@@ -114,10 +114,10 @@ const CalendarSchedule: React.FC = () => {
       });
     };
 
-    scrollContainer.addEventListener("scroll", handleScroll);
+    scrollContainer.addEventListener('scroll', handleScroll);
 
     return () => {
-      scrollContainer.removeEventListener("scroll", handleScroll);
+      scrollContainer.removeEventListener('scroll', handleScroll);
     };
   }, [dispatch, isUserScrolling]);
 
@@ -126,7 +126,7 @@ const CalendarSchedule: React.FC = () => {
   }, [observeHeaders]);
 
   return (
-    <div ref = {containerRef} className = "glassjar__schedule">
+    <div ref = {containerRef} className = 'glassjar__schedule'>
 
       {groupedTransactions.length > 0 ?
         <>
@@ -135,21 +135,21 @@ const CalendarSchedule: React.FC = () => {
               headerRefs.current.set(group.date, React.createRef());
             }
             return (
-              <div id={group.date} key={groupIndex} className="glassjar__lazy-list-group" ref={headerRefs.current.get(group.date)}>
+              <div id={group.date} key={groupIndex} className='glassjar__lazy-list-group' ref={headerRefs.current.get(group.date)}>
                 <div
-                  className="glassjar__lazy-list__header glassjar__flex glassjar__flex--justify-between"
+                  className='glassjar__lazy-list__header glassjar__flex glassjar__flex--justify-between'
                 >
-                  <h2 className="glassjar__calendar__month">
-                    {format(parseISO(group.date), "MMMM do")}
+                  <h2 className='glassjar__calendar__month'>
+                    {format(parseISO(group.date), 'MMMM do')}
                   </h2>
                   <button
                     onClick={() => {
                       dispatch(setActiveTransaction(null));
                       dispatch(openTransactionModal());
                     }}
-                    className="glassjar__button glassjar__button--small" 
+                    className='glassjar__button glassjar__button--small' 
                   >
-                    <i className="fa-solid fa-plus-minus" />
+                    <i className='fa-solid fa-plus-minus' />
                   </button>
                 </div>
                 <div>
@@ -167,9 +167,9 @@ const CalendarSchedule: React.FC = () => {
         :
         <>
           <div
-            className="glassjar__lazy-list__header glassjar__flex"
+            className='glassjar__lazy-list__header glassjar__flex'
           >
-            <h2 className="glassjar__calendar__month">
+            <h2 className='glassjar__calendar__month'>
               Create your first transaction!
             </h2>
             <button
@@ -177,14 +177,14 @@ const CalendarSchedule: React.FC = () => {
                 dispatch(setActiveTransaction(null));
                 dispatch(openTransactionModal());
               }}
-              className="glassjar__button glassjar__button--small" 
+              className='glassjar__button glassjar__button--small' 
             >
-              <i className="fa-solid fa-plus-minus" />
+              <i className='fa-solid fa-plus-minus' />
             </button>
           </div>
         </>}
     
-      <div ref = {loader} style = {{ minHeight: "1px" }} />
+      <div ref = {loader} style = {{ minHeight: '1px' }} />
       {loading && <p>Loading...</p>}
     </div>
   );

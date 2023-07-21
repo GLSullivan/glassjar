@@ -5,7 +5,7 @@ export interface ViewState {
 }
 
 const initialState: ViewState = {
-  search  : ""
+  search  : ''
 }
 
 export const search = createSlice({

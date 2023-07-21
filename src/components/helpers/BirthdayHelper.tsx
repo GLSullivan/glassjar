@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import CurrencyInput from 'react-currency-input-field';
 
-import BirthdayTransactionForm from "../forms/BirthdayTransactionForm";
+import BirthdayTransactionForm from '../forms/BirthdayTransactionForm';
 import { Transaction } from './../../models/Transaction';
-import { RootState } from "./../../redux/store";
-import { Account } from "../../models/Account";
+import { RootState } from './../../redux/store';
+import { Account } from '../../models/Account';
 
 interface Form {
   key                     ?: number;
@@ -27,8 +27,8 @@ const BirthdayHelper: React.FC = () => {
 
   const [initialForm, setInitialForm] = useState<Form>({
       key                     : Date.now(),
-      initialCategory         : "Charity and Gifts",
-      initialName             : "",
+      initialCategory         : 'Charity and Gifts',
+      initialName             : '',
       isActive                : false,
       initialActiveTransaction: null
   });
@@ -39,7 +39,7 @@ const BirthdayHelper: React.FC = () => {
 
   useEffect(() => {
     const newTransactions = allTransactions.filter(
-      (transaction) => transaction.fromHelper === "birthday"
+      (transaction) => transaction.fromHelper === 'birthday'
     );
   
     const newForms = newTransactions.map((transaction, index) => ({
@@ -68,20 +68,20 @@ const BirthdayHelper: React.FC = () => {
     // Resets the initialForm state
     setInitialForm({
       key: Date.now(),
-      initialCategory: "Charity and Gifts",
+      initialCategory: 'Charity and Gifts',
       isActive: false,
     });
   };
   
   return (
     <>
-     <div className="glassjar__form__input-group">
-              <label htmlFor="amount">Amount:</label>
+     <div className='glassjar__form__input-group'>
+              <label htmlFor='amount'>Amount:</label>
               <CurrencyInput
-                id="amount"
-                prefix="$"
-                name="amount"
-                placeholder="Transaction Amount:"
+                id='amount'
+                prefix='$'
+                name='amount'
+                placeholder='Transaction Amount:'
                 defaultValue={amount / 100} // Convert cents to dollars for display
                 decimalsLimit={2} // Allow decimal input
                 onValueChange={(value) =>
@@ -89,10 +89,10 @@ const BirthdayHelper: React.FC = () => {
                 }
               />
             </div>
-            <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-            <label htmlFor="fromAccount">From Account:</label>
+            <div className='glassjar__form__input-group glassjar__form__input-group--drop'>
+            <label htmlFor='fromAccount'>From Account:</label>
             <select
-              id="fromAccount"
+              id='fromAccount'
               value={fromAccount}
               onChange={(e) => {
                 setFromAccount(e.target.value);
@@ -110,7 +110,7 @@ const BirthdayHelper: React.FC = () => {
         initialCategory          = {initialForm.initialCategory}
         isActive                 = {initialForm.isActive}
         initialActiveTransaction = {initialForm.initialActiveTransaction}
-        initialFromHelper        = "birthday"
+        initialFromHelper        = 'birthday'
         onSubmit                 = {handleFormSubmit}
         initialAmount            = {amount}
         initialFromAccount       = {fromAccount}
@@ -122,7 +122,7 @@ const BirthdayHelper: React.FC = () => {
           initialCategory          = {form.initialCategory}
           isActive                 = {form.isActive}
           initialActiveTransaction = {form.initialActiveTransaction}
-          initialFromHelper        = "birthday"
+          initialFromHelper        = 'birthday'
         />
       ))}
     </>

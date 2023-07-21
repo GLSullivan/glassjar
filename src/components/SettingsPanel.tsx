@@ -1,18 +1,18 @@
-import { useDispatch, useSelector } from "react-redux";
-import React from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 
 import {
   setHealthRangeTop,
   setHealthRangeBottom,
-} from "../redux/slices/userprefs";
+} from '../redux/slices/userprefs';
 
-import { openTransactionHelper } from "./../redux/slices/modals";
-import { RootState } from "../redux/store";
+import { openTransactionHelper } from './../redux/slices/modals';
+import { RootState } from '../redux/store';
 
-import CurrencyInput from "react-currency-input-field";
-import firebase from "firebase/compat/app";
-import "./../css/SettingsPanel.css";
-import { setSignedIn } from "./../redux/slices/auth";
+import CurrencyInput from 'react-currency-input-field';
+import firebase from 'firebase/compat/app';
+import './../css/SettingsPanel.css';
+import { setSignedIn } from './../redux/slices/auth';
 import { setView } from './../redux/slices/views';
 
 
@@ -26,33 +26,33 @@ const SettingsPanel: React.FC = () => {
 
   const signOut = async () => {
     try {
-      dispatch(setView("calendar"));      
+      dispatch(setView('calendar'));      
       await firebase.auth().signOut();
       dispatch(setSignedIn(false));
       window.location.reload();
     } catch (error) {
-      console.error("Error signing out: ", error);
+      console.error('Error signing out: ', error);
     }
   };
   
 
   return (
-    <div className="glassjar__settings-panel">
+    <div className='glassjar__settings-panel'>
       <div>
         <h2>Dev Tools Menu</h2>
         <p>Welcome, {currentUser?.displayName}</p>
       </div>
       <div>
-        <button className="glassjar__button glassjar__button--full-width glassjar__button--primary" onClick={() => dispatch(openTransactionHelper())}>
+        <button className='glassjar__button glassjar__button--full-width glassjar__button--primary' onClick={() => dispatch(openTransactionHelper())}>
           Run Transaction Helper
         </button>
       </div>
-      <div className="glassjar__form__input-group">
+      <div className='glassjar__form__input-group'>
         <CurrencyInput
-          id="amount"
-          prefix="$"
-          name="amount"
-          placeholder="Transaction Amount:"
+          id='amount'
+          prefix='$'
+          name='amount'
+          placeholder='Transaction Amount:'
           defaultValue={healthRangeTop / 100}
           decimalsLimit={2}
           onValueChange={(value) =>
@@ -63,12 +63,12 @@ const SettingsPanel: React.FC = () => {
         />
         <label>Health Range Top:</label>
       </div>
-      <div className="glassjar__form__input-group">
+      <div className='glassjar__form__input-group'>
         <CurrencyInput
-          id="amount"
-          prefix="$"
-          name="amount"
-          placeholder="Transaction Amount:"
+          id='amount'
+          prefix='$'
+          name='amount'
+          placeholder='Transaction Amount:'
           defaultValue={healthRangeBottom / 100}
           decimalsLimit={2}
           onValueChange={(value) =>
@@ -83,7 +83,7 @@ const SettingsPanel: React.FC = () => {
         Health Range Bottom:
       </label>
       </div>
-      <button className="glassjar__button glassjar__button--warn" onClick={() => signOut()}>Sign Out</button>
+      <button className='glassjar__button glassjar__button--warn' onClick={() => signOut()}>Sign Out</button>
     </div>
   );
 };

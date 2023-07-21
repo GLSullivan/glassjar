@@ -8,8 +8,8 @@ export interface ViewState {
 }
 
 const initialState: ViewState = {
-  activeView  : "calendar",
-  calendarView: "month",
+  activeView  : 'calendar',
+  calendarView: 'month',
   graphRange  : 3
 }
 

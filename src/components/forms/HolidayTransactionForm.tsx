@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import CurrencyInput from "react-currency-input-field";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CurrencyInput from 'react-currency-input-field';
 
-import { addTransaction, updateTransaction } from "../../redux/slices/transactions";
-import { RootState } from "../../redux/store";
-import { Transaction } from "../../models/Transaction";
+import { addTransaction, updateTransaction } from '../../redux/slices/transactions';
+import { RootState } from '../../redux/store';
+import { Transaction } from '../../models/Transaction';
 import { CustomIntervalType, RecurrenceFrequency, TransactionType } from './../../utils/constants';
 
-import "./../../css/MiniForms.css";
+import './../../css/MiniForms.css';
 
 interface HolidayTransactionFormProps {
   initialName                ?: string;
@@ -31,9 +31,9 @@ interface HolidayTransactionFormProps {
 }
 
 const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
-  initialName           = "",
+  initialName           = '',
   initialAmount         = 0,
-  initialCategory       = "Charity and Gifts",
+  initialCategory       = 'Charity and Gifts',
   initialArbitraryDates = [],
   isActive              = false,
   initialActiveTransaction,
@@ -120,19 +120,19 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
       };
 
   return (
-    <form  className={`glassjar__mini-transaction ${isActive ? "active" : ""}`} onSubmit={handleSubmit}>
-      <div className="glassjar__form__input-group">
+    <form  className={`glassjar__mini-transaction ${isActive ? 'active' : ''}`} onSubmit={handleSubmit}>
+      <div className='glassjar__form__input-group'>
         <h3>{transactionName}</h3>
       </div>
 
-      <div className="glassjar__mini-transaction__sub">
-        <div className="glassjar__form__input-group">
-          <label htmlFor="amount">Amount:</label>
+      <div className='glassjar__mini-transaction__sub'>
+        <div className='glassjar__form__input-group'>
+          <label htmlFor='amount'>Amount:</label>
           <CurrencyInput
-            prefix        = "$"
-            id            = "amount"
-            name          = "amount"
-            placeholder   = "Amount"
+            prefix        = '$'
+            id            = 'amount'
+            name          = 'amount'
+            placeholder   = 'Amount'
             defaultValue  = {amount / 100}
             decimalsLimit = {2}
             onValueChange = {(value) =>
@@ -141,8 +141,8 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
           />
         </div>
 
-        <button type="submit">
-          {initialActiveTransaction ? <i className="fa-solid fa-floppy-disk" /> : <i className="fa-solid fa-plus" /> }
+        <button type='submit'>
+          {initialActiveTransaction ? <i className='fa-solid fa-floppy-disk' /> : <i className='fa-solid fa-plus' /> }
         </button>
       </div>
     </form>

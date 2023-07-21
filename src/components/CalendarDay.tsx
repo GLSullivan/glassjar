@@ -1,14 +1,14 @@
-import { useDispatch, useSelector }   from "react-redux";
-import React                          from "react";
+import { useDispatch, useSelector }   from 'react-redux';
+import React                          from 'react';
 
 import { interpolateRgb }             from 'd3-interpolate';
 import { RGBColor, rgb as d3Rgb }     from 'd3-color';
 
 import { aggregateBalanceOnDate }     from './../redux/slices/projections';
-import { setActiveDate }              from "./../redux/slices/activedates";
-import { RootState }                  from "./../redux/store";
+import { setActiveDate }              from './../redux/slices/activedates';
+import { RootState }                  from './../redux/store';
 
-import "./../css/Calendar.css";
+import './../css/Calendar.css';
 
 interface CalendarDayProps {
   day           : Date;
@@ -69,14 +69,14 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
     }
 
     const className = [
-      "glassjar__calendar__day",
-      !isCurrentMonth ? "other-month"     : "",
-      isToday         ? "today"           : "",
-      isActive        ? "active"          : "",
-      hasTransaction  ? "has-transaction" : "",
+      'glassjar__calendar__day',
+      !isCurrentMonth ? 'other-month'     : '',
+      isToday         ? 'today'           : '',
+      isActive        ? 'active'          : '',
+      hasTransaction  ? 'has-transaction' : '',
     ]
-      .join(" ")
-      .replace(/\s{2,}/g, " ");
+      .join(' ')
+      .replace(/\s{2,}/g, ' ');
 
     return (
       <div className={className} >
@@ -84,7 +84,7 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
           onClick={() => dispatch(setActiveDate(day.toISOString()))} >
           {day.getDate()}
         </h1>
-        {hasTransaction && <div className="glassjar__calendar__day-marker" style={{ backgroundColor: getColorFromGradient(colors, dayHealth) }}></div>}
+        {hasTransaction && <div className='glassjar__calendar__day-marker' style={{ backgroundColor: getColorFromGradient(colors, dayHealth) }}></div>}
       </div>
     );
   }

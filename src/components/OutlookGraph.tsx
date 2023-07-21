@@ -1,6 +1,6 @@
 import React, { 
   useState, 
-  useEffect }                                 from "react";
+  useEffect }                                 from 'react';
 
 import { 
   startOfMonth,
@@ -21,17 +21,17 @@ import {
   Label,
   ResponsiveContainer,
   ReferenceLine,
-}                                             from "recharts";
+}                                             from 'recharts';
 
-import { useDispatch, useSelector }                        from "react-redux";
+import { useDispatch, useSelector }                        from 'react-redux';
 
-import { accountBalancesByDateRange }         from "./../redux/slices/projections";
-import { Account }                            from "./../models/Account";
-import { RootState }                          from "./../redux/store";
-import { colorPalette }                       from "../data/ColorPalette";
+import { accountBalancesByDateRange }         from './../redux/slices/projections';
+import { Account }                            from './../models/Account';
+import { RootState }                          from './../redux/store';
+import { colorPalette }                       from '../data/ColorPalette';
 
-import "./../css/OutlookGraph.css";
-import { setGraphRange } from "../redux/slices/views";
+import './../css/OutlookGraph.css';
+import { setGraphRange } from '../redux/slices/views';
 
 const OutlookGraph: React.FC = () => {
   const dispatch = useDispatch()
@@ -56,9 +56,9 @@ const OutlookGraph: React.FC = () => {
   };
 
   const currencyFormatter = (item: any) => {
-    return Number(item).toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
+    return Number(item).toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
       maximumFractionDigits: 0,
     });
   }
@@ -170,8 +170,8 @@ const OutlookGraph: React.FC = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="glassjar__custom-tooltip">
-          <h3 className="label">{`${label}`}</h3>
+        <div className='glassjar__custom-tooltip'>
+          <h3 className='label'>{`${label}`}</h3>
           <table>
             <tbody>
               {payload.map(
@@ -200,7 +200,7 @@ const OutlookGraph: React.FC = () => {
       <text 
         x          = {x}
         y          = {y + 10}
-        fill       = "#666"
+        fill       = '#666'
         textAnchor = {isFirstOrLast ? (payload.value === data[0].date ? 'start' : 'end') : 'middle'}
       >
         {payload.value}
@@ -221,15 +221,15 @@ const OutlookGraph: React.FC = () => {
   }
 
   return (
-    <div className="glassjar__graph-holder">
+    <div className='glassjar__graph-holder'>
       <h2>Balance Outlook</h2>
-      <div className="glassjar__graph-holder__sub">
-        <div className="glassjar__graph-holder__sub-sub">
-          <ResponsiveContainer width="100%" height="100%">
+      <div className='glassjar__graph-holder__sub'>
+        <div className='glassjar__graph-holder__sub-sub'>
+          <ResponsiveContainer width='100%' height='100%'>
             <LineChart data={combinedData}>
-              {/* <CartesianGrid strokeDasharray="3 3" /> */}
+              {/* <CartesianGrid strokeDasharray='3 3' /> */}
               <XAxis 
-                dataKey = "date"
+                dataKey = 'date'
                 tick    = {(props) => CustomXAxisTick(props, combinedData)}
                 ticks   = {xTicks} />
               <YAxis
@@ -241,18 +241,18 @@ const OutlookGraph: React.FC = () => {
               />
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine
-                position = "start"
+                position = 'start'
                 x        = {format(new Date(state.activeDates.activeDate), 'M/d/yy')}
-                stroke   = "#54816F"
+                stroke   = '#54816F'
               >
-                <Label position={"right"}>
+                <Label position={'right'}>
                   {format(new Date(state.activeDates.activeDate), 'M/d')}
                 </Label>
               </ReferenceLine>
               {dataKeys.map((key, index) => (
                 <Line
                   key               = {key}
-                  type              = "monotone"
+                  type              = 'monotone'
                   dataKey           = {key}
                   stroke            = {accountColors[key]}
                   strokeWidth       = {2}
@@ -265,8 +265,8 @@ const OutlookGraph: React.FC = () => {
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="glassjar__graph-holder__range-change">
-        <button className="glassjar__button glassjar__button--small" onClick={() => handleSpanChange()}>{graphRange}</button>
+      <div className='glassjar__graph-holder__range-change'>
+        <button className='glassjar__button glassjar__button--small' onClick={() => handleSpanChange()}>{graphRange}</button>
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import CurrencyInput from "react-currency-input-field";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CurrencyInput from 'react-currency-input-field';
 
-import { addTransaction, updateTransaction, } from "../../redux/slices/transactions";
-import { RootState } from "../../redux/store";
-import { Transaction } from "../../models/Transaction";
-import { CustomIntervalType, RecurrenceFrequency, TransactionType } from "../../utils/constants";
-import { addZoneOffset, stripTime } from "../../utils/dateUtils";
+import { addTransaction, updateTransaction, } from '../../redux/slices/transactions';
+import { RootState } from '../../redux/store';
+import { Transaction } from '../../models/Transaction';
+import { CustomIntervalType, RecurrenceFrequency, TransactionType } from '../../utils/constants';
+import { addZoneOffset, stripTime } from '../../utils/dateUtils';
 
-import "./../../css/MiniForms.css";
+import './../../css/MiniForms.css';
 
 interface BirthdayTransactionFormProps {
   key                        ?: number;
@@ -35,9 +35,9 @@ interface BirthdayTransactionFormProps {
 
 const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   key,
-  initialName           = "",
+  initialName           = '',
   initialAmount         = 0,
-  initialCategory       = "Charity and Gifts",
+  initialCategory       = 'Charity and Gifts',
   isActive              = false,
   initialActiveTransaction,
   initialDate,
@@ -61,7 +61,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
     if (initialDate) {
       return new Date(initialDate).toISOString();
     }
-    return "";
+    return '';
   });
 
   const [amount, setAmount] = useState(
@@ -72,9 +72,9 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   const category    = activeTransaction?.category || initialCategory;
   const fromAccount = activeTransaction?.fromAccount || initialFromAccount || accounts[0].id;
   const toAccount   = activeTransaction?.toAccount || accounts[0].id;
-  const description = activeTransaction?.description || "";
+  const description = activeTransaction?.description || '';
   const isRecurring = activeTransaction?.isRecurring || true;
-  const endDate     = activeTransaction?.endDate || "";
+  const endDate     = activeTransaction?.endDate || '';
 
   let   recurrenceFrequency = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
   const customIntervalType  = activeTransaction?.customIntervalType || CustomIntervalType.WEEK;
@@ -117,37 +117,37 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
 
   return (
     <form
-      className={`glassjar__mini-transaction ${isActive ? "active" : ""}`}
+      className={`glassjar__mini-transaction ${isActive ? 'active' : ''}`}
       onSubmit={handleSubmit}
     >
-      <div className="glassjar__form__input-group">
-        {/* <label htmlFor="Name">Transaction Name:</label> */}
+      <div className='glassjar__form__input-group'>
+        {/* <label htmlFor='Name'>Transaction Name:</label> */}
         <input
-          placeholder = "Name"
-          type        = "text"
+          placeholder = 'Name'
+          type        = 'text'
           value       = {transactionName}
           onChange    = {(e) => setTransactionName(e.target.value)}
         />
       </div>
 
-      <div className="glassjar__mini-transaction__sub">
-        <div className="glassjar__form__input-group glassjar__form__input-group--date">
-          <label htmlFor="date">Date:</label>
+      <div className='glassjar__mini-transaction__sub'>
+        <div className='glassjar__form__input-group glassjar__form__input-group--date'>
+          <label htmlFor='date'>Date:</label>
           <input
-            type     = "date"
-            id       = "date"
+            type     = 'date'
+            id       = 'date'
             value    = {stripTime(date)}
             onChange = {(e) => setDate(addZoneOffset(e.target.value))}
           />
         </div>
 
-        <div className="glassjar__form__input-group">
-          <label htmlFor="amount">Amount:</label>
+        <div className='glassjar__form__input-group'>
+          <label htmlFor='amount'>Amount:</label>
           <CurrencyInput
-            prefix        = "$"
-            id            = "amount"
-            name          = "amount"
-            placeholder   = "Amount"
+            prefix        = '$'
+            id            = 'amount'
+            name          = 'amount'
+            placeholder   = 'Amount'
             defaultValue  = {amount / 100}
             decimalsLimit = {2}
             onValueChange = {(value) =>
@@ -156,11 +156,11 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
           />
         </div>
 
-        <button type="submit">
+        <button type='submit'>
           {initialActiveTransaction ? (
-            <i className="fa-solid fa-floppy-disk" />
+            <i className='fa-solid fa-floppy-disk' />
           ) : (
-            <i className="fa-solid fa-plus" />
+            <i className='fa-solid fa-plus' />
           )}
         </button>
 

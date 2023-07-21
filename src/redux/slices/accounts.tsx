@@ -18,7 +18,7 @@ const isAccountTypeLiability = (accountType: string): boolean => {
 };
 
 export const accountsSlice = createSlice({
-  name: "accounts",
+  name: 'accounts',
   initialState,
   reducers: { 
     setAccounts: (state, action: PayloadAction<Account[]>) => {
@@ -28,10 +28,10 @@ export const accountsSlice = createSlice({
       const newAccount = {
         ...action.payload,
         // Set default values here
-        name: action.payload.name || "New Account",
+        name: action.payload.name || 'New Account',
         currentBalance: action.payload.currentBalance || 0,
-        type: action.payload.type || "checking",
-        isLiability: isAccountTypeLiability(action.payload.type || "checking"),
+        type: action.payload.type || 'checking',
+        isLiability: isAccountTypeLiability(action.payload.type || 'checking'),
         lastUpdated: action.payload.lastUpdated || new Date().toISOString(),
         showInGraph: action.payload.showInGraph || false,
         color: action.payload.color || 0,
@@ -52,9 +52,9 @@ export const accountsSlice = createSlice({
           isLiability: isAccountTypeLiability(action.payload.type),
           lastUpdated: action.payload.lastUpdated || new Date().toISOString(),
           showInGraph: action.payload.showInGraph || false,
-          name: action.payload.name || "New Account",
+          name: action.payload.name || 'New Account',
           currentBalance: action.payload.currentBalance || 0,
-          type: action.payload.type || "checking",
+          type: action.payload.type || 'checking',
           color: action.payload.color || 0,
         };
       }

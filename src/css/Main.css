@@ -51,7 +51,7 @@
   box-sizing    : border-box;
   display       : flex;
   flex-direction: column;
-  /* font-family   : "Space Grotesk", sans-serif; */
+  /* font-family   : 'Space Grotesk', sans-serif; */
   font-family: 'Work Sans', sans-serif;
       /* gap           : 1rem; */
   /* height        : -webkit-fill-available;

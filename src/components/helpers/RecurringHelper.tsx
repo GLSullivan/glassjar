@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import MiniTransactionForm from "../forms/MiniTransactionForm";
-import { RecurringExpenses } from "../../data/RecurringExpenses";
+import MiniTransactionForm from '../forms/MiniTransactionForm';
+import { RecurringExpenses } from '../../data/RecurringExpenses';
 
 const RecurringHelper: React.FC = () => {
 
@@ -9,18 +9,18 @@ const RecurringHelper: React.FC = () => {
     <>
           {RecurringExpenses.map((categoryItem, index) => (
             <div key={index}>
-              {categoryItem.category !== "None" && (
+              {categoryItem.category !== 'None' && (
                 <p>{categoryItem.category}</p>
               )}
               <div>
                 {categoryItem.expenses.map(
                   (expense, expenseIndex) =>
-                    categoryItem.category !== "None" && (
+                    categoryItem.category !== 'None' && (
                       <MiniTransactionForm
                         key={expenseIndex}
                         initialCategory={categoryItem.category}
                         initialName={expense}
-                        initialDay="1"
+                        initialDay='1'
                       />
                     )
                 )}

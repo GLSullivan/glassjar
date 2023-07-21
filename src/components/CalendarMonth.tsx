@@ -139,7 +139,7 @@ const CalendarMonth: React.FC = () => {
           //       : ''
           //     }`}
           // >
-            <div className="glassjar__calendar__seven-row">
+            <div className={`glassjar__calendar__seven-row${isDateInWeek(week[0], new Date(activeDate)) ? ' active' : '' }`}>
               {week.map((day: Date, dayIndex: number) => {
                 return (
                   <CalendarDay
@@ -158,10 +158,10 @@ const CalendarMonth: React.FC = () => {
           // </div>
         ))}
       </div>
-      <div className="glassjar__calendar__day-panel--graph">
+      <div className='glassjar__calendar__day-panel--graph'>
         <OutlookGraph />
       </div>
-      <div className="glassjar__calendar__day-panel">
+      <div className='glassjar__calendar__day-panel'>
         {/* <DayPanel /> */}
         <CalendarSchedule />
       </div>

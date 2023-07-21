@@ -27,7 +27,7 @@ import './css/Main.css'
 import './css/Nav.css'  
 
 const App: React.FC = () => {
-  
+
   const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen);
   const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen);
@@ -94,33 +94,33 @@ const App: React.FC = () => {
         />
       </Modal>
 
-      {activeView === "calendar" && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
+      {activeView === 'calendar' && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
         <Calendar />
       </div>}
-      {activeView === "accounts" && <div className='glassjar__panel-group'>
+      {activeView === 'accounts' && <div className='glassjar__panel-group'>
         <AccountList />
       </div>}
-      {activeView === "outlook" && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
+      {activeView === 'outlook' && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
         <OutlookGraph />
       </div>}
-      {activeView === "categories" && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
+      {activeView === 'categories' && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
         <CategoryGraph />
       </div>}
-      {activeView === "transactions" && <div className='glassjar__panel-group glassjar__panel-group--transactions'>
+      {activeView === 'transactions' && <div className='glassjar__panel-group glassjar__panel-group--transactions'>
         <TransactionList />
       </div>}
-      {activeView === "settings" && <div className='glassjar__panel-group glassjar__panel-group--settings'>
+      {activeView === 'settings' && <div className='glassjar__panel-group glassjar__panel-group--settings'>
         <SettingsPanel />
       </div>
       }
 
       <div className='glassjar__footer-nav'>
-        <i onClick = {() => { setActiveView("calendar") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === "calendar" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("accounts") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === "accounts" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("transactions") }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === "transactions" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("outlook") }} className      = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === "outlook" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("categories") }} className   = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === "categories" ? ' active' : '')} />
-        <i onClick = {() => { setActiveView("settings") }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === "settings" ? ' active' : '')} />
+        <i onClick = {() => { setActiveView('calendar') }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === 'calendar' ? ' active' : '')} />
+        <i onClick = {() => { setActiveView('accounts') }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === 'accounts' ? ' active' : '')} />
+        <i onClick = {() => { setActiveView('transactions') }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === 'transactions' ? ' active' : '')} />
+        <i onClick = {() => { setActiveView('outlook') }} className      = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === 'outlook' ? ' active' : '')} />
+        <i onClick = {() => { setActiveView('categories') }} className   = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === 'categories' ? ' active' : '')} />
+        <i onClick = {() => { setActiveView('settings') }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === 'settings' ? ' active' : '')} />
       </div>
       
       </>}

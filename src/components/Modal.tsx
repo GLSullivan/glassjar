@@ -15,8 +15,8 @@ function Modal(props: { children?: any; onClose: any; isOpen: boolean, hideClose
   return (
     <>{open &&
       <div className='glassjar__modal'>
-        <div className="glassjar__modal__backing" onClick={closeTheModal}></div>
-        <div className="glassjar__modal__body">
+        <div className='glassjar__modal__backing' onClick={closeTheModal}></div>
+        <div className='glassjar__modal__body'>
           {theChildren?.map((child: any, index: number) => {
             return (
               <div key={index}>

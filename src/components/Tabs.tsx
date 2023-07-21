@@ -1,6 +1,6 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState, ReactNode } from 'react';
 
-import "./../css/Tabs.css";
+import './../css/Tabs.css';
 
 interface TabsProps {
   children: ReactNode;
@@ -48,7 +48,7 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
           <div
             onClick   = {() => toggleTabs(index)}
             className = {`glassjar__tabs__header ${
-              openTabsIndex === index ? "glassjar__tabs__header--open" : ""
+              openTabsIndex === index ? 'glassjar__tabs__header--open' : ''
             }`}
           >
             {child.props.heading}
@@ -59,9 +59,9 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
     });
 
   return (
-    <div className = "glassjar__tabs-group">
-    <div className = "glassjar__tabs__headers">{renderHeaders()}</div>
-    <div className = "glassjar__tabs__content">{renderChildren()}</div>
+    <div className = 'glassjar__tabs-group'>
+    <div className = 'glassjar__tabs__headers'>{renderHeaders()}</div>
+    <div className = 'glassjar__tabs__content'>{renderChildren()}</div>
     </div>
   );
 };
@@ -73,8 +73,8 @@ const TabsItem: React.FC<TabsItemProps> = ({
   return (
     <div className={`glassjar__tabs ${isOpen ? 'glassjar__tabs--open' : ''}`}>
       {isOpen && (
-        <div className="glassjar__tabs__body">
-          <div className="glassjar__tabs__body-content" >
+        <div className='glassjar__tabs__body'>
+          <div className='glassjar__tabs__body-content' >
             {children}
           </div>
         </div>

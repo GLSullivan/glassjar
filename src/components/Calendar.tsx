@@ -16,11 +16,11 @@ const CalendarSelector: React.FC = () => {
   const calendarView = useSelector((state: RootState) => state.views.calendarView);
   return (
     <div className='glassjar__calendar-group'>
-      <div className="glassjar__schedule__view-control">
-        <div onClick={() => handleViewChange('month')} className={`glassjar__calendar-view-button${calendarView === 'Month' ? " selected" : ""}`}><i className="fa-duotone fa-calendar-days" /></div>
-        <div onClick={() => handleViewChange('schedule')} className={`glassjar__calendar-view-button${calendarView === 'Schedule' ? " selected" : ""}`}><i className="fa-duotone fa-list" /></div>
+      <div className='glassjar__schedule__view-control'>
+        <div onClick={() => handleViewChange('month')} className={`glassjar__calendar-view-button${calendarView === 'Month' ? ' selected' : ''}`}><i className='fa-duotone fa-calendar-days' /></div>
+        <div onClick={() => handleViewChange('schedule')} className={`glassjar__calendar-view-button${calendarView === 'Schedule' ? ' selected' : ''}`}><i className='fa-duotone fa-list' /></div>
       </div>
-        {/* <div className="glassjar__calendar-holder"> */}
+        {/* <div className='glassjar__calendar-holder'> */}
           {calendarView === 'month' ? (
             <CalendarMonth />
           ) : (

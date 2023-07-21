@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./../css/Menu.css";
+import React, { useEffect, useRef, useState } from 'react';
+import './../css/Menu.css';
 
 interface MenuProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ const MenuButton: React.FC<MenuButtonProps> = ({ children, menuClick }) => {
   };
 
   return (
-    <div onClick={handleClick} className="glassjar__menu__button">
+    <div onClick={handleClick} className='glassjar__menu__button'>
       {children}
     </div>
   );
@@ -34,7 +34,7 @@ const MenuBody: React.FC<MenuBodyProps> = ({ children, isMenuOpen }) => {
   return (
     <div
       className={`glassjar__menu__body ${
-        isMenuOpen ? "glassjar__menu__body--open" : ""
+        isMenuOpen ? 'glassjar__menu__body--open' : ''
       }`}
     >
       {children}
@@ -58,15 +58,15 @@ const Menu: React.FC<MenuProps> & { Button: React.FC<MenuButtonProps> } & {
         setIsOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []); // End of useEffect block
 
-  let theClassName = "glassjar__menu"
+  let theClassName = 'glassjar__menu'
   if (className) {
-    theClassName += " " + className;
+    theClassName += ' ' + className;
   }
 
   const renderChildren = () =>

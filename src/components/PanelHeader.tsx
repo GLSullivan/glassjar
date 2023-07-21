@@ -1,5 +1,5 @@
-import React from "react";
-import "./../css/PanelHeader.css";
+import React from 'react';
+import './../css/PanelHeader.css';
 
 interface HeaderProps {
   title                  : string;
@@ -16,18 +16,18 @@ interface HeaderProps {
 const PanelHeader: React.FC<HeaderProps> = ({
   title,
   onPrimaryAction,
-  primaryActionLabel     = "Save",
+  primaryActionLabel     = 'Save',
   showPrimaryButton      = true,
   disablePrimaryButton   = false,
   onSecondaryAction,
-  secondaryActionLabel   = "Cancel",
+  secondaryActionLabel   = 'Cancel',
   showSecondaryButton    = true,
   disableSecondaryButton = false
 }) => {
   return (
-    <div className="glassjar__panel-header">
+    <div className='glassjar__panel-header'>
       <button 
-        className={`glassjar__text-button ${showSecondaryButton ? "" : "glassjar__text-button--hidden"}`} 
+        className={`glassjar__text-button ${showSecondaryButton ? '' : 'glassjar__text-button--hidden'}`} 
         onClick={onSecondaryAction} 
         disabled={disableSecondaryButton || !showSecondaryButton}
       >
@@ -35,7 +35,7 @@ const PanelHeader: React.FC<HeaderProps> = ({
       </button>
       <h1>{title}</h1>
       <button 
-        className={`glassjar__text-button glassjar__text-button--primary ${showPrimaryButton ? "" : "glassjar__text-button--hidden"}`} 
+        className={`glassjar__text-button glassjar__text-button--primary ${showPrimaryButton ? '' : 'glassjar__text-button--hidden'}`} 
         onClick={onPrimaryAction} 
         disabled={disablePrimaryButton || !showPrimaryButton}
       >

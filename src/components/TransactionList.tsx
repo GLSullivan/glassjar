@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { RootState } from "../redux/store";
-import { setSearchString } from "./../redux/slices/search";
+import { RootState } from '../redux/store';
+import { setSearchString } from './../redux/slices/search';
 import { TransactionType } from './../utils/constants';
 
-import TransactionListItem from "./TransactionListItem";
-import Menu from "./Menu";
+import TransactionListItem from './TransactionListItem';
+import Menu from './Menu';
 
-import "./../css/TransactionList.css";
+import './../css/TransactionList.css';
 
 type FilterOption = {
   id: number;
@@ -29,24 +29,24 @@ const TransactionList: React.FC = () => {
   );
 
   const [transactions, setTransactions] = useState(allTransactions);
-  const [search, setSearch]             = useState("");
+  const [search, setSearch]             = useState('');
   const [filter, setFilter]             = useState<number[]>([]);
   const [sort, setSort]                 = useState<number | null>(2);
 
   const options: FilterOption[] = [
-    { id: 1, label: "Deposit", type: TransactionType.DEPOSIT },
-    { id: 2, label: "Withdrawal", type: TransactionType.WITHDRAWAL },
-    { id: 3, label: "Transfer", type: TransactionType.TRANSFER },
-    { id: 4, label: "Event", type: TransactionType.EVENT },
+    { id: 1, label: 'Deposit', type: TransactionType.DEPOSIT },
+    { id: 2, label: 'Withdrawal', type: TransactionType.WITHDRAWAL },
+    { id: 3, label: 'Transfer', type: TransactionType.TRANSFER },
+    { id: 4, label: 'Event', type: TransactionType.EVENT },
   ];
 
   const sortOptions: SortOption[] = [
-    { id: 1, label: "A to Z" },
-    { id: 2, label: "High to Low" },
-    { id: 3, label: "Low to High" },
-    { id: 4, label: "Account To" },
-    { id: 5, label: "Account From" },
-    { id: 6, label: "Category" },
+    { id: 1, label: 'A to Z' },
+    { id: 2, label: 'High to Low' },
+    { id: 3, label: 'Low to High' },
+    { id: 4, label: 'Account To' },
+    { id: 5, label: 'Account From' },
+    { id: 6, label: 'Category' },
   ];
 
   const handleCheckboxChange = (optionId: number) => {
@@ -96,17 +96,17 @@ const TransactionList: React.FC = () => {
           break;
         case 4: // Account To
           filteredTransactions.sort((a, b) =>
-            (a.toAccount || "").localeCompare(b.toAccount || "")
+            (a.toAccount || '').localeCompare(b.toAccount || '')
           );
           break;
         case 5: // Account From
           filteredTransactions.sort((a, b) =>
-            (a.fromAccount || "").localeCompare(b.fromAccount || "")
+            (a.fromAccount || '').localeCompare(b.fromAccount || '')
           );
           break;
         case 6: // Category
           filteredTransactions.sort((a, b) =>
-            (a.category || "").localeCompare(b.category || "")
+            (a.category || '').localeCompare(b.category || '')
           );
           break;
         default:
@@ -130,62 +130,62 @@ const TransactionList: React.FC = () => {
   }, [filter, sort, search, allTransactions]);
 
   return (
-    <div className="glassjar__transaction-list">
-      <div className="glassjar__transaction-list__header">
+    <div className='glassjar__transaction-list'>
+      <div className='glassjar__transaction-list__header'>
         <h2>Transactions</h2>
-        <div className="glassjar__search-sort">
-          <div className="glassjar__search-sort__field  glassjar__form__input-group">
+        <div className='glassjar__search-sort'>
+          <div className='glassjar__search-sort__field  glassjar__form__input-group'>
             <input
-              type="text"
-              id="searchTerm"
-              placeholder="Search..."
-              value={search || ""}
+              type='text'
+              id='searchTerm'
+              placeholder='Search...'
+              value={search || ''}
               onChange={(event) => handleSearchChange(event.target.value)}
             />
-            <label htmlFor="searchTerm">Search...</label>
-            {search !== "" && (
+            <label htmlFor='searchTerm'>Search...</label>
+            {search !== '' && (
               <div
-                className="glassjar__search-sort__field-clear"
-                onClick={() => handleSearchChange("")}
+                className='glassjar__search-sort__field-clear'
+                onClick={() => handleSearchChange('')}
               >
-                <i className="fa-solid fa-circle-x" />
+                <i className='fa-solid fa-circle-x' />
               </div>
             )}
           </div>
-          <Menu className="glassjar__sort-menu">
+          <Menu className='glassjar__sort-menu'>
             <Menu.Button>
-              <i className="fa-regular fa-bars-filter" />
+              <i className='fa-regular fa-bars-filter' />
             </Menu.Button>
             <Menu.Body>
               <p>Sort Transactions</p>
-              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
-                <select value={sort || ""} onChange={handleSortChange} id="sort">
-                  <option value="">None</option>
+              <div className='glassjar__form__input-group glassjar__form__input-group--drop'>
+                <select value={sort || ''} onChange={handleSortChange} id='sort'>
+                  <option value=''>None</option>
                   {sortOptions.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.label}
                     </option>
                   ))}
                 </select>
-                  <label htmlFor="sort">Sort:</label>
+                  <label htmlFor='sort'>Sort:</label>
               </div>
               <br />
               <p>Show Only</p>
-              <div className="glassjar__sort-menu__filter">
+              <div className='glassjar__sort-menu__filter'>
                 {options.map((option) => (
-                  <div key={option.id} className="glassjar__form__input-group glassjar__form__input-group--check">
+                  <div key={option.id} className='glassjar__form__input-group glassjar__form__input-group--check'>
                     <input
-                      type="checkbox"
-                      className="glassjar__checkbox"
+                      type='checkbox'
+                      className='glassjar__checkbox'
                       value={option.id}
                       checked={filter.includes(option.id)}
                       // defaultChecked
-                      id={"filter" + option.id}
+                      id={'filter' + option.id}
                       onChange={() =>
                         option.id && handleCheckboxChange(option.id)
                       }
                     />
-                    <label htmlFor={"filter" + option.id}>{option.label}</label>
+                    <label htmlFor={'filter' + option.id}>{option.label}</label>
                   </div>
                 ))}
               </div>
@@ -194,7 +194,7 @@ const TransactionList: React.FC = () => {
         </div>
       </div>
 
-      <div className="glassjar__transaction-view">
+      <div className='glassjar__transaction-view'>
         {transactions.map((transaction, index) => (
           <TransactionListItem
             key={transaction.id}

@@ -59,7 +59,7 @@ button.selected,
 
 input,
 textarea,
-input[type="date"] {
+input[type='date'] {
   background        : var(--color-bright);
   border            : 1px solid var(--color-border);
   border-radius     : 0.5rem;
@@ -101,7 +101,7 @@ textarea {
 input:focus,
 textarea:focus,
 select,
-input[type="date"]:focus {
+input[type='date']:focus {
   border: 1px solid #8c5c38;
 }
 
@@ -181,7 +181,7 @@ select {
 
 .glassjar__form__input-group.glassjar__form__input-group--drop::after {
   bottom                : 0.6rem;
-  content               : "\f078";
+  content               : '\f078';
   display               : block;
   font                  : var(--fa-font-solid);
   -webkit-font-smoothing: antialiased;
@@ -219,7 +219,7 @@ select {
   width          : 100%;
 }
 
-.glassjar__form__input-group.glassjar__form__input-group--check input[type="checkbox"] {
+.glassjar__form__input-group.glassjar__form__input-group--check input[type='checkbox'] {
   display: none;
 }
 
@@ -248,14 +248,14 @@ select {
   width        : 2rem;
 }
 
-.glassjar__form__input-group.glassjar__form__input-group--check input[type="checkbox"]:checked+label::before {
+.glassjar__form__input-group.glassjar__form__input-group--check input[type='checkbox']:checked+label::before {
   background  : var(--color-secondary);
   border-color: transparent;
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--check label::after {
   color     : var(--color-bright);
-  content   : "\f00c";
+  content   : '\f00c';
   display   : block;
   font      : var(--fa-font-solid);
   font-size : 1.2rem;
@@ -269,7 +269,7 @@ select {
   width     : 2rem;
 }
 
-.glassjar__form__input-group.glassjar__form__input-group--check input[type="checkbox"]:checked+label::after {
+.glassjar__form__input-group.glassjar__form__input-group--check input[type='checkbox']:checked+label::after {
   opacity  : 1;
   transform: scale(1);
 }
