@@ -18,7 +18,6 @@ const CalendarSchedule: React.FC = () => {
 
   const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
   const [loading, setLoading]                 = useState(false);
-  const [isUserScrolling, setIsUserScrolling] = useState(false);
 
   const activeDate                            = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                                 = useSelector((state: RootState) => state.activeDates.today);
@@ -56,14 +55,12 @@ const CalendarSchedule: React.FC = () => {
   // Detect user scrolling
   useEffect(() => {
     const handleUserScroll = () => {
-      setIsUserScrolling(true);
   
       if (scrollTimeout !== null) {
         clearTimeout(scrollTimeout);
       }
   
       setScrollTimeout(setTimeout(() => {
-        setIsUserScrolling(false);
       }, 150) as unknown as number); 
     };
   
@@ -107,33 +104,42 @@ const CalendarSchedule: React.FC = () => {
   const observeHeaders = useCallback(() => {
     const scrollContainer = document.querySelector('.glassjar__schedule');
     if (!scrollContainer) return;
-
+  
     let lastSetDate = '';
-
-    const handleScroll = () => {
-      const containerRect = containerRef.current?.getBoundingClientRect();
-
-      if (!containerRect || !isUserScrolling) return;
-
+  
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          Array.from(headerRefs.current.entries()).forEach(([date, ref]) => {
+            if (ref.current === entry.target && date !== lastSetDate) {
+              lastSetDate = date;
+              dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
+            }
+          });
+        }
+      });
+    }, {
+      root: scrollContainer,
+      threshold: 0.1
+    });
+  
+    headerRefs.current.forEach((ref, date) => {
+      const current = ref.current;
+      if (current) {
+        observer.observe(current);
+      }
+    });
+  
+    return () => {
       headerRefs.current.forEach((ref, date) => {
         const current = ref.current;
-        if (!current) return;
-
-        const rect        = current.getBoundingClientRect();
-        const relativeTop = rect.top - containerRect.top;
-        if (relativeTop <= 20 && relativeTop >= 0 && date !== lastSetDate) {
-          lastSetDate = date;
-          dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
+        if (current) {
+          observer.unobserve(current);
         }
       });
     };
-
-    scrollContainer.addEventListener('scroll', handleScroll);
-
-    return () => {
-      scrollContainer.removeEventListener('scroll', handleScroll);
-    };
-  }, [dispatch, isUserScrolling]);
+  }, [dispatch]);
+  
 
   useEffect(() => {
     return observeHeaders();
