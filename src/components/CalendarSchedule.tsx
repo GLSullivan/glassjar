@@ -81,13 +81,16 @@ const CalendarSchedule: React.FC = () => {
 
   // React to user interaction with the list  
   const handleUserScroll = () => {
+
+    getClosestDataDate();
+
     if (scrollTimeout.current !== null) {
       clearTimeout(scrollTimeout.current);
     }
 
     scrollTimeout.current = setTimeout(() => {
       getClosestDataDate();
-    }, 150);
+    }, 3000);
   };
 
   const throttledHandleUserScroll = _.throttle(handleUserScroll, 200);
