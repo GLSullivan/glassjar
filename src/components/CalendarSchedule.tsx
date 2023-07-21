@@ -108,20 +108,33 @@ const CalendarSchedule: React.FC = () => {
     let lastSetDate = '';
   
     const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          Array.from(headerRefs.current.entries()).forEach(([date, ref]) => {
-            if (ref.current === entry.target && date !== lastSetDate) {
-              lastSetDate = date;
-              dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
-            }
-          });
+      const intersectingEntries = entries.filter(entry => entry.isIntersecting);
+    
+      if (intersectingEntries.length > 0) {
+        let closestEntryBelowTop: IntersectionObserverEntry | null = null;
+        let smallestDistanceBelowTop = Infinity;
+    
+        intersectingEntries.forEach(entry => {
+          const distanceBelowTop = entry.boundingClientRect.top - scrollContainer.getBoundingClientRect().top;
+          if (distanceBelowTop >= 0 && distanceBelowTop < smallestDistanceBelowTop) {
+            closestEntryBelowTop = entry;
+            smallestDistanceBelowTop = distanceBelowTop;
+          }
+        });
+    
+        if (closestEntryBelowTop) {
+          const date = Array.from(headerRefs.current.entries()).find(([_, ref]) => ref.current === closestEntryBelowTop?.target)?.[0];
+          if (date && date !== lastSetDate) {
+            lastSetDate = date;
+            dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
+          }
         }
-      });
+      }
     }, {
       root: scrollContainer,
       threshold: 0.1
     });
+    
   
     headerRefs.current.forEach((ref, date) => {
       const current = ref.current;
@@ -139,6 +152,7 @@ const CalendarSchedule: React.FC = () => {
       });
     };
   }, [dispatch]);
+  
   
 
   useEffect(() => {
