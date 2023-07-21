@@ -13,10 +13,12 @@ import TransactionListItem                                  from './TransactionL
 import './../css/TransactionList.css';
 import { addMonths, endOfMonth, format, parseISO }          from 'date-fns';
 
+import _ from 'lodash';
+
 const CalendarSchedule: React.FC = () => {
   const dispatch                              = useDispatch();
 
-  const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
+  // const [scrollTimeout, setScrollTimeout]     = useState<number | null>(null);
   const [loading, setLoading]                 = useState(false);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
 
@@ -53,35 +55,60 @@ const CalendarSchedule: React.FC = () => {
 
   }, [activeDate, today, state]);
 
-  // Detect user scrolling
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const getClosestDataDate = useCallback((): string | null => {
+    const container = containerRef.current;
+  
+    if (!container) {
+      return null;
+    }
+  
+    const listChildren = Array.from(container.getElementsByClassName('glassjar__lazy-list-group'));
+    if (listChildren.length === 0) {
+      return null;
+    }
+  
+    const containerTop = container.getBoundingClientRect().top;
+  
+    const closestDiv = listChildren.reduce((closest, current) => {
+      const closestTop = closest.getBoundingClientRect().top - containerTop;
+      const currentTop = current.getBoundingClientRect().top - containerTop;
+  
+      if (closestTop < 0) return current;  
+      if (currentTop < 0) return closest;  
+  
+      return currentTop < closestTop ? current : closest;
+    });
+
+    return closestDiv.getAttribute('data-date') || null; 
+  }, []);
+
+  const handleUserScroll = () => {
+    setIsUserScrolling(true);
+
+    if (scrollTimeout.current !== null) {
+      clearTimeout(scrollTimeout.current);
+    }
+
+    scrollTimeout.current = setTimeout(() => {
+      setIsUserScrolling(false);
+    }, 150);
+  };
+
+  const throttledHandleUserScroll = _.throttle(handleUserScroll, 200);
+
   useEffect(() => {
-    const handleUserScroll = () => {
-      setIsUserScrolling(true);
-  
-      if (scrollTimeout !== null) {
-        clearTimeout(scrollTimeout);
-      }
-  
-      setScrollTimeout(setTimeout(() => {
-        setIsUserScrolling(false);
-      }, 150) as unknown as number); 
-    };
-  
-    window.addEventListener('scroll', handleUserScroll);
-    window.addEventListener('touchmove', handleUserScroll);
-    window.addEventListener('wheel', handleUserScroll);
-  
+    const events = ['scroll', 'touchmove', 'wheel'];
+    events.forEach(event => window.addEventListener(event, throttledHandleUserScroll));
+
     return () => {
-      window.removeEventListener('scroll', handleUserScroll);
-      window.removeEventListener('touchmove', handleUserScroll);
-      window.removeEventListener('wheel', handleUserScroll);
+      events.forEach(event => window.removeEventListener(event, throttledHandleUserScroll));
     };
-  }, [scrollTimeout]);
-  
-  // Scroll to activeDate
+  }, [throttledHandleUserScroll]);
+
   useEffect(() => {
     if (activeDate) {
- 
       const dateElements = Array.from(document.querySelectorAll('[data-date]'));
       const targetDate = new Date(activeDate).getTime();
       const sortedDateElements = dateElements.map(el => ({
@@ -94,49 +121,25 @@ const CalendarSchedule: React.FC = () => {
       if (sortedDateElements.length > 0) {
         const nearestDateElement = sortedDateElements[0].el;
         nearestDateElement.scrollIntoView({
-            behavior: 'smooth',
-            block   : 'start',
-            inline  : 'nearest',
-          });
-        }
+          behavior: 'smooth',
+          block   : 'start',
+          inline  : 'nearest',
+        });
+      }
     }
   }, [activeDate]);
-  
-  // Set activeDate when user scrolls
+
   const observeHeaders = useCallback(() => {
-    const scrollContainer = document.querySelector('.glassjar__schedule');
-    if (!scrollContainer) return;
-
-    let lastSetDate = '';
-
-    const handleScroll = () => {
-      const containerRect = containerRef.current?.getBoundingClientRect();
-
-      if (!containerRect || !isUserScrolling) return;
-
-      headerRefs.current.forEach((ref, date) => {
-        const current = ref.current;
-        if (!current) return;
-
-        const rect        = current.getBoundingClientRect();
-        const relativeTop = rect.top - containerRect.top;
-        if (relativeTop <= 20 && relativeTop >= 0 && date !== lastSetDate) {
-          lastSetDate = date;
-          dispatch(setActiveDate(new Date(parseISO(date)).toISOString()));
-        }
-      });
-    };
-
-    scrollContainer.addEventListener('scroll', handleScroll);
-
-    return () => {
-      scrollContainer.removeEventListener('scroll', handleScroll);
-    };
-  }, [dispatch, isUserScrolling]);
+    const closestDataDate = getClosestDataDate();
+    if (closestDataDate !== null && isUserScrolling) {
+      dispatch(setActiveDate(closestDataDate));
+    }
+  }, [dispatch, isUserScrolling, getClosestDataDate]);
 
   useEffect(() => {
     return observeHeaders();
   }, [observeHeaders]);
+
 
   return (
     <div ref = {containerRef} className = 'glassjar__schedule'>

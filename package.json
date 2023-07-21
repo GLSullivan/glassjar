@@ -19,6 +19,7 @@
     "firebase": "^9.22.0",
     "firebaseui": "^6.0.2",
     "formik": "^2.4.2",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-currency-input-field": "^3.6.10",
     "react-dom": "^18.2.0",
@@ -56,5 +57,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.195"
   }
 }
