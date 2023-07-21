@@ -90,7 +90,7 @@ const CalendarSchedule: React.FC = () => {
 
     scrollTimeout.current = setTimeout(() => {
       getClosestDataDate();
-    }, 3000);
+    }, 300);
   };
 
   const throttledHandleUserScroll = _.throttle(handleUserScroll, 200);
