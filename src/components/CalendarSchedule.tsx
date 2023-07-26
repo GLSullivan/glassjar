@@ -82,7 +82,7 @@ const CalendarSchedule: React.FC = () => {
   };
 
   const [scrolling, setScrolling] = useState(false);
-
+  const throttledHandleUserScroll = _.throttle(getClosestDataDate, 200);
 
   const handleScroll = () => {
     setScrolling(true);
@@ -95,31 +95,21 @@ const CalendarSchedule: React.FC = () => {
 
     timerRef.current = window.setTimeout(() => {
       scrollingRef.current = false;
-    setScrolling(false);
-
+      setScrolling(false);
       console.log('User stopped scrolling:', scrollingRef.current);
+      getClosestDataDate(); // Call the function immediately when scrolling stops
     }, 1000); // Change to X ms
+
+    throttledHandleUserScroll();
   };
 
   useEffect(() => {
     const events = ['scroll', 'touchmove', 'wheel'];
     events.forEach(event => window.addEventListener(event, handleScroll));
 
-    window.addEventListener('scroll', handleScroll);
     return () => events.forEach(event => window.removeEventListener(event, handleScroll));
   }, []);
 
-
-  const throttledHandleUserScroll = _.throttle(getClosestDataDate, 200);
-
-  useEffect(() => {
-    const events = ['scroll', 'touchmove', 'wheel'];
-    events.forEach(event => window.addEventListener(event, throttledHandleUserScroll));
-
-    return () => {
-      events.forEach(event => window.removeEventListener(event, throttledHandleUserScroll));
-    };
-  }, [throttledHandleUserScroll]);
 
   // Scroll to the active date when it is changed
   useEffect(() => {
