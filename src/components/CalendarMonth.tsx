@@ -115,7 +115,7 @@ const CalendarMonth: React.FC = () => {
         </button>
         <h2
           className='glassjar__calendar__month'
-          onClick={() => { dispatch(setActiveDate(new Date().toISOString())); }}
+          onClick={() => { dispatch(setActiveDate(startOfDay(new Date()).toISOString())); }}
         >
           {format(activeDateObj, 'MMMM yyyy')}
         </h2>
