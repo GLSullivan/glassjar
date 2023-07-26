@@ -14,7 +14,6 @@ import './../css/TransactionList.css';
 import { addDays, endOfMonth, format, parseISO }            from 'date-fns';
 
 import _ from 'lodash';
-import { spawn } from 'child_process';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
