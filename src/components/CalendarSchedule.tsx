@@ -82,12 +82,12 @@ const CalendarSchedule: React.FC = () => {
   };
 
   const [scrolling, setScrolling] = useState(false);
+
   const throttledHandleUserScroll = _.throttle(getClosestDataDate, 200);
 
-  const handleScroll = () => {
+  const handleScrollRef = useRef(() => {
     setScrolling(true);
     scrollingRef.current = true;
-    console.log('User started scrolling:', scrollingRef.current);
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -96,19 +96,25 @@ const CalendarSchedule: React.FC = () => {
     timerRef.current = window.setTimeout(() => {
       scrollingRef.current = false;
       setScrolling(false);
-      console.log('User stopped scrolling:', scrollingRef.current);
-      getClosestDataDate(); // Call the function immediately when scrolling stops
-    }, 1000); // Change to X ms
+    }, 1000); 
 
     throttledHandleUserScroll();
-  };
+  });
 
   useEffect(() => {
-    const events = ['scroll', 'touchmove', 'wheel'];
-    events.forEach(event => window.addEventListener(event, handleScroll));
+    const events: (keyof WindowEventMap)[] = ['scroll', 'touchmove', 'wheel'];
+    const currentHandleScroll = handleScrollRef.current; // copy the ref to a variable
+    events.forEach(event => window.addEventListener(event, currentHandleScroll));
 
-    return () => events.forEach(event => window.removeEventListener(event, handleScroll));
-  }, []);
+    return () => {
+      events.forEach(event => window.removeEventListener(event, currentHandleScroll));
+    };
+  }, []); // Removed handleScroll from dependencies, since it's stored in a ref now
+
+
+
+
+
 
 
   // Scroll to the active date when it is changed

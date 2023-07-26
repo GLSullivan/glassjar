@@ -105,6 +105,7 @@
 .glassjar__schedule > h5 {
   position: absolute;
   z-index: 1000;
-  background: pink;
+  background: red;
+  color: white;
   padding: 1rem;
 }
