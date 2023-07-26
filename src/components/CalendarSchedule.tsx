@@ -18,7 +18,7 @@ import _ from 'lodash';
 const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
 
-  const [scrolling, setScrolling]                     = useState<boolean>(false);
+  const [groupedTransactions, setGroupedTransactions] = useState<{ date: string; transactions: { transaction: Transaction; date: string }[]; }[]>([]);
   const [scrollPosition, setScrollPosition]           = useState<number>(0);
   const [loading, setLoading]                         = useState(false);
   
@@ -27,13 +27,10 @@ const CalendarSchedule: React.FC = () => {
   const state                                         = useSelector((state: RootState) => state);
 
   const headerRefs                                    = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
-  const loader                                        = useRef<HTMLDivElement | null>(null);
   const containerRef                                  = useRef<HTMLDivElement | null>(null);
   const timerRef                                      = useRef<number | null>(null);
   const intervalRef                                   = useRef<number | null>(null);
-  const scrollingRef                                  = useRef<boolean>(false);
-
-  const [groupedTransactions, setGroupedTransactions] = useState<{ date: string; transactions: { transaction: Transaction; date: string }[]; }[]>([]);
+  const userInitiatedScroll                           = useRef<boolean>(false);
 
   // Fetch transactions on mount and when activeDate changes.
   useEffect(() => {
@@ -84,45 +81,30 @@ const CalendarSchedule: React.FC = () => {
   // Detect and react to use scrolling
 
   useEffect(() => {
-    const updateScrollPosition = () => {
-      if (containerRef.current) {
-        setScrollPosition(containerRef.current.scrollTop);
-      }
-    };
+    if (userInitiatedScroll.current) {
+      let prevScrollPos = scrollPosition;
 
-    const intervalId = setInterval(() => {
-      updateScrollPosition();
-    }, 100);
+      // Set an interval to check if scrolling has stopped
+      const checkIntervalId = setInterval(() => {
+        if (prevScrollPos === scrollPosition) {
+          clearInterval(checkIntervalId); 
+          userInitiatedScroll.current = false;
+          getClosestDataDate();
+        } else {
+          prevScrollPos = scrollPosition;
+        }
+      }, 100);
 
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []); // Only run once, on mount
-
-  useEffect(() => {
-    let prevScrollPos = scrollPosition;
-
-    // Set an interval to check if scrolling has stopped
-    const checkIntervalId = setInterval(() => {
-      if (prevScrollPos === scrollPosition) {
-        clearInterval(checkIntervalId); 
-        setScrolling(false);
-        scrollingRef.current = false;
-        getClosestDataDate();
-      } else {
-        prevScrollPos = scrollPosition;
-      }
-    }, 100);
-
-    // Clean up interval on component unmount
-    return () => clearInterval(checkIntervalId);
+      // Clean up interval on component unmount
+      return () => clearInterval(checkIntervalId);
+    }
     // eslint-disable-next-line
   }, [scrollPosition]); 
 
-  const handleScrollRef = useRef(() => {
+  const handleScroll = useRef(() => {
     const throttledHandleUserScroll = _.throttle(getClosestDataDate, 100);
 
-    setScrolling(true);
-    scrollingRef.current = true;
+    userInitiatedScroll.current = true;
 
     if (timerRef.current) {
       window.clearTimeout(timerRef.current);
@@ -135,9 +117,8 @@ const CalendarSchedule: React.FC = () => {
     intervalRef.current = window.setInterval(throttledHandleUserScroll, 100);
 
     timerRef.current = window.setTimeout(() => {
-      scrollingRef.current = false;
-      setScrolling(false);
-
+      userInitiatedScroll.current = false;
+      getClosestDataDate();
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -147,17 +128,28 @@ const CalendarSchedule: React.FC = () => {
 
   useEffect(() => {
     const events: (keyof WindowEventMap)[] = ['scroll', 'touchmove', 'wheel'];
-    const currentHandleScroll = handleScrollRef.current;
+    const currentHandleScroll = handleScroll.current;
     events.forEach(event => window.addEventListener(event, currentHandleScroll));
 
+    const updateScrollPosition = () => {
+      if (containerRef.current) {
+        setScrollPosition(containerRef.current.scrollTop);
+      }
+    };
+
+    const intervalId = setInterval(() => {
+      updateScrollPosition();
+    }, 100);
     return () => {
+      clearInterval(intervalId)
       events.forEach(event => window.removeEventListener(event, currentHandleScroll));
     };
+
   }, []); 
 
   // Scroll to the active date when it is changed
   useEffect(() => {
-    if (activeDate && !scrollingRef.current) {
+    if (activeDate && !userInitiatedScroll.current) {
       const dateElements = Array.from(document.querySelectorAll('[data-date]'));
       const targetDate = new Date(activeDate).getTime();
       const sortedDateElements = dateElements.map(el => ({
@@ -180,7 +172,6 @@ const CalendarSchedule: React.FC = () => {
 
   return (
     <div ref = {containerRef} className = 'glassjar__schedule'>
-      <h5>{scrolling ? <span>True</span> : <span>False</span>} {scrollPosition}</h5>
       {groupedTransactions.length > 0 ?
         <>
           {groupedTransactions.map((group, groupIndex) => {
@@ -236,9 +227,7 @@ const CalendarSchedule: React.FC = () => {
             </button>
           </div>
         </>}
-    
-      <div ref = {loader} style = {{ minHeight: '1px' }} />
-      {loading && <p>Loading...</p>}
+          {loading && <p>Loading...</p>}
     </div>
   );
 };
