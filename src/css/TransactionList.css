@@ -88,3 +88,23 @@
   gap: 1rem;
   padding-top: 1rem;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.glassjar__schedule > h5 {
+  position: absolute;
+  z-index: 1000;
+  background: pink;
+  padding: 1rem;
+}
