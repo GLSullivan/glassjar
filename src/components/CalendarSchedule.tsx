@@ -14,6 +14,7 @@ import './../css/TransactionList.css';
 import { addDays, endOfMonth, format, parseISO }            from 'date-fns';
 
 import _ from 'lodash';
+import { spawn } from 'child_process';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
@@ -49,6 +50,7 @@ const CalendarSchedule: React.FC = () => {
 
   // Find the date closest to the top of the container
   const getClosestDataDate = () => {
+    console.log("Getting that date, yo!")
     const container = containerRef.current;
   
     if (!container) {
@@ -80,7 +82,11 @@ const CalendarSchedule: React.FC = () => {
 
   };
 
+  const [scrolling, setScrolling] = useState(false);
+
+
   const handleScroll = () => {
+    setScrolling(true);
     scrollingRef.current = true;
     console.log('User started scrolling:', scrollingRef.current);
 
@@ -90,6 +96,8 @@ const CalendarSchedule: React.FC = () => {
 
     timerRef.current = window.setTimeout(() => {
       scrollingRef.current = false;
+    setScrolling(false);
+
       console.log('User stopped scrolling:', scrollingRef.current);
     }, 1000); // Change to X ms
   };
@@ -139,6 +147,7 @@ const CalendarSchedule: React.FC = () => {
 
   return (
     <div ref = {containerRef} className = 'glassjar__schedule'>
+      <h5>{scrolling ? <span>True</span> : <span>False</span>} </h5>
       {groupedTransactions.length > 0 ?
         <>
           {groupedTransactions.map((group, groupIndex) => {
