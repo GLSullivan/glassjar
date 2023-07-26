@@ -28,7 +28,8 @@ const CalendarSchedule: React.FC = () => {
 
   const loader                                        = useRef<HTMLDivElement | null>(null);
   const containerRef                                  = useRef<HTMLDivElement | null>(null);
-  // const scrollTimeout                                 = useRef<NodeJS.Timeout | null>(null);
+  const timerRef                                      = useRef<number | null>(null);
+  const scrollingRef                                  = useRef(false);
 
   const [groupedTransactions, setGroupedTransactions] = useState<{ date: string; transactions: { transaction: Transaction; date: string }[]; }[]>([]);
 
@@ -79,19 +80,28 @@ const CalendarSchedule: React.FC = () => {
 
   };
 
-  // React to user interaction with the list  
-  // const handleUserScroll = () => {
+  const handleScroll = () => {
+    scrollingRef.current = true;
+    console.log('User started scrolling:', scrollingRef.current);
 
-  //   getClosestDataDate();
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
 
-  //   if (scrollTimeout.current !== null) {
-  //     clearTimeout(scrollTimeout.current);
-  //   }
+    timerRef.current = window.setTimeout(() => {
+      scrollingRef.current = false;
+      console.log('User stopped scrolling:', scrollingRef.current);
+    }, 1000); // Change to X ms
+  };
 
-  //   scrollTimeout.current = setTimeout(() => {
-  //     getClosestDataDate();
-  //   }, 300);
-  // };
+  useEffect(() => {
+    const events = ['scroll', 'touchmove', 'wheel'];
+    events.forEach(event => window.addEventListener(event, handleScroll));
+
+    window.addEventListener('scroll', handleScroll);
+    return () => events.forEach(event => window.removeEventListener(event, handleScroll));
+  }, []);
+
 
   const throttledHandleUserScroll = _.throttle(getClosestDataDate, 200);
 
@@ -106,7 +116,7 @@ const CalendarSchedule: React.FC = () => {
 
   // Scroll to the active date when it is changed
   useEffect(() => {
-    if (activeDate) {
+    if (activeDate && !scrollingRef.current) {
       const dateElements = Array.from(document.querySelectorAll('[data-date]'));
       const targetDate = new Date(activeDate).getTime();
       const sortedDateElements = dateElements.map(el => ({
