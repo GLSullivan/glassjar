@@ -1,19 +1,20 @@
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-
-import { useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
-
-import landing from './../media/images/landing_hero.webp';
-import logo from './../media/images/glassjar_logo1.svg';
-import copyright from './../media/images/copyright.svg';
-
-import './../css/Landing.css';
-
-import firebase from 'firebase/compat/app';
+import { Formik, Field, Form, ErrorMessage }  from 'formik';
+import * as Yup                               from 'yup';
+import firebase                               from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
-import { setCurrentUser, setSignedIn } from './../redux/slices/auth';
+import { useDispatch }                        from 'react-redux';
+import React, { useEffect, useState }         from 'react';
+
+import { setCurrentUser, setSignedIn }        from './../redux/slices/auth';
+
+import landing                                from './../media/images/landing_hero.webp';
+import logo                                   from './../media/images/glassjar_logo1.svg';
+import copyright                              from './../media/images/copyright.svg';
+import fourJars                               from './../media/images/fours-jars.jpg';
+
+
+import './../css/Landing.css';
 
 function Landing() {
   const dispatch = useDispatch();
@@ -126,10 +127,30 @@ function Landing() {
     return () => unregisterAuthObserver();
   }, [dispatch]);
 
+  const [showMore, setShowMore] = useState<boolean>(false);
+
   return (
     <>
       <div className='glassjar__landing'>
         <div>
+          <button className="glassjar__more-tab" onClick={() => setShowMore(!showMore)}>
+            <i className={`fa-solid fa-fw fa-circle-x glassjar__more-tab__icon ${showMore ? 'open' : ''}`} />
+            <i className={`fa-solid fa-fw fa-circle-info glassjar__more-tab__icon ${showMore ? '' : 'open'}`} />
+          </button>
+          <div className={`glassjar__welcome-content ${showMore ? 'open' : ''}`}>
+            <img
+              className='glassjar__landing__img glassjar__landing__img--jars'
+              src={fourJars}
+              alt=''
+            />
+            <section>
+              <h1>Visualize Your Financial Journey</h1>
+              <p><strong>Glass Jar</strong> serves as a financial calendar, simplifying the process of managing your finances. With its intuitive interface inspired by the calendar apps you're familiar with, learning to navigate it is a breeze.</p>
+              <p>With just a few minutes of setup, our robust assistant tool enables you to forecast your financial future up to five years ahead. Begin making informed financial plans with confidence, having a clear vision of their potential impact.</p>
+              <p><strong>Glass Jar</strong> is the creation of <span className='glassjar__no-wrap'>Greg Sullivan</span> and is currently available free of charge during its development phase. As it is still evolving, you may encounter some unfinished features or minor bugs. Rest assured, I'm continuously refining the app to ensure a seamless experience. Your patience and support are greatly appreciated.</p>  
+              <p>If you find a bug or have an idea for a feature, I would be very happy to hear about it. Reach me at <a href='mailto:greg@artofsullivan.com?subject=Glass Jar&body=Hi Greg...'>greg@artofsullivan.com</a></p>
+            </section>
+          </div>
           <div className='glassjar__landing__form'>
             <h1>Welcome</h1>
             <div>

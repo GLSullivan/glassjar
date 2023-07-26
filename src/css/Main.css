@@ -172,3 +172,7 @@ h2 {
 .glassjar__margin-gap > .glassjar__auto-height.open {
   margin-bottom: .5rem;
 }
+
+.glassjar__no-wrap {
+  white-space: nowrap;
+}

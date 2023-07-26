@@ -20,14 +20,15 @@ import 'firebase/compat/auth';
 let isAppLoaded = false;
 
 const firebaseConfig = {
-  apiKey           : 'AIzaSyAlTL5Q1AGIK1bsKz0eWd7d5jwoyNIlLE0',
-  authDomain       : 'glassjar-jarstore.firebaseapp.com',
-  projectId        : 'glassjar-jarstore',
-  storageBucket    : 'glassjar-jarstore.appspot.com',
-  messagingSenderId: '485993136920',
-  appId            : '1:485993136920:web:cf2c6312a276293ca2946d',
-  measurementId    : 'G-MWSVVY6GTK',
+  apiKey           : process.env.REACT_APP_API_KEY,
+  authDomain       : process.env.REACT_APP_AUTH_DOMAIN,
+  projectId        : process.env.REACT_APP_PROJECT_ID,
+  storageBucket    : process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId            : process.env.REACT_APP_APP_ID,
+  measurementId    : process.env.REACT_APP_MEASUREMENT_ID,
 };
+
 
 firebase.initializeApp(firebaseConfig);
 const dbRef = firebase.database().ref();
