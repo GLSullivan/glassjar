@@ -19,6 +19,7 @@ const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
 
   const [loading, setLoading]                         = useState(false);
+  const [scrolling, setScrolling]                     = useState<boolean>(false);
 
   const activeDate                                    = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                                         = useSelector((state: RootState) => state.activeDates.today);
@@ -29,7 +30,8 @@ const CalendarSchedule: React.FC = () => {
   const loader                                        = useRef<HTMLDivElement | null>(null);
   const containerRef                                  = useRef<HTMLDivElement | null>(null);
   const timerRef                                      = useRef<number | null>(null);
-  const scrollingRef                                  = useRef(false);
+  const intervalRef                                   = useRef<number | null>(null);
+  const scrollingRef                                  = useRef<boolean>(false);
 
   const [groupedTransactions, setGroupedTransactions] = useState<{ date: string; transactions: { transaction: Transaction; date: string }[]; }[]>([]);
 
@@ -49,7 +51,6 @@ const CalendarSchedule: React.FC = () => {
 
   // Find the date closest to the top of the container
   const getClosestDataDate = () => {
-    console.log("Getting that date, yo!")
     const container = containerRef.current;
   
     if (!container) {
@@ -78,44 +79,45 @@ const CalendarSchedule: React.FC = () => {
     if (closestDataDate !== null && closestDataDate !== activeDate) {
       dispatch(setActiveDate(closestDataDate));
     }
-
   };
 
-  const [scrolling, setScrolling] = useState(false);
-
-  const throttledHandleUserScroll = _.throttle(getClosestDataDate, 200);
-
+  // Detect and react to use scrolling
   const handleScrollRef = useRef(() => {
+    const throttledHandleUserScroll = _.throttle(getClosestDataDate, 100);
+
     setScrolling(true);
     scrollingRef.current = true;
 
     if (timerRef.current) {
-      clearTimeout(timerRef.current);
+      window.clearTimeout(timerRef.current);
     }
+
+    if (intervalRef.current) {
+      window.clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = window.setInterval(throttledHandleUserScroll, 100);
 
     timerRef.current = window.setTimeout(() => {
       scrollingRef.current = false;
       setScrolling(false);
-    }, 1000); 
 
-    throttledHandleUserScroll();
+      if (intervalRef.current) {
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }, 3000);
   });
 
   useEffect(() => {
     const events: (keyof WindowEventMap)[] = ['scroll', 'touchmove', 'wheel'];
-    const currentHandleScroll = handleScrollRef.current; // copy the ref to a variable
+    const currentHandleScroll = handleScrollRef.current;
     events.forEach(event => window.addEventListener(event, currentHandleScroll));
 
     return () => {
       events.forEach(event => window.removeEventListener(event, currentHandleScroll));
     };
-  }, []); // Removed handleScroll from dependencies, since it's stored in a ref now
-
-
-
-
-
-
+  }, []); 
 
   // Scroll to the active date when it is changed
   useEffect(() => {
