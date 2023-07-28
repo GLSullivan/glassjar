@@ -21,15 +21,15 @@ function Landing() {
   const [firebaseSignInError, setFirebaseSignInError] = useState<string | null>( null );
   const [firebaseSignUpError, setFirebaseSignUPError] = useState<string | null>( null );
 
-  const [showPassword, setShowPassword]               = useState<boolean>(false);
   const [mode, setMode]                               = useState<string>('signIn');
+  const [showPassword, setShowPassword]               = useState<boolean>(false);
   const [emailHasBeenSent, setEmailHasBeenSent]       = useState<boolean>(false);
-  const [error, setError]                             = useState<string>('');
   const [showMore, setShowMore]                       = useState<boolean>(false);
+  const [error, setError]                             = useState<string>('');
 
-  const signInRef                                     = useRef<HTMLInputElement  | null>(null);
-  const signUpRef                                     = useRef<HTMLInputElement  | null>(null);
-  const forgotRef                                     = useRef<HTMLInputElement  | null>(null);
+  const signInRef                                     = useRef<HTMLInputElement | null>(null);
+  const signUpRef                                     = useRef<HTMLInputElement | null>(null);
+  const forgotRef                                     = useRef<HTMLInputElement | null>(null);
 
   const handleModeChange = useCallback(() => {
     console.log(mode)
@@ -161,12 +161,8 @@ function Landing() {
     <>
       <div className='glassjar__landing'>
         <div>
-          <button className="glassjar__more-tab" onClick={() => setShowMore(!showMore)}>
-            {/* <i className={`fa-solid fa-fw fa-circle-x glassjar__more-tab__icon ${showMore ? 'open' : ''}`} />
-            <i className={`fa-solid fa-fw fa-circle-info glassjar__more-tab__icon ${showMore ? '' : 'open'}`} /> */}
-
+          <button className='glassjar__more-tab' onClick={() => setShowMore(!showMore)}>
             <i className={`fa-fw fa-solid fa-plus-large glassjar__more-tab__icon ${showMore ? '' : 'open'}`} /> 
-
           </button>
           <div className={`glassjar__welcome-content ${showMore ? 'open' : ''}`}>
             <img
@@ -199,7 +195,7 @@ function Landing() {
                   >
                       {({ errors, touched, setFieldTouched }) => (
                       <Form>
-                        <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
+                        <div className='glassjar__flex glassjar__flex--column'>
                           <div className='glassjar__form__input-group'>
                             <Field
                               name         = 'email'

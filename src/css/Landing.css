@@ -144,7 +144,7 @@ button.glassjar__more-tab {
     position       : absolute;
     right          : 0;
     top            : 20%;
-    z-index        : 15;
+    z-index        : 150;
 }
 
 button.glassjar__more-tab:before,
@@ -171,7 +171,7 @@ button.glassjar__more-tab:after {
 
 .glassjar__more-tab__icon {
   align-items     : center;
-  background-color: var(--color-interaction);
+  background: var(--color-interaction);
   border-radius   : 5rem;
   color           : var(--color-bright);
   display         : flex;
