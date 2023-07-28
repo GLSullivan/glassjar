@@ -1,31 +1,54 @@
-import { Formik, Field, Form, ErrorMessage }  from 'formik';
-import * as Yup                               from 'yup';
-import firebase                               from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import firebase                                                    from 'firebase/compat/app';
+import { Formik, Field, Form, ErrorMessage }                       from 'formik';
+import * as Yup                                                    from 'yup';
+import 'firebase/compat/auth';                     
 
-import { useDispatch }                        from 'react-redux';
-import React, { useEffect, useState }         from 'react';
+import { useDispatch }                                             from 'react-redux';
+import React, { useCallback, useEffect, useRef, useState }         from 'react';
 
-import { setCurrentUser, setSignedIn }        from './../redux/slices/auth';
+import { setCurrentUser, setSignedIn }                             from './../redux/slices/auth';
 
-import landing                                from './../media/images/landing_hero.webp';
-import logo                                   from './../media/images/glassjar_logo1.svg';
-import copyright                              from './../media/images/copyright.svg';
-import fourJars                               from './../media/images/fours-jars.jpg';
-
+import logo                                                        from './../media/images/glassjar_logo1.svg';
+import landing                                                     from './../media/images/landing_hero.webp';
+import fourJars                                                    from './../media/images/fours-jars.jpg';
+import copyright                                                   from './../media/images/copyright.svg';
 
 import './../css/Landing.css';
 
 function Landing() {
   const dispatch = useDispatch();
+
   const [firebaseSignInError, setFirebaseSignInError] = useState<string | null>( null );
   const [firebaseSignUpError, setFirebaseSignUPError] = useState<string | null>( null );
 
+  const [showPassword, setShowPassword]               = useState<boolean>(false);
+  const [mode, setMode]                               = useState<string>('signIn');
+  const [emailHasBeenSent, setEmailHasBeenSent]       = useState<boolean>(false);
+  const [error, setError]                             = useState<string>('');
+  const [showMore, setShowMore]                       = useState<boolean>(false);
+
+  const signInRef                                     = useRef<HTMLInputElement  | null>(null);
+  const signUpRef                                     = useRef<HTMLInputElement  | null>(null);
+  const forgotRef                                     = useRef<HTMLInputElement  | null>(null);
+
+  const handleModeChange = useCallback(() => {
+    console.log(mode)
+    switch (mode) {
+      case 'signIn':
+        signInRef.current?.focus();
+        break;
+      case 'signUp':
+        signUpRef.current?.focus();
+        break;
+      case 'forgot':
+        forgotRef.current?.focus();
+        break;
+    }
+  }, [mode, signInRef, signUpRef, forgotRef]); 
   
-  const [showPassword, setShowPassword]         = useState(false);
-  const [mode, setMode]                         = useState('signIn');
-  const [emailHasBeenSent, setEmailHasBeenSent] = useState<boolean>(false);
-  const [error, setError]                       = useState<string>('');
+  useEffect(() => {
+    handleModeChange();
+  }, [handleModeChange]); 
 
   const sendResetEmail = async (values: { email: string }) => {
     try {
@@ -127,15 +150,16 @@ function Landing() {
     return () => unregisterAuthObserver();
   }, [dispatch]);
 
-  const [showMore, setShowMore] = useState<boolean>(false);
-
   return (
     <>
       <div className='glassjar__landing'>
         <div>
           <button className="glassjar__more-tab" onClick={() => setShowMore(!showMore)}>
-            <i className={`fa-solid fa-fw fa-circle-x glassjar__more-tab__icon ${showMore ? 'open' : ''}`} />
-            <i className={`fa-solid fa-fw fa-circle-info glassjar__more-tab__icon ${showMore ? '' : 'open'}`} />
+            {/* <i className={`fa-solid fa-fw fa-circle-x glassjar__more-tab__icon ${showMore ? 'open' : ''}`} />
+            <i className={`fa-solid fa-fw fa-circle-info glassjar__more-tab__icon ${showMore ? '' : 'open'}`} /> */}
+
+            <i className={`fa-fw fa-solid fa-plus-large glassjar__more-tab__icon ${showMore ? '' : 'open'}`} /> 
+
           </button>
           <div className={`glassjar__welcome-content ${showMore ? 'open' : ''}`}>
             <img
@@ -170,11 +194,13 @@ function Landing() {
                         <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                           <div className='glassjar__form__input-group'>
                             <Field
-                              name        = 'email'
-                              type        = 'email'
-                              placeholder = 'Email'
-                              autoComplete= 'username'
-                              className   = {errors.email ? 'error' : ''}
+                              name         = 'email'
+                              type         = 'email'
+                              placeholder  = 'Email'
+                              autoComplete = 'username'
+                              tabIndex     = {mode === 'signIn' ? 1 : -1}
+                              innerRef     = {signInRef}
+                              className    = {errors.email ? 'error' : ''}
                             />
                             <label htmlFor='email'>
                               Email{' '}
@@ -196,6 +222,7 @@ function Landing() {
                               type         = {showPassword ? 'text' : 'password'}
                               placeholder  = 'Password'
                               autoComplete = 'current-password'
+                              tabIndex     = {mode === 'signIn' ? 2 : -1}
                               className    = {errors.password ? 'error' : ''}
                             />
                             <label htmlFor='password'>
@@ -224,6 +251,7 @@ function Landing() {
                                 <i className='fa-brands fa-google' />
                               </button>
                               <button
+                                tabIndex = {mode === 'signIn' ? 3 : -1}
                                 className='glassjar__button glassjar__button--primary'
                                 type='submit'
                               >
@@ -271,11 +299,14 @@ function Landing() {
                         <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                           <div className='glassjar__form__input-group'>
                             <Field
-                              name        = 'email'
-                              type        = 'email'
-                              placeholder = 'Email'
-                              autoComplete= 'username'
-                              className   = {errors.email ? 'error' : ''}
+                              name         = 'email'
+                              type         = 'email'
+                              placeholder  = 'Email'
+                              autoComplete = 'username'
+                              innerRef     = {signUpRef}
+                              tabIndex     = {mode === 'signUp' ? 1 : -1}
+
+                              className    = {errors.email ? 'error' : ''}
                             />
                             <label htmlFor='email'>
                               Email{' '}
@@ -297,6 +328,7 @@ function Landing() {
                               type         = {showPassword ? 'text' : 'password'}
                               placeholder  = 'Password'
                               className    = {errors.password ? 'error' : ''}
+                              tabIndex     = {mode === 'signUp' ? 2 : -1}
                               autoComplete = 'new-password'
                             />
                             <label htmlFor='password'>
@@ -320,6 +352,7 @@ function Landing() {
                               <button
                                 className='glassjar__button glassjar__button--primary'
                                 type='submit'
+                                tabIndex     = {mode === 'signUp' ? 3 : -1}
                               >
                                 Sign Up
                               </button>
@@ -374,6 +407,8 @@ function Landing() {
                               type        = 'email'
                               name        = 'email'
                               id          = 'email'
+                              innerRef    = {forgotRef}
+                              tabIndex    = {mode === 'forgot' ? 1 : -1}
                               placeholder = 'Your Email'
                               className   = {errors.email ? 'error' : ''}
                             />
@@ -385,9 +420,10 @@ function Landing() {
                             </label>
                           </div>
                           <button
-                            className='glassjar__button glassjar__button--primary'
-                            type='submit'
-                            disabled={isSubmitting}
+                            className = 'glassjar__button glassjar__button--primary'
+                            type      = 'submit'
+                            tabIndex  = {mode === 'forgot' ? 2 : -1}
+                            disabled = {isSubmitting}
                           >
                             Send Reset Link
                           </button>

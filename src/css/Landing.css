@@ -178,14 +178,26 @@ button.glassjar__more-tab:after {
 }
 
 .glassjar__more-tab__icon {
-  opacity   : 0;
-  position  : absolute;
-  transform : rotate(-540deg);
-  transition: .5s ease;
+  position        : absolute;
+  transform       : rotate(-45deg);
+  transition      : .5s ease;
+  color           : var(--color-bright);
+  font-size       : 1.0rem;
+  width           : 1.3rem;
+  height          : 1.3rem;
+  max-width       : 1.3rem;
+  max-height      : 1.3rem;
+  min-width       : 1.3rem;
+  min-height      : 1.3rem;
+  border-radius   : 5rem;
+  padding         : .3rem;
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  background-color: var(--color-interaction);
 }
 
 .glassjar__more-tab__icon.open {
-  opacity  : 1;
   transform: rotate(0deg);
 }
 

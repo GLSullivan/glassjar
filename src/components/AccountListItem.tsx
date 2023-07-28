@@ -10,8 +10,8 @@ import { AccountType }                from './../utils/constants';
 import './../css/Panels.css';
 
 interface AccountListItem {
-  account           : Account;
-  balance          ?: number;
+  account : Account;
+  balance?: number;
 }
 
 const accountTypeIcons: { [K in AccountType]: string } = {
@@ -30,7 +30,7 @@ function getNextOccurrence(dateString: string | undefined) {
 
   const currentDate = new Date();
   currentDate.setMonth(currentDate.getMonth() + 1);  // Move to the next month.
-  currentDate.setDate(1);  // Set to the first day of the next month.
+  currentDate.setDate (1);                           // Set to the first day of the next month.
 
   const dateParts = dateString.split('-');
   const dayInMonth = Number(dateParts[2]);
