@@ -244,7 +244,8 @@ function Landing() {
                             </div>
                             <div className='glassjar__flex'>
                               <button
-                                type='button'
+                                type='button'                             
+                                tabIndex = {mode === 'signIn' ? 4 : -1}
                                 className='glassjar__button glassjar__button--primary'
                                 onClick={signInWithGoogle}
                               >
@@ -261,20 +262,22 @@ function Landing() {
                           </div>
                           <p>
                             Don't have an account?{' '}
-                            <span
+                            <button
+                              tabIndex = {mode === 'signIn' ? 5 : -1}
                               onClick={() => setMode('signUp')}
                               className='glassjar__text-link'
                             >
                               Sign UP
-                            </span>
+                            </button>
                           </p>
                           <p>
-                            <span
+                            <button
+                              tabIndex = {mode === 'signIn' ? 6 : -1}
                               onClick={() => setMode('forgot')}
                               className='glassjar__text-link'
                             >
                               Forgot Your Password?
-                            </span>
+                            </button>
                           </p>
                         </div>
                       </Form>
@@ -360,12 +363,13 @@ function Landing() {
                           </div>
                           <p>
                             Already have an account?{' '}
-                            <span
-                              onClick={() => setMode('signIn')}
-                              className='glassjar__text-link'
+                            <button
+                              tabIndex  = {mode === 'signUp' ? 4 : -1}
+                              onClick   = {() => setMode('signIn')}
+                              className = 'glassjar__text-link'
                             >
                               Sign In
-                            </span>
+                            </button>
                           </p>
                         </div>
                       </Form>
@@ -388,7 +392,6 @@ function Landing() {
                     {({ errors, isSubmitting }) => (
                       <Form>
                         <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
-                          <p>Reset your Password</p>
                           <div
                             className={`glassjar__auto-height glassjar__auto-height--top ${
                               emailHasBeenSent ? 'open' : ''
@@ -428,12 +431,13 @@ function Landing() {
                             Send Reset Link
                           </button>
                           <p>
-                            <span
+                            <button
+                              tabIndex  = {mode === 'forgot' ? 3 : -1}
                               onClick={() => setMode('signIn')}
                               className='glassjar__text-link'
                             >
                               Back To Sign In
-                            </span>
+                            </button>
                           </p>{' '}
                         </div>
                       </Form>

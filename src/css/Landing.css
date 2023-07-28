@@ -27,9 +27,7 @@
 
 .glassjar__landing > div {
   align-items    : center;
-  border-radius  : .9rem;
-  /* box-shadow     : rgba(17, 17, 26, 0.05) 0px 4px 16px 0px,
-                    rgba(17, 17, 26, 0.05) 0px 8px 32px 0px;   */
+  border-radius  : 1rem;
   box-sizing     : border-box;
   display        : flex;
   flex           : 2;
@@ -72,15 +70,9 @@
 }
 
 .glassjar__landing__form > div {
-  backdrop-filter: blur(4px) saturate(0.0);
-  background     : rgba(54, 110, 121, 0.2);
-  border-radius  : 0.5rem;
   bottom         : 0.5rem;
-  box-shadow     : 0px 4px 16px 0px rgba(17, 17, 26, 0.25),
-                    0px 8px 32px 0px rgba(17, 17, 26, 0.25); 
   box-sizing     : border-box;
-  padding        : 1rem;
-  width          : 100%;
+  width          : 100%;  
 }
 
 .glassjar__landing h1 {
@@ -92,7 +84,7 @@
   margin     : 0;
   text-align : right;
   text-shadow: 0px 4px 6px rgba(54, 110, 121, 0.2),
-  0px 8px 12px rgba(54, 110, 121, 0.2);
+                0px 8px 12px rgba(54, 110, 121, 0.2);
   width      : 100%; 
 }
 
@@ -166,35 +158,35 @@ button.glassjar__more-tab:after {
 }
 
 button.glassjar__more-tab:before {
-    border-top-right-radius: 1rem;
+    border-top-right-radius: .5rem;
     bottom                 : -2rem;
     box-shadow             : 0 -1rem 0 0 var(--color-bright);
 }
 
 button.glassjar__more-tab:after {
-    border-bottom-right-radius: 1rem;
+    border-bottom-right-radius: .5rem;
     box-shadow                : 0 1rem 0 0 var(--color-bright);
     top                       : -2rem;
 }
 
 .glassjar__more-tab__icon {
+  align-items     : center;
+  background-color: var(--color-interaction);
+  border-radius   : 5rem;
+  color           : var(--color-bright);
+  display         : flex;
+  font-size       : 1.0rem;
+  height          : 1.3rem;
+  justify-content : center;
+  max-height      : 1.3rem;
+  max-width       : 1.3rem;
+  min-height      : 1.3rem;
+  min-width       : 1.3rem;
+  padding         : .3rem;
   position        : absolute;
   transform       : rotate(-45deg);
   transition      : .5s ease;
-  color           : var(--color-bright);
-  font-size       : 1.0rem;
   width           : 1.3rem;
-  height          : 1.3rem;
-  max-width       : 1.3rem;
-  max-height      : 1.3rem;
-  min-width       : 1.3rem;
-  min-height      : 1.3rem;
-  border-radius   : 5rem;
-  padding         : .3rem;
-  display         : flex;
-  align-items     : center;
-  justify-content : center;
-  background-color: var(--color-interaction);
 }
 
 .glassjar__more-tab__icon.open {

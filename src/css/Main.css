@@ -19,7 +19,7 @@
   --color-inverse     : #f0f5f3;
   --color-secondary   : #8f8f8f;
   --color-brand       : #202230;
-  --color-interaction : #8c5c38;
+  --color-interaction : #bd7a46;
   --color-tertiary    : #b5b5b5;
   --color-primary     : #202230;
   --color-accent      : #414450;
@@ -124,8 +124,21 @@ h2 {
 }
 
 .glassjar__text-link {
-  color : #bd7a46;
-  cursor: pointer;
+  background   : none;
+  border       : none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  color        : var(--color-interaction);
+  cursor       : pointer;
+  font-weight  : inherit;
+  margin       : 0;
+  outline      : none;
+  padding      : 0;
+  transition   : .5s ease;
+}
+
+.glassjar__text-link:focus {
+  border-bottom: 1px solid  var(--color-interaction);
 }
 
 .glassjar__margin-gap > * {
