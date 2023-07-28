@@ -165,7 +165,7 @@ function Landing() {
             <img
               className='glassjar__landing__img glassjar__landing__img--jars'
               src={fourJars}
-              alt=''
+              alt='Four jars full of coins.'
             />
             <section>
               <h1>Visualize Your Financial Journey</h1>
@@ -446,18 +446,18 @@ function Landing() {
           <img
             className='glassjar__landing__img glassjar__landing__img--hero'
             src={landing}
-            alt=''
+            alt='A glass jar overflowing with coins.'
           />
         </div>
         <img
           className='glassjar__landing__img glassjar__landing__img--logo'
           src={logo}
-          alt=''
+          alt='Glass Jar by Greg Sullivan'
         />
         <img
           className='glassjar__landing__img glassjar__landing__img--copyright'
           src={copyright}
-          alt=''
+          alt='Copyright 2023 - Greg Sullivan'
         />
       </div>
     </>
