@@ -17,6 +17,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
+      <div className='glassjar__desktop-message'>Glass Jar is under development and thus far has not been configured for desktop.</div>
     </Provider>
   </React.StrictMode>
 );
