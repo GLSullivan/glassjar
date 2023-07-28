@@ -66,7 +66,14 @@ function Landing() {
     email: Yup.string().email('Invalid email format').required('Required'),
   });
 
-  const validationSchema = Yup.object({
+  const signUpValidationSchema = Yup.object({
+    email: Yup.string().email('Invalid email format').required('Required'),
+    password: Yup.string()
+      .min(6, 'Must be > 6 characters')
+      .required('Required'),
+  });
+
+  const signInValidationSchema = Yup.object({
     email: Yup.string().email('Invalid email format').required('Required'),
     password: Yup.string()
       .min(6, 'Must be > 6 characters')
@@ -186,10 +193,11 @@ function Landing() {
                 <div>
                   <Formik
                     initialValues={{ email: '', password: '' } as any}
-                    validationSchema={validationSchema}
+                    validationSchema={signUpValidationSchema}
                     onSubmit={signIn}
+                    validateOnChange={false}
                   >
-                    {({ errors }) => (
+                      {({ errors, touched, setFieldTouched }) => (
                       <Form>
                         <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                           <div className='glassjar__form__input-group'>
@@ -201,11 +209,16 @@ function Landing() {
                               tabIndex     = {mode === 'signIn' ? 1 : -1}
                               innerRef     = {signInRef}
                               className    = {errors.email ? 'error' : ''}
+                              onBlur={(e: React.FocusEvent<any>) => {
+                                if (e.target.value) {
+                                  setFieldTouched('email')
+                                }
+                              }}
                             />
                             <label htmlFor='email'>
                               Email{' '}
                               <span className='glassjar__form__input-group__error'>
-                                <ErrorMessage name='email' />
+                                {errors.email && touched.email ? <ErrorMessage name='email' /> : null}
                               </span>
                             </label>
                           </div>
@@ -294,10 +307,10 @@ function Landing() {
                 <div>
                   <Formik
                     initialValues={{ email: '', password: '' } as any}
-                    validationSchema={validationSchema}
+                    validationSchema={signInValidationSchema}
                     onSubmit={signUp}
                   >
-                    {({ errors }) => (
+                    {({ errors, touched, setFieldTouched }) => (
                       <Form>
                         <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                           <div className='glassjar__form__input-group'>
@@ -308,13 +321,17 @@ function Landing() {
                               autoComplete = 'username'
                               innerRef     = {signUpRef}
                               tabIndex     = {mode === 'signUp' ? 1 : -1}
-
                               className    = {errors.email ? 'error' : ''}
+                              onBlur={(e: React.FocusEvent<any>) => {
+                                if (e.target.value) {
+                                  setFieldTouched('email')
+                                }
+                              }}
                             />
                             <label htmlFor='email'>
                               Email{' '}
                               <span className='glassjar__form__input-group__error'>
-                                <ErrorMessage name='email' />
+                                {errors.email && touched.email ? <ErrorMessage name='email' /> : null}
                               </span>
                             </label>
                           </div>
