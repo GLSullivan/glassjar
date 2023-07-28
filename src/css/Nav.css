@@ -1,4 +1,4 @@
-        /* 
+          /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -9,237 +9,115 @@
 
 */
 
-.glassjar__footer-nav {
-  background: var(--color-bright);
-  bottom: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-shrink: 0;
-  font-size: 1.4rem;
-  justify-content: space-around;
-  left: 0;
-  max-width: 100vw;
-  width: 100%;
-}
-
 .glassjar__panel-group {
   border-radius: 1rem;
-  box-sizing: border-box;
-  flex: 2;
-  flex-grow: 1;
-  height: 100%;
-  overflow-y: auto;
-  padding: 1rem;
-  position: relative;
-  width: 100%;
+  box-sizing   : border-box;
+  flex         : 2;
+  flex-grow    : 1;
+  height       : 100%;
+  min-height   : 100%;
+  min-width    : 100%;
+  overflow-y   : auto;
+  padding      : 1rem;
+  position     : relative;
+  width        : 100%;
 }
 
 .glassjar__panel-group.glassjar__panel-group--no-scroll {
   overflow-y: unset;
 }
 
-.glassjar__footer-nav__button {
-  color: var(--color-accent);
-  cursor: pointer;
-  font-size: 1.4rem;
-  /* height: 100%; */
-  /* min-height: 100%; */
-  /* padding   : 1rem; */
-  position: absolute;
-  transition: .5s ease;
-}
-
-.glassjar__footer-nav__button.active {
-  color: var(--color-secondary);
-}
-
 .glassjar__panel-group.glassjar__panel-group--calendar {
-  background: none;
+  background   : none;
   border-radius: 0;
-  margin: 0;
-  max-width: unset;
-  padding: 0;
+  margin       : 0;
+  max-width    : unset;
+  padding      : 0;
 }
 
 .glassjar__panel-group.glassjar__panel-group--settings {
   padding-top: 0;
 }
 
-@media (orientation: portrait) {
-  .glassjar__footer-nav {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-@media (orientation: landscape) {
-  .glassjar__footer-nav {
-    border-radius: 0 1rem 1rem 0;
-    flex-direction: column;
-    height: 100vh;
-    width: 60px;
-  }
-
-  .glassjar__panel-group,
-  .glassjar__panel-group.glassjar__panel-group--graph {
-    /* margin-right: 1rem; */
-    height: 100%;
-    margin: 1rem;
-    margin-top: 0;
-    max-height: calc(100% - 2rem);
-    /* max-width: calc(100% - 2rem); */
-    width: 100%;
-  }
-
-  div .glassjar__root {
-    flex-direction: row-reverse;
-  }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Primary */
-
 .glassjar__primary-nav {
-
-  align-items: center;
-  background: var(--color-bright);
-  border: none;
-  border-radius: 100rem 0 0 100rem;
-  bottom: 0;
-  box-shadow: var(--shadow-main);
-  box-sizing: border-box;
-  display: flex;
-  height: 5rem;
-  height: 5rem;
-  justify-content: flex-start;
-  min-height: 48px;
-  min-width: 48px;
-  outline: none;
-  padding: 0 0 0 1rem;
-  position: fixed;
-  right: 0;
-  transition: .5s ease-out;
-  transition-delay: .2s;
-  width: 100vw;
-  width: 5rem;
-  z-index: 500;
-
+  bottom    : 0;
+  position  : fixed;
+  right     : 0;
+  transition: .25s ease;
+  z-index   : 500;
 }
 
-.glassjar__primary-nav.open {
+.glassjar__primary-nav__backing {
+  background    : transparent;
+  bottom        : 0;
+  left          : 0;
+  pointer-events: none;
+  position      : fixed;
+  right         : 0;
+  top           : 0;
+  transition    : .5s ease;
+  z-index       : -1;
+}
 
-  width: 95vw;
+.glassjar__primary-nav__backing.open {
+  background    : var(--color-bright);
+  pointer-events: auto;
 }
 
 button.glassjar__primary-nav__more {
-  align-items: center;
-  background: none;
-  border: none;
-  display: flex;
-  height: 5rem;
-  justify-content: center;
-  position: absolute;
-  right: 0;
-  width: 5rem;
-
-}
-
-button.glassjar__primary-nav__more.open {
-
-  /* width: 95vw; */
-}
-
-.glassjar__primary-nav__icon-holder {
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: space-around;
-  max-width: calc(100% - 4rem);
-  /* background: red; */
-  /* border: 1px solid green; */
-  overflow: hidden;
-  width: 100%;
-}
-
-.glassjar__primary-nav__icon-holder>div {
-  position: relative;
+  border       : none;
+  border-radius: 10rem;
+  bottom       : 1rem;
+  box-shadow   : rgba(0, 0, 0, 0.09) 0px 3px 12px;
+  color        : var(--color-interaction);
+  font-size    : 2rem;
+  position     : absolute;
+  right        : 1rem;
+  z-index      : 500;
 }
 
 .glassjar__primary-nav__more-icon {
-  align-items: center;
-  color: var(--color-interaction);
-  display: flex;
-
-  font-size: 3.5rem;
-  justify-content: center;
-
-  /* height          : 4.6rem;
-  max-height      : 4.6rem;
-  max-width       : 4.6rem;
-  min-height      : 4.6rem;
-  min-width       : 4.6rem;
-  width           : 4.6rem; */
-
-  padding: .2rem;
-
-  position: absolute;
-  right: 0;
-  transform: rotate(0deg);
-  transition: .25s ease-in;
+  transform : rotate(0deg);
+  transition: .2s ease-in;
 }
 
 .glassjar__primary-nav__more-icon.open {
-  transform: rotate(-90deg);
+  transform: rotate(-45deg);
 }
 
-
-
-.glassjar__primary-nav__icon-holder>div {
-  width: 1px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+.glassjar__primary-nav__icon-holder {
+  bottom        : 3.5rem;
+  display       : flex;
+  flex-direction: column;
+  gap           : 0rem;
+  pointer-events: none;
+  position      : absolute;
+  right         : 3.5rem;
+  transition    : .2s ease;
 }
 
-
-
-
-
-
-
-
-        /* button.glassjar__primary-nav__more:before,
-button.glassjar__primary-nav__more:after {
-  content : ' ';
-  height  : 2rem;
-  position: absolute;
-  right   : 0;
-  width   : 1rem;
-  z-index : -1;
+.glassjar__primary-nav__icon-holder.open {
+  gap           : 1rem;
+  pointer-events: auto;
 }
 
-button.glassjar__primary-nav__more:before {
-  border-top-right-radius: .5rem;
-  bottom                 : -2rem;
-  box-shadow             : 0 -1rem 0 0 var(--color-bright);
+.glassjar__primary-nav__icon-holder.exiting {
+  opacity: 0;
 }
 
-button.glassjar__primary-nav__more:after {
-  border-bottom-right-radius: .5rem;
-  box-shadow                : 0 1rem 0 0 var(--color-bright);
-  top                       : -2rem;
-} */
+.glassjar__primary-nav__icon-holder > button {
+  align-items    : center;
+  background     : none;
+  border         : none;
+  display        : flex;
+  font-size      : 1.2rem;
+  gap            : 0.5rem;
+  height         : 48px;
+  justify-content: flex-end;
+  opacity        : 0;
+  transition     : .5s ease;
+}
+
+.glassjar__primary-nav__icon-holder.open > button {
+  opacity: 1;
+}
