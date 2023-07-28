@@ -190,5 +190,5 @@ button {
 .glassjar__button.glassjar__button--danger {
   font-weight: 900;
   color: var(--color-bright);
-  background-color: var(--color-danger);
+  background: var(--color-danger);
 }

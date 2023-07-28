@@ -9,12 +9,12 @@ import TransactionList                      from './components/TransactionList';
 import CategoryGraph                        from './components/CategoryGraph'
 import SettingsPanel                        from './components/SettingsPanel';
 import OutlookGraph                         from './components/OutlookGraph'
+import PrimaryNav                           from './components/PrimaryNav';
 import Calendar                             from './components/Calendar';
 import Loader                               from './components/Loader';
 import Modal                                from './components/Modal';
 
 import { recalculateProjections }           from './redux/slices/projections';
-import { setView }                          from './redux/slices/views';
 import {      
   closeTransactionModal,      
   closeAccountForm,     
@@ -54,10 +54,6 @@ const App: React.FC = () => {
 
   const closeTheTransactionHelper = () => {
     dispatch(closeTransactionHelper())
-  }
-
-  const setActiveView = (view: string) => {
-    dispatch(setView(view))
   }
 
   useEffect(() => {
@@ -114,14 +110,7 @@ const App: React.FC = () => {
       </div>
       }
 
-      <div className='glassjar__footer-nav'>
-        <i onClick = {() => { setActiveView('calendar') }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-calendar-days' + (activeView === 'calendar' ? ' active' : '')} />
-        <i onClick = {() => { setActiveView('accounts') }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-file-invoice' + (activeView === 'accounts' ? ' active' : '')} />
-        <i onClick = {() => { setActiveView('transactions') }} className = {'glassjar__footer-nav__button fa-fw fa-solid fa-jar' + (activeView === 'transactions' ? ' active' : '')} />
-        <i onClick = {() => { setActiveView('outlook') }} className      = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-line' + (activeView === 'outlook' ? ' active' : '')} />
-        <i onClick = {() => { setActiveView('categories') }} className   = {'glassjar__footer-nav__button fa-fw fa-solid fa-chart-pie' + (activeView === 'categories' ? ' active' : '')} />
-        <i onClick = {() => { setActiveView('settings') }} className     = {'glassjar__footer-nav__button fa-fw fa-solid fa-gear' + (activeView === 'settings' ? ' active' : '')} />
-      </div>
+      <PrimaryNav />
       
       </>}
     </div>
