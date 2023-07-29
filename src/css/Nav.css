@@ -67,12 +67,12 @@
 button.glassjar__primary-nav__more {
   border       : none;
   border-radius: 10rem;
-  bottom       : 1rem;
+  bottom       : 2rem;
   box-shadow   : rgba(0, 0, 0, 0.09) 0px 3px 12px;
   color        : var(--color-interaction);
-  font-size    : 2rem;
+  font-size    : 3rem;
   position     : absolute;
-  right        : 1rem;
+  right        : 2rem;
   z-index      : 500;
 }
 
@@ -86,13 +86,13 @@ button.glassjar__primary-nav__more {
 }
 
 .glassjar__primary-nav__icon-holder {
-  bottom        : 3.5rem;
+  bottom        : 6rem;
   display       : flex;
   flex-direction: column;
   gap           : 0rem;
   pointer-events: none;
   position      : absolute;
-  right         : 3.5rem;
+  right         : 6rem;
   transition    : .2s ease;
 }
 
@@ -110,9 +110,9 @@ button.glassjar__primary-nav__more {
   background     : none;
   border         : none;
   display        : flex;
-  font-size      : 1.2rem;
+  font-size      : 1.4rem;
   gap            : 0.5rem;
-  height         : 48px;
+  min-height     : 48px;
   justify-content: flex-end;
   opacity        : 0;
   transition     : .5s ease;

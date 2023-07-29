@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSwipeable }               from 'react-swipeable';
 import { addDays, 
   addMonths, 
+  addWeeks, 
   endOfWeek, 
   format, 
   getDay, 
@@ -14,20 +15,18 @@ import { addDays,
   startOfMonth, 
   startOfWeek, 
   subDays, 
-  subMonths }                         from 'date-fns';
+  subMonths,
+  subWeeks }                          from 'date-fns';
 
-import { setActiveDate }              from '../redux/slices/activedates';
-import { dateHasTransactions }        from '../redux/slices/projections';
-import { RootState }                  from '../redux/store';
-
-// import { DayPanel }                   from './panels/DayPanel';
-import OutlookGraph                   from './OutlookGraph';
-import CalendarSchedule               from './CalendarSchedule';
+import { setActiveDate }              from './../redux/slices/activedates';
+import { dateHasTransactions }        from './../redux/slices/projections';
+import { setCalendarView }            from './../redux/slices/views';
+import { RootState }                  from './../redux/store';
 import CalendarDay                    from './CalendarDay';
 
 import './../css/Calendar.css';
 
-  // Constants
+// Constants
 const dayNames       = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 
@@ -38,7 +37,15 @@ const CalendarMonth: React.FC = () => {
   // Redux store selectors
   const activeDate    = useSelector((state: RootState) => state.activeDates.activeDate);
   const today         = useSelector((state: RootState) => state.activeDates.today);
+  const calendarView  = useSelector((state: RootState) => state.views.calendarView);
+
   const activeDateObj = new Date(activeDate);
+
+  const handleViewChange = () => {
+    // Toggle between 'month' and 'week'
+    const newView = calendarView === 'month' ? 'week' : 'month';
+    dispatch(setCalendarView(newView));
+  };
 
   // Rotated day names to allow users to choose the first day of the week
   const rotatedDayNames = dayNames
@@ -47,21 +54,32 @@ const CalendarMonth: React.FC = () => {
 
   // Function to change the month based on the given direction
   const changeMonth = (direction: 'next' | 'previous') => {
-    let newMonth;
-    if (direction === 'next') {
-      newMonth = addMonths(activeDateObj, 1);
-    } else {
-      newMonth = subMonths(activeDateObj, 1);
-    }
+    let newDate: Date = new Date(activeDate);
 
-    newMonth = startOfMonth(newMonth); // Ensure the date is set to the first of the month
+    if (direction === 'next') {
+      if (calendarView === 'month') {
+        newDate = addMonths(newDate, 1);
+        newDate = startOfMonth(newDate); 
+
+      } else if (calendarView === 'week') {
+        newDate = addWeeks(newDate, 1);
+      }
+    } else {
+      if (calendarView === 'month') {
+        newDate = subMonths(newDate, 1);
+      } else if (calendarView === 'week') {
+        newDate = subWeeks(newDate, 1);
+        newDate = startOfMonth(newDate); 
+      }
+    }
 
     const today = startOfDay(new Date());
-    if (isBefore(newMonth, today)) {
-      newMonth = today;
+
+    if (isBefore(newDate, today)) {
+      newDate = today;
     }
 
-    dispatch(setActiveDate(newMonth.toISOString()));
+    dispatch(setActiveDate(newDate.toISOString()));
   };
 
     // Swipe handlers for changing the month
@@ -132,13 +150,7 @@ const CalendarMonth: React.FC = () => {
           ))}
         </div>
         {chunk(days, 7).map((week: Date[], weekIndex: number) => (
-          // <div
-          //   key={weekIndex}
-          //   className={`glassjar__calendar__week glassjar__auto-height${isDateInWeek(week[0], new Date(activeDate))
-          //       ? ' open'
-          //       : ''
-          //     }`}
-          // >
+          <div key={weekIndex} className={`glassjar__calendar__week glassjar__auto-height${(isDateInWeek(week[0], new Date(activeDate)) || calendarView === 'month') ? ' open' : '' }`} >
             <div key={weekIndex} className={`glassjar__calendar__seven-row${isDateInWeek(week[0], new Date(activeDate)) ? ' active' : '' }`}>
               {week.map((day: Date, dayIndex: number) => {
                 return (
@@ -155,16 +167,20 @@ const CalendarMonth: React.FC = () => {
                 );
               })}
             </div>
-          // </div>
+          </div>
         ))}
+
+        <div className='glassjar__calendar-toggle'>
+          <button
+            onClick={() => handleViewChange()}
+            className='glassjar__button glassjar__button__calendar-toggle glassjar__button--small'
+          >
+            <i className={`fa-regular fa-down-to-line ${calendarView === 'month' ? "open" : ""}`} />
+          </button>
+        </div>
+        
       </div>
-      <div className='glassjar__calendar__day-panel--graph'>
-        <OutlookGraph />
-      </div>
-      <div className='glassjar__calendar__day-panel'>
-        {/* <DayPanel /> */}
-        <CalendarSchedule />
-      </div>
+      
     </div>
   );
 };

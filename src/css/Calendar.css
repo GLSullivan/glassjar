@@ -21,13 +21,21 @@
 }
 
 .glassjar__calendar__calendar {
-  /* border: 1px solid var(--color-border); */
-  padding: 0.5rem 1rem;
-  margin: 0 3rem;
-  /* border-radius: .5rem; */
   box-shadow: var(--shadow-main);
-  /* background: var(--color-brand);
-  color: var(--color-bright); */
+  box-sizing: border-box;
+  margin    : 0 3rem 1rem 3rem;
+  min-height: 100px;
+  padding   : 0.5rem 1rem 1.5rem 1rem;
+  position  : relative;
+}
+
+.glassjar__calendar-toggle {
+  bottom         : -1rem;
+  display        : flex;
+  justify-content: center;
+  left           : 0;
+  position       : absolute;
+  width          : 100%;
 }
 
 .glassjar__calendar__seven-row {
@@ -36,10 +44,10 @@
 }
 
 .glassjar__calendar__seven-row > * {
-  flex : 2;
-  width: 100%;
-  font-size: .8rem;
+  flex       : 2;
+  font-size  : .8rem;
   font-weight: 300;
+  width      : 100%;
 }
 
 .glassjar__calendar__day {
@@ -80,18 +88,14 @@
   font-weight: 500;
 }
 
-/* .glassjar__calendar__day.today {
-  border: 1px solid var(--color-border);
-} */
-
 .glassjar__calendar__day.other-month {
   opacity: .25;
 }
 
 .glassjar__calendar__day.active {
   background   : var(--color-bright) ;
-  color        : var(--color-brand);
   border       : 1px solid var(--color-border);
+  color        : var(--color-brand);
   opacity      : 1;
 }
 
@@ -106,10 +110,6 @@
     justify-content: space-around;
 }
 
-.glassjar__calendar__container .glassjar__calendar__navigation {
-  padding-right  : 6rem;
-}
-
 .glassjar__calendar__navigation h2 {
   flex      : 2;
   text-align: center;
@@ -118,7 +118,7 @@
 .glassjar__calendar__navigation button {
   background: none;
   border    : none;
-  color     : var(--color-inverse);
+  color     : var(--color-interaction);
   font-size : 1.4rem;
   outline   : none;
   padding   : 1rem;
@@ -162,16 +162,13 @@
   flex      : 1;
   max-height: 100%;
   overflow  : auto;
-  /* padding   : 1rem; */
-
   -webkit-overflow-scrolling: auto;
-
 }
 
 .glassjar__calendar__day-panel--graph {
+  box-sizing: border-box;
   height: 20vh;
   padding: .5rem 1rem;
-  box-sizing: border-box;
 }
 
 .glassjar__calendar__day-panel--graph h2 {
@@ -180,4 +177,12 @@
 
 .glassjar__calendar__month {
   margin: 0;
+}
+
+button.glassjar__button.glassjar__button__calendar-toggle i {
+  transition: .25s ease;
+}
+
+button.glassjar__button.glassjar__button__calendar-toggle i.open {
+  transform: rotateX(180deg);
 }

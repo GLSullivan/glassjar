@@ -1,8 +1,8 @@
+import { useDispatch, useSelector }   from "react-redux";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-import { setView } from "./../redux/slices/views";
-import { RootState } from "../redux/store";
+import { setView }                    from "./../redux/slices/views";
+import { RootState }                  from "../redux/store";
 
 import "./../css/Nav.css";
 
@@ -11,7 +11,7 @@ const PrimaryNav = () => {
     { label: 'Calendar',     icon: 'fa-calendar-days', view: 'calendar' },
     { label: 'Accounts',     icon: 'fa-file-invoice',  view: 'accounts' },
     { label: 'Transactions', icon: 'fa-jar',           view: 'transactions' },
-    { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
+    // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
     { label: 'Settings',     icon: 'fa-gear',          view: 'settings' },
     // { label: 'Categories',     icon: 'fa-chart-pie',     view: 'categories' },
   ];
@@ -37,7 +37,7 @@ const PrimaryNav = () => {
 
       const timer = setTimeout(() => {
         setIsExiting(false);
-      }, 1000); 
+      }, 600); 
 
       return () => {
         clearTimeout(timer);

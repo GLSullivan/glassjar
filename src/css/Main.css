@@ -158,12 +158,12 @@ h2 {
 .glassjar__auto-height {
   display           : grid;
   grid-template-rows: 0fr;
-  transition        : 0.5s ease;
+  transition        : 0.5s;
 }
 
 .glassjar__auto-height > div {
   overflow  : hidden;
-  transition: 0.5s ease;
+  transition: 0.5s;
 }
 
 .glassjar__auto-height.open > div {
