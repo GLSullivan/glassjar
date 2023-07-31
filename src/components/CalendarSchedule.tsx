@@ -78,14 +78,12 @@ const CalendarSchedule: React.FC = () => {
     const schedule = scheduleWindow.current;
 
     const scrollHandler = () => {
-      console.log("scrollHandler");
       userInitiatedScroll.current = true;
       startInterval();
       startTimeout();
     };
   
     const touchEndHandler = () => {
-      console.log("touchEndHandler");
       startTimeout();
     };
   
@@ -94,7 +92,7 @@ const CalendarSchedule: React.FC = () => {
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
       // Set a new timeout
       scrollTimeout.current = setTimeout(() => {
-        console.log("Time setting it false.");
+        getClosestDataDate();
         userInitiatedScroll.current = false;
         stopInterval(); // Stop the interval when userInitiatedScroll is set to false
       }, 1000); // Adjust the delay as needed
