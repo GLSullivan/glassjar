@@ -79,13 +79,12 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
       .replace(/\s{2,}/g, ' ');
 
     return (
-      <div className={className} >
-        <h1 key={day.toISOString()}
-          onClick={() => dispatch(setActiveDate(day.toISOString()))} >
+      <button className={className} onClick={() => dispatch(setActiveDate(day.toISOString()))}>
+        <h1 key={day.toISOString()} >
           {day.getDate()}
         </h1>
         {hasTransaction && <div className='glassjar__calendar__day-marker' style={{ backgroundColor: getColorFromGradient(colors, dayHealth) }}></div>}
-      </div>
+      </button>
     );
   }
 );

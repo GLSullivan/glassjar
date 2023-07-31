@@ -38,6 +38,10 @@
   width          : 100%;
 }
 
+.glassjar__calendar__calendar .glassjar__calendar__week .glassjar__calendar__seven-row {
+  margin-top: 0;
+}
+
 .glassjar__calendar__seven-row {
   display        : flex;
   justify-content: space-around;
@@ -59,6 +63,7 @@
   display        : flex;
   font-weight    : 300;
   justify-content: center;
+  padding        : 0;
   position       : relative;
   text-align     : center;
   transition     : .5s ease;

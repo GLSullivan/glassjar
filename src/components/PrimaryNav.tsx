@@ -85,13 +85,14 @@ const PrimaryNav = () => {
           </button>
         ))}
       </div>
-
       <div
         className={`glassjar__primary-nav__backing ${showNav ? "open" : ""} ${
           isExiting ? "exiting" : ""
         }`}
         onClick={() => setShowNav(false)}
-      ></div>
+      >
+        <p className='glassjar__version'>Version: {process.env.REACT_APP_VERSION}</p>
+      </div>
     </div>
   );
 };

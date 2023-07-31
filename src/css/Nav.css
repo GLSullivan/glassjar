@@ -60,8 +60,9 @@
 }
 
 .glassjar__primary-nav__backing.open {
-  background    : var(--color-bright);
-  pointer-events: auto;
+  background     : rgb(255 255 255 / 90%);
+  pointer-events : auto;
+  backdrop-filter: blur(5px);
 }
 
 button.glassjar__primary-nav__more {
