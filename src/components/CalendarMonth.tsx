@@ -53,7 +53,7 @@ const CalendarMonth: React.FC = () => {
     .concat(dayNames.slice(0, startDayOfWeek));
 
   // Function to change the month based on the given direction
-  const changeMonth = (direction: 'next' | 'previous') => {
+  const changeDate = (direction: 'next' | 'previous') => {
     let newDate: Date = new Date(activeDate);
 
     if (direction === 'next') {
@@ -84,8 +84,8 @@ const CalendarMonth: React.FC = () => {
 
     // Swipe handlers for changing the month
   const swipeHandlers = useSwipeable({
-    onSwipedLeft : () => changeMonth('next'),
-    onSwipedRight: () => changeMonth('previous'),
+    onSwipedLeft : () => changeDate('next'),
+    onSwipedRight: () => changeDate('previous'),
   });
 
   // Function to generate the days array
@@ -128,7 +128,7 @@ const CalendarMonth: React.FC = () => {
   return (
     <div className='glassjar__calendar__container' {...swipeHandlers}>
       <div className='glassjar__calendar__navigation'>
-        <button onClick={() => changeMonth('previous')}>
+        <button onClick={() => changeDate('previous')}>
           <i className='fa-regular fa-chevron-left' />
         </button>
         <h2
@@ -137,7 +137,7 @@ const CalendarMonth: React.FC = () => {
         >
           {format(activeDateObj, 'MMMM yyyy')}
         </h2>
-        <button onClick={() => changeMonth('next')}>
+        <button onClick={() => changeDate('next')}>
           <i className='fa-regular fa-chevron-right' />
         </button>
       </div>

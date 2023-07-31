@@ -102,29 +102,33 @@ const CalendarSchedule: React.FC = () => {
   }, [scrollPosition]); 
 
   const handleScroll = useRef(() => {
-    const throttledHandleUserScroll = _.throttle(getClosestDataDate, 100);
-
+    const throttledHandleUserScroll = _.throttle(() => {
+      if (userInitiatedScroll.current) {
+        getClosestDataDate();
+      }
+    }, 100);
+  
     userInitiatedScroll.current = true;
-
+  
     if (timerRef.current) {
       window.clearTimeout(timerRef.current);
     }
-
+  
     if (intervalRef.current) {
       window.clearInterval(intervalRef.current);
     }
-
+  
     intervalRef.current = window.setInterval(throttledHandleUserScroll, 100);
-
+  
     timerRef.current = window.setTimeout(() => {
       userInitiatedScroll.current = false;
-      getClosestDataDate();
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     }, 3000);
   });
+  
 
   useEffect(() => {
     const events: (keyof WindowEventMap)[] = ['scroll', 'touchmove', 'wheel'];
