@@ -51,6 +51,7 @@
   background    : transparent;
   bottom        : 0;
   left          : 0;
+  opacity       : 0;
   pointer-events: none;
   position      : fixed;
   right         : 0;
@@ -61,6 +62,7 @@
 
 .glassjar__primary-nav__backing.open {
   background     : rgb(255 255 255 / 90%);
+  opacity        : 1;
   pointer-events : auto;
   backdrop-filter: blur(5px);
 }
@@ -121,4 +123,11 @@ button.glassjar__primary-nav__more {
 
 .glassjar__primary-nav__icon-holder.open > button {
   opacity: 1;
+}
+
+p.glassjar__version {
+  margin: 1rem;
+  font-weight: 300;
+  font-size: .8rem;
+  color: gray;
 }

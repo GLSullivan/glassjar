@@ -32,7 +32,6 @@ function Landing() {
   const forgotRef                                     = useRef<HTMLInputElement | null>(null);
 
   const handleModeChange = useCallback(() => {
-    console.log(mode)
     switch (mode) {
       case 'signIn':
         signInRef.current?.focus();

@@ -11,8 +11,8 @@ const PrimaryNav = () => {
     { label: 'Calendar',     icon: 'fa-calendar-days', view: 'calendar' },
     { label: 'Accounts',     icon: 'fa-file-invoice',  view: 'accounts' },
     { label: 'Transactions', icon: 'fa-jar',           view: 'transactions' },
-    // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
     { label: 'Settings',     icon: 'fa-gear',          view: 'settings' },
+    // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
     // { label: 'Categories',     icon: 'fa-chart-pie',     view: 'categories' },
   ];
 
