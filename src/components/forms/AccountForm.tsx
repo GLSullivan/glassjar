@@ -52,6 +52,7 @@ export const AccountForm: React.FC = () => {
       isLiability   : false,
       showInGraph   : true,
       color         : 0,
+      creditLimit   : 0
     }
   );
 
@@ -74,6 +75,7 @@ export const AccountForm: React.FC = () => {
       const updatedAccount = {
         ...account,
         currentBalance: parseFloat(account.currentBalance.toFixed(2)),
+        creditLimit: account.creditLimit ? parseFloat(account.creditLimit.toFixed(2)) : 0.00,
         color: account.color
       };
     
@@ -109,9 +111,13 @@ export const AccountForm: React.FC = () => {
     name ?: string | undefined
   ) => {
     if (name && value !== undefined) {
+      console.log("!")
+    console.log(name,value,parseFloat(value))
+
       setAccount({ ...account, [name]: (parseFloat(value) ? Math.round(parseFloat(value) * 100) : 0 )  });
-    } else  if (name) {
-        setAccount({ ...account, [name]: '' });
+    } else if (name) {
+      console.log("?")
+      setAccount({ ...account, [name]: '' });
     }
   };
 
@@ -210,7 +216,7 @@ export const AccountForm: React.FC = () => {
                 id='currentBalance'
                 prefix='$'
                 name='currentBalance'
-                placeholder='Current Balance:'
+                placeholder='Balance:'
                 defaultValue={account.currentBalance / 100}
                 decimalsLimit={0}
                 onValueChange={handleCurrencyChange}
@@ -261,12 +267,14 @@ export const AccountForm: React.FC = () => {
 
               {['credit card'].includes(account.type) && (
                 <div className='glassjar__form__input-group'>
-                  <input
-                    type='number'
+                  <CurrencyInput
                     id='creditLimit'
+                    prefix='$'
                     name='creditLimit'
-                    value={account.creditLimit || ''}
-                    onChange={handleChange}
+                    placeholder='Credit Limit:'
+                    defaultValue={account.creditLimit ? account.creditLimit / 100 : 0}
+                    decimalsLimit={0}
+                    onValueChange={handleCurrencyChange}
                   />
                   <label htmlFor='creditLimit'>Credit Limit:</label>
                 </div>
