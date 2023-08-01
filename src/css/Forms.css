@@ -215,7 +215,6 @@ select {
 
 .glassjar__form__input-group.glassjar__form__input-group--check {
   align-items    : center;
-  align-items    : center;
   display        : flex;
   flex           : 2;
   justify-content: space-between;
@@ -230,14 +229,15 @@ select {
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--check input+label {
-  color        : var(--color-brand);
-  cursor       : pointer;
-  display      : block;
-  font-size    : 1rem;
-  font-weight  : 500;
-  padding-right: 3rem;
-  position     : initial;
-  transform    : none;
+  color         : var(--color-brand);
+  cursor        : pointer;
+  display       : block;
+  font-size     : 1rem;
+  font-weight   : 500;
+  padding-right : 3rem;
+  pointer-events: auto;
+  position      : initial;
+  transform     : none;
 }
 
 .glassjar__form__input-group.glassjar__form__input-group--check label::before {

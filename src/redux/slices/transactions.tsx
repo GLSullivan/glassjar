@@ -42,6 +42,16 @@ const transactionsSlice = createSlice({
         state.transactions[index] = action.payload;
       }
     },
+    bulkUpdateTransactions: (state, action: PayloadAction<Transaction[]>) => {
+      action.payload.forEach((updatedTransaction) => {
+        const index = state.transactions.findIndex(
+          (transaction) => transaction.id === updatedTransaction.id
+        );
+        if (index !== -1) {
+          state.transactions[index] = { ...updatedTransaction, updatedAt: Date.now() };
+        }
+      });
+    },
     deleteTransaction: (state, action: PayloadAction<number>) => {
       state.transactions = state.transactions.filter(
         (transaction) => transaction.id !== action.payload
@@ -58,7 +68,8 @@ export const {
   addTransaction, 
   updateTransaction, 
   deleteTransaction,
-  setActiveTransaction 
+  setActiveTransaction,
+  bulkUpdateTransactions
 } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

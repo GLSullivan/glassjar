@@ -1,10 +1,11 @@
 import { createSlice }          from '@reduxjs/toolkit'
 
 export interface ModalState {
-  transactionFormOpen: boolean,
-  accountFormOpen: boolean,
-  accountListOpen: boolean,
+  transactionFormOpen  : boolean,
+  accountFormOpen      : boolean,
+  accountListOpen      : boolean,
   transactionHelperOpen: boolean,
+  deleteTransactionOpen: boolean,
 }
 
 const initialState: ModalState = {
@@ -12,6 +13,7 @@ const initialState: ModalState = {
   accountFormOpen      : false,
   accountListOpen      : false,
   transactionHelperOpen: false,
+  deleteTransactionOpen: false,
 }
 
 export const modalState = createSlice({
@@ -42,6 +44,12 @@ export const modalState = createSlice({
     openTransactionHelper: (state) => {
       state.transactionHelperOpen = true;
     },
+    closeDeleteTransaction: (state) => {
+      state.deleteTransactionOpen = false
+    },    
+    openDeleteAccount: (state) => {
+      state.deleteTransactionOpen = true;
+    },
   },
 })
 
@@ -53,7 +61,9 @@ export const {
   closeAccountForm, 
   openAccountForm,
   closeTransactionHelper,
-  openTransactionHelper
+  openTransactionHelper,
+  closeDeleteTransaction,
+  openDeleteAccount
 } = modalState.actions
 
 export default modalState.reducer

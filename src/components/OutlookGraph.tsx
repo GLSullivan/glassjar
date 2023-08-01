@@ -23,25 +23,27 @@ import {
   ReferenceLine,
 }                                             from 'recharts';
 
-import { useDispatch, useSelector }                        from 'react-redux';
+import { useDispatch, useSelector }           from 'react-redux';
 
 import { accountBalancesByDateRange }         from './../redux/slices/projections';
 import { Account }                            from './../models/Account';
 import { RootState }                          from './../redux/store';
-import { colorPalette }                       from '../data/ColorPalette';
+import { colorPalette }                       from './../data/ColorPalette';
 
 import './../css/OutlookGraph.css';
 import { setGraphRange } from '../redux/slices/views';
 
 const OutlookGraph: React.FC = () => {
   const dispatch = useDispatch()
-  const graphRange = useSelector((state: RootState) => state.views.graphRange);
-
+  
   const rangeChoices: number[]            = [1,3,6,12];
+  
+  const graphRange                        = useSelector((state: RootState) => state.views.graphRange);
   const state                             = useSelector((state: RootState) => state);
   const accounts                          = useSelector((state: RootState) => state.accounts.accounts);
   const activeDate                        = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                             = useSelector((state: RootState) => state.activeDates.today);
+  
   const [accountColors, setAccountColors] = useState<Record<string, string>>({});
   const [combinedData, setCombinedData]   = useState<CombinedData[]>([]);
   const [xTicks, setXTicks]               = useState<string[]>([]);

@@ -1,10 +1,10 @@
-import { useDispatch, useSelector }   from "react-redux";
-import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector }   from 'react-redux';
+import React, { useEffect, useState } from 'react';
 
-import { setView }                    from "./../redux/slices/views";
-import { RootState }                  from "../redux/store";
+import { setView }                    from './../redux/slices/views';
+import { RootState }                  from '../redux/store';
 
-import "./../css/Nav.css";
+import './../css/Nav.css';
 
 const PrimaryNav = () => {
   const buttons = [
@@ -24,7 +24,6 @@ const PrimaryNav = () => {
   const activeView = useSelector((state: RootState) => state.views.activeView);
 
   const setActiveView = (view: string) => {
-    console.log("?");
     setShowNav(false);
     dispatch(setView(view));
   };
@@ -47,34 +46,34 @@ const PrimaryNav = () => {
 
   return (
     <div
-      className={`glassjar__primary-nav ${showNav ? "open" : ""} ${
-        isExiting ? "exiting" : ""
+      className={`glassjar__primary-nav ${showNav ? 'open' : ''} ${
+        isExiting ? 'exiting' : ''
       }`}
     >
       <button
-        className={`glassjar__primary-nav__more ${showNav ? "" : "open"} ${
-          isExiting ? "exiting" : ""
+        className={`glassjar__primary-nav__more ${showNav ? '' : 'open'} ${
+          isExiting ? 'exiting' : ''
         }`}
         onClick={() => setShowNav(!showNav)}
       >
         <i
           className={`fa-fw fa-duotone fa-jar glassjar__primary-nav__more-icon ${
-            showNav ? "open" : ""
-          } ${isExiting ? "exiting" : ""}`}
+            showNav ? 'open' : ''
+          } ${isExiting ? 'exiting' : ''}`}
         />
       </button>
 
       <div
         className={`glassjar__primary-nav__icon-holder ${
-          showNav ? "open" : ""
-        } ${isExiting ? "exiting" : ""}`}
+          showNav ? 'open' : ''
+        } ${isExiting ? 'exiting' : ''}`}
       >
         {buttons.map((button, index) => (
           <button
             key={button.view}
             className={`glassjar__footer-nav__button${
-              activeView === button.view ? " active" : ""
-            } ${isExiting ? "exiting" : ""}`}
+              activeView === button.view ? ' active' : ''
+            } ${isExiting ? 'exiting' : ''}`}
             onClick={() => setActiveView(button.view)}
             style={{
               transitionDelay: `${(buttons.length - index) * 0.1}s`,
@@ -86,8 +85,8 @@ const PrimaryNav = () => {
         ))}
       </div>
       <div
-        className={`glassjar__primary-nav__backing ${showNav ? "open" : ""} ${
-          isExiting ? "exiting" : ""
+        className={`glassjar__primary-nav__backing ${showNav ? 'open' : ''} ${
+          isExiting ? 'exiting' : ''
         }`}
         onClick={() => setShowNav(false)}
       >

@@ -1,22 +1,21 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
-import { useDispatch, useSelector } from 'react-redux';
-import CurrencyInput from 'react-currency-input-field';
-
-import { Transaction } from './../../models/Transaction';
+import CurrencyInput                           from 'react-currency-input-field';
+import { Transaction }                         from './../../models/Transaction';
+import { useDispatch, useSelector }            from 'react-redux';
 import {
   addTransaction,
   updateTransaction,
   deleteTransaction,
-} from './../../redux/slices/transactions';
-import { RootState } from './../../redux/store';
-import { stripTime, addZoneOffset } from './../../utils/dateUtils';
-import { Account } from './../../models/Account';
-import { RecurringExpenses } from './../../data/RecurringExpenses';
-import PanelHeader from '../PanelHeader';
+}                                              from './../../redux/slices/transactions';
+import { RecurringExpenses }                   from './../../data/RecurringExpenses';
+import { stripTime, addZoneOffset }            from './../../utils/dateUtils';
+import { Account }                             from './../../models/Account';
+import { RootState }                           from './../../redux/store';
+import PanelHeader                             from '../PanelHeader';
 
-import { format } from 'date-fns-tz';
-import { isPast, add, parseISO, isValid } from 'date-fns';
+import { format }                              from 'date-fns-tz';
+import { isPast, add, parseISO, isValid }      from 'date-fns';
 
 import './../../css/Forms.css';
 
@@ -54,7 +53,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const [type, setType]                                       = useState<TransactionType>(activeTransaction?.type || TransactionType.WITHDRAWAL);
   const [customIntervalType, setCustomIntervalType]           = useState<CustomIntervalType>(activeTransaction?.customIntervalType || CustomIntervalType.DAY);
   const [recurrenceFrequency, setRecurrenceFrequency]         = useState<RecurrenceFrequency>(activeTransaction?.recurrenceFrequency || RecurrenceFrequency.MONTHLY);
-
   const [recurrenceInterval, setRecurrenceInterval]           = useState<number>(activeTransaction?.recurrenceInterval || 1);
   const [recurrenceIntervalInput, setRecurrenceIntervalInput] = useState<string>(activeTransaction?.recurrenceInterval?.toString() || '1');
   const [selectedDays, setSelectedDays]                       = useState<number[]>(activeTransaction?.givenDays || []);
@@ -72,7 +70,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                                                                 }
                                                                 return '';
                                                               });
-
 
   const dispatch = useDispatch();
 
@@ -630,9 +627,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   dispatch(deleteTransaction(activeTransaction.id));
                   onClose();
                 }}
-              >
-                Delete Transaction
-              </button>
+              >Delete Transaction</button>
             )}
           </div>
           <input type='submit' hidden />

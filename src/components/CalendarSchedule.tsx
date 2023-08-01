@@ -113,11 +113,11 @@ const CalendarSchedule: React.FC = () => {
     };
   
     // Attaching the event listeners
-    schedule?.addEventListener('touchstart', scrollHandler);
-    schedule?.addEventListener('touchend', touchEndHandler);
-    schedule?.addEventListener('mousedown', scrollHandler);
-    schedule?.addEventListener('mouseup', scrollHandler);
-    schedule?.addEventListener('wheel', scrollHandler);
+    schedule?.addEventListener('touchstart', scrollHandler, { passive: true });
+    schedule?.addEventListener('touchend', touchEndHandler, { passive: true });
+    schedule?.addEventListener('mousedown', scrollHandler, { passive: true });
+    schedule?.addEventListener('mouseup', scrollHandler, { passive: true });
+    schedule?.addEventListener('wheel', scrollHandler, { passive: true });
   
     // Cleanup
     return () => {

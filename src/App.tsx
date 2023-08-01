@@ -8,19 +8,23 @@ import { AccountForm }                      from './components/forms/AccountForm
 import TransactionList                      from './components/TransactionList';
 import CategoryGraph                        from './components/CategoryGraph'
 import SettingsPanel                        from './components/SettingsPanel';
+import AccountDelete                        from './components/AccountDelete';
 import OutlookGraph                         from './components/OutlookGraph'
 import PrimaryNav                           from './components/PrimaryNav';
 import Calendar                             from './components/Calendar';
+import Landing                              from './components/Landing';
 import Loader                               from './components/Loader';
 import Modal                                from './components/Modal';
+
+import { colorPalette }                     from './data/ColorPalette';
 
 import { recalculateProjections }           from './redux/slices/projections';
 import {      
   closeTransactionModal,      
   closeAccountForm,     
-  closeTransactionHelper      
+  closeTransactionHelper,
+  closeDeleteTransaction      
 }                                           from './redux/slices/modals';
-import Landing                              from './components/Landing';
 import { RootState }                        from './redux/store';
 
 import './css/Main.css'      
@@ -29,14 +33,16 @@ import './css/Nav.css'
 const App: React.FC = () => {
 
   const transactionHelperOpen = useSelector((state: RootState) => state.modalState.transactionHelperOpen);
+  const deleteTransactionOpen = useSelector((state: RootState) => state.modalState.deleteTransactionOpen);
   const transactionOpen       = useSelector((state: RootState) => state.modalState.transactionFormOpen);
   const accountFormOpen       = useSelector((state: RootState) => state.modalState.accountFormOpen);
   const transactions          = useSelector((state: RootState) => state.transactions.transactions);
   const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate);
+  const activeAccount         = useSelector((state: RootState) => state.accounts.activeAccount);
   const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
   const accounts              = useSelector((state: RootState) => state.accounts.accounts);
   const activeView            = useSelector((state: RootState) => state.views.activeView);
-  
+
   const dispatch = useDispatch()
 
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
@@ -50,6 +56,10 @@ const App: React.FC = () => {
 
   const closeTheAccountForm = () => {
     dispatch(closeAccountForm())
+  }
+
+  const closeTheDeleteTransactionForm = () => {
+    dispatch(closeDeleteTransaction())
   }
 
   const closeTheTransactionHelper = () => {
@@ -72,6 +82,7 @@ const App: React.FC = () => {
         isOpen={accountFormOpen}
         onClose={closeTheAccountForm}
         hideClose={accounts.length < 1}
+        color={activeAccount ? colorPalette[activeAccount.color] : undefined}
       >
         <AccountForm />
       </Modal>
@@ -81,6 +92,14 @@ const App: React.FC = () => {
         onClose={closeTheTransactionHelper}
       >
         <TransactionHelper />
+      </Modal>
+
+      <Modal
+        isOpen={deleteTransactionOpen}
+        onClose={closeTheDeleteTransactionForm}
+        color={activeAccount ? colorPalette[activeAccount.color] : undefined}
+      >
+        <AccountDelete />
       </Modal>
 
       <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>

@@ -175,7 +175,7 @@ const CalendarMonth: React.FC = () => {
             onClick={() => handleViewChange()}
             className='glassjar__button glassjar__button__calendar-toggle glassjar__button--small'
           >
-            <i className={`fa-regular fa-down-to-line ${calendarView === 'month' ? "open" : ""}`} />
+            <i className={`fa-regular fa-down-to-line ${calendarView === 'month' ? 'open' : ''}`} />
           </button>
         </div>
         

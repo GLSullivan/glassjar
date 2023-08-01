@@ -3,9 +3,9 @@ import React                          from 'react';
 
 import { setActiveAccount }           from '../redux/slices/accounts';
 import { openAccountForm }            from '../redux/slices/modals';
-import { Account }                    from '../models/Account';
 import { colorPalette }               from './../data/ColorPalette';
 import { AccountType }                from './../utils/constants';
+import { Account }                    from '../models/Account';
 
 import './../css/Panels.css';
 
@@ -32,10 +32,10 @@ function getNextOccurrence(dateString: string | undefined) {
   currentDate.setMonth(currentDate.getMonth() + 1);  // Move to the next month.
   currentDate.setDate (1);                           // Set to the first day of the next month.
 
-  const dateParts = dateString.split('-');
-  const dayInMonth = Number(dateParts[2]);
-  let targetMonth = currentDate.getMonth();
-  let targetYear = currentDate.getFullYear();
+  const dateParts   = dateString.split('-');
+  const dayInMonth  = Number(dateParts[2]);
+  let   targetMonth = currentDate.getMonth();
+  let   targetYear  = currentDate.getFullYear();
 
   const daysInTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
 
