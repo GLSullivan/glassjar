@@ -108,27 +108,24 @@ const App: React.FC = () => {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-
-      {activeView === 'calendar' && <div className='glassjar__panel-group glassjar__panel-group--calendar'>
+      <div className={`glassjar__panel-group glassjar__panel-group--calendar ${activeView === 'calendar' ? 'visible' : ''}`}>
         <Calendar />
-      </div>}
-      {activeView === 'accounts' && <div className='glassjar__panel-group'>
+      </div>
+      <div className={`glassjar__panel-group glassjar__panel-group--accounts ${activeView === 'accounts' ? 'visible' : ''}`}>
         <AccountList />
-      </div>}
-      {activeView === 'outlook' && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
+      </div>
+      <div className={`glassjar__panel-group glassjar__panel-group--outlook ${activeView === 'outlook' ? 'visible' : ''}`}>
         <OutlookGraph />
-      </div>}
-      {activeView === 'categories' && <div className='glassjar__panel-group glassjar__panel-group--graph glassjar__panel-group--no-scroll'>
+      </div>
+      <div className={`glassjar__panel-group glassjar__panel-group--categories ${activeView === 'categories' ? 'visible' : ''}`}>
         <CategoryGraph />
-      </div>}
-      {activeView === 'transactions' && <div className='glassjar__panel-group glassjar__panel-group--transactions'>
+      </div>
+      <div className={`glassjar__panel-group glassjar__panel-group--transactions ${activeView === 'transactions' ? 'visible' : ''}`}>
         <TransactionList />
-      </div>}
-      {activeView === 'settings' && <div className='glassjar__panel-group glassjar__panel-group--settings'>
+      </div>
+      <div className={`glassjar__panel-group glassjar__panel-group--settings ${activeView === 'settings' ? 'visible' : ''}`}>
         <SettingsPanel />
       </div>
-      }
-
       <PrimaryNav />
       
       </>}

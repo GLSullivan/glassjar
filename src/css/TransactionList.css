@@ -30,7 +30,6 @@
   display        : flex;
   gap            : 1rem;
   justify-content: space-between;
-  margin-bottom  : 1rem;
 }
 
 .glassjar__search-sort__field {
@@ -77,7 +76,7 @@
 }
 
 .glassjar__transaction-list__header {
-  padding: 0 1rem;
+  padding: 1rem;
 }
 
 .glassjar__sort-menu__filter {

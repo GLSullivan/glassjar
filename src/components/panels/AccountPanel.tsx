@@ -33,3 +33,5 @@ export const AccountList: React.FC = () => {
     </div>
   );
 };
+
+export default AccountList;

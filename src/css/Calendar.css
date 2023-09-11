@@ -21,9 +21,8 @@
 }
 
 .glassjar__calendar__calendar {
-  box-shadow: var(--shadow-main);
   box-sizing: border-box;
-  margin    : 0 3rem 1rem 3rem;
+  margin    : 0 0 1rem 0;
   min-height: 90px;
   padding   : 0.5rem 1rem 1.5rem 1rem;
   position  : relative;
@@ -150,9 +149,10 @@
 }
 
 .glassjar__schedule {
-  max-height: 100%;
-  overflow  : auto;
-  padding   : 0 1rem;
+  max-height   : 100%;
+  overflow     : auto;
+  padding-right: 0.7rem;
+  margin-right : -0.7rem;
 }
 
 .glassjar__calendar__container {
@@ -173,7 +173,6 @@
 .glassjar__calendar__day-panel--graph {
   box-sizing: border-box;
   height: 20vh;
-  padding: .5rem 1rem;
 }
 
 .glassjar__calendar__day-panel--graph h2 {
