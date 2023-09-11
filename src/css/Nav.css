@@ -192,6 +192,7 @@ p.glassjar__version {
   justify-content: center;
   top            : 0;
   pointer-events : none;
+  z-index        : 1;
 }
 
 .glassjar__nav__underline > div {
