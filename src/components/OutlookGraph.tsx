@@ -38,19 +38,19 @@ const OutlookGraph: React.FC = () => {
   
   const rangeChoices: number[]            = [1,3,6,12];
   
+  const activeDate                        = useSelector((state: RootState) => state.activeDates.activeDate);
+  const accounts                          = useSelector((state: RootState) => state.accounts.accounts);
+  const today                             = useSelector((state: RootState) => state.activeDates.today);
   const graphRange                        = useSelector((state: RootState) => state.views.graphRange);
   const state                             = useSelector((state: RootState) => state);
-  const accounts                          = useSelector((state: RootState) => state.accounts.accounts);
-  const activeDate                        = useSelector((state: RootState) => state.activeDates.activeDate);
-  const today                             = useSelector((state: RootState) => state.activeDates.today);
   
   const [accountColors, setAccountColors] = useState<Record<string, string>>({});
   const [combinedData, setCombinedData]   = useState<CombinedData[]>([]);
   const [xTicks, setXTicks]               = useState<string[]>([]);
   const [yTicks, setYTicks]               = useState<number[]>([]);
+  const [dataKeys, setDataKeys]           = useState<string[]>([]);
   const [minY, setMinY]                   = useState<number>(0);
   const [maxY, setMaxY]                   = useState<number>(0);
-  const [dataKeys, setDataKeys]           = useState<string[]>([]);
 
   type CombinedData = {
     date: string;

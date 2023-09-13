@@ -9,7 +9,7 @@
 
 */
 
-.glassjar__tabs-group {
+/* .glassjar__tabs-group {
   display: flex;
   flex-direction: column;
 }
@@ -49,4 +49,4 @@
 .glassjar__tabs__header.glassjar__tabs__header--open {
   background: var(--color-bright);
   color: var(--color-brand);
-}
+} */

@@ -1,5 +1,6 @@
 import { useDispatch }                from 'react-redux';
 import React                          from 'react';
+import CountUp                        from 'react-countup';
 
 import { setActiveAccount }           from '../redux/slices/accounts';
 import { openAccountForm }            from '../redux/slices/modals';
@@ -76,16 +77,30 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
         <div className='glassjar__list-item__body'>
           <div className='glassjar__list-item-row glassjar__list-item__row--row1'>
             <h4>{account.name}</h4>
-            <h4>
+            <h4 className='glassjar__mono-spaced'>
               {balance !== undefined && balance !== null
-                ? <em>{(balance / 100).toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                })}</em>
-                : (account.currentBalance / 100).toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                })}
+                ? <em>
+                  <CountUp 
+                    decimals={2}
+                    decimal="."
+                    prefix="$"
+                    end={(balance / 100)} 
+                    duration={2}
+                    preserveValue={true}
+                    />
+                </em>
+                : 
+                <em>
+                  <CountUp 
+                    decimals={2}
+                    decimal="."
+                    prefix="$"
+                    end={(account.currentBalance / 100)} 
+                    duration={2}
+                    preserveValue={true}
+                    />
+                </em>
+                }
             </h4>
           </div>
           <div className='glassjar__list-item-row glassjar__list-item__row--row2'>
