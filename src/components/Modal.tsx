@@ -55,9 +55,9 @@ const Modal: React.FC<modalProps> = React.memo(
             <div className='glassjar__modal__body'>
               {theChildren?.map((child: any, index: number) => {
                 return (
-                  <div key={index}>
+                  <React.Fragment key={index}>
                     {child}
-                  </div>
+                  </React.Fragment>
                 )
               })}
             </div>

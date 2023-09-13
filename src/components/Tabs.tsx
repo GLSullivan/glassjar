@@ -1,19 +1,19 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState }  from 'react';
 
-import { colorPalette } from "../data/ColorPalette";
+import { colorPalette }                                   from '../data/ColorPalette';
 
-import "./../css/Nav.css";
+import './../css/Nav.css';
 
 type StyleState = {
-  left?: string;
+  left ?: string;
   width?: string;
   color?: string;
 };
 
 interface TabsItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  heading?: string;
-  isOpen?: boolean;
+  children  ?: React.ReactNode;
+  heading   ?: string;
+  isOpen    ?: boolean;
   toggleTabs?: (index: number) => void;
 }
 
@@ -29,7 +29,7 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
   };
 
   const [openTabsIndex, setOpenTabsIndex] = useState<number>(0);
-  const [activeStyle, setActiveStyle] = useState<StyleState>({});
+  const [activeStyle, setActiveStyle]     = useState<StyleState>({});
 
   const navRef = useRef<HTMLDivElement | null>(null);
 
@@ -37,7 +37,7 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
     setTimeout(() => {
       setUnderlinePosition();
     }, 0);
-    // eslint-disable-next-line
+      // eslint-disable-next-line
   }, [openTabsIndex]);
 
   const setUnderlinePosition = () => {
@@ -50,13 +50,13 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
       );
       if (!navItem) return;
 
-      const bounds = navItem.getBoundingClientRect();
+      const bounds       = navItem.getBoundingClientRect();
       const parentBounds = navRef.current.getBoundingClientRect();
-      const left = bounds.left - parentBounds.left;
-      const width = bounds.width;
+      const left         = bounds.left - parentBounds.left;
+      const width        = bounds.width;
 
       setActiveStyle({
-        left: `${left}px`,
+        left : `${left}px`,
         width: `${width}px`,
         color: colorPalette[openTabsIndex],
       });
@@ -65,18 +65,33 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
 
   const renderHeaders = () => {
     return (
-      <div ref={navRef} className={`glassjar__nav`}>
-        <div className="glassjar__nav__icon-holder">
+      <div ref       = {navRef} className = {`glassjar__nav`}>
+        <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+          <div style     = {{ background: activeStyle.color }}></div>
+        </div>
+        <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+          <div style     = {{ background: activeStyle.color }}></div>
+        </div>
+        <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+          <div style     = {{ background: activeStyle.color }}></div>
+        </div>
+        <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+          <div style     = {{ background: activeStyle.color }}></div>
+        </div>
+        <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+          <div style     = {{ background: activeStyle.color }}></div>
+        </div>
+        <div className = 'glassjar__nav__icon-holder'>
           {React.Children.map(children, (child: any, index) => {
             if (child.props.heading) {
               return (
                 <button
-                  key={child.props.heading}
-                  data-target={child.props.heading}
-                  className={`glassjar__nav__button${
-                    openTabsIndex === index ? " active" : ""
+                  key         = {child.props.heading}
+                  data-target = {child.props.heading}
+                  className   = {`glassjar__nav__button${
+                    openTabsIndex === index ? ' active' : ''
                   }`}
-                  onClick={() => toggleTabs(index)}
+                  onClick = {() => toggleTabs(index)}
                 >
                   {child.props.heading}
                 </button>
@@ -84,12 +99,12 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
             }
           })}
         </div>
-        <div className="glassjar__nav__underline" style={activeStyle}>
-          <div style={{ background: activeStyle.color }}></div>
+        <div className = 'glassjar__nav__underline' style = {activeStyle}>
+        <div style     = {{ background: activeStyle.color }}></div>
         </div>
       </div>
     );
-  }
+  };
 
   const renderChildren = () =>
     React.Children.map(children, (child, index) => {
@@ -105,26 +120,23 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
       return child;
     });
 
-return (
-  <>
-    {renderHeaders()}
-    {renderChildren()}
-  </>
-)
-  
+  return (
+    <div className='glassjar__nav__group'>
+      {renderHeaders()}
+      {renderChildren()}
+    </div>
+  );
 };
 
 export default Tabs;
 
 const TabsItem: React.FC<TabsItemProps> = ({ children, isOpen }) => {
   return (
-    <div className={`glassjar__tabs ${isOpen ? "glassjar__tabs--open" : ""}`}>
+    <>
       {isOpen && (
-        <div className="glassjar__tabs__body">
-          <div className="glassjar__tabs__body-content">{children}</div>
-        </div>
+        <div className = 'glassjar__nav__body'>{children}</div>
       )}
-    </div>
+    </>
   );
 };
 

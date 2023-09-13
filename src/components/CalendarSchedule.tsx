@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef }  from 'react';
+import React, { useEffect, useState, useRef }               from 'react';
 import { useDispatch, useSelector }                         from 'react-redux';
 
 import { setActiveTransaction }                             from './../redux/slices/transactions';
@@ -10,8 +10,9 @@ import { RootState }                                        from './../redux/sto
 import { Transaction }                                      from './../models/Transaction';
 import TransactionListItem                                  from './TransactionListItem';
 
-import './../css/TransactionList.css';
 import { addDays, endOfMonth, format, parseISO }            from 'date-fns';
+
+import './../css/TransactionList.css';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
@@ -33,8 +34,8 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     setLoading(true);
 
-    let   endDate        = format(addDays(endOfMonth(parseISO(activeDate)), 10), 'yyyy-MM-dd');
-    let   startDate      = format(new Date(today), 'yyyy-MM-dd');
+    let endDate      = format(addDays(endOfMonth(parseISO(activeDate)), 10), 'yyyy-MM-dd');
+    let startDate    = format(new Date(today), 'yyyy-MM-dd');
     let transactions = getTransactionsByDateRange(state,startDate,endDate);
 
     setGroupedTransactions(transactions);
@@ -88,27 +89,22 @@ const CalendarSchedule: React.FC = () => {
     };
   
     const startTimeout = () => {
-      // Clear any existing timeout
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      // Set a new timeout
       scrollTimeout.current = setTimeout(() => {
         getClosestDataDate();
         userInitiatedScroll.current = false;
-        stopInterval(); // Stop the interval when userInitiatedScroll is set to false
-      }, 1000); // Adjust the delay as needed
+        stopInterval(); 
+      }, 1000); 
     };
   
     const startInterval = () => {
-      // Clear any existing interval
       if (scrollInterval.current) clearInterval(scrollInterval.current);
-      // Set a new interval
       scrollInterval.current = setInterval(() => {
         getClosestDataDate(); // Run your function every 100ms
       }, 100);
     };
   
     const stopInterval = () => {
-      // Clear the interval
       if (scrollInterval.current) clearInterval(scrollInterval.current);
     };
   

@@ -1,4 +1,4 @@
-          /* 
+            /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -10,31 +10,33 @@
 */
 
 .glassjar__nav {
-  position: relative;
+  border       : 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
   overflow     : hidden;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  position     : relative;
 }
 
 .glassjar__nav.glassjar__nav--primary {
   border-radius: 2rem 2rem 0 0;
+  border-top   : 1px solid rgba(0, 0, 0, 0.05);
   bottom       : -1px;
   position     : fixed;
   width        : 100%;
   z-index      : 9000;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .glassjar__nav__icon-holder {
-  background: var(--color-bright);
-  bottom         : 0;
-  display        : flex;
-  padding-top    : .2rem;
-  width          : 100%;
-  height         : 100%;
-  overflow       : hidden;
-  z-index        : 1;
-  position       : relative;
+  background : var(--color-bright);
+  bottom     : 0;
+  display    : flex;
+  height     : 100%;
+  overflow   : hidden;
+  padding-top: .2rem;
+  position   : relative;
+  width      : 100%;
+  z-index    : 1;
+  backdrop-filter: blur(20px);
+  background     : rgb(255 255 255 / 35%);
 }
 
 .glassjar__nav.glassjar__nav--primary .glassjar__nav__icon-holder {
@@ -55,8 +57,8 @@
   font-weight    : 500;
   gap            : 0.25rem;
   justify-content: center;
-  width          : 100%;
   transition     : .4s ease;
+  width          : 100%;
 }
 
 .glassjar__nav__button.active {
@@ -68,59 +70,83 @@
 }
 
 .glassjar__nav__underline {
-  height         : .25rem;
-  position       : absolute;
-  transition     : left 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
+  align-items    : center;
+  display        : flex;
+  height    : .25rem;
+  justify-content: center;
+  pointer-events : none;
+  position  : absolute;
+  top            : 0;
+  transition: left 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   width 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   color .5s;
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
-  top            : 0;
-  pointer-events : none;
   z-index        : 1;
 }
 
 .glassjar__nav__underline > div {
-  width        : 30%;
   background   : var(--gradient-brand);
-  height       : 100%;
   border-radius: 2rem;
+  height       : 100%;
+  width        : 30%;
 }
 
 .glassjar__nav__backing-shape {
-  height         : 100%;
-  position       : absolute;
-  transition     : left 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
+  align-items    : center;
+  display        : flex;
+  height    : 100%;
+  justify-content: center;
+  pointer-events : none;
+  position  : absolute;
+  top            : 0;
+  transition: left 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   width 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   color 0.5s ease;
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
-  top            : 0;
-  pointer-events : none;
 }
 
 .glassjar__nav__backing-shape > div {
-  width        : 90%;
   background   : var(--gradient-brand);
-  height       : 80%;
   border-radius: 2rem;
+  height       : 80%;
   opacity      : .15;
+  width        : 90%;
 }
 
 .glassjar__nav__backing-shape:nth-child(2) {
-  transition-delay: 0.05s; 
+  transition-delay: 0.05s;
 }
 
 .glassjar__nav__backing-shape:nth-child(3) {
-  transition-delay: 0.1s; 
+  transition-delay: 0.1s;
 }
 
 .glassjar__nav__backing-shape:nth-child(4) {
-  transition-delay: 0.15s; 
+  transition-delay: 0.15s;
 }
 
 .glassjar__nav__backing-shape:nth-child(5) {
-  transition-delay: 0.2s; 
+  transition-delay: 0.2s;
+}
+
+.glassjar__nav__group .glassjar__nav__body {
+  max-height: 100%;
+  overflow  : auto;
+}
+
+.glassjar__nav__group {
+  display       : flex;
+  flex-direction: column;
+  max-height    : 100%;
+  min-height    : 100%;
+  overflow      : hidden;
+  position      : relative;
+}
+
+.glassjar__nav__group .glassjar__nav {
+  flex-shrink: 0;
+}
+
+.glassjar__nav__body {
+  display       : flex;
+  flex-direction: column;
+  flex-grow     : 1;
 }

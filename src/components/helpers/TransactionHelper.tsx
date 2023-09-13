@@ -19,7 +19,7 @@ const Loader: React.FC = () => {
         secondaryActionLabel='Close'
         showPrimaryButton={false}
       />
-      <div className='glassjar__padding'>
+      <div className='glassjar__padding glassjar__flex-wrap'>
         <p>
           This tool helps you quickly fill out your recurring transactions,
           birthdays, and holiday expenses.

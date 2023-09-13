@@ -80,6 +80,13 @@ h2 {
   width     : 100%;
 }
 
+.glassjar__flex-wrap {
+  flex-grow     : 0;
+  overflow      : hidden;
+  display       : flex;
+  flex-direction: column;
+}
+
 .glassjar__flex.glassjar__flex--even > * {
   flex : 2;
   width: 100%;

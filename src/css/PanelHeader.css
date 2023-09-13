@@ -12,7 +12,7 @@
 .glassjar__panel-header {
   display: flex;
   padding: .5rem;
-  background: var(--color-bright);
+  /* background: var(--color-bright); */
   position: sticky;
   top: 0;
   justify-content: space-between;
