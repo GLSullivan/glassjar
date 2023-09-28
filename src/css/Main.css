@@ -38,6 +38,14 @@
 
 }
 
+input,
+textarea,
+button,
+select,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
 .glassjar__root {
   /* align-items: center; */
   /* background: var(--color-brand); */
