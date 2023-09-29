@@ -27,7 +27,11 @@
 }
 
 .glassjar__panel-group.glassjar__panel-group--calendar {
-  padding-bottom: 0;
+  padding: 0;
+}
+
+.glassjar__panel-group.glassjar__panel-group--calendar .glassjar__calendar__day-panel {
+  padding: 1rem;
 }
 
 .glassjar__graph-holder h2,

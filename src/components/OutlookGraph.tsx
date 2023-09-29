@@ -12,16 +12,8 @@ import {
   isAfter,
   isToday}                                    from 'date-fns';
 
-import { 
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Label,
-  ResponsiveContainer,
-  ReferenceLine,
-}                                             from 'recharts';
+import SVGGraph                               from './../components/SVGGraph';  
+
 
 import { useDispatch, useSelector }           from 'react-redux';
 
@@ -29,9 +21,9 @@ import { accountBalancesByDateRange }         from './../redux/slices/projection
 import { Account }                            from './../models/Account';
 import { RootState }                          from './../redux/store';
 import { colorPalette }                       from './../data/ColorPalette';
+import { setGraphRange }                      from './../redux/slices/views';
 
 import './../css/OutlookGraph.css';
-import { setGraphRange } from '../redux/slices/views';
 
 const OutlookGraph: React.FC = () => {
   const dispatch = useDispatch()
@@ -44,26 +36,26 @@ const OutlookGraph: React.FC = () => {
   const graphRange                        = useSelector((state: RootState) => state.views.graphRange);
   const state                             = useSelector((state: RootState) => state);
   
-  const [accountColors, setAccountColors] = useState<Record<string, string>>({});
+  // const [accountColors, setAccountColors] = useState<Record<string, string>>({});
   const [combinedData, setCombinedData]   = useState<CombinedData[]>([]);
-  const [xTicks, setXTicks]               = useState<string[]>([]);
-  const [yTicks, setYTicks]               = useState<number[]>([]);
-  const [dataKeys, setDataKeys]           = useState<string[]>([]);
-  const [minY, setMinY]                   = useState<number>(0);
-  const [maxY, setMaxY]                   = useState<number>(0);
+  // const [xTicks, setXTicks]               = useState<string[]>([]);
+  // const [yTicks, setYTicks]               = useState<number[]>([]);
+  // const [dataKeys, setDataKeys]           = useState<string[]>([]);
+  // const [minY, setMinY]                   = useState<number>(0);
+  // const [maxY, setMaxY]                   = useState<number>(0);
 
   type CombinedData = {
     date: string;
     [key: string]: number | string;
   };
 
-  const currencyFormatter = (item: any) => {
-    return Number(item).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    });
-  }
+  // const currencyFormatter = (item: any) => {
+  //   return Number(item).toLocaleString('en-US', {
+  //     style: 'currency',
+  //     currency: 'USD',
+  //     maximumFractionDigits: 0,
+  //   });
+  // }
 
   useEffect(() => {
     function firstOrToday(inputDate: string) {
@@ -101,7 +93,7 @@ const OutlookGraph: React.FC = () => {
       }
     }
 
-    setAccountColors(colors);
+    // setAccountColors(colors);
 
     const tempCombinedData: CombinedData[] = [];
     let minY = Infinity;
@@ -135,8 +127,8 @@ const OutlookGraph: React.FC = () => {
         tempCombinedData.push(dayData);
       }
 
-      setMinY(minY - Math.abs(minY) * 0.1); // Force a wee margin
-      setMaxY(maxY + Math.abs(maxY) * 0.1);
+      // setMinY(minY - Math.abs(minY) * 0.1); // Force a wee margin
+      // setMaxY(maxY + Math.abs(maxY) * 0.1);
 
       let new_yTicks = [minY];
       if (minY < 0 && maxY > 0) {
@@ -144,19 +136,19 @@ const OutlookGraph: React.FC = () => {
       }
       new_yTicks.push(maxY);
 
-      setYTicks(new_yTicks);
+      // setYTicks(new_yTicks);
 
-      setXTicks([
-        format(new Date(tempCombinedData[0].date), 'M/d/yy'),
-        format(new Date(tempCombinedData[tempCombinedData.length - 1].date), 'M/d/yy')
-      ]);
+      // setXTicks([
+      //   format(new Date(tempCombinedData[0].date), 'M/d/yy'),
+      //   format(new Date(tempCombinedData[tempCombinedData.length - 1].date), 'M/d/yy')
+      // ]);
 
-      if (tempCombinedData.length > 0) {
-        const keys = Object.keys(tempCombinedData[0]).filter(key => key !== 'date');
-        setDataKeys(keys);
-      } else {
-        setDataKeys([]);
-      }
+      // if (tempCombinedData.length > 0) {
+      //   const keys = Object.keys(tempCombinedData[0]).filter(key => key !== 'date');
+      //   setDataKeys(keys);
+      // } else {
+      //   setDataKeys([]);
+      // }
 
       setCombinedData(tempCombinedData)
     }
@@ -168,47 +160,6 @@ const OutlookGraph: React.FC = () => {
     graphRange,
     today
   ])
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className='glassjar__custom-tooltip'>
-          <h3 className='label'>{`${label}`}</h3>
-          <table>
-            <tbody>
-              {payload.map(
-                (entry: { color: any; name: any; value: any }, index: any) => (
-                  <tr key={index}>
-                    <td key={`item-${index}`} style={{ color: entry.color }}>
-                      {`${entry.name}:`}
-                    </td>
-                    <td>{currencyFormatter(entry.value)}</td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  function CustomXAxisTick({ x, y, payload }: any, data: string | any[]) {
-    const isFirstOrLast = payload.value === data[0].date || payload.value === data[data.length - 1].date;
-
-    return (
-      <text 
-        x          = {x}
-        y          = {y + 10}
-        fill       = '#666'
-        textAnchor = {isFirstOrLast ? (payload.value === data[0].date ? 'start' : 'end') : 'middle'}
-      >
-        {payload.value}
-      </text>
-    );
-  }
 
   const handleSpanChange = () => {
     let currentIndex = rangeChoices.findIndex(value => value === graphRange);
@@ -222,14 +173,35 @@ const OutlookGraph: React.FC = () => {
     );
   }
 
+  const dataSets = Object.keys(combinedData[0] || {})
+  .filter((key) => key !== 'date')
+  .map((account) => {
+    const accountInfo = accounts.find((acc) => acc.name === account);
+    return {
+      name: account,
+      data: combinedData.map((entry) => ({
+        date: new Date(entry.date),
+        value: parseFloat(entry[account] as string),
+      })),
+      color: colorPalette[accountInfo?.color || 0], // Fallback to a default color if not found
+    };
+  });
+
+if (accounts.length === 0) {
+  return <div>No accounts available. Please add an account to see the graph.</div>;
+}
+
   return (
     <div className='glassjar__graph-holder'>
       <h2>Balance Outlook</h2>
       <div className='glassjar__graph-holder__sub'>
         <div className='glassjar__graph-holder__sub-sub'>
-          <ResponsiveContainer width='100%' height='100%'>
+        <SVGGraph dataSets={dataSets} />
+
+
+
+          {/* <ResponsiveContainer width='100%' height='100%'>
             <LineChart data={combinedData}>
-              {/* <CartesianGrid strokeDasharray='3 3' /> */}
               <XAxis 
                 dataKey = 'date'
                 tick    = {(props) => CustomXAxisTick(props, combinedData)}
@@ -264,7 +236,7 @@ const OutlookGraph: React.FC = () => {
                 />
               ))}
             </LineChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer> */}
         </div>
       </div>
       <div className='glassjar__graph-holder__range-change'>
