@@ -171,10 +171,10 @@ const SVGGraph: React.FC<SVGGraphProps> = ({ dataSets }) => {
   }
   
   function formatToAttractiveCurrency(num: number): string {
-    if (num === 0) return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(0);
+    if (num === 0) return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(0);
   
     const rounded = roundToNearestPow(Math.abs(num));
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num < 0 ? -rounded : rounded);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num < 0 ? -rounded : rounded);
   }
   
   const formattedMin = formatToAttractiveCurrency(yMin);
