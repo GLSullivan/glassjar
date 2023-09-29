@@ -1,4 +1,4 @@
-        /* 
+          /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -23,7 +23,7 @@
   position      : absolute;
   transition    : opacity 0.6s, transform 0.6s;
   width         : 100%;
-  z-index: -1;
+  z-index       : -1;
 }
 
 .glassjar__panel-group.glassjar__panel-group--calendar {
@@ -43,5 +43,36 @@
   opacity       : 1;
   pointer-events: auto;
   visibility    : visible;
-  z-index: 1;
+  z-index       : 1;
+}
+
+.glassjar__list > h3 {
+  margin-top: 1rem;
+  text-align: center;
+  width     : 100%;
+}
+
+.glassjar__grid.glassjar__grid--projected-info {
+  display              : grid;
+  gap                  : .5rem;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom        : 1rem;
+  width                : 100%;
+}
+
+.glassjar__grid.glassjar__grid--projected-info h4 {
+  margin: 0
+}
+
+.glassjar__grid.glassjar__grid--projected-info h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-left: 1rem;
+  white-space: nowrap;
+}
+
+.glassjar__grid.glassjar__grid--projected-info span,
+.glassjar__grid.glassjar__grid--projected-info strong {
+  text-align: right;
 }

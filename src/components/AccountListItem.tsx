@@ -9,6 +9,7 @@ import { AccountType }                from './../utils/constants';
 import { Account }                    from '../models/Account';
 
 import './../css/Panels.css';
+// import SVGGraph from './SVGGraph';
 
 interface AccountListItem {
   account : Account;
@@ -69,7 +70,10 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
     const dispatch = useDispatch();
 
     return (
-      <div className='glassjar__list-item' onClick={() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key={account.id}>
+      <div className='glassjar__list-item glassjar__list-item--account' onClick={() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key={account.id}>
+        
+        {/* <SVGGraph dataSets={dataSets} /> */}
+
         <div className='glassjar__list-item__icon'>
           <i className={accountTypeIcons[account.type]} />
           <div className='glassjar__list-icon__backing' style={{ background: colorPalette[account.color] }} />

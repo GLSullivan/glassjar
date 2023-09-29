@@ -72,12 +72,19 @@ a {
   overflow      : hidden;
   padding       : 0rem;
 
+  position: fixed;
+  top: 0;
+  width: 100vw;
 }
 
 h2 {
   font-size    : 1.6rem;
   font-weight  : 300;
   margin-top: 0;
+}
+
+h3 {
+  font-weight: 500;
 }
 
 .glassjar__flex {

@@ -5,7 +5,7 @@ import CalendarMonth     from './CalendarMonth';
 import OutlookGraph      from './OutlookGraph';
 import Tabs              from './Tabs';
 
-import { DayPanel } from './panels/DayPanel';
+import { DayPanel } from './panels/Projections';
 
 const CalendarSelector: React.FC = () => {
   return (

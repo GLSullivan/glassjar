@@ -10,14 +10,16 @@
 */
 
 .glassjar__lazy-list__header {
-  background: white;
-  margin    : 0;
-  padding   : .2rem 0;
-  position  : sticky;
-  text-align: left;
-  top       : -1px;
-  width     : 100%;
-  z-index   : 2;
+  align-items: baseline;
+  background : white;
+  margin     : 0;
+  margin     : 0.5rem 0;
+  padding    : .2rem 0;
+  position   : sticky;
+  text-align : left;
+  top        : -1px;
+  width      : 100%;
+  z-index    : 2;
 }
 
 .glassjar__calendar__container .glassjar__lazy-list__header {

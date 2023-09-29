@@ -24,4 +24,6 @@ export interface Transaction {
   arbitraryDates     ?: string[]; 
   discretionary      ?: boolean; // Future feature for sorting, showing things that are required.
   fromHelper         ?: string;
+  nextOccurrence     ?: string;
+  
 }

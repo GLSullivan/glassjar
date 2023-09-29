@@ -165,9 +165,9 @@ const CalendarSchedule: React.FC = () => {
                 <div
                   className='glassjar__lazy-list__header glassjar__flex glassjar__flex--justify-between'
                 >
-                  <h2 className='glassjar__calendar__month'>
+                  <h3 className='glassjar__calendar__month'>
                     {format(parseISO(group.date), 'MMMM do')}
-                  </h2>
+                  </h3>
                   <button
                     onClick={() => {
                       dispatch(setActiveTransaction(null));
@@ -195,9 +195,9 @@ const CalendarSchedule: React.FC = () => {
           <div
             className='glassjar__lazy-list__header glassjar__flex'
           >
-            <h2 className='glassjar__calendar__month'>
+            <h3 className='glassjar__calendar__month'>
               Create your first transaction!
-            </h2>
+            </h3>
             <button
               onClick={() => {
                 dispatch(setActiveTransaction(null));

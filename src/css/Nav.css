@@ -19,7 +19,7 @@
 .glassjar__nav.glassjar__nav--primary {
   border-radius: 2rem 2rem 0 0;
   border-top   : 1px solid rgba(0, 0, 0, 0.05);
-  bottom       : -1px;
+  bottom       : -4px;
   position     : absolute;
   width        : 100%;
   z-index      : 9000;

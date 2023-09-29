@@ -44,15 +44,16 @@ export const AccountForm: React.FC = () => {
 
   const [account, setAccount] = useState<Account>(
     activeAccount || {
-      id            : generateUniqueId(),
-      name          : '',
-      currentBalance: 0,
-      type          : AccountType.CHECKING,
-      lastUpdated   : new Date().toISOString(),
-      isLiability   : false,
-      showInGraph   : true,
-      color         : 0,
-      creditLimit   : 0
+      id             : generateUniqueId(),
+      name           : '',
+      currentBalance : 0,
+      type           : AccountType.CHECKING,
+      lastUpdated    : new Date().toISOString(),
+      isLiability    : false,
+      showInGraph    : true,
+      color          : 0,
+      creditLimit    : 0,
+      isSpendingPower: true
     }
   );
 
@@ -308,16 +309,30 @@ export const AccountForm: React.FC = () => {
             </div>
           </div>
 
-          <div className='glassjar__form__input-group glassjar__form__input-group--check'>
+          <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
             <input
-              type='checkbox'
-              id='showInGraph'
-              name='showInGraph'
-              checked={account.showInGraph}
-              onChange={handleChange}
+              type     = 'checkbox'
+              id       = 'showInGraph'
+              name     = 'showInGraph'
+              checked  = {account.showInGraph}
+              onChange = {handleChange}
             />
-            <label htmlFor='showInGraph'>Show In Graph:</label>
+            <label htmlFor = 'showInGraph'>Show In Graph:</label>
           </div>
+
+          {(account.type === 'checking' || account.type === 'savings' || account.type === 'credit card' || account.type === 'cash') && 
+            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
+              <input
+                type     = 'checkbox'
+                id       = 'isSpendingPower'
+                name     = 'isSpendingPower'
+                checked  = {account.isSpendingPower}
+                onChange = {handleChange}
+              />
+              <label htmlFor = 'isSpendingPower'>Count As Spending Power:</label>
+            </div>
+          }
+
           {activeAccount && accounts.length > 1 && (
             <>
               <br />

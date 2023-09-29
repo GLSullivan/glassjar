@@ -10,66 +10,46 @@ import {
   endOfMonth, 
   addMonths, 
   isAfter,
-  isToday}                                    from 'date-fns';
+  isToday }                                   from 'date-fns';
 
 import SVGGraph                               from './../components/SVGGraph';  
 
-
-import { useDispatch, useSelector }           from 'react-redux';
+import { useSelector }                        from 'react-redux';
 
 import { accountBalancesByDateRange }         from './../redux/slices/projections';
+import { colorPalette }                       from './../data/ColorPalette';
 import { Account }                            from './../models/Account';
 import { RootState }                          from './../redux/store';
-import { colorPalette }                       from './../data/ColorPalette';
-import { setGraphRange }                      from './../redux/slices/views';
 
 import './../css/OutlookGraph.css';
 
 const OutlookGraph: React.FC = () => {
-  const dispatch = useDispatch()
   
-  const rangeChoices: number[]            = [1,3,6,12];
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
+  const accounts   = useSelector((state: RootState) => state.accounts.accounts);
+  const today      = useSelector((state: RootState) => state.activeDates.today);
+  const graphRange = useSelector((state: RootState) => state.views.graphRange);
+  const state      = useSelector((state: RootState) => state);
   
-  const activeDate                        = useSelector((state: RootState) => state.activeDates.activeDate);
-  const accounts                          = useSelector((state: RootState) => state.accounts.accounts);
-  const today                             = useSelector((state: RootState) => state.activeDates.today);
-  const graphRange                        = useSelector((state: RootState) => state.views.graphRange);
-  const state                             = useSelector((state: RootState) => state);
-  
-  // const [accountColors, setAccountColors] = useState<Record<string, string>>({});
-  const [combinedData, setCombinedData]   = useState<CombinedData[]>([]);
-  // const [xTicks, setXTicks]               = useState<string[]>([]);
-  // const [yTicks, setYTicks]               = useState<number[]>([]);
-  // const [dataKeys, setDataKeys]           = useState<string[]>([]);
-  // const [minY, setMinY]                   = useState<number>(0);
-  // const [maxY, setMaxY]                   = useState<number>(0);
+  const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
 
   type CombinedData = {
-    date: string;
+    date         : string;
     [key: string]: number | string;
   };
 
-  // const currencyFormatter = (item: any) => {
-  //   return Number(item).toLocaleString('en-US', {
-  //     style: 'currency',
-  //     currency: 'USD',
-  //     maximumFractionDigits: 0,
-  //   });
-  // }
+  function firstOrToday(inputDate: string) {
+    const todayDate       = new Date(today);                    // gets today's date
+    const firstDayOfMonth = startOfMonth(new Date(inputDate));  // gets the first day of the month of inputDate
+
+    if (isAfter(firstDayOfMonth, todayDate) || isToday(firstDayOfMonth)) { // If the first day of the inputDate month is later than today, or it is today
+      return formatISO(firstDayOfMonth);
+    } else {
+      return formatISO(todayDate); // If today's date is later
+    }
+  }
 
   useEffect(() => {
-    function firstOrToday(inputDate: string) {
-      const todayDate = new Date(today); // gets today's date
-      const firstDayOfMonth = startOfMonth(new Date(inputDate)); // gets the first day of the month of inputDate
-  
-      if (isAfter(firstDayOfMonth, todayDate) || isToday(firstDayOfMonth)) {
-        // If the first day of the inputDate month is later than today, or it is today
-        return formatISO(firstDayOfMonth);
-      } else {
-        // If today's date is later
-        return formatISO(todayDate);
-      }
-    }
 
     const graphStart = firstOrToday(activeDate);
     const graphEnd   = formatISO(endOfMonth(addMonths(new Date(graphStart), graphRange || 6)));
@@ -90,18 +70,18 @@ const OutlookGraph: React.FC = () => {
         accountBalances.push(balances);
         graphingAccounts.push(account)
         colors[account.name] = colorPalette[account.color];
+        // console.log(account.name,balances)
       }
     }
 
-    // setAccountColors(colors);
-
     const tempCombinedData: CombinedData[] = [];
-    let minY = Infinity;
-    let maxY = -Infinity;
+
+    let   minY                             = Infinity;
+    let   maxY                             = -Infinity;
 
     if (accountBalances[0] && Array.isArray(accountBalances[0])) {
       for (let dayIndex = 0; dayIndex < accountBalances[0].length; dayIndex++) {
-        const date = addDays(new Date(graphStart), dayIndex);
+        const date                  = addDays(new Date(graphStart), dayIndex);
         const dayData: CombinedData = {
           date: format(date, 'M/d/yy')
         };
@@ -127,32 +107,15 @@ const OutlookGraph: React.FC = () => {
         tempCombinedData.push(dayData);
       }
 
-      // setMinY(minY - Math.abs(minY) * 0.1); // Force a wee margin
-      // setMaxY(maxY + Math.abs(maxY) * 0.1);
-
       let new_yTicks = [minY];
       if (minY < 0 && maxY > 0) {
         new_yTicks.push(0);
       }
       new_yTicks.push(maxY);
 
-      // setYTicks(new_yTicks);
-
-      // setXTicks([
-      //   format(new Date(tempCombinedData[0].date), 'M/d/yy'),
-      //   format(new Date(tempCombinedData[tempCombinedData.length - 1].date), 'M/d/yy')
-      // ]);
-
-      // if (tempCombinedData.length > 0) {
-      //   const keys = Object.keys(tempCombinedData[0]).filter(key => key !== 'date');
-      //   setDataKeys(keys);
-      // } else {
-      //   setDataKeys([]);
-      // }
-
       setCombinedData(tempCombinedData)
     }
-
+// eslint-disable-next-line
   }, [
     activeDate,
     accounts,
@@ -160,12 +123,6 @@ const OutlookGraph: React.FC = () => {
     graphRange,
     today
   ])
-
-  const handleSpanChange = () => {
-    let currentIndex = rangeChoices.findIndex(value => value === graphRange);
-    let nextIndex    = (currentIndex + 1) % rangeChoices.length;
-    dispatch(setGraphRange(rangeChoices[nextIndex]))
-  };
 
   if (accounts.length === 0) {
     return (
@@ -180,67 +137,19 @@ const OutlookGraph: React.FC = () => {
     return {
       name: account,
       data: combinedData.map((entry) => ({
-        date: new Date(entry.date),
+        date : new Date(entry.date),
         value: parseFloat(entry[account] as string),
       })),
-      color: colorPalette[accountInfo?.color || 0], // Fallback to a default color if not found
+      color: colorPalette[accountInfo?.color || 0],   // Fallback to a default color if not found
     };
   });
 
-if (accounts.length === 0) {
-  return <div>No accounts available. Please add an account to see the graph.</div>;
-}
-
   return (
-    <div className='glassjar__graph-holder'>
-      <h2>Balance Outlook</h2>
-      <div className='glassjar__graph-holder__sub'>
-        <div className='glassjar__graph-holder__sub-sub'>
-        <SVGGraph dataSets={dataSets} />
-
-
-
-          {/* <ResponsiveContainer width='100%' height='100%'>
-            <LineChart data={combinedData}>
-              <XAxis 
-                dataKey = 'date'
-                tick    = {(props) => CustomXAxisTick(props, combinedData)}
-                ticks   = {xTicks} />
-              <YAxis
-                ticks         = {yTicks}
-                tickFormatter = {currencyFormatter}
-                width         = {75}
-                domain        = {[minY, maxY]}
-                tickCount     = {5}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine
-                position = 'start'
-                x        = {format(new Date(state.activeDates.activeDate), 'M/d/yy')}
-                stroke   = '#54816F'
-              >
-                <Label position={'right'}>
-                  {format(new Date(state.activeDates.activeDate), 'M/d')}
-                </Label>
-              </ReferenceLine>
-              {dataKeys.map((key, index) => (
-                <Line
-                  key               = {key}
-                  type              = 'monotone'
-                  dataKey           = {key}
-                  stroke            = {accountColors[key]}
-                  strokeWidth       = {2}
-                  activeDot         = {{ r: 8 }}
-                  dot               = {false}
-                  isAnimationActive = {false}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer> */}
+    <div className="glassjar__graph-holder">
+      <div className="glassjar__graph-holder__sub">
+        <div className="glassjar__graph-holder__sub-sub">
+          <SVGGraph dataSets={dataSets} />
         </div>
-      </div>
-      <div className='glassjar__graph-holder__range-change'>
-        <button className='glassjar__button glassjar__button--small' onClick={() => handleSpanChange()}>{graphRange}</button>
       </div>
     </div>
   );

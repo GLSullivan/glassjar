@@ -87,8 +87,6 @@ export const projectionsSlice = createSlice({
               tempTransactionsOnDate[dateString] = [];
             }
             
-
-
             tempTransactionsOnDate[dateString].push(transaction);
       
             if (transaction.isRecurring) {
@@ -454,6 +452,8 @@ export const projectionsSlice = createSlice({
   },
 });
 
+// THE FUNCTIONS
+
 // Update the projections due to a change
 export const { recalculateProjections } = projectionsSlice.actions;
 
@@ -490,7 +490,6 @@ export const accountBalanceOnDate = (
   } else {
     date = inputDate.toISOString().split('T')[0];
   }
-
   return accountBalance[date] || 0;
 };
 
@@ -604,6 +603,204 @@ export const accountBalancesByDateRange = (
     start.setDate(start.getDate() + 1);
   }
   return balances;
+};
+
+// Get Spending Power for a date
+export const getSpendingPowerByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+      if (account && account.isSpendingPower) {
+        switch (account.type) {
+          case 'checking':
+          case 'savings':
+          case 'cash':
+            workingValue += accountBalanceOnDate(state, account.id, date);
+            break;
+          case 'credit card':
+            if(account.creditLimit) {
+            const availableCredit = account.creditLimit - accountBalanceOnDate(state, account.id, date);
+            if (availableCredit > 0) {
+              workingValue += availableCredit;
+            }
+          }
+            break;
+          default:
+            break;
+        }
+      }
+    })
+  }
+
+  return workingValue;
+};
+
+// Get Savings for a date
+export const getSavingsByDate = (
+  state: RootState,
+  date: string
+): number | null => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+      if (account && account.type === 'savings' && account.isSpendingPower) {
+        hasRequiredAccount = true;
+        workingValue += accountBalanceOnDate(state, account.id, date);
+      }
+    });
+  }
+
+  return hasRequiredAccount ? workingValue : null;
+};
+
+
+// Get Cash for a date
+export const getCashByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+      if (account && (account.type === 'checking' || account.type === 'cash' ) && account.isSpendingPower) {
+        hasRequiredAccount = true;
+        workingValue += accountBalanceOnDate(state, account.id, date);   
+      }
+    })
+  }
+
+  return hasRequiredAccount ? workingValue : null;
+};
+
+// Get Available Credit for a date
+export const getAvailableCreditByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+      if (account && account.type === 'credit card' && account.creditLimit) {
+        hasRequiredAccount = true;
+        const availableCredit = account.creditLimit - accountBalanceOnDate(state, account.id, date);
+        if (availableCredit > 0) {
+          workingValue += availableCredit;
+        }
+      }
+    })
+  }
+
+  return hasRequiredAccount ? workingValue : null;
+};
+
+// Get Debt for a date
+export const getDebtByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+
+      if (account && account.isSpendingPower) {
+        switch (account.type) {
+          case "loan":
+          case "credit card":
+            hasRequiredAccount = true;
+            workingValue += accountBalanceOnDate(state, account.id, date);
+            break;
+          default:
+            break;
+        }
+      }
+    })
+  }
+
+  return hasRequiredAccount ? workingValue : null;
+};
+
+// Get Credit Card Debt for a date
+export const getCreditCardDebtByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+      if (account && account.isSpendingPower) {
+        switch (account.type) {
+          case "credit card":
+            hasRequiredAccount = true;
+            workingValue += accountBalanceOnDate(state, account.id, date);
+            break;
+          default:
+            break;
+        }
+      }
+    })
+  }
+
+  return hasRequiredAccount ? workingValue : null;
+};
+
+// Get Loan Debt for a date
+export const getLoanDebtByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  if (allAccounts) {
+    allAccounts.forEach((account) => {
+
+      if (account && account.isSpendingPower) {
+        switch (account.type) {
+          case "loan":
+            hasRequiredAccount = true;
+            workingValue += accountBalanceOnDate(state, account.id, date);
+            break;
+          default:
+            break;
+        }
+      }
+    })
+  }
+
+  return hasRequiredAccount ? workingValue : null;
+};
+
+// Get Net Worth for a date
+export const getNetWorthByDate = (
+  state    : RootState,
+  date     : string
+  ) => {
+  let workingValue = 0;
+  let hasRequiredAccount = false;
+
+  let theSavings = getSavingsByDate(state, date)
+  let theCash = getCashByDate(state, date)
+  let theDebt = getDebtByDate(state, date)
+
+  if (theSavings !== null && theCash !== null && theDebt !== null) {
+    hasRequiredAccount = true;
+    workingValue = theSavings + theCash - theDebt
+  } 
+
+  return hasRequiredAccount ? workingValue : null;
 };
 
 export default projectionsSlice.reducer;

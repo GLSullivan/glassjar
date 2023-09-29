@@ -76,9 +76,12 @@
 }
 
 .glassjar__modal.open .glassjar__modal__body {
-
   opacity       : 1;
+}
 
+.glassjar__modal__body .glassjar__padding {
+  max-height: 100%;
+  overflow: auto;
 }
 
 .glassjar__modal__close {
