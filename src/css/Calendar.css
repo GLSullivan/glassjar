@@ -29,7 +29,7 @@
 }
 
 .glassjar__calendar-toggle {
-  bottom         : 0rem;
+  bottom         : -0.5rem;
   display        : flex;
   justify-content: center;
   left           : 1rem;

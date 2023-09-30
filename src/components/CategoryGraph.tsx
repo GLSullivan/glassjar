@@ -9,11 +9,11 @@ import {
   ResponsiveContainer,
 }                             from 'recharts';
 import { RecurringExpenses }  from '../data/RecurringExpenses';
-import { colorPalette } from '../data/ColorPalette';
+import { accountColors } from '../data/AccountColors';
 
 const CategorySpendPieChart = () => {
   const categorySpendData = useSelector(getCategorySpend);
-  const COLORS = colorPalette;
+  const COLORS = accountColors;
 
   const getCategoryPercentage = (categoryName: any) => {
     const [beforeColon] = categoryName.split(':');

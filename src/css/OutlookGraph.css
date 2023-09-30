@@ -110,13 +110,20 @@ margin: 0;
 .glassjar__graph-holder__range-change .glassjar__button.glassjar__button--small {
   width       : unset;
   aspect-ratio: unset;
-  font-size   : 1rem;
   height      : 2rem;
   padding     : 0.5rem;
   position    : absolute;
   right       : 0rem;
   top         : 0;
   white-space : nowrap;
+}
+
+button.glassjar__button.glassjar__button--small {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+  background: #fafcfa;
 }
 
 .glassjar__svg-graph h2 {

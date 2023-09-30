@@ -147,16 +147,14 @@ const SVGGraph: React.FC<SVGGraphProps> = ({ dataSets }) => {
     updateDimensions();  // Initial dimensions
     window.addEventListener('resize', updateDimensions);
 
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, [containerRef]);
-
-  useEffect(() => {
     if (containerRef.current) {
       const { width, height } = (containerRef.current as HTMLElement).getBoundingClientRect();
       setDimensions({ width, height });
     }
+
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
   }, [containerRef]);
 
     // Calculate yMin and yMax including the rolling average
@@ -211,7 +209,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({ dataSets }) => {
   return (
     <div className = 'glassjar__svg-graph' ref = {containerRef}>
     <svg width     = "100%" height             = "100%">
-
+{/* This is the rolling average / trend line */}
         <path
           key         = {rollingAverageDataSet.name}
           d           = {paths[rollingAverageDataSet.name]}
@@ -219,7 +217,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({ dataSets }) => {
           strokeWidth = "16"
           fill        = "none"
         />
-
+{/* This is the zero line if it appears in the range */}
         {shouldDisplayZeroLine && (
           <line
             x1              = "0"
@@ -232,6 +230,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({ dataSets }) => {
           />
         )}
 
+{/* This is the remaining graph lines */}
         {Object.keys(paths).map((key) => {
           if (key === 'Rolling Average') return null;  // Skip the rolling average line
           const  color     = dataSets.find((d) => d.name === key)?.color || 'black';

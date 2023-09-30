@@ -4,7 +4,7 @@ import CountUp                        from 'react-countup';
 
 import { setActiveAccount }           from '../redux/slices/accounts';
 import { openAccountForm }            from '../redux/slices/modals';
-import { colorPalette }               from './../data/ColorPalette';
+import { accountColors }               from '../data/AccountColors';
 import { AccountType }                from './../utils/constants';
 import { Account }                    from '../models/Account';
 
@@ -76,7 +76,7 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
 
         <div className='glassjar__list-item__icon'>
           <i className={accountTypeIcons[account.type]} />
-          <div className='glassjar__list-icon__backing' style={{ background: colorPalette[account.color] }} />
+          <div className='glassjar__list-icon__backing' style={{ background: accountColors[account.color] }} />
         </div>
         <div className='glassjar__list-item__body'>
           <div className='glassjar__list-item-row glassjar__list-item__row--row1'>
@@ -113,7 +113,7 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
           </div>
 
         </div>
-        <div className='glassjar__list-item__backing' style={{ background: colorPalette[account.color] }} />
+        <div className='glassjar__list-item__backing' style={{ background: accountColors[account.color] }} />
       </div>
     );
   }

@@ -55,6 +55,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
                 end={spendingPower / 100}
                 duration={2}
                 preserveValue={true}
+                className='glassjar__mono-spaced'
               />
             </strong>
           </>
@@ -70,6 +71,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
               end={getSavingsByDate(state, graphEnd)! / 100}
               duration={2}
               preserveValue={true}
+              className='glassjar__mono-spaced'
             />
           </>
         )}
@@ -84,6 +86,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
               end={cash / 100}
               duration={2}
               preserveValue={true}
+              className='glassjar__mono-spaced'
             />
           </>
         )}
@@ -98,6 +101,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
               end={availableCredit / 100}
               duration={2}
               preserveValue={true}
+              className='glassjar__mono-spaced'
             />
           </>
         )}
@@ -113,6 +117,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
                 end={debt / 100}
                 duration={2}
                 preserveValue={true}
+                className='glassjar__mono-spaced'
               />
             </strong>
           </>
@@ -128,6 +133,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
               end={creditCardDebt / 100}
               duration={2}
               preserveValue={true}
+              className='glassjar__mono-spaced'
             />
           </>
         )}
@@ -142,6 +148,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
               end={loan / 100}
               duration={2}
               preserveValue={true}
+              className='glassjar__mono-spaced'
             />
           </>
         )}
@@ -157,6 +164,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
                 end={netWorth / 100}
                 duration={2}
                 preserveValue={true}
+                className='glassjar__mono-spaced'
               />
             </strong>
           </>
@@ -164,6 +172,7 @@ const netWorth        = getNetWorthByDate(state, graphEnd)
 
 
       </div>
+      <h3>Accounts</h3>
       <div>
         {accounts.map((account) => (
           <AccountListItem

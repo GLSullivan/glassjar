@@ -5,7 +5,7 @@ import { setActiveTransaction }     from './../redux/slices/transactions';
 import { openTransactionModal }     from './../redux/slices/modals';
 
 import { Transaction }              from './../models/Transaction';
-import { colorPalette }             from './../data/ColorPalette';
+import { accountColors }             from '../data/AccountColors';
 import { RootState }                from './../redux/store';
 
 import './../css/ListItems.css';
@@ -34,19 +34,19 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     
     if (transaction.type === 'deposit' && toAccountIndex !== -1) {
       const toAccountColor = accounts[toAccountIndex].color;
-      if (colorPalette[toAccountColor] !== undefined) {
-        accountColor = colorPalette[toAccountColor];
+      if (accountColors[toAccountColor] !== undefined) {
+        accountColor = accountColors[toAccountColor];
       }
     } else if (transaction.type === 'transfer' && fromAccountIndex !== -1 && toAccountIndex !== -1) {
       const fromAccountColor = accounts[fromAccountIndex].color;
       const toAccountColor   = accounts[toAccountIndex].color;
-      if (colorPalette[fromAccountColor] !== undefined) {
-        accountColor = 'linear-gradient(70deg, ' + colorPalette[fromAccountColor] + ' 0%,' + colorPalette[fromAccountColor] + ' 45%,' + colorPalette[toAccountColor] + ' 55%,' + colorPalette[toAccountColor];
+      if (accountColors[fromAccountColor] !== undefined) {
+        accountColor = 'linear-gradient(70deg, ' + accountColors[fromAccountColor] + ' 0%,' + accountColors[fromAccountColor] + ' 45%,' + accountColors[toAccountColor] + ' 55%,' + accountColors[toAccountColor];
       }
     } else if (fromAccountIndex !== -1) {
       const fromAccountColor = accounts[fromAccountIndex].color;
-      if (colorPalette[fromAccountColor] !== undefined) {
-        accountColor = colorPalette[fromAccountColor];
+      if (accountColors[fromAccountColor] !== undefined) {
+        accountColor = accountColors[fromAccountColor];
       }
     } 
     

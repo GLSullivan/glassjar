@@ -16,7 +16,7 @@ import Landing                              from './components/Landing';
 import Loader                               from './components/Loader';
 import Modal                                from './components/Modal';
 
-import { colorPalette }                     from './data/ColorPalette';
+import { accountColors }                     from './data/AccountColors';
 
 import { recalculateProjections }           from './redux/slices/projections';
 import {      
@@ -82,7 +82,7 @@ const App: React.FC = () => {
         isOpen={accountFormOpen}
         onClose={closeTheAccountForm}
         hideClose={accounts.length < 1}
-        color={activeAccount ? colorPalette[activeAccount.color] : undefined}
+        color={activeAccount ? accountColors[activeAccount.color] : undefined}
       >
         <AccountForm />
       </Modal>
@@ -97,7 +97,7 @@ const App: React.FC = () => {
       <Modal
         isOpen={deleteTransactionOpen}
         onClose={closeTheDeleteTransactionForm}
-        color={activeAccount ? colorPalette[activeAccount.color] : undefined}
+        color={activeAccount ? accountColors[activeAccount.color] : undefined}
       >
         <AccountDelete />
       </Modal>

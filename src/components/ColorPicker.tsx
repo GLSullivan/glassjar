@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { colorPalette } from './../data/ColorPalette';
+import { accountColors } from '../data/AccountColors';
 
 import './../css/ColorPicker.css';
 
@@ -20,7 +20,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 
   return (
     <div className='glassjar__color-picker'>
-      {colorPalette.map((color, index) => (
+      {accountColors.map((color, index) => (
         <button
           key={index}
           className={`glassjar__color-picker__color${

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { setView }                            from './../redux/slices/views';
 import { RootState }                          from '../redux/store';
 
-import { colorPalette }                       from '../data/ColorPalette';
+import { interfaceColors }                       from '../data/InterfaceColors';
 
 import "./../css/Nav.css";
 
@@ -16,10 +16,10 @@ type StyleState = {
 
 const PrimaryNav = () => {
   const buttons = [
-    { label: "Calendar",     color: colorPalette[0], icon: "fa-calendar-days", view: "calendar" },
-    { label: "Accounts",     color: colorPalette[1], icon: "fa-file-invoice",  view: "accounts" },
-    { label: "Transactions", color: colorPalette[2], icon: "fa-jar",           view: "transactions" },
-    { label: "Settings",     color: colorPalette[3], icon: "fa-gear",          view: "settings" },
+    { label: "Calendar",     color: interfaceColors[0], icon: "fa-calendar-days", view: "calendar" },
+    { label: "Accounts",     color: interfaceColors[0], icon: "fa-file-invoice",  view: "accounts" },
+    { label: "Transactions", color: interfaceColors[0], icon: "fa-jar",           view: "transactions" },
+    { label: "Settings",     color: interfaceColors[0], icon: "fa-gear",          view: "settings" },
     // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
     // { label: 'Categories',     icon: 'fa-chart-pie',     view: 'categories' },
   ];

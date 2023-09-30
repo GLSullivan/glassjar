@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState }  from 'react';
 
-import { colorPalette }                                   from '../data/ColorPalette';
+import { interfaceColors }                                   from '../data/InterfaceColors';
 
 import './../css/Nav.css';
 
@@ -58,7 +58,7 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
       setActiveStyle({
         left : `${left}px`,
         width: `${width}px`,
-        color: colorPalette[openTabsIndex],
+        color: interfaceColors[0],
       });
     }
   };

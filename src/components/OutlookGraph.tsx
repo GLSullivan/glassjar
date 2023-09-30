@@ -17,7 +17,7 @@ import SVGGraph                               from './../components/SVGGraph';
 import { useSelector }                        from 'react-redux';
 
 import { accountBalancesByDateRange }         from './../redux/slices/projections';
-import { colorPalette }                       from './../data/ColorPalette';
+import { accountColors }                       from '../data/AccountColors';
 import { Account }                            from './../models/Account';
 import { RootState }                          from './../redux/store';
 
@@ -69,7 +69,7 @@ const OutlookGraph: React.FC = () => {
         ) as number[];
         accountBalances.push(balances);
         graphingAccounts.push(account)
-        colors[account.name] = colorPalette[account.color];
+        colors[account.name] = accountColors[account.color];
         // console.log(account.name,balances)
       }
     }
@@ -140,7 +140,7 @@ const OutlookGraph: React.FC = () => {
         date : new Date(entry.date),
         value: parseFloat(entry[account] as string),
       })),
-      color: colorPalette[accountInfo?.color || 0],   // Fallback to a default color if not found
+      color: accountColors[accountInfo?.color || 0],   // Fallback to a default color if not found
     };
   });
 
