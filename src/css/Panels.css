@@ -65,9 +65,9 @@
 }
 
 .glassjar__grid.glassjar__grid--projected-info h5 {
-  margin: 0;
   font-size: 1rem;
   font-weight: 500;
+  margin: 0;
   margin-left: 1rem;
   white-space: nowrap;
 }
@@ -75,4 +75,15 @@
 .glassjar__grid.glassjar__grid--projected-info span,
 .glassjar__grid.glassjar__grid--projected-info strong {
   text-align: right;
+}
+
+.glassjar__list-item.glassjar__list-item--account .glassjar__svg-graph {
+  height    : 100%;
+  left      : 0;
+  max-height: 90%;
+  opacity   : .15;
+  position  : absolute;
+  top       : 5%;
+  width     : 100%;
+  pointer-events: none;
 }

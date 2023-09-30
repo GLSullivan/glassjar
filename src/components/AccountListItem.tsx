@@ -1,4 +1,4 @@
-import { useDispatch }                from 'react-redux';
+import { useDispatch, useSelector }                from 'react-redux';
 import React                          from 'react';
 import CountUp                        from 'react-countup';
 
@@ -9,7 +9,16 @@ import { AccountType }                from './../utils/constants';
 import { Account }                    from '../models/Account';
 
 import './../css/Panels.css';
-// import SVGGraph from './SVGGraph';
+import SVGGraph from './SVGGraph';
+import { RootState } from '../redux/store';
+import {
+  startOfMonth,
+  formatISO,
+  endOfMonth,
+  addMonths,
+  isAfter,
+  isToday,
+} from "date-fns";
 
 interface AccountListItem {
   account : Account;
@@ -31,6 +40,7 @@ function getNextOccurrence(dateString: string | undefined) {
   }
 
   const currentDate = new Date();
+  
   currentDate.setMonth(currentDate.getMonth() + 1);  // Move to the next month.
   currentDate.setDate (1);                           // Set to the first day of the next month.
 
@@ -63,17 +73,48 @@ function getNextOccurrence(dateString: string | undefined) {
 
   return `${monthNames[targetMonth]} ${day}${daySuffix}`;
 }
-
   
 const CalendarDay: React.FC<AccountListItem> = React.memo(
   ({ account, balance }) => {
     const dispatch = useDispatch();
 
+    const graphRange = useSelector((state: RootState) => state.views.graphRange);
+    const today      = useSelector((state: RootState) => state.activeDates.today);
+    const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
+
+    function firstOrToday(inputDate: string) {
+      const todayDate       = new Date(today);                    // gets today's date
+      const firstDayOfMonth = startOfMonth(new Date(inputDate));  // gets the first day of the month of inputDate
+
+      if (isAfter(firstDayOfMonth, todayDate) || isToday(firstDayOfMonth)) {
+          // If the first day of the inputDate month is later than today, or it is today
+        return formatISO(firstDayOfMonth);
+      } else {
+        return formatISO(todayDate);  // If today's date is later
+      }
+    }
+
+    const graphStart = firstOrToday(activeDate);
+    const graphEnd   = formatISO(
+      endOfMonth(addMonths(new Date(graphStart), graphRange || 6))
+    );
+
     return (
       <div className='glassjar__list-item glassjar__list-item--account' onClick={() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key={account.id}>
         
-        {/* <SVGGraph dataSets={dataSets} /> */}
 
+        <SVGGraph
+            accounts  = {[account]}
+            startDate = {graphStart}
+            endDate   = {graphEnd}
+            hideSpan  = {true}
+            hideZero  = {true}
+            hideTrend = {true}
+            hideDates = {true}
+            hideRange = {true}
+            thickness = {2}
+          />
+          
         <div className='glassjar__list-item__icon'>
           <i className={accountTypeIcons[account.type]} />
           <div className='glassjar__list-icon__backing' style={{ background: accountColors[account.color] }} />
@@ -111,7 +152,6 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
             <h5>{account.dueDate && <>Due Next: {getNextOccurrence(account.dueDate)}</>}</h5>
             <h5>{account.interestRate && <>{account.interestRate}%</>}</h5>
           </div>
-
         </div>
         <div className='glassjar__list-item__backing' style={{ background: accountColors[account.color] }} />
       </div>
