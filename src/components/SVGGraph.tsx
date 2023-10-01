@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector }                        from 'react-redux';
+import { useDispatch, useSelector }                        from 'react-redux';
 import { RootState }                          from '../redux/store';
 import { Account }                            from '../models/Account';
 import { accountBalancesByDateRange }         from './../redux/slices/projections';
 import { accountColors }                      from '../data/AccountColors';
 import SpanChangeButton                       from './../components/SpanChangeButton';
 import { format, isToday }                    from 'date-fns';
+
+import { setActiveDate }                      from './../redux/slices/activedates';
+
 
 interface SVGGraphProps {
   startDate : string;
@@ -16,6 +19,7 @@ interface SVGGraphProps {
   hideTrend?: Boolean;
   hideDates?: Boolean;
   hideRange?: Boolean;
+  hideToday?: Boolean;
   thickness?: number;
 }
 
@@ -28,16 +32,20 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   hideTrend,
   hideDates,
   hideRange,
+  hideToday,
   thickness
 }) => {
-  const state = useSelector((state: RootState) => state);
+  const state    = useSelector((state: RootState) => state);
+  const dispatch = useDispatch();                            
 
-  let yMin: number     = 0;
-  let yMax: number     = 0;
+  let yMin: number = Infinity;  // Initialize to Infinity
+  let yMax: number = -Infinity; // Initialize to -Infinity
   let colors: string[] = [];
 
   const containerRef                = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate); 
 
   const updateDimensions = () => {
     if (containerRef.current) {
@@ -96,9 +104,11 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     return (dimensions.width / (maxDataPoints - 1)) * index;
   };
 
+  const margin = 4;  
+
   const scaleY = (value: number) => {
-    const graphHeight = dimensions.height;
-    return graphHeight - ((value - yMin) / (yMax - yMin)) * graphHeight;
+    const graphHeight = dimensions.height - (2 * margin);  
+    return graphHeight + margin - ((value - yMin) / (yMax - yMin)) * graphHeight;
   };
 
   function roundToNearestPow(value: number): number {
@@ -139,9 +149,30 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     rollingAverage.push(count > 0 ? sum / count : 0);
   }
 
+  const handleTouchStart = (e: React.TouchEvent<SVGSVGElement>) => {
+    const touch = e.touches[0];
+    const x = touch.clientX;
+    const svgRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+    const touchXRelative = x - svgRect.left;
+
+    const index = Math.round(touchXRelative / (dimensions.width / (maxDataPoints - 1)));
+
+    const date = new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000);
+
+    dispatch(setActiveDate(date.toISOString()));  
+  };
+
+  const activeDateIndex = (new Date(activeDate).getTime() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000);
+  const activeDateX     = scaleX(Math.round(activeDateIndex));
+
+
   return (
     <div className = 'glassjar__svg-graph' ref            = {containerRef}>
-      <svg width     = {Math.ceil(dimensions.width)} height = {Math.ceil(dimensions.height)}>
+      <svg 
+      width        = {Math.ceil(dimensions.width)}
+      height       = {Math.ceil(dimensions.height)}
+      onTouchStart = {handleTouchStart}
+      >
         {!hideTrend &&
           <polyline
             points={rollingAverage
@@ -175,6 +206,18 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
             stroke          = '#8f8f8f'
             strokeWidth     = '1'
             strokeDasharray = '10,10'
+          />
+        )}
+        
+        {(activeDate && !hideToday) && (
+          <line
+            x1={activeDateX}
+            y1={0}
+            x2={activeDateX}
+            y2={dimensions.height}
+            stroke="#8f8f8f"  
+            strokeWidth="5"
+            opacity     = '0.25'
           />
         )}
 

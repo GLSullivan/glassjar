@@ -63,11 +63,11 @@ a {
   /* height        : -webkit-fill-available;
   min-height    : 100%; */
   /* max-height    : -webkit-fill-available; */
-    min-height    : 100vh;
+    /* min-height    : 100vh; */
   box-sizing    : border-box;
   display       : flex;
   flex-direction: column;
-  height        : 100vh;
+  height        : 100%;
   max-height    : calc(var(--vh, 1vh) * 100);
   overflow      : hidden;
   padding       : 0rem;

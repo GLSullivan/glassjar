@@ -11,7 +11,7 @@
 
 .glassjar__list-item {
   align-items    : center;
-  border-radius  : 1rem;
+  border-radius  : 1.4rem;
   box-sizing     : border-box;
   display        : flex;
   gap            : .5rem;
