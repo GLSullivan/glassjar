@@ -34,8 +34,31 @@
     #7a4a3fff
   );
 --shadow-main : 0px 1px 4px 0px rgba(17, 17, 26, 0.025),
-0px 2px 8px 0px rgba(17, 17, 26, 0.025); 
+                0px 2px 8px 0px rgba(17, 17, 26, 0.025); 
 
+--text-stroke: -1px -1px 0 var(--color-bright),
+                1px -1px 0 var(--color-bright),
+                -1px 1px 0 var(--color-bright),
+                 1px 1px 0 var(--color-bright),
+               -2px -2px 0 var(--color-bright),
+                2px -2px 0 var(--color-bright),
+                -2px 2px 0 var(--color-bright),
+                 2px 2px 0 var(--color-bright);
+}
+
+.glassjar__text-stroke {
+  text-shadow: -1px -1px 0 var(--stroke-color, #ffffff),  
+  1px -1px 0  var(--stroke-color, #ffffff),
+  -1px 1px 0  var(--stroke-color, #ffffff),
+  1px 1px 0  var(--stroke-color, #ffffff),
+  -2px -2px 0  var(--stroke-color, #ffffff),  
+  2px -2px 0  var(--stroke-color, #ffffff),
+  -2px  2px 0  var(--stroke-color, #ffffff),
+  2px  2px 0  var(--stroke-color, #ffffff),
+  -3px -3px 0  var(--stroke-color, #ffffff),  
+  3px -3px 0  var(--stroke-color, #ffffff),
+  -3px  3px 0  var(--stroke-color, #ffffff),
+  3px  3px 0  var(--stroke-color, #ffffff);;
 }
 
 input,
@@ -75,6 +98,12 @@ a {
   position: fixed;
   top: 0;
   width: 100vw;
+}
+
+.glassjar__fill-back {
+  background: var(--box-color, var(--color-bright));
+  border-radius: 2px;
+  padding: 0 3px;
 }
 
 h2 {
@@ -218,7 +247,7 @@ h3 {
 }
 
 .glassjar__list {
-  padding-bottom: 100px;
+  padding: 0 1rem 100px 1rem;
 }
 
 .glassjar__mono-spaced {

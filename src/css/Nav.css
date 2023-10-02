@@ -143,6 +143,8 @@
 
 .glassjar__nav__group .glassjar__nav {
   flex-shrink: 0;
+  box-sizing: border-box;
+  margin: 1rem 1rem 0rem 1rem;
 }
 
 .glassjar__nav__body {

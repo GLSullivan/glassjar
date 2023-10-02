@@ -148,10 +148,9 @@
 }
 
 .glassjar__schedule {
-  margin-right : -0.7rem;
   max-height   : 100%;
   overflow     : auto;
-  padding-right: 0.7rem;
+  padding      : 0 1rem;
   position     : relative;
 }
 

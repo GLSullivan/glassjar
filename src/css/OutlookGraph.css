@@ -15,14 +15,6 @@
   flex-direction: column;
   min-height    : 100%;
   position      : relative;
-  --text-stroke : -1px -1px 0 #ffffff,  
-                  1px -1px 0 #ffffff,
-                  -1px 1px 0 #ffffff,
-                  1px 1px 0 #ffffff,
-                  -2px -2px 0 #ffffff,  
-                  2px -2px 0 #ffffff,
-                  -2px  2px 0 #ffffff,
-                  2px  2px 0 #ffffff;
 }
 
 .glassjar__graph-holder__sub {
@@ -143,4 +135,28 @@ button.glassjar__button.glassjar__button--small {
 .glassjar__svg-graph h2 + h2 {
   left : unset;
   right: 0;
+}
+
+
+.glassjar__svg-graph .glassjar__SVGGraph__data {
+  position: absolute;
+  top: 0;
+  left: .75rem;
+  z-index: 1;
+  transition: .5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.glassjar__svg-graph .glassjar__SVGGraph__data.glassjar__SVGGraph__data--end {
+  left: unset;
+  right: .75rem;
+  align-items: flex-end;
+}
+
+.glassjar__svg-graph h5 {
+  display: inline-block;  
+  margin: 0;
+  text-align: center;
 }

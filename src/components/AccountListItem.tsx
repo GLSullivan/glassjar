@@ -1,16 +1,15 @@
 import { useDispatch, useSelector }                from 'react-redux';
 import React                          from 'react';
-import CountUp                        from 'react-countup';
 
 import { setActiveAccount }           from '../redux/slices/accounts';
 import { openAccountForm }            from '../redux/slices/modals';
-import { accountColors }               from '../data/AccountColors';
+import { accountColors }              from '../data/AccountColors';
 import { AccountType }                from './../utils/constants';
 import { Account }                    from '../models/Account';
 
 import './../css/Panels.css';
-import SVGGraph from './SVGGraph';
-import { RootState } from '../redux/store';
+import SVGGraph                       from './SVGGraph';
+import { RootState }                  from '../redux/store';
 import {
   startOfMonth,
   formatISO,
@@ -18,7 +17,7 @@ import {
   addMonths,
   isAfter,
   isToday,
-} from "date-fns";
+}                                    from "date-fns";
 
 interface AccountListItem {
   account : Account;
@@ -41,8 +40,8 @@ function getNextOccurrence(dateString: string | undefined) {
 
   const currentDate = new Date();
   
-  currentDate.setMonth(currentDate.getMonth() + 1);  // Move to the next month.
-  currentDate.setDate  (1);                          // Set to the first day of the next month.
+  currentDate.setMonth(currentDate.getMonth() + 1);  
+  currentDate.setDate  (1);                          
 
   const dateParts   = dateString.split('-');
   const dayInMonth  = Number(dateParts[2]);
@@ -99,61 +98,63 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
       endOfMonth(addMonths(new Date(graphStart), graphRange || 6))
     );
 
-    return (
-      <div className = 'glassjar__list-item glassjar__list-item--account' onClick = {() => { dispatch(setActiveAccount(account)); dispatch(openAccountForm()); }} key = {account.id}>
-        
-        <SVGGraph
-          accounts  = {[account]}
-          startDate = {graphStart}
-          endDate   = {graphEnd}
-          hideSpan  = {true}
-          hideZero  = {true}
-          hideTrend = {true}
-          hideDates = {true}
-          hideRange = {true}
-          hideToday = {true}
-          thickness = {2}
-        />
+    function blendWithWhite(color: string, alpha: number) {
+      const r = Math.floor((1 - alpha) * 255 + alpha * parseInt(color.slice(1, 3), 16));
+      const g = Math.floor((1 - alpha) * 255 + alpha * parseInt(color.slice(3, 5), 16));
+      const b = Math.floor((1 - alpha) * 255 + alpha * parseInt(color.slice(5, 7), 16));
+      
+      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    }
 
-        <div className = 'glassjar__list-item__icon'>
-        <i   className = {accountTypeIcons[account.type]} />
-        <div className = 'glassjar__list-icon__backing' style = {{ background: accountColors[account.color] }} />
-        </div>
-        <div className = 'glassjar__list-item__body'>
-        <div className = 'glassjar__list-item-row glassjar__list-item__row--row1'>
-            <h4>{account.name}</h4>
-            <h4 className = 'glassjar__mono-spaced'>
-              {balance !== undefined && balance !== null
-                ? <em>
-                  <CountUp 
-                    decimals      = {2}
-                    decimal       = "."
-                    prefix        = "$"
-                    end           = {(balance / 100)}
-                    duration      = {2}
-                    preserveValue = {true}
-                    />
-                </em>
-                : 
-                <em>
-                  <CountUp 
-                    decimals      = {2}
-                    decimal       = "."
-                    prefix        = "$"
-                    end           = {(account.currentBalance / 100)}
-                    duration      = {2}
-                    preserveValue = {true}
-                    />
-                </em>
-                }
-            </h4>
+    return (
+      <div
+        className="glassjar__list-item glassjar__list-item--account"
+        onClick={() => {
+          dispatch(setActiveAccount(account));
+          dispatch(openAccountForm());
+        }}
+        key={account.id}
+        style={{ ['--box-color' as any]:  blendWithWhite(accountColors[account.color], .1) }}>
+
+        <div className="glassjar__list-item__header" style={{ background: accountColors[account.color] }}>
+          <div className="glassjar__list-item__icon">
+            <i className={accountTypeIcons[account.type]} />
           </div>
-          <div className = 'glassjar__list-item-row glassjar__list-item__row--row2'>
-            <h5>{account.dueDate && <>Due Next: {getNextOccurrence(account.dueDate)}</>}</h5>
-            <h5>{account.interestRate && <>{account.interestRate}%</>}</h5>
+          <div className='glassjar__list-item__header--mid'>
+          <div className='glassjar__list-item__headline'>
+              <h4>{account.name}</h4>
+              {account.interestRate && <h5>{account.interestRate}%</h5>}
+            </div>
+            <div className='glassjar__list-item__details'>
+              {account.dueDate && (<h5>Due Next: {getNextOccurrence(account.dueDate)}</h5>)}
+              
+            </div>
+          </div>
+          <div>
+            <h3 style={{ color: accountColors[account.color] }}>88</h3>
           </div>
         </div>
-        <div className = 'glassjar__list-item__backing' style = {{ background: accountColors[account.color] }} />
+        <div className="glassjar__list-item__body">
+          <SVGGraph
+            accounts  = {[account]}
+            startDate = {graphStart}
+            endDate   = {graphEnd}
+            hideSpan  = {true}
+            hideZero  = {true}
+            hideTrend = {true}
+            hideDates = {true}
+            hideRange = {true}
+            hideToday = {true}
+            thickness = {2}
+          />
+        </div>
+        <div className="glassjar__list-item__footer">
+          <h5 className="glassjar__fill-back"><span>215 Transactions</span></h5>
+        </div>
+        <div
+          className="glassjar__list-item__backing"
+          style={{ background: accountColors[account.color] }}
+        />
       </div>
     );
   }

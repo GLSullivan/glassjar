@@ -48,7 +48,7 @@ export const DayPanel: React.FC = () => {
         {spendingPower !== null && (
           <>
             <h4>Spending power:</h4>
-            <strong>
+            <h4>
               <CountUp
                 decimals={2}
                 decimal="."
@@ -58,14 +58,15 @@ export const DayPanel: React.FC = () => {
                 preserveValue={true}
                 className='glassjar__mono-spaced'
               />
-            </strong>
+            </h4>
           </>
         )}
 
         {savings !== null && (
           <>
             <h5>Savings:</h5>
-            <CountUp
+            <h5>
+              <CountUp
               decimals={2}
               decimal="."
               prefix="$"
@@ -74,13 +75,15 @@ export const DayPanel: React.FC = () => {
               preserveValue={true}
               className='glassjar__mono-spaced'
             />
+            </h5>
           </>
         )}
 
         {cash !== null && (
           <>
             <h5>Cash On Hand:</h5>
-            <CountUp
+<h5>
+              <CountUp
               decimals={2}
               decimal="."
               prefix="$"
@@ -89,28 +92,31 @@ export const DayPanel: React.FC = () => {
               preserveValue={true}
               className='glassjar__mono-spaced'
             />
+            </h5>
           </>
         )}
 
         {availableCredit !== null && (
           <>
             <h5>Available Credit:</h5>
-            <CountUp
-              decimals={2}
-              decimal="."
-              prefix="$"
-              end={availableCredit / 100}
-              duration={2}
-              preserveValue={true}
-              className='glassjar__mono-spaced'
-            />
+            <h5>
+              <CountUp
+                decimals={2}
+                decimal="."
+                prefix="$"
+                end={availableCredit / 100}
+                duration={2}
+                preserveValue={true}
+                className='glassjar__mono-spaced'
+              />
+            </h5>
           </>
         )}
 
         {debt !== null && (
           <>
             <h4>Debt:</h4>
-            <strong>
+            <h4>
               <CountUp
                 decimals={2}
                 decimal="."
@@ -120,14 +126,15 @@ export const DayPanel: React.FC = () => {
                 preserveValue={true}
                 className='glassjar__mono-spaced'
               />
-            </strong>
+            </h4>
           </>
         )}
 
         {creditCardDebt !== null && (
           <>
             <h5>Credit Card Balances:</h5>
-            <CountUp
+            <h5>
+              <CountUp
               decimals={2}
               decimal="."
               prefix="$"
@@ -136,12 +143,14 @@ export const DayPanel: React.FC = () => {
               preserveValue={true}
               className='glassjar__mono-spaced'
             />
+            </h5>
           </>
         )}
 
         {loan !== null && (
           <>
             <h5>Loans:</h5>
+            <h5>
             <CountUp
               decimals={2}
               decimal="."
@@ -151,13 +160,14 @@ export const DayPanel: React.FC = () => {
               preserveValue={true}
               className='glassjar__mono-spaced'
             />
+            </h5>
           </>
         )}
         
         {netWorth !== null && (
           <>
             <h4>Net Worth:</h4>
-            <strong>
+            <h4>
               <CountUp
                 decimals={2}
                 decimal="."
@@ -167,14 +177,14 @@ export const DayPanel: React.FC = () => {
                 preserveValue={true}
                 className='glassjar__mono-spaced'
               />
-            </strong>
+            </h4>
           </>
         )}
 
 
       </div>
       <h3>Accounts</h3>
-      <div>
+      <div className='glassjar__flex glassjar__flex--column'>
         {accounts.map((account) => (
           <AccountListItem
             key={account.id}

@@ -1,39 +1,42 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector }                        from 'react-redux';
-import { RootState }                          from '../redux/store';
-import { Account }                            from '../models/Account';
-import { accountBalancesByDateRange }         from './../redux/slices/projections';
-import { accountColors }                      from '../data/AccountColors';
-import SpanChangeButton                       from './../components/SpanChangeButton';
+import CountUp                                from 'react-countup';
+import { useDispatch, useSelector }           from 'react-redux';
 import { format, isToday }                    from 'date-fns';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { setActiveDate }                      from './../redux/slices/activedates';
+import { accountBalancesByDateRange }         from './../redux/slices/projections';
+import { accountColors }                      from './../data/AccountColors';
+import { Account }                            from './../models/Account';
+import { RootState }                          from './../redux/store';
 
+import SpanChangeButton                       from './../components/SpanChangeButton';
 
 interface SVGGraphProps {
-  startDate : string;
-  endDate   : string;
-  accounts  : Account[];
-  hideSpan ?: Boolean;
-  hideZero ?: Boolean;
-  hideTrend?: Boolean;
-  hideDates?: Boolean;
-  hideRange?: Boolean;
-  hideToday?: Boolean;
-  thickness?: number;
+  startDate    : string;
+  endDate      : string;
+  accounts     : Account[];
+  thickness   ?: number;
+  hideSpan    ?: Boolean;
+  hideZero    ?: Boolean;
+  hideTrend   ?: Boolean;
+  hideDates   ?: Boolean;
+  hideRange   ?: Boolean;
+  hideToday   ?: Boolean;
+  hideStartEnd?: Boolean;
 }
 
 const SVGGraph: React.FC<SVGGraphProps> = ({
   startDate,
   endDate,
   accounts,
+  thickness,
   hideSpan,
   hideZero,
   hideTrend,
   hideDates,
   hideRange,
   hideToday,
-  thickness
+  hideStartEnd
 }) => {
   const state    = useSelector((state: RootState) => state);
   const dispatch = useDispatch();                            
@@ -119,13 +122,11 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   
   function formatToAttractiveCurrency(num: number): string {
     if (num === 0) return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(0);
-  
-    const rounded = roundToNearestPow(Math.abs(num));
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num < 0 ? -rounded : rounded);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
   }
   
-  const formattedMin = formatToAttractiveCurrency(yMin/100);
-  const formattedMax = formatToAttractiveCurrency(yMax/100);
+  const formattedMin = formatToAttractiveCurrency(roundToNearestPow(yMin/100));
+  const formattedMax = formatToAttractiveCurrency(roundToNearestPow(yMax/100));
 
   const formatDateOrToday = (date: Date | null) => {
     return date 
@@ -166,7 +167,58 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   const activeDateX     = scaleX(Math.round(activeDateIndex));
 
 
-  return (
+
+
+
+
+
+
+
+  const firstH4Ref = useRef<HTMLHeadingElement>(null);
+  const lastH4Ref = useRef<HTMLHeadingElement>(null);
+  const [firstH4Height, setFirstH4Height] = useState(0);
+  const [lastH4Height, setLastH4Height] = useState(0);
+  
+  useEffect(() => {
+    if (firstH4Ref.current) {
+      setFirstH4Height(firstH4Ref.current.offsetHeight);
+    }
+    if (lastH4Ref.current) {
+      setLastH4Height(lastH4Ref.current.offsetHeight);
+    }
+  }, [firstH4Ref, lastH4Ref]);
+  
+  const firstBalance    = accountBalances[0] ? accountBalances[0][0] : 0;
+  const lastBalance     = accountBalances[0] ? accountBalances[0][accountBalances[0].length - 1] : 0;
+  let   delta           = lastBalance - firstBalance;
+
+  if (accounts[0] && accounts[0].isLiability) {
+    delta *= -1;
+  }
+
+  const firstPointY = scaleY(firstBalance);
+  const lastPointY = scaleY(lastBalance);
+
+  const calculateTop = (pointY: number, h4Height: number) => {
+    let top = pointY - h4Height / 2;
+    top = Math.max(top, 0);
+    top = Math.min(top, dimensions.height - h4Height);
+    return top;
+  };
+  
+  const firstH4Style: React.CSSProperties = {
+    top: `${calculateTop(firstPointY, firstH4Height)}px`,
+    position: 'absolute',
+  };
+  
+  const lastH4Style: React.CSSProperties = {
+    top: `${calculateTop(lastPointY, lastH4Height)}px`,
+    position: 'absolute',
+  };
+  
+
+
+    return (
     <div className = 'glassjar__svg-graph' ref            = {containerRef}>
       <svg 
       width        = {Math.ceil(dimensions.width)}
@@ -241,7 +293,54 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
           <SpanChangeButton />
         </div>
       }
+
+      {!hideStartEnd &&
+        <>
+          <div className='glassjar__SVGGraph__data'  style={firstH4Style} ref={firstH4Ref}>          
+            <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(startDate))}</h5>
+            <h4 className="glassjar__mono-spaced glassjar__fill-back">
+              <em> 
+                <CountUp
+                  decimals={2}
+                  decimal="."
+                  prefix="$"
+                  end={firstBalance / 100}
+                  duration={2}
+                  preserveValue={true}
+                />
+              </em>
+            </h4>
+          </div>
+          <div className='glassjar__SVGGraph__data glassjar__SVGGraph__data--end' style={lastH4Style} ref={lastH4Ref}>
+            <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(endDate))}</h5>
+            <h4 className="glassjar__mono-spaced glassjar__fill-back">
+              <em> 
+                <CountUp
+                  decimals={2}
+                  decimal="."
+                  prefix="$"
+                  end={lastBalance / 100}
+                  duration={2}
+                  preserveValue={true}
+                />
+              </em>
+            </h4>
+            <h5 className="glassjar__mono-spaced glassjar__fill-back">
+              {delta < 0 ? <i className="fa-duotone fa-caret-down" /> : <i className="fa-duotone fa-caret-up" />}{' '}
+                <CountUp
+                  decimals={2}
+                  decimal="."
+                  prefix="$"
+                  end={Math.abs(delta / 100)}
+                  duration={2}
+                  preserveValue={true}
+                />
+            </h5>
+          </div>
+        </>
+      }
     </div>
+    
   );
 };
 

@@ -72,9 +72,13 @@
 }
 
 .glassjar__transaction-view {
-  max-height: 100%;
-  overflow  : auto;
-  padding   : 0 1rem;
+  max-height    : 100%;
+  overflow      : auto;
+  padding       : 0 1rem 100px 1rem;
+}
+
+.glassjar__transaction-view > div {
+  margin-bottom: .5rem;
 }
 
 .glassjar__transaction-list__header {

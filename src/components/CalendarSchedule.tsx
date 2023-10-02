@@ -178,7 +178,7 @@ const CalendarSchedule: React.FC = () => {
                     <i className='fa-solid fa-plus-minus' />
                   </button>
                 </div>
-                <div>
+                <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                   {group.transactions.map(({ transaction }, transactionIndex) => (
                     <TransactionListItem
                       key={`${groupIndex}-${transactionIndex}`}
