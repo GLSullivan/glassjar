@@ -25,8 +25,8 @@ button {
 }
 
 .glassjar__button.glassjar__button--primary {
-  background: linear-gradient(150deg, #c27d48, #885632, #885632, #99663e);
-  border    : 1px solid #8c5c38;
+  background: linear-gradient(150deg, #8d6ef6, #b152ef);
+  border    : 1px solid #8d6ef6;
   color     : var(--color-bright);
 }
 

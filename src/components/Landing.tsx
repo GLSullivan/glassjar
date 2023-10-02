@@ -158,131 +158,176 @@ function Landing() {
 
   return (
     <>
-      <div className='glassjar__landing'>
+      <div className="glassjar__landing">
         <div>
-          <button className='glassjar__more-tab' onClick={() => setShowMore(!showMore)}>
-            <i className={`fa-fw fa-solid fa-plus-large glassjar__more-tab__icon ${showMore ? '' : 'open'}`} /> 
+          <button
+            className="glassjar__more-tab"
+            onClick={() => setShowMore(!showMore)}
+          >
+            <i
+              className={`fa-fw fa-solid fa-plus-large glassjar__more-tab__icon ${
+                showMore ? "" : "open"
+              }`}
+            />
           </button>
-          <div className={`glassjar__welcome-content ${showMore ? 'open' : ''}`}>
+          <div
+            className={`glassjar__welcome-content ${showMore ? "open" : ""}`}
+          >
             <img
-              className='glassjar__landing__img glassjar__landing__img--jars'
+              className="glassjar__landing__img glassjar__landing__img--jars"
               src={fourJars}
-              alt='Four jars full of coins.'
+              alt="Four jars full of coins."
             />
             <section>
               <h1>Visualize Your Financial Journey</h1>
-              <p><strong>Glass Jar</strong> serves as a financial calendar, simplifying the process of managing your finances. With its intuitive interface inspired by the calendar apps you're familiar with, learning to navigate it is a breeze.</p>
-              <p>With just a few minutes of setup, our robust assistant tool enables you to forecast your financial future up to five years ahead. Begin making informed financial plans with confidence, having a clear vision of their potential impact.</p>
-              <p><strong>Glass Jar</strong> is the creation of <span className='glassjar__no-wrap'>Greg Sullivan</span> and is currently available free of charge during its development phase. As it is still evolving, you may encounter some unfinished features or minor bugs. Rest assured, I'm continuously refining the app to ensure a seamless experience. Your patience and support are greatly appreciated.</p>  
-              <p>If you find a bug or have an idea for a feature, I would be very happy to hear about it. Reach me at <a href='mailto:greg@artofsullivan.com?subject=Glass Jar&body=Hi Greg...'>greg@artofsullivan.com</a></p>
+              <p>
+                <strong>Glass Jar</strong> serves as a financial calendar,
+                simplifying the process of managing your finances. With its
+                intuitive interface inspired by the calendar apps you're
+                familiar with, learning to navigate it is a breeze.
+              </p>
+              <p>
+                With just a few minutes of setup, our robust assistant tool
+                enables you to forecast your financial future up to five years
+                ahead. Begin making informed financial plans with confidence,
+                having a clear vision of their potential impact.
+              </p>
+              <p>
+                <strong>Glass Jar</strong> is the creation of{" "}
+                <span className="glassjar__no-wrap">Greg Sullivan</span> and is
+                currently available free of charge during its development phase.
+                As it is still evolving, you may encounter some unfinished
+                features or minor bugs. Rest assured, I'm continuously refining
+                the app to ensure a seamless experience. Your patience and
+                support are greatly appreciated.
+              </p>
+              <p>
+                If you find a bug or have an idea for a feature, I would be very
+                happy to hear about it. Reach me at{" "}
+                <a href="mailto:greg@artofsullivan.com?subject=Glass Jar&body=Hi Greg...">
+                  greg@artofsullivan.com
+                </a>
+              </p>
             </section>
           </div>
-          <div className='glassjar__landing__form'>
-            <h1>Welcome</h1>
+          <div className="glassjar__landing__form">
+          <div className="glassjar__landing-image-group">
+              <img
+                className="glassjar__landing__img glassjar__landing__img--logo"
+                src={logo}
+                alt="Glass Jar by Greg Sullivan"
+              />
+            </div>
             <div>
               <div
                 className={`glassjar__auto-height glassjar__auto-height--top ${
-                  mode === 'signIn' ? 'open' : ''
+                  mode === "signIn" ? "open" : ""
                 }`}
               >
                 <div>
                   <Formik
-                    initialValues={{ email: '', password: '' } as any}
+                    initialValues={{ email: "", password: "" } as any}
                     validationSchema={signUpValidationSchema}
                     onSubmit={signIn}
                     validateOnChange={false}
                   >
-                      {({ errors, touched, setFieldTouched }) => (
+                    {({ errors, touched, setFieldTouched }) => (
                       <Form>
-                        <div className='glassjar__flex glassjar__flex--column'>
-                          <div className='glassjar__form__input-group'>
+                        <div className="glassjar__flex glassjar__flex--column">
+                          <div className="glassjar__form__input-group">
                             <Field
-                              name         = 'email'
-                              type         = 'email'
-                              placeholder  = 'Email'
-                              autoComplete = 'username'
-                              tabIndex     = {mode === 'signIn' ? 1 : -1}
-                              innerRef     = {signInRef}
-                              className    = {errors.email ? 'error' : ''}
+                              name="email"
+                              type="email"
+                              placeholder="Email"
+                              autoComplete="username"
+                              tabIndex={mode === "signIn" ? 1 : -1}
+                              innerRef={signInRef}
+                              className={errors.email ? "error" : ""}
                               onBlur={(e: React.FocusEvent<any>) => {
                                 if (e.target.value) {
-                                  setFieldTouched('email')
+                                  setFieldTouched("email");
                                 }
                               }}
                             />
-                            <label htmlFor='email'>
-                              Email{' '}
-                              <span className='glassjar__form__input-group__error'>
-                                {errors.email && touched.email ? <ErrorMessage name='email' /> : null}
+                            <label htmlFor="email">
+                              Email{" "}
+                              <span className="glassjar__form__input-group__error">
+                                {errors.email && touched.email ? (
+                                  <ErrorMessage name="email" />
+                                ) : null}
                               </span>
                             </label>
                           </div>
-                          <div className='glassjar__form__input-group'>
+                          <div className="glassjar__form__input-group">
                             <button
-                              className = 'glassjar__password-toggle'
-                              type      = 'button'
-                              onClick   = {() => setShowPassword(!showPassword)}
+                              className="glassjar__password-toggle"
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
                             >
-                              {showPassword ? <i className='fa-solid fa-fw fa-eye-slash' /> : <i className='fa-solid fa-fw fa-eye' />}
+                              {showPassword ? (
+                                <i className="fa-solid fa-fw fa-eye-slash" />
+                              ) : (
+                                <i className="fa-solid fa-fw fa-eye" />
+                              )}
                             </button>
                             <Field
-                              name         = 'password'
-                              type         = {showPassword ? 'text' : 'password'}
-                              placeholder  = 'Password'
-                              autoComplete = 'current-password'
-                              tabIndex     = {mode === 'signIn' ? 2 : -1}
-                              className    = {errors.password ? 'error' : ''}
+                              name="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Password"
+                              autoComplete="current-password"
+                              tabIndex={mode === "signIn" ? 2 : -1}
+                              className={errors.password ? "error" : ""}
                             />
-                            <label htmlFor='password'>
-                              Password{' '}
-                              <span className='glassjar__form__input-group__error'>
-                                <ErrorMessage name='password' />
+                            <label htmlFor="password">
+                              Password{" "}
+                              <span className="glassjar__form__input-group__error">
+                                <ErrorMessage name="password" />
                               </span>
                             </label>
                           </div>
                           <div>
                             <div
                               className={`glassjar__auto-height glassjar__auto-height--top ${
-                                firebaseSignInError ? 'open' : ''
+                                firebaseSignInError ? "open" : ""
                               }`}
                             >
-                              <div className='glassjar__error-block'>
+                              <div className="glassjar__error-block">
                                 <p>{firebaseSignInError}</p>
                               </div>
                             </div>
-                            <div className='glassjar__flex'>
+                            <div className="glassjar__flex">
                               <button
-                                type='button'                             
-                                tabIndex = {mode === 'signIn' ? 4 : -1}
-                                className='glassjar__button glassjar__button--primary'
+                                type="button"
+                                tabIndex={mode === "signIn" ? 4 : -1}
+                                className="glassjar__button glassjar__button--primary"
                                 onClick={signInWithGoogle}
                               >
-                                <i className='fa-brands fa-google' />
+                                <i className="fa-brands fa-google" />
                               </button>
                               <button
-                                tabIndex = {mode === 'signIn' ? 3 : -1}
-                                className='glassjar__button glassjar__button--primary'
-                                type='submit'
+                                tabIndex={mode === "signIn" ? 3 : -1}
+                                className="glassjar__button glassjar__button--primary"
+                                type="submit"
                               >
                                 Sign In
                               </button>
                             </div>
                           </div>
                           <p>
-                            Don't have an account?{' '}
+                            Don't have an account?{" "}
                             <button
-                              tabIndex = {mode === 'signIn' ? 5 : -1}
-                              onClick={() => setMode('signUp')}
-                              className='glassjar__text-link'
+                              tabIndex={mode === "signIn" ? 5 : -1}
+                              onClick={() => setMode("signUp")}
+                              className="glassjar__text-link"
                             >
                               Sign UP
                             </button>
                           </p>
                           <p>
                             <button
-                              tabIndex = {mode === 'signIn' ? 6 : -1}
-                              onClick={() => setMode('forgot')}
-                              className='glassjar__text-link'
+                              tabIndex={mode === "signIn" ? 6 : -1}
+                              onClick={() => setMode("forgot")}
+                              className="glassjar__text-link"
                             >
                               Forgot Your Password?
                             </button>
@@ -296,89 +341,95 @@ function Landing() {
 
               <div
                 className={`glassjar__auto-height glassjar__auto-height--top ${
-                  mode === 'signUp' ? 'open' : ''
+                  mode === "signUp" ? "open" : ""
                 }`}
               >
                 <div>
                   <Formik
-                    initialValues={{ email: '', password: '' } as any}
+                    initialValues={{ email: "", password: "" } as any}
                     validationSchema={signInValidationSchema}
                     onSubmit={signUp}
                   >
                     {({ errors, touched, setFieldTouched }) => (
                       <Form>
-                        <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
-                          <div className='glassjar__form__input-group'>
+                        <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
+                          <div className="glassjar__form__input-group">
                             <Field
-                              name         = 'email'
-                              type         = 'email'
-                              placeholder  = 'Email'
-                              autoComplete = 'username'
-                              innerRef     = {signUpRef}
-                              tabIndex     = {mode === 'signUp' ? 1 : -1}
-                              className    = {errors.email ? 'error' : ''}
+                              name="email"
+                              type="email"
+                              placeholder="Email"
+                              autoComplete="username"
+                              innerRef={signUpRef}
+                              tabIndex={mode === "signUp" ? 1 : -1}
+                              className={errors.email ? "error" : ""}
                               onBlur={(e: React.FocusEvent<any>) => {
                                 if (e.target.value) {
-                                  setFieldTouched('email')
+                                  setFieldTouched("email");
                                 }
                               }}
                             />
-                            <label htmlFor='email'>
-                              Email{' '}
-                              <span className='glassjar__form__input-group__error'>
-                                {errors.email && touched.email ? <ErrorMessage name='email' /> : null}
+                            <label htmlFor="email">
+                              Email{" "}
+                              <span className="glassjar__form__input-group__error">
+                                {errors.email && touched.email ? (
+                                  <ErrorMessage name="email" />
+                                ) : null}
                               </span>
                             </label>
                           </div>
-                          <div className='glassjar__form__input-group'>
+                          <div className="glassjar__form__input-group">
                             <button
-                              className = 'glassjar__password-toggle'
-                              type      = 'button'
-                              onClick   = {() => setShowPassword(!showPassword)}
+                              className="glassjar__password-toggle"
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
                             >
-                              {showPassword ? <i className='fa-solid fa-fw fa-eye-slash' /> : <i className='fa-solid fa-fw fa-eye' />}
+                              {showPassword ? (
+                                <i className="fa-solid fa-fw fa-eye-slash" />
+                              ) : (
+                                <i className="fa-solid fa-fw fa-eye" />
+                              )}
                             </button>
                             <Field
-                              name         = 'password'
-                              type         = {showPassword ? 'text' : 'password'}
-                              placeholder  = 'Password'
-                              className    = {errors.password ? 'error' : ''}
-                              tabIndex     = {mode === 'signUp' ? 2 : -1}
-                              autoComplete = 'new-password'
+                              name="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Password"
+                              className={errors.password ? "error" : ""}
+                              tabIndex={mode === "signUp" ? 2 : -1}
+                              autoComplete="new-password"
                             />
-                            <label htmlFor='password'>
-                              Password{' '}
-                              <span className='glassjar__form__input-group__error'>
-                                <ErrorMessage name='password' />
+                            <label htmlFor="password">
+                              Password{" "}
+                              <span className="glassjar__form__input-group__error">
+                                <ErrorMessage name="password" />
                               </span>
                             </label>
                           </div>
                           <div>
                             <div
                               className={`glassjar__auto-height glassjar__auto-height--top ${
-                                firebaseSignUpError ? 'open' : ''
+                                firebaseSignUpError ? "open" : ""
                               }`}
                             >
-                              <div className='glassjar__error-block'>
+                              <div className="glassjar__error-block">
                                 <p>{firebaseSignUpError}</p>
                               </div>
                             </div>
-                            <div className='glassjar__flex'>
+                            <div className="glassjar__flex">
                               <button
-                                className='glassjar__button glassjar__button--primary'
-                                type='submit'
-                                tabIndex     = {mode === 'signUp' ? 3 : -1}
+                                className="glassjar__button glassjar__button--primary"
+                                type="submit"
+                                tabIndex={mode === "signUp" ? 3 : -1}
                               >
                                 Sign Up
                               </button>
                             </div>
                           </div>
                           <p>
-                            Already have an account?{' '}
+                            Already have an account?{" "}
                             <button
-                              tabIndex  = {mode === 'signUp' ? 4 : -1}
-                              onClick   = {() => setMode('signIn')}
-                              className = 'glassjar__text-link'
+                              tabIndex={mode === "signUp" ? 4 : -1}
+                              onClick={() => setMode("signIn")}
+                              className="glassjar__text-link"
                             >
                               Sign In
                             </button>
@@ -392,21 +443,21 @@ function Landing() {
 
               <div
                 className={`glassjar__auto-height glassjar__auto-height--top ${
-                  mode === 'forgot' ? 'open' : ''
+                  mode === "forgot" ? "open" : ""
                 }`}
               >
                 <div>
                   <Formik
-                    initialValues={{ email: '' } as any}
+                    initialValues={{ email: "" } as any}
                     validationSchema={forgotPasswordValidationSchema}
                     onSubmit={sendResetEmail}
                   >
                     {({ errors, isSubmitting }) => (
                       <Form>
-                        <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
+                        <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
                           <div
                             className={`glassjar__auto-height glassjar__auto-height--top ${
-                              emailHasBeenSent ? 'open' : ''
+                              emailHasBeenSent ? "open" : ""
                             }`}
                           >
                             <div>
@@ -416,41 +467,41 @@ function Landing() {
                               </p>
                             </div>
                           </div>
-                          {error !== '' && <div>{error}</div>}
-                          <div className='glassjar__form__input-group'>
+                          {error !== "" && <div>{error}</div>}
+                          <div className="glassjar__form__input-group">
                             <Field
-                              type        = 'email'
-                              name        = 'email'
-                              id          = 'email'
-                              innerRef    = {forgotRef}
-                              tabIndex    = {mode === 'forgot' ? 1 : -1}
-                              placeholder = 'Your Email'
-                              className   = {errors.email ? 'error' : ''}
+                              type="email"
+                              name="email"
+                              id="email"
+                              innerRef={forgotRef}
+                              tabIndex={mode === "forgot" ? 1 : -1}
+                              placeholder="Your Email"
+                              className={errors.email ? "error" : ""}
                             />
-                            <label htmlFor='email'>
-                              Email:{' '}
-                              <span className='glassjar__form__input-group__error'>
-                                <ErrorMessage name='email' />
+                            <label htmlFor="email">
+                              Email:{" "}
+                              <span className="glassjar__form__input-group__error">
+                                <ErrorMessage name="email" />
                               </span>
                             </label>
                           </div>
                           <button
-                            className = 'glassjar__button glassjar__button--primary'
-                            type      = 'submit'
-                            tabIndex  = {mode === 'forgot' ? 2 : -1}
-                            disabled = {isSubmitting}
+                            className="glassjar__button glassjar__button--primary"
+                            type="submit"
+                            tabIndex={mode === "forgot" ? 2 : -1}
+                            disabled={isSubmitting}
                           >
                             Send Reset Link
                           </button>
                           <p>
                             <button
-                              tabIndex  = {mode === 'forgot' ? 3 : -1}
-                              onClick={() => setMode('signIn')}
-                              className='glassjar__text-link'
+                              tabIndex={mode === "forgot" ? 3 : -1}
+                              onClick={() => setMode("signIn")}
+                              className="glassjar__text-link"
                             >
                               Back To Sign In
                             </button>
-                          </p>{' '}
+                          </p>{" "}
                         </div>
                       </Form>
                     )}
@@ -458,23 +509,20 @@ function Landing() {
                 </div>
               </div>
             </div>
+            <div className="glassjar__landing-image-group">
+              <img
+                className="glassjar__landing__img glassjar__landing__img--copyright"
+                src={copyright}
+                alt="Copyright 2023 - Greg Sullivan"
+              />
+            </div>
           </div>
           <img
-            className='glassjar__landing__img glassjar__landing__img--hero'
+            className="glassjar__landing__img glassjar__landing__img--hero"
             src={landing}
-            alt='A glass jar overflowing with coins.'
+            alt="A glass jar overflowing with coins."
           />
         </div>
-        <img
-          className='glassjar__landing__img glassjar__landing__img--logo'
-          src={logo}
-          alt='Glass Jar by Greg Sullivan'
-        />
-        <img
-          className='glassjar__landing__img glassjar__landing__img--copyright'
-          src={copyright}
-          alt='Copyright 2023 - Greg Sullivan'
-        />
       </div>
     </>
   );
