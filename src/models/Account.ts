@@ -1,18 +1,22 @@
 import { AccountType } from './../utils/constants';
 
 export interface Account {
-  id              : string;
-  name            : string;
-  currentBalance  : number;
-  type            : AccountType;
-  isLiability     : boolean;
-  lastUpdated     : string;
-  showInGraph     : boolean;
-  color           : number; 
-  interestRate   ?: number;
-  updatedAt      ?: number;
-  dueDate        ?: string;
-  creditLimit    ?: number;
-  isSpendingPower?: boolean;
-  messages       ?: number;
+  name                       : string;
+  id                         : string;
+  currentBalance             : number;
+  type                       : AccountType;
+  isLiability                : boolean;
+  lastUpdated                : string;
+  showInGraph                : boolean;
+  color                      : number;
+  
+  interestRate              ?: number;
+  dueDate                   ?: string;
+  creditLimit               ?: number;
+  isSpendingPower           ?: boolean;
+
+  notifyOnAccountStale      ?: boolean;
+  notifyOnAccountOverDraft  ?: boolean;
+  notifyOnAccountOverCredit ?: boolean;
+  notifyOnAccountPayoff     ?: boolean;
 }

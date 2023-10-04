@@ -107,13 +107,23 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     return (dimensions.width / (maxDataPoints - 1)) * index;
   };
 
-  const margin = 4;  
+  const margin:number = 4;  
 
   const scaleY = (value: number) => {
-    const graphHeight = dimensions.height - (2 * margin);  
-    return graphHeight + margin - ((value - yMin) / (yMax - yMin)) * graphHeight;
-  };
 
+    if (yMax === yMin) {
+      return 100; 
+    }
+    const graphHeight = dimensions.height - (2 * margin);  
+    const scaledY = graphHeight + margin - ((value - yMin) / (yMax - yMin)) * graphHeight;
+    
+    if (isNaN(scaledY)) {
+      return 100; 
+    }
+    
+    return scaledY;
+  };
+  
   function roundToNearestPow(value: number): number {
     const digits = Math.ceil(Math.log10(Math.abs(value) + 1));
     const pow    = Math.pow(10, digits > 4 ? digits - 3 : digits);
@@ -165,14 +175,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
 
   const activeDateIndex = (new Date(activeDate).getTime() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000);
   const activeDateX     = scaleX(Math.round(activeDateIndex));
-
-
-
-
-
-
-
-
 
   const firstH4Ref = useRef<HTMLHeadingElement>(null);
   const lastH4Ref = useRef<HTMLHeadingElement>(null);

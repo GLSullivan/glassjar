@@ -181,7 +181,6 @@ export const DayPanel: React.FC = () => {
           </>
         )}
 
-
       </div>
       <h3>Accounts</h3>
       <div className='glassjar__flex glassjar__flex--column'>

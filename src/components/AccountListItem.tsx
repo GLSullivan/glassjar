@@ -1,43 +1,37 @@
-import { useDispatch, useSelector }                from 'react-redux';
-import React                          from 'react';
+import { useDispatch, useSelector }    from 'react-redux';
+import React                           from 'react';
+ 
+import { setActiveAccount }            from './../redux/slices/accounts';
+import { accountTypeIcons }            from './../data/AccountTypeIcons';
+import { openAccountForm }             from './../redux/slices/modals'; // TODO: Rewrite the modals to use HTML modals and maybe not require state.
+import { accountColors }               from './../data/AccountColors';
+import { Account }                     from './../models/Account';
+ 
+import './../css/ListItems.css'; 
 
-import { setActiveAccount }           from '../redux/slices/accounts';
-import { openAccountForm }            from '../redux/slices/modals';
-import { accountColors }              from '../data/AccountColors';
-import { AccountType }                from './../utils/constants';
-import { Account }                    from '../models/Account';
+import SVGGraph                        from './SVGGraph';
+import { RootState }                   from './../redux/store';
+import { 
+  startOfMonth, 
+  formatISO, 
+  endOfMonth, 
+  addMonths, 
+  isAfter, 
+  isToday
+}                                     from "date-fns";
+import { getAccountMessages,
+  getTransactionsByAccount }          from '../redux/slices/projections';
 
-import './../css/Panels.css';
-import SVGGraph                       from './SVGGraph';
-import { RootState }                  from '../redux/store';
-import {
-  startOfMonth,
-  formatISO,
-  endOfMonth,
-  addMonths,
-  isAfter,
-  isToday,
-}                                    from "date-fns";
-
-interface AccountListItem {
+interface AccountListItemProps {
   account : Account;
   balance?: number;
 }
-
-const accountTypeIcons: { [K in AccountType]: string } = {
-  'checking'   : 'glassjar__list-icon fa-solid fa-fw fa-money-check-dollar-pen',
-  'savings'    : 'glassjar__list-icon fa-solid fa-fw fa-piggy-bank',
-  'credit card': 'glassjar__list-icon fa-solid fa-fw fa-credit-card',
-  'loan'       : 'glassjar__list-icon fa-solid fa-fw fa-hand-holding-dollar',
-  'mortgage'   : 'glassjar__list-icon fa-solid fa-fw fa-house-chimney-window',
-  'cash'       : 'glassjar__list-icon fa-solid fa-fw fa-wallet',
-};
 
 function getNextOccurrence(dateString: string | undefined) {
   if (dateString === undefined) {
     return
   }
-
+  
   const currentDate = new Date();
   
   currentDate.setMonth(currentDate.getMonth() + 1);  
@@ -73,13 +67,16 @@ function getNextOccurrence(dateString: string | undefined) {
   return `${monthNames[targetMonth]} ${day}${daySuffix}`;
 }
   
-const CalendarDay: React.FC<AccountListItem> = React.memo(
-  ({ account, balance }) => {
+const AccountListItem: React.FC<AccountListItemProps> = React.memo(
+  ({ account }) => {
     const dispatch = useDispatch();
+    const state = useSelector((state: RootState) => state);
 
     const graphRange = useSelector((state: RootState) => state.views.graphRange);
     const today      = useSelector((state: RootState) => state.activeDates.today);
     const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
+
+    const messages   = getAccountMessages(state, account);
 
     function firstOrToday(inputDate: string) {
       const todayDate       = new Date(today);                    // gets today's date
@@ -130,9 +127,9 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
               
             </div>
           </div>
-          <div>
-            <h3 style={{ color: accountColors[account.color] }}>88</h3>
-          </div>
+          {messages.length > 0 &&<div>
+            <h3 style={{ color: accountColors[account.color] }}>{messages.length}</h3>
+          </div>}
         </div>
         <div className="glassjar__list-item__body">
           <SVGGraph
@@ -149,7 +146,7 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
           />
         </div>
         <div className="glassjar__list-item__footer">
-          <h5 className="glassjar__fill-back"><span>215 Transactions</span></h5>
+          <h5 className="glassjar__fill-back"><span>{getTransactionsByAccount(state, account.id).length} transaction{getTransactionsByAccount(state, account.id).length !== 1 && <>s</>}</span></h5>
         </div>
         <div
           className="glassjar__list-item__backing"
@@ -160,4 +157,4 @@ const CalendarDay: React.FC<AccountListItem> = React.memo(
   }
 );
 
-export default CalendarDay;
+export default AccountListItem;

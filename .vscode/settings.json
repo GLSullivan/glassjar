@@ -3,6 +3,7 @@
         "appspot",
         "Cinco",
         "countup",
+        "exceedance",
         "firebaseapp",
         "firebaseui",
         "firestore",
@@ -28,5 +29,7 @@
         "AGIK",
         "MWSVVY",
         "jwoy"
-    ]
+    ],
+    "name": "Greg",
+    "enabledCodeActions": true
 }

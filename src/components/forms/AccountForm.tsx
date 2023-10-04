@@ -44,16 +44,20 @@ export const AccountForm: React.FC = () => {
 
   const [account, setAccount] = useState<Account>(
     activeAccount || {
-      id             : generateUniqueId(),
-      name           : '',
-      currentBalance : 0,
-      type           : AccountType.CHECKING,
-      lastUpdated    : new Date().toISOString(),
-      isLiability    : false,
-      showInGraph    : true,
-      color          : 0,
-      creditLimit    : 0,
-      isSpendingPower: true
+      id                       : generateUniqueId(),
+      name                     : '',
+      currentBalance           : 0,
+      type                     : AccountType.CHECKING,
+      lastUpdated              : new Date().toISOString(),
+      isLiability              : false,
+      showInGraph              : true,
+      color                    : 0,
+      creditLimit              : 0,
+      isSpendingPower          : true,
+      notifyOnAccountStale     : true,
+      notifyOnAccountOverDraft : true,
+      notifyOnAccountOverCredit: true,
+      notifyOnAccountPayoff    : true,
     }
   );
 
@@ -75,9 +79,10 @@ export const AccountForm: React.FC = () => {
     if (saveReady){
       const updatedAccount = {
         ...account,
+        lastUpdated   : new Date().toISOString(),
         currentBalance: parseFloat(account.currentBalance.toFixed(2)),
-        creditLimit: account.creditLimit ? parseFloat(account.creditLimit.toFixed(2)) : 0.00,
-        color: account.color
+        creditLimit   : account.creditLimit ? parseFloat(account.creditLimit.toFixed(2)): 0.00,
+        color         : account.color
       };
     
       if (activeAccount) {
@@ -330,6 +335,56 @@ export const AccountForm: React.FC = () => {
                 onChange = {handleChange}
               />
               <label htmlFor = 'isSpendingPower'>Count As Spending Power:</label>
+            </div>
+          }
+
+          <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
+            <input
+              type     = 'checkbox'
+              id       = 'notifyOnAccountStale'
+              name     = 'notifyOnAccountStale'
+              checked  = {account.notifyOnAccountStale}
+              onChange = {handleChange}
+            />
+            <label htmlFor = 'notifyOnAccountStale'>Notify When Account Is Stale:</label>
+          </div>
+            
+          {(account.type === 'savings' || account.type === 'checking') && 
+            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
+              <input
+                type     = 'checkbox'
+                id       = 'notifyOnAccountOverDraft'
+                name     = 'notifyOnAccountOverDraft'
+                checked  = {account.notifyOnAccountOverDraft}
+                onChange = {handleChange}
+              />
+              <label htmlFor = 'notifyOnAccountOverDraft'>Notify When Overdrawn:</label>
+            </div>
+          }
+          
+          {(account.type === 'credit card') && 
+            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
+              <input
+                type     = 'checkbox'
+                id       = 'notifyOnAccountOverCredit'
+                name     = 'notifyOnAccountOverCredit'
+                checked  = {account.notifyOnAccountOverCredit}
+                onChange = {handleChange}
+              />
+              <label htmlFor = 'notifyOnAccountOverCredit'>Notify When Limit Exceeded:</label>
+            </div>
+          }
+
+          {(account.type === 'credit card' || account.type === 'loan' || account.type === 'mortgage') && 
+            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
+              <input
+                type     = 'checkbox'
+                id       = 'notifyOnAccountPayoff'
+                name     = 'notifyOnAccountPayoff'
+                checked  = {account.notifyOnAccountPayoff}
+                onChange = {handleChange}
+              />
+              <label htmlFor = 'notifyOnAccountPayoff'>Notify on Payoff:</label>
             </div>
           }
 

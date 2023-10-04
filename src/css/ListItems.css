@@ -186,3 +186,24 @@
   flex-direction: column;
   gap: .5rem;
 }
+
+.glassjar__list-item.glassjar__list-item--account.glassjar__list-item--message {
+  justify-content: flex-start;
+  aspect-ratio: unset;
+  align-items: flex-start;
+}
+
+.glassjar__list-item__message {
+  padding: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.glassjar__list-item__message + .glassjar__list-item__message {
+  border-top: 2px solid var(--color-bright);
+}
+
+/* .glassjar__list-item.glassjar__list-item--account.glassjar__list-item--message,
+.glassjar__list-item.glassjar__list-item--message .glassjar__list-item__backing {
+  border-radius: 0.5rem;
+} */

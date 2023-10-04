@@ -15,11 +15,16 @@ type StyleState = {
 };
 
 const PrimaryNav = () => {
+
+  const messages = useSelector((state: RootState) => state.projections.accountMessages);
+  const totalMessages = Object.values(messages).reduce((acc, messages) => acc + messages.length, 0);
+
   const buttons = [
     { label: "Calendar",     color: interfaceColors[0], icon: "fa-calendar-days", view: "calendar" },
     { label: "Accounts",     color: interfaceColors[0], icon: "fa-file-invoice",  view: "accounts" },
     { label: "Transactions", color: interfaceColors[0], icon: "fa-jar",           view: "transactions" },
-    { label: "Settings",     color: interfaceColors[0], icon: "fa-gear",          view: "settings" },
+    { label: "Messages",     color: interfaceColors[0], icon: "fa-envelope",      view: "messages" },
+    // { label: "Settings",     color: interfaceColors[0], icon: "fa-gear",          view: "settings" },
     // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
     // { label: 'Categories',     icon: 'fa-chart-pie',     view: 'categories' },
   ];
@@ -94,8 +99,13 @@ const PrimaryNav = () => {
             className   = {`glassjar__nav__button${activeView === button.view ? " active" : ""}`}
             onClick = {() => setActiveView(button.view)}
           >
-            <span>{button.label}</span>
-            <i className = {`fa-fw fa-solid ${button.icon}`} />
+            <span>
+              {button.label}
+            </span>
+            <div>
+              <i className = {`fa-fw fa-solid ${button.icon}`} />
+              {(button.view === 'messages' && totalMessages > 0) && <span className='glassjar__nav__pill' style={{background: button.color, color: 'var(--color-bright)'}}>{totalMessages}</span>}
+            </div>
           </button>
         ))}
       </div>
@@ -107,3 +117,5 @@ const PrimaryNav = () => {
 };
 
 export default PrimaryNav;
+
+// 

@@ -1,19 +1,27 @@
+import { addMonths, isBefore, parseISO } from 'date-fns'; // TODO: Overhaul projections to use date-fns
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Transaction }                from './../../models/Transaction';
 import { Account }                    from './../../models/Account';
 import { RootState }                  from './../store';
+import { TransactionType } from '../../utils/constants';
 
 interface ProjectionsState {
   transactionsOnDate     : { [date: string]: Transaction[] };
   balanceByDateAndAccount: { [accountId: string]: { [date: string]: number } };
   categorySpend          : { [category: string]: number };
+  accountMessages        : { [accountId: string]: { date: string, type: string, account: Account}[] };
+  transactionsByAccount  : { [accountId: string]: Transaction[] };
 }
 
 const initialState: ProjectionsState = {
   transactionsOnDate     : {},
   balanceByDateAndAccount: {},
-  categorySpend          : {}
+  categorySpend          : {},
+  accountMessages        : {},
+  transactionsByAccount  : {},
+
 };
 
 let allAccounts: Account[];
@@ -50,7 +58,10 @@ export const projectionsSlice = createSlice({
 
       accounts.forEach((account) => {
         const currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
-        const dateKey = currentDay.toISOString().split('T')[0];
+        const dateKey = currentDay.toISOString().split('T')[0];        
+        if (isBefore( addMonths(parseISO(account.lastUpdated), 1), currentDay) && account.notifyOnAccountStale) {
+          updateAccountMessages(account.id,dateKey,'accountStale',account);
+        }
 
         if (!tempBalanceByDateAndAccount[account.id]) {
           tempBalanceByDateAndAccount[account.id] = {};
@@ -60,7 +71,6 @@ export const projectionsSlice = createSlice({
 
       // Populate the arrays for transactionsOnDay and dayHasTransaction;
       const populateTransactionsOnDate = () => {
-
 
         transactions.forEach((transaction) => {
           let count: number = 0;
@@ -211,7 +221,6 @@ export const projectionsSlice = createSlice({
             
         });
       };
-      
 
       // Calculate interest for the current day's balance
       function runTodaysInterest(dateKey: string) {
@@ -271,24 +280,16 @@ export const projectionsSlice = createSlice({
             );
             let total = activeBalance + interest;
             tempBalanceByDateAndAccount[accountId][dateKey] = total;
+            
           }
         });
-      }
-
-      interface TransactionData {
-        amount: number;
-      }
-
-      interface AccountData {
-        id         : string | number;
-        isLiability: boolean;
       }
 
       interface BalanceData {
         [accountId: string]: { [dateKey: string]: number };
       }
 
-      function sumUpCategories(amount: number, category?: string) {
+      function sumUpCategories(amount: number, category?: string) { // TODO: FUTURE FEATURE! This is where to do up the total spend per transaction over a year. 
         if (!category) {
           category = 'Uncategorized'
         }
@@ -298,13 +299,13 @@ export const projectionsSlice = createSlice({
         }
         tempCategorySpend[category] += amount;
       }
-
+      
       function handleTransfer(
         tempBalanceByDateAndAccount : BalanceData,
-        transaction                 : TransactionData,
-        dateKey                     : string | number,
-        toAccount                  ?: AccountData,
-        fromAccount                ?: AccountData,
+        transaction                 : Transaction,
+        dateKey                     : string,
+        toAccount                  ?: Account,
+        fromAccount                ?: Account,
         category                   ?: string,
       ) {
         if (!toAccount || !fromAccount) return;
@@ -314,7 +315,14 @@ export const projectionsSlice = createSlice({
         let toAccountBalance = 
           tempBalanceByDateAndAccount[toAccount.id][dateKey];
         let transferAmount = transaction.amount;
-        if (toAccount.isLiability) {
+        if (toAccount.isLiability) { 
+          // TODO: THIS ISN'T ALLOWING OVERPAYMENT, and that's great, but it should check if overpayment is allowed. 
+          if (transaction.amount > tempBalanceByDateAndAccount[toAccount.id][dateKey] && toAccount.notifyOnAccountPayoff && 
+            (toAccount.type === 'loan' || toAccount.type === 'credit card' || toAccount.type === 'mortgage')) 
+          {
+            updateAccountMessages(toAccount.id,dateKey,'accountPayoff',toAccount);
+          }
+          // TODO: THIS IS CORRECT. Also where I need to look into allowOverPayment and adjust accordingly. 
           transferAmount = Math.min(transaction.amount, toAccountBalance);
         }
         const toAccountSign   = toAccount.isLiability ? -1 : 1;
@@ -326,17 +334,36 @@ export const projectionsSlice = createSlice({
 
       function handleWithdrawal(
         tempBalanceByDateAndAccount : BalanceData,
-        transaction                 : TransactionData,
-        dateKey                     : string | number,
-        toAccount                  ?: AccountData,
-        fromAccount                ?: AccountData,
+        transaction                 : Transaction,
+        dateKey                     : string,
+        toAccount                  ?: Account,
+        fromAccount                ?: Account,
         category                   ?: string,
       ) {
 
         if (!fromAccount) return;
           if (fromAccount.isLiability) {
+            // TODO: THIS IS NOT RESPECTING ALLOW OVERDRAFT or any such. 
+            if (fromAccount.creditLimit) {
+              if (transaction.amount > fromAccount.creditLimit - tempBalanceByDateAndAccount[fromAccount.id][dateKey] && fromAccount.notifyOnAccountOverCredit && 
+                (fromAccount.type === 'credit card')) 
+              {
+                updateAccountMessages(fromAccount.id,dateKey,'accountOverCredit',fromAccount);
+              }
+            }
+            // TODO: THIS IS CORRECT. Also where I need to look into allowOverPayment and adjust accordingly. 
             tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transaction.amount;
           } else {
+
+            if (fromAccount) {
+              if (transaction.amount > tempBalanceByDateAndAccount[fromAccount.id][dateKey] && fromAccount.notifyOnAccountOverDraft && 
+                (fromAccount.type === 'checking' || fromAccount.type === 'savings' || fromAccount.type === 'cash')) 
+              {
+                updateAccountMessages(fromAccount.id,dateKey,'accountOverdraft',fromAccount);
+
+              }
+            }
+
             tempBalanceByDateAndAccount[fromAccount.id][dateKey] -= transaction.amount;
           }
 
@@ -346,19 +373,24 @@ export const projectionsSlice = createSlice({
 
       function handleDeposit(
         tempBalanceByDateAndAccount : BalanceData,
-        transaction                 : TransactionData,
-        dateKey                     : string | number,
-        toAccount                  ?: AccountData,
-        fromAccount                ?: AccountData,
+        transaction                 : Transaction,
+        dateKey                     : string,
+        toAccount                  ?: Account,
+        fromAccount                ?: Account,
         category                   ?: string,
       ) {
         if (!toAccount) return;
         if (toAccount.isLiability) {
-          tempBalanceByDateAndAccount[toAccount.id][dateKey] -=
-            transaction.amount;
+          if (transaction.amount > tempBalanceByDateAndAccount[toAccount.id][dateKey] && toAccount.notifyOnAccountPayoff && 
+            (toAccount.type === 'mortgage' || toAccount.type === 'loan' || toAccount.type === 'credit card')) // TODO: Gotta be a better way to do this. Maybe move this to the message panel?
+          {
+            updateAccountMessages(toAccount.id,dateKey,'accountPayoff',toAccount);
+
+          }
+          // THIS IS CORRECT. Also where I need to look into allowOverPayment and adjust accordingly. 
+          tempBalanceByDateAndAccount[toAccount.id][dateKey] -= transaction.amount;
         } else {
-          tempBalanceByDateAndAccount[toAccount.id][dateKey] +=
-            transaction.amount;
+          tempBalanceByDateAndAccount[toAccount.id][dateKey] += transaction.amount;
         }
       }
 
@@ -421,19 +453,63 @@ export const projectionsSlice = createSlice({
           }
         }
 
+        const transactionsByAccount: { [accountId: string]: Transaction[] } = {};
+
+        // Populate the object
+        transactions.forEach((transaction) => {
+          let accountIds: string[] = [];
+        
+          if (transaction.type === TransactionType.DEPOSIT && transaction.toAccount) {
+            accountIds.push(transaction.toAccount);
+          } else if (transaction.type === TransactionType.WITHDRAWAL && transaction.fromAccount) {
+            accountIds.push(transaction.fromAccount);
+          } else if (transaction.type === TransactionType.TRANSFER) {
+            if (transaction.fromAccount) {
+              accountIds.push(transaction.fromAccount);
+            }
+            if (transaction.toAccount) {
+              accountIds.push(transaction.toAccount);
+            }
+          }
+        
+          accountIds.forEach((accountId) => {
+            const existingTransactions = transactionsByAccount[accountId] || [];
+            existingTransactions.push(transaction);
+            transactionsByAccount[accountId] = existingTransactions;
+          });
+        });
+        
+        // Store it in the Redux state
+        state.transactionsByAccount = transactionsByAccount;
+
         runTodaysInterest(dateKey);
 
         currentDay.setDate(currentDay.getDate() + 1);
         iterations++;
       }
+      
+      function updateAccountMessages(accountId: string, date: string, type: string, account: Account) {
+        // Initialize the array for this accountId if it doesn't exist
+        if (!state.accountMessages[accountId]) {
+          state.accountMessages[accountId] = [];
+        }
+      
+        // Check if this type already exists for this accountId
+        const typeExists = state.accountMessages[accountId].some((item) => item.type === type);
+      
+        // If this type doesn't exist, add the new type/date pair
+        if (!typeExists) {
+          state.accountMessages[accountId].push({ date, type, account });
+        }
+      }
 
       const removeOldTransactions = () => {
         let today = new Date(new Date().setDate(new Date().getDate()-1));
 
-        today.setHours(0, 0, 0, 0); // To compare only the date part and not the time part
+        today.setHours(0, 0, 0, 0);
 
         Object.keys(tempTransactionsOnDate).forEach((date) => {
-          const transactionDate = new Date(date);
+          const transactionDate = new Date(date); // TODO: IF AUTO CLEAR! FUTURE FEATURE! 
           if (transactionDate < today) {
             delete tempTransactionsOnDate[date];
           }
@@ -446,13 +522,15 @@ export const projectionsSlice = createSlice({
       state.categorySpend           = tempCategorySpend;
 
       const endTime = performance.now();
-
       console.log(`Recalculating Projections took ${(endTime - startTime).toFixed(2)} milliseconds to execute.`);
     },
   },
 });
 
-// THE FUNCTIONS
+//  ___       ___     ___            __  ___    __        __  
+//   |  |__| |__     |__  |  | |\ | /  `  |  | /  \ |\ | /__` 
+//   |  |  | |___    |    \__/ | \| \__,  |  | \__/ | \| .__/ 
+//                                                            
 
 // Update the projections due to a change
 export const { recalculateProjections } = projectionsSlice.actions;
@@ -792,8 +870,8 @@ export const getNetWorthByDate = (
   let hasRequiredAccount = false;
 
   let theSavings = getSavingsByDate(state, date)
-  let theCash = getCashByDate(state, date)
-  let theDebt = getDebtByDate(state, date)
+  let theCash    = getCashByDate(state, date)
+  let theDebt    = getDebtByDate(state, date)
 
   if (theSavings !== null && theCash !== null && theDebt !== null) {
     hasRequiredAccount = true;
@@ -803,4 +881,54 @@ export const getNetWorthByDate = (
   return hasRequiredAccount ? workingValue : null;
 };
 
+// Get account messages
+interface Message {
+  accountId: string;
+  type: string;
+  date: string;
+  account: Account;
+}
+
+export const getAccountMessages = (state: RootState, account?: Account): Message[] => {
+  const messages: Message[] = [];
+
+  if (!state.projections.accountMessages || Object.keys(state.projections.accountMessages).length === 0) {
+    return messages;
+  }
+
+  if (account) {
+    const accountId = account.id;
+    const accountMessages = state.projections.accountMessages[accountId];
+    if (accountMessages) {
+      accountMessages.forEach((message) => {
+        messages.push({ accountId, type: message.type, date: message.date, account: message.account });
+      });
+    }
+  } else {
+    for (const accId in state.projections.accountMessages) {
+      const accountMessages = state.projections.accountMessages[accId];
+      accountMessages.forEach((message) => {
+        messages.push({ accountId: accId, type: message.type, date: message.date, account: message.account });
+      });
+    }
+  }
+
+  return messages;
+};
+
+// Get Transactions By Account
+export const getTransactionsByAccount = (
+  state: RootState,
+  accountId?: string
+) => {
+  const transactionsByAccount = state.projections.transactionsByAccount;
+
+  if (accountId) {
+    return transactionsByAccount[accountId] || [];
+  } else {
+    return Object.values(transactionsByAccount).flat();
+  }
+};
+
 export default projectionsSlice.reducer;
+

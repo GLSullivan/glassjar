@@ -22,12 +22,13 @@ export const accountsSlice = createSlice({
   initialState,
   reducers: { 
     setAccounts: (state, action: PayloadAction<Account[]>) => {
-      state.accounts = action.payload;
+      state.accounts = action.payload.map(account => ({
+        ...account
+      }));
     },
     addAccount: (state, action: PayloadAction<Account>) => {
       const newAccount = {
         ...action.payload,
-          // Set default values here
         name          : action.payload.name || 'New Account',
         currentBalance: action.payload.currentBalance || 0,
         type          : action.payload.type || 'checking',
@@ -43,12 +44,8 @@ export const accountsSlice = createSlice({
         (account) => account.id === action.payload.id
       );
       if (index !== -1) {
-        // Set the updatedAt property to the current timestamp
-        // and update the isLiability property based on the updated account type
-        // Set default values here as well
         state.accounts[index] = {
           ...action.payload,
-          updatedAt     : Date.now(),
           isLiability   : isAccountTypeLiability(action.payload.type),
           lastUpdated   : action.payload.lastUpdated || new Date().toISOString(),
           showInGraph   : action.payload.showInGraph || false,

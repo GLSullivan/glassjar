@@ -10,13 +10,14 @@ import CategoryGraph                        from './components/CategoryGraph'
 import SettingsPanel                        from './components/SettingsPanel';
 import AccountDelete                        from './components/AccountDelete';
 import OutlookGraph                         from './components/OutlookGraph'
+import MessageList                          from './components/MessageList';
 import PrimaryNav                           from './components/PrimaryNav';
 import Calendar                             from './components/Calendar';
 import Landing                              from './components/Landing';
 import Loader                               from './components/Loader';
 import Modal                                from './components/Modal';
 
-import { accountColors }                     from './data/AccountColors';
+import { accountColors }                    from './data/AccountColors';
 
 import { recalculateProjections }           from './redux/slices/projections';
 import {      
@@ -122,6 +123,9 @@ const App: React.FC = () => {
       </div>
       <div className={`glassjar__panel-group glassjar__panel-group--transactions ${activeView === 'transactions' ? 'visible' : ''}`}>
         <TransactionList />
+      </div>
+      <div className={`glassjar__panel-group glassjar__panel-group--messages ${activeView === 'messages' ? 'visible' : ''}`}>
+        <MessageList />
       </div>
       <div className={`glassjar__panel-group glassjar__panel-group--settings ${activeView === 'settings' ? 'visible' : ''}`}>
         <SettingsPanel />
