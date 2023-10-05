@@ -6,7 +6,7 @@ import { RootState }                          from '../redux/store';
 
 import { interfaceColors }                       from '../data/InterfaceColors';
 
-import "./../css/Nav.css";
+import './../css/Nav.css';
 
 type StyleState = {
   left ?: string;
@@ -20,11 +20,11 @@ const PrimaryNav = () => {
   const totalMessages = Object.values(messages).reduce((acc, messages) => acc + messages.length, 0);
 
   const buttons = [
-    { label: "Calendar",     color: interfaceColors[0], icon: "fa-calendar-days", view: "calendar" },
-    { label: "Accounts",     color: interfaceColors[0], icon: "fa-file-invoice",  view: "accounts" },
-    { label: "Transactions", color: interfaceColors[0], icon: "fa-jar",           view: "transactions" },
-    { label: "Messages",     color: interfaceColors[0], icon: "fa-envelope",      view: "messages" },
-    // { label: "Settings",     color: interfaceColors[0], icon: "fa-gear",          view: "settings" },
+    { label: 'Calendar',     color: interfaceColors[0], icon: 'fa-calendar-days', view: 'calendar' },
+    { label: 'Accounts',     color: interfaceColors[0], icon: 'fa-file-invoice',  view: 'accounts' },
+    { label: 'Transactions', color: interfaceColors[0], icon: 'fa-jar',           view: 'transactions' },
+    { label: 'Messages',     color: interfaceColors[0], icon: 'fa-envelope',      view: 'messages' },
+    // { label: 'Settings',     color: interfaceColors[0], icon: 'fa-gear',          view: 'settings' },
     // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
     // { label: 'Categories',     icon: 'fa-chart-pie',     view: 'categories' },
   ];
@@ -74,19 +74,19 @@ const PrimaryNav = () => {
       ref       = {navRef}
       className = 'glassjar__nav glassjar__nav--primary'
     >
-      <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
       </div>
-      <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
       </div>
-      <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
       </div>
-      <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
       </div>
-      <div className = "glassjar__nav__backing-shape" style = {activeStyle}>
+      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
       </div>
       <div
@@ -96,7 +96,7 @@ const PrimaryNav = () => {
           <button
             key         = {button.view}
             data-target = {button.view}
-            className   = {`glassjar__nav__button${activeView === button.view ? " active" : ""}`}
+            className   = {`glassjar__nav__button${activeView === button.view ? ' active' : ''}`}
             onClick = {() => setActiveView(button.view)}
           >
             <span>
@@ -109,7 +109,7 @@ const PrimaryNav = () => {
           </button>
         ))}
       </div>
-      <div className = "glassjar__nav__underline" style = {activeStyle}>
+      <div className = 'glassjar__nav__underline' style = {activeStyle}>
       <div style     = {{ background: activeStyle.color }}></div>
       </div>
     </div>

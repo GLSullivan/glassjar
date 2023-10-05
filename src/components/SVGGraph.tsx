@@ -265,8 +265,8 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
             y1={0}
             x2={activeDateX}
             y2={dimensions.height}
-            stroke="#8f8f8f"  
-            strokeWidth="5"
+            stroke='#8f8f8f'  
+            strokeWidth='5'
             opacity     = '0.25'
           />
         )}
@@ -290,12 +290,12 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
         <>
           <div className='glassjar__SVGGraph__data'  style={firstH4Style} ref={firstH4Ref}>          
             <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(startDate))}</h5>
-            <h4 className="glassjar__mono-spaced glassjar__fill-back">
+            <h4 className='glassjar__mono-spaced glassjar__fill-back'>
               <em> 
                 <CountUp
                   decimals={2}
-                  decimal="."
-                  prefix="$"
+                  decimal='.'
+                  prefix='$'
                   end={firstBalance / 100}
                   duration={2}
                   preserveValue={true}
@@ -305,24 +305,24 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
           </div>
           <div className='glassjar__SVGGraph__data glassjar__SVGGraph__data--end' style={lastH4Style} ref={lastH4Ref}>
             <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(endDate))}</h5>
-            <h4 className="glassjar__mono-spaced glassjar__fill-back">
+            <h4 className='glassjar__mono-spaced glassjar__fill-back'>
               <em> 
                 <CountUp
                   decimals={2}
-                  decimal="."
-                  prefix="$"
+                  decimal='.'
+                  prefix='$'
                   end={lastBalance / 100}
                   duration={2}
                   preserveValue={true}
                 />
               </em>
             </h4>
-            <h5 className="glassjar__mono-spaced glassjar__fill-back">
-              {delta < 0 ? <i className="fa-duotone fa-caret-down" /> : <i className="fa-duotone fa-caret-up" />}{' '}
+            <h5 className='glassjar__mono-spaced glassjar__fill-back'>
+              {delta < 0 ? <i className='fa-duotone fa-caret-down' /> : <i className='fa-duotone fa-caret-up' />}{' '}
                 <CountUp
                   decimals={2}
-                  decimal="."
-                  prefix="$"
+                  decimal='.'
+                  prefix='$'
                   end={Math.abs(delta / 100)}
                   duration={2}
                   preserveValue={true}

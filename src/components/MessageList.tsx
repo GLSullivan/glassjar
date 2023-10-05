@@ -1,16 +1,16 @@
-import React                          from "react";
-import { useDispatch, useSelector }   from "react-redux";
+import React                          from 'react';
+import { useDispatch, useSelector }   from 'react-redux';
 
-import { getAccountMessages }         from "./../redux/slices/projections";
+import { getAccountMessages }         from './../redux/slices/projections';
 import { accountTypeIcons }           from './../data/AccountTypeIcons';
 import { accountColors }              from './../data/AccountColors';
         
-import { setActiveAccount }           from "./../redux/slices/accounts";
-import { openAccountForm }            from "./../redux/slices/modals";
-import { Account }                    from "./../models/Account";
-import { RootState }                  from "./../redux/store";
+import { setActiveAccount }           from './../redux/slices/accounts';
+import { openAccountForm }            from './../redux/slices/modals';
+import { Account }                    from './../models/Account';
+import { RootState }                  from './../redux/store';
 
-import messageFactory                 from "./../components/MessageFactory";
+import messageFactory                 from './../components/MessageFactory';
 
 const MessagesPage: React.FC = () => { 
   // TODO: This should take an account and only display the message for the passed account.
@@ -33,22 +33,22 @@ const MessagesPage: React.FC = () => {
   });
 
   return (
-    <div className="glassjar__account-list">
-      <div className="glassjar__account-list__header glassjar__flex glassjar__flex--justify-between">
+    <div className='glassjar__account-list'>
+      <div className='glassjar__account-list__header glassjar__flex glassjar__flex--justify-between'>
         <h2>Messages</h2>
       </div>
 
       {Object.keys(groupedMessages).length > 0 ? (
         <>
           {Object.keys(groupedMessages).map((accountId) => (
-            <div key={accountId} className="glassjar__list-item glassjar__list-item--account glassjar__list-item--message"
+            <div key={accountId} className='glassjar__list-item glassjar__list-item--account glassjar__list-item--message'
             onClick={() => {
               dispatch(setActiveAccount(groupedMessages[accountId][0].account));
               dispatch(openAccountForm());
             }}           
             >
               <div
-                className="glassjar__list-item__header"
+                className='glassjar__list-item__header'
                 style={{
                   background:
                     accountColors[
@@ -56,7 +56,7 @@ const MessagesPage: React.FC = () => {
                     ],
                 }}
               >
-                <div className="glassjar__list-item__icon">
+                <div className='glassjar__list-item__icon'>
                   <i
                     className={
                       accountTypeIcons[
@@ -65,8 +65,8 @@ const MessagesPage: React.FC = () => {
                     }
                   />
                 </div>
-                <div className="glassjar__list-item__header--mid">
-                  <div className="glassjar__list-item__headline">
+                <div className='glassjar__list-item__header--mid'>
+                  <div className='glassjar__list-item__headline'>
                     <h4>{groupedMessages[accountId][0].account.name}</h4>
                   </div>
                 </div>
@@ -77,7 +77,7 @@ const MessagesPage: React.FC = () => {
               ))}
 
               <div
-                className="glassjar__list-item__backing"
+                className='glassjar__list-item__backing'
                 style={{ background: accountColors[groupedMessages[accountId][0].account.color] }}
               />
             </div>

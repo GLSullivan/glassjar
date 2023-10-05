@@ -18,7 +18,7 @@ const SpanChangeButton = () => {
 
   return (
     <button
-      className = "glassjar__button glassjar__button--small glassjar__button--span"
+      className = 'glassjar__button glassjar__button--small glassjar__button--span'
       onClick   = {() => handleSpanChange()}
     >
       {graphRange} Month{graphRange !== 1 && 's'}

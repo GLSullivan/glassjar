@@ -40,10 +40,10 @@ export const DayPanel: React.FC = () => {
   const netWorth        = getNetWorthByDate(state, graphEnd)
 
   return (
-    <div className="glassjar__list glassjar__list--projections">
+    <div className='glassjar__list glassjar__list--projections'>
       {/* <h3>{graphRange} Month Projection</h3> */}
       <h3>{format(new Date(graphEnd), 'M/d/yy')}</h3>
-      <div className="glassjar__grid glassjar__grid--projected-info">
+      <div className='glassjar__grid glassjar__grid--projected-info'>
 
         {spendingPower !== null && (
           <>
@@ -51,8 +51,8 @@ export const DayPanel: React.FC = () => {
             <h4>
               <CountUp
                 decimals={2}
-                decimal="."
-                prefix="$"
+                decimal='.'
+                prefix='$'
                 end={spendingPower / 100}
                 duration={2}
                 preserveValue={true}
@@ -68,8 +68,8 @@ export const DayPanel: React.FC = () => {
             <h5>
               <CountUp
               decimals={2}
-              decimal="."
-              prefix="$"
+              decimal='.'
+              prefix='$'
               end={getSavingsByDate(state, graphEnd)! / 100}
               duration={2}
               preserveValue={true}
@@ -85,8 +85,8 @@ export const DayPanel: React.FC = () => {
 <h5>
               <CountUp
               decimals={2}
-              decimal="."
-              prefix="$"
+              decimal='.'
+              prefix='$'
               end={cash / 100}
               duration={2}
               preserveValue={true}
@@ -102,8 +102,8 @@ export const DayPanel: React.FC = () => {
             <h5>
               <CountUp
                 decimals={2}
-                decimal="."
-                prefix="$"
+                decimal='.'
+                prefix='$'
                 end={availableCredit / 100}
                 duration={2}
                 preserveValue={true}
@@ -119,8 +119,8 @@ export const DayPanel: React.FC = () => {
             <h4>
               <CountUp
                 decimals={2}
-                decimal="."
-                prefix="$"
+                decimal='.'
+                prefix='$'
                 end={debt / 100}
                 duration={2}
                 preserveValue={true}
@@ -136,8 +136,8 @@ export const DayPanel: React.FC = () => {
             <h5>
               <CountUp
               decimals={2}
-              decimal="."
-              prefix="$"
+              decimal='.'
+              prefix='$'
               end={creditCardDebt / 100}
               duration={2}
               preserveValue={true}
@@ -153,8 +153,8 @@ export const DayPanel: React.FC = () => {
             <h5>
             <CountUp
               decimals={2}
-              decimal="."
-              prefix="$"
+              decimal='.'
+              prefix='$'
               end={loan / 100}
               duration={2}
               preserveValue={true}
@@ -170,8 +170,8 @@ export const DayPanel: React.FC = () => {
             <h4>
               <CountUp
                 decimals={2}
-                decimal="."
-                prefix="$"
+                decimal='.'
+                prefix='$'
                 end={netWorth / 100}
                 duration={2}
                 preserveValue={true}

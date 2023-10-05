@@ -18,7 +18,7 @@ import {
   addMonths, 
   isAfter, 
   isToday
-}                                     from "date-fns";
+}                                     from 'date-fns';
 import { getAccountMessages,
   getTransactionsByAccount }          from '../redux/slices/projections';
 
@@ -105,7 +105,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
 
     return (
       <div
-        className="glassjar__list-item glassjar__list-item--account"
+        className='glassjar__list-item glassjar__list-item--account'
         onClick={() => {
           dispatch(setActiveAccount(account));
           dispatch(openAccountForm());
@@ -113,8 +113,8 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
         key={account.id}
         style={{ ['--box-color' as any]:  blendWithWhite(accountColors[account.color], .1) }}>
 
-        <div className="glassjar__list-item__header" style={{ background: accountColors[account.color] }}>
-          <div className="glassjar__list-item__icon">
+        <div className='glassjar__list-item__header' style={{ background: accountColors[account.color] }}>
+          <div className='glassjar__list-item__icon'>
             <i className={accountTypeIcons[account.type]} />
           </div>
           <div className='glassjar__list-item__header--mid'>
@@ -131,7 +131,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
             <h3 style={{ color: accountColors[account.color] }}>{messages.length}</h3>
           </div>}
         </div>
-        <div className="glassjar__list-item__body">
+        <div className='glassjar__list-item__body'>
           <SVGGraph
             accounts  = {[account]}
             startDate = {graphStart}
@@ -144,11 +144,11 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
             thickness = {2}
           />
         </div>
-        <div className="glassjar__list-item__footer">
-          <h5 className="glassjar__fill-back"><span>{getTransactionsByAccount(state, account.id).length} transaction{getTransactionsByAccount(state, account.id).length !== 1 && <>s</>}</span></h5>
+        <div className='glassjar__list-item__footer'>
+          <h5 className='glassjar__fill-back'><span>{getTransactionsByAccount(state, account.id).length} transaction{getTransactionsByAccount(state, account.id).length !== 1 && <>s</>}</span></h5>
         </div>
         <div
-          className="glassjar__list-item__backing"
+          className='glassjar__list-item__backing'
           style={{ background: accountColors[account.color] }}
         />
       </div>

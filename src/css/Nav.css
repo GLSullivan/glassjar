@@ -184,6 +184,7 @@
   align-items: center;
   justify-content: center;
   padding: .5rem;
+  z-index: 9000;
 }
 
 button.glassjar__button.glassjar__button--span {

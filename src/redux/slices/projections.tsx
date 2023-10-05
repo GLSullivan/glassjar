@@ -793,8 +793,8 @@ export const getDebtByDate = (
 
       if (account && account.isSpendingPower) {
         switch (account.type) {
-          case "loan":
-          case "credit card":
+          case 'loan':
+          case 'credit card':
             hasRequiredAccount = true;
             workingValue += accountBalanceOnDate(state, account.id, date);
             break;
@@ -820,7 +820,7 @@ export const getCreditCardDebtByDate = (
     allAccounts.forEach((account) => {
       if (account && account.isSpendingPower) {
         switch (account.type) {
-          case "credit card":
+          case 'credit card':
             hasRequiredAccount = true;
             workingValue += accountBalanceOnDate(state, account.id, date);
             break;
@@ -847,7 +847,7 @@ export const getLoanDebtByDate = (
 
       if (account && account.isSpendingPower) {
         switch (account.type) {
-          case "loan":
+          case 'loan':
             hasRequiredAccount = true;
             workingValue += accountBalanceOnDate(state, account.id, date);
             break;

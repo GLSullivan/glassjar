@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 import {
   startOfMonth,
@@ -7,16 +7,16 @@ import {
   addMonths,
   isAfter,
   isToday,
-} from "date-fns";
+} from 'date-fns';
 
-import SVGGraph from "./../components/SVGGraph";
+import SVGGraph from './../components/SVGGraph';
 
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
-import { Account } from "./../models/Account";
-import { RootState } from "./../redux/store";
+import { Account } from './../models/Account';
+import { RootState } from './../redux/store';
 
-import "./../css/OutlookGraph.css";
+import './../css/OutlookGraph.css';
 
 const OutlookGraph: React.FC = () => {
   const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
@@ -64,9 +64,9 @@ const OutlookGraph: React.FC = () => {
   }
 
   return (
-    <div className="glassjar__graph-holder">
-      <div className="glassjar__graph-holder__sub">
-        <div className="glassjar__graph-holder__sub-sub">
+    <div className='glassjar__graph-holder'>
+      <div className='glassjar__graph-holder__sub'>
+        <div className='glassjar__graph-holder__sub-sub'>
           <SVGGraph
             accounts={graphingAccounts}
             startDate={graphStart}
