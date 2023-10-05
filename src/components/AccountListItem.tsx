@@ -136,7 +136,6 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
             accounts  = {[account]}
             startDate = {graphStart}
             endDate   = {graphEnd}
-            hideSpan  = {true}
             hideZero  = {true}
             hideTrend = {true}
             hideDates = {true}

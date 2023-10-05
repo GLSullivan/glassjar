@@ -30,6 +30,7 @@ import { RootState }                        from './redux/store';
 
 import './css/Main.css'      
 import './css/Nav.css'  
+import TopNav from './components/TopNav';
 
 const App: React.FC = () => {
 
@@ -109,26 +110,30 @@ const App: React.FC = () => {
           onClose={closeTheTransactionModal}
         />
       </Modal>
-      <div className={`glassjar__panel-group glassjar__panel-group--calendar ${activeView === 'calendar' ? 'visible' : ''}`}>
-        <Calendar />
-      </div>
-      <div className={`glassjar__panel-group glassjar__panel-group--accounts ${activeView === 'accounts' ? 'visible' : ''}`}>
-        <AccountList />
-      </div>
-      <div className={`glassjar__panel-group glassjar__panel-group--outlook ${activeView === 'outlook' ? 'visible' : ''}`}>
-        <OutlookGraph />
-      </div>
-      <div className={`glassjar__panel-group glassjar__panel-group--categories ${activeView === 'categories' ? 'visible' : ''}`}>
-        <CategoryGraph />
-      </div>
-      <div className={`glassjar__panel-group glassjar__panel-group--transactions ${activeView === 'transactions' ? 'visible' : ''}`}>
-        <TransactionList />
-      </div>
-      <div className={`glassjar__panel-group glassjar__panel-group--messages ${activeView === 'messages' ? 'visible' : ''}`}>
-        <MessageList />
-      </div>
-      <div className={`glassjar__panel-group glassjar__panel-group--settings ${activeView === 'settings' ? 'visible' : ''}`}>
-        <SettingsPanel />
+
+      <TopNav/>
+      <div className="glassjar__panels">
+        <div className={`glassjar__panel-group glassjar__panel-group--calendar ${activeView === 'calendar' ? 'visible' : ''}`}>
+          <Calendar />
+        </div>
+        <div className={`glassjar__panel-group glassjar__panel-group--accounts ${activeView === 'accounts' ? 'visible' : ''}`}>
+          <AccountList />
+        </div>
+        <div className={`glassjar__panel-group glassjar__panel-group--outlook ${activeView === 'outlook' ? 'visible' : ''}`}>
+          <OutlookGraph />
+        </div>
+        <div className={`glassjar__panel-group glassjar__panel-group--categories ${activeView === 'categories' ? 'visible' : ''}`}>
+          <CategoryGraph />
+        </div>
+        <div className={`glassjar__panel-group glassjar__panel-group--transactions ${activeView === 'transactions' ? 'visible' : ''}`}>
+          <TransactionList />
+        </div>
+        <div className={`glassjar__panel-group glassjar__panel-group--messages ${activeView === 'messages' ? 'visible' : ''}`}>
+          <MessageList />
+        </div>
+        <div className={`glassjar__panel-group glassjar__panel-group--settings ${activeView === 'settings' ? 'visible' : ''}`}>
+          <SettingsPanel />
+        </div>
       </div>
       <PrimaryNav />
       

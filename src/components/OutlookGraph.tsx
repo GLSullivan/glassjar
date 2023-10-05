@@ -64,14 +64,14 @@ const OutlookGraph: React.FC = () => {
   }
 
   return (
-    <div className = "glassjar__graph-holder">
-    <div className = "glassjar__graph-holder__sub">
-    <div className = "glassjar__graph-holder__sub-sub">
+    <div className="glassjar__graph-holder">
+      <div className="glassjar__graph-holder__sub">
+        <div className="glassjar__graph-holder__sub-sub">
           <SVGGraph
-            accounts     = {graphingAccounts}
-            startDate    = {graphStart}
-            endDate      = {graphEnd}
-            hideStartEnd = {true}
+            accounts={graphingAccounts}
+            startDate={graphStart}
+            endDate={graphEnd}
+            hideStartEnd={true}
           />
         </div>
       </div>

@@ -9,14 +9,11 @@ import { accountColors }                      from './../data/AccountColors';
 import { Account }                            from './../models/Account';
 import { RootState }                          from './../redux/store';
 
-import SpanChangeButton                       from './../components/SpanChangeButton';
-
 interface SVGGraphProps {
   startDate    : string;
   endDate      : string;
   accounts     : Account[];
   thickness   ?: number;
-  hideSpan    ?: Boolean;
   hideZero    ?: Boolean;
   hideTrend   ?: Boolean;
   hideDates   ?: Boolean;
@@ -30,7 +27,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   endDate,
   accounts,
   thickness,
-  hideSpan,
   hideZero,
   hideTrend,
   hideDates,
@@ -288,12 +284,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
           <h2>{formatDateOrToday(new Date(startDate))}</h2>
           <h2>{formatDateOrToday(new Date(endDate))}</h2>
         </>
-      }
-
-      {!hideSpan &&
-        <div className = 'glassjar__graph-holder__range-change'>
-          <SpanChangeButton />
-        </div>
       }
 
       {!hideStartEnd &&
