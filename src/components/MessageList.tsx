@@ -72,7 +72,7 @@ const MessagesPage: React.FC = () => {
                 </div>
               </div>
 
-              {groupedMessages[accountId].map((message, index) => (
+              {groupedMessages[accountId].map((message, index) => ( // TODO: Make this its own component to which an array is passed.
                 <div className='glassjar__list-item__message' key={index}>{messageFactory(message)}</div>
               ))}
 

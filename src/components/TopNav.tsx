@@ -1,13 +1,43 @@
-import React            from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import React, { useState }          from "react";
 
-import SpanChangeButton from './SpanChangeButton';
+import SpanChangeButton             from "./SpanChangeButton";
 
-import './../css/Nav.css'  
+import { setView }                  from "./../redux/slices/views";
+import { RootState }                from "./../redux/store";
+
+import Icon from './../media/images/header-icon.png'
+
+import "./../css/Nav.css";
 
 const TopNav = () => {
+  const [prevView, setPrevView] = useState<string | null>(null);
+  const dispatch                = useDispatch();
+  const activeView              = useSelector((state: RootState) => state.views.activeView);
+
+  const setActiveView = (view: string) => {
+    if (activeView !== "settings") {
+      setPrevView(activeView); 
+      dispatch(setView(view));
+    } else {
+      if (prevView) {
+        dispatch(setView(prevView)); 
+      } else {
+          // Handle the case where there is no previous view (e.g., the app just started)
+      }
+    }
+  };
+
   return (
-    <div className='glassjar__top-nav'>          
+    <div className = "glassjar__top-nav">
+      <div><img src={Icon} alt="Glass Jar by Greg Sullivan" /></div>
       <SpanChangeButton />
+      <div
+        onClick   = {() => setActiveView("settings")}
+        className = {`glassjar__nav__button${activeView === "settings" ? " active" : ""}`}
+      >
+        <i className = "fa-solid fa-gear"></i>
+      </div>
     </div>
   );
 };

@@ -20,13 +20,10 @@ const PrimaryNav = () => {
   const totalMessages = Object.values(messages).reduce((acc, messages) => acc + messages.length, 0);
 
   const buttons = [
-    { label: 'Calendar',     color: interfaceColors[0], icon: 'fa-calendar-days', view: 'calendar' },
-    { label: 'Accounts',     color: interfaceColors[0], icon: 'fa-file-invoice',  view: 'accounts' },
-    { label: 'Transactions', color: interfaceColors[0], icon: 'fa-jar',           view: 'transactions' },
-    { label: 'Messages',     color: interfaceColors[0], icon: 'fa-envelope',      view: 'messages' },
-    // { label: 'Settings',     color: interfaceColors[0], icon: 'fa-gear',          view: 'settings' },
-    // { label: 'Outlooks',     icon: 'fa-chart-line',    view: 'outlook' },
-    // { label: 'Categories',     icon: 'fa-chart-pie',     view: 'categories' },
+    { label: 'Calendar',     color: interfaceColors[0], icon: 'fa-calendar-days',   view: 'calendar' },
+    { label: 'Accounts',     color: interfaceColors[0], icon: 'fa-university',      view: 'accounts' },
+    { label: 'Transactions', color: interfaceColors[0], icon: 'fa-money-bill-wave', view: 'transactions' },
+    { label: 'Messages',     color: interfaceColors[0], icon: 'fa-envelope',        view: 'messages' },
   ];
 
   const dispatch = useDispatch();
@@ -36,6 +33,8 @@ const PrimaryNav = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
 
   const activeView = useSelector((state: RootState) => state.views.activeView);
+
+  const isActiveView = buttons.some(button => button.view === activeView);
 
   const setActiveView = (view: string) => {
     dispatch(setView(view));
@@ -72,7 +71,7 @@ const PrimaryNav = () => {
   return (
     <div
       ref       = {navRef}
-      className = 'glassjar__nav glassjar__nav--primary'
+      className={`glassjar__nav glassjar__nav--primary${isActiveView ? '' : ' inactive'}`}
     >
       <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
@@ -117,5 +116,3 @@ const PrimaryNav = () => {
 };
 
 export default PrimaryNav;
-
-// 

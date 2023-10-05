@@ -18,7 +18,7 @@
 }
 
 .glassjar__nav.glassjar__nav--primary {
-  border-radius: 2rem 2rem 0 0;
+  border-radius: 1rem 1rem 0 0;
   border-top   : 1px solid rgba(0, 0, 0, 0.15);
   bottom       : -4px;
   position     : absolute;
@@ -80,7 +80,8 @@
   top            : 0;
   transition     : left 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   width 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
-                  color .5s;
+                  color .5s,
+                  opacity 0.5s;
   z-index: 1;
 }
 
@@ -101,7 +102,16 @@
   top            : 0;
   transition     : left 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   width 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
-                  color 0.5s ease;
+                  color 0.5s ease,
+                  opacity 0.5s;
+}
+
+.glassjar__nav.glassjar__nav--primary.inactive .glassjar__nav__underline {
+  opacity: 0;
+}
+
+.glassjar__nav.glassjar__nav--primary.inactive .glassjar__nav__backing-shape {
+  opacity: 0;
 }
 
 .glassjar__nav__backing-shape > div {
@@ -178,13 +188,27 @@
 /* Header */
 
 .glassjar__top-nav {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   width: 100%;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: .5rem;
   z-index: 9000;
+  border-radius: 0 0 0.5rem 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  background: var(--color-bright);
+}
+
+.glassjar__top-nav > * {
+  width: 100%;
+  flex: 2;
+}
+
+.glassjar__top-nav > div:last-of-type {
+  text-align : right;
+  align-items: flex-end;
 }
 
 button.glassjar__button.glassjar__button--span {

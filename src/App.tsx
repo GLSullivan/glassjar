@@ -80,7 +80,9 @@ const App: React.FC = () => {
       {!isSignedIn && <Landing />}
       {isSignedIn && <>
 
-      <Modal
+      {/* TODO: https://chat.openai.com/share/53492717-90e7-4995-bdb0-3965a7c1a1ac Use portals to overhaul modals */}
+      
+      <Modal 
         isOpen={accountFormOpen}
         onClose={closeTheAccountForm}
         hideClose={accounts.length < 1}
@@ -110,6 +112,7 @@ const App: React.FC = () => {
           onClose={closeTheTransactionModal}
         />
       </Modal>
+
       <div className="glassjar__main">
         <TopNav/>
             <div className='glassjar__panels'>
