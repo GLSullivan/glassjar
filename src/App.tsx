@@ -113,7 +113,7 @@ const App: React.FC = () => {
         />
       </Modal>
 
-      <div className="glassjar__main">
+      <div className='glassjar__main'>
         <TopNav/>
             <div className='glassjar__panels'>
               <div className={`glassjar__panel-group glassjar__panel-group--calendar ${activeView === 'calendar' ? 'visible' : ''}`}>
@@ -139,9 +139,9 @@ const App: React.FC = () => {
               </div>
             </div>
       </div>
-     
+
       <PrimaryNav />
-      
+
       </>}
     </div>
   );
