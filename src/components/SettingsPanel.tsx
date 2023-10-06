@@ -39,8 +39,9 @@ const SettingsPanel: React.FC = () => {
   return (
     <div className='glassjar__settings-panel'>
       <div>
-        <h2>Dev Tools Menu</h2>
-        <p>Welcome, {currentUser?.displayName}</p>
+        <h2>Settings</h2>
+        <h5>And while we're in beta, the dev tools menu.</h5>
+        {currentUser?.displayName && <p>Hello there, {(currentUser?.displayName).split(' ')[0]}.</p>}
       </div>
       <div>
         <button className='glassjar__button glassjar__button--full-width glassjar__button--primary' onClick={() => dispatch(openTransactionHelper())}>

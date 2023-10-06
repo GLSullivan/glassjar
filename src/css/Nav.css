@@ -228,3 +228,9 @@ button.glassjar__nav__button.active > span {
   opacity: 1;
   transform: scale(1)
 }
+
+.glassjar__nav__button img {
+  max-width : 28px;
+  max-height: 28px;
+  border-radius: 100px;
+}

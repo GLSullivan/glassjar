@@ -11,9 +11,13 @@ import Icon from './../media/images/header-icon.png'
 import './../css/Nav.css';
 
 const TopNav = () => {
-  const [prevView, setPrevView] = useState<string | null>(null);
-  const dispatch                = useDispatch();
-  const activeView              = useSelector((state: RootState) => state.views.activeView);
+  const dispatch = useDispatch();
+
+  const [imageError, setImageError] = useState(false);
+  const [prevView, setPrevView]     = useState<string | null>(null);
+
+  const userPhoto  = useSelector((state: RootState) => state.userInfo.photo);
+  const activeView = useSelector((state: RootState) => state.views.activeView);
 
   const setActiveView = (view: string) => {
     if (activeView !== 'settings') {
@@ -36,7 +40,15 @@ const TopNav = () => {
         onClick   = {() => setActiveView('settings')}
         className = {`glassjar__nav__button${activeView === 'settings' ? ' active' : ''}`}
       >
-        <i className = 'fa-solid fa-gear'></i>
+    {!imageError && userPhoto ? (
+        <img 
+          src={userPhoto} 
+          alt="User" 
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <i className="fa-solid fa-gear" />
+      )}
       </div>
     </div>
   );

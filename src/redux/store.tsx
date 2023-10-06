@@ -4,6 +4,7 @@ import transactionsReducer, { setTransactions}    from './slices/transactions';
 import activeDatesReducer                         from './slices/activedates';
 import projectionsReducer                         from './slices/projections';
 import userPrefsReducer, { setPrefsState }        from './slices/userprefs';
+import userInfoReducer, { setUserInfo }           from './slices/userInfo';
 import accountsReducer, { setAccounts }           from './slices/accounts';
 import modalStateReducer, { openAccountForm }     from './slices/modals';
 import loaderReducer                              from './slices/loader';
@@ -70,9 +71,12 @@ firebase.auth().onAuthStateChanged((user) => {
       .catch((error) => {
         console.error(error);
       });
+
+      store.dispatch(setUserInfo({ name: user.displayName, photo: user.photoURL }));
   } else {
     store.dispatch(hideLoader());
     store.dispatch(setLoadingAuthState(false));
+    store.dispatch(setUserInfo({ name: null, photo: null }));
   }
 });
 
@@ -88,10 +92,11 @@ export const store = configureStore({
     userPrefs   : userPrefsReducer,
     views       : viewReducer,
     search      : searchReducer,
+    userInfo    : userInfoReducer,
   }
 });
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState   = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 function replaceUndefinedWithNull(value: any): any {
@@ -110,7 +115,7 @@ function replaceUndefinedWithNull(value: any): any {
 
 function saveStateToDatabase() {
   const state = store.getState();
-  const user = firebase.auth().currentUser;
+  const user  = firebase.auth().currentUser;
   if (user) {
     dbRef.child('users/' + user.uid + '/accounts').set(replaceUndefinedWithNull(state.accounts.accounts));
     dbRef.child('users/' + user.uid + '/transactions').set(replaceUndefinedWithNull(state.transactions.transactions));
@@ -120,26 +125,26 @@ function saveStateToDatabase() {
 }
 
 let prevState = {
-  accounts: store.getState().accounts,
+  accounts    : store.getState().accounts,
   transactions: store.getState().transactions,
-  views: store.getState().views,
-  userPrefs: store.getState().userPrefs,
+  views       : store.getState().views,
+  userPrefs   : store.getState().userPrefs,
 };
 
 store.subscribe(() => {
-  const user = firebase.auth().currentUser;
+  const user     = firebase.auth().currentUser;
   const newState = {
-    accounts: store.getState().accounts,
+    accounts    : store.getState().accounts,
     transactions: store.getState().transactions,
-    views: store.getState().views,
-    userPrefs: store.getState().userPrefs,
+    views       : store.getState().views,
+    userPrefs   : store.getState().userPrefs,
   };
   
   if (user && isAppLoaded) {
     if (JSON.stringify(newState.accounts) !== JSON.stringify(prevState.accounts)
       || JSON.stringify(newState.transactions) !== JSON.stringify(prevState.transactions)
-      || JSON.stringify(newState.views) !== JSON.stringify(prevState.views)
-      || JSON.stringify(newState.userPrefs) !== JSON.stringify(prevState.userPrefs)) {
+      || JSON.stringify(newState.views)        !== JSON.stringify(prevState.views)
+      || JSON.stringify(newState.userPrefs)    !== JSON.stringify(prevState.userPrefs)) {
 
       saveStateToDatabase();
       prevState = newState;
