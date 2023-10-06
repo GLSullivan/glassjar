@@ -1,13 +1,20 @@
-import CountUp                                from 'react-countup';
-import { useDispatch, useSelector }           from 'react-redux';
-import { format, isToday }                    from 'date-fns';
-import React, { useEffect, useRef, useState } from 'react';
+import CountUp                                           from 'react-countup';
+import { useDispatch, useSelector }                      from 'react-redux';
+import {  format,
+          isToday, 
+          startOfDay, 
+          addMonths, 
+          startOfMonth, 
+          endOfMonth }                                   from 'date-fns';
+import React, { useEffect, useRef, useState }            from 'react';
 
-import { setActiveDate }                      from './../redux/slices/activedates';
-import { accountBalancesByDateRange }         from './../redux/slices/projections';
-import { accountColors }                      from './../data/AccountColors';
-import { Account }                            from './../models/Account';
-import { RootState }                          from './../redux/store';
+import { setActiveDate }                                 from './../redux/slices/activedates';
+import { accountBalancesByDateRange }                    from './../redux/slices/projections';
+import { accountColors }                                 from './../data/AccountColors';
+import { Account }                                       from './../models/Account';
+import { RootState }                                     from './../redux/store';
+
+import './../css/OutlookGraph.css'
 
 interface SVGGraphProps {
   startDate    : string;
@@ -20,6 +27,7 @@ interface SVGGraphProps {
   hideRange   ?: Boolean;
   hideToday   ?: Boolean;
   hideStartEnd?: Boolean;
+  hideMonth   ?: Boolean;
 }
 
 const SVGGraph: React.FC<SVGGraphProps> = ({
@@ -32,19 +40,26 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   hideDates,
   hideRange,
   hideToday,
-  hideStartEnd
+  hideStartEnd,
+  hideMonth
 }) => {
   const state    = useSelector((state: RootState) => state);
-  const dispatch = useDispatch();                            
+  const dispatch = useDispatch();    
+
+  const graphRange             = useSelector((state: RootState) => state.views.graphRange);
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate); 
 
   let yMin: number = Infinity;  // Initialize to Infinity
   let yMax: number = -Infinity; // Initialize to -Infinity
   let colors: string[] = [];
 
+  startDate = startOfDay(new Date()).toISOString();
+  endDate   = addMonths(startOfDay(new Date()),graphRange).toISOString(); 
+  // TODO: A fair bit of math is being done to find these dates and I'm overriding it here. This is a hack that needs addressing for performance.
+
   const containerRef                = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate); 
 
   const updateDimensions = () => {
     if (containerRef.current) {
@@ -214,15 +229,65 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     position: 'absolute',
   };
   
+  // New state to hold the box dimensions and position
+  const [boxStyle, setBoxStyle] = useState<React.CSSProperties>({});
 
+  useEffect(() => {
+    if (activeDate) {
+      const activeDateObj = startOfDay(new Date(activeDate));
+      const startDateObj  = startOfDay(new Date(startDate));
+      const endDateObj    = startOfDay(new Date(endDate));
+  
+        // Use date-fns to get the start and end dates of the active month
+      const activeMonthStart = startOfMonth(activeDateObj);
+      const activeMonthEnd   = endOfMonth(activeDateObj);
+  
+        // Calculate the position of the active month relative to the start and end dates
+      const totalDays       = (endDateObj.getTime() - startDateObj.getTime()) / (24 * 60 * 60 * 1000);
+      const activeStartDays = (activeMonthStart.getTime() - startDateObj.getTime()) / (24 * 60 * 60 * 1000);
+  
+        // Calculate the width of one day in the SVG
+      const dayWidth = dimensions.width / totalDays;
+  
+        // Calculate the x-position and width of the box
+      const boxX     = dayWidth * activeStartDays;
+      const boxWidth = dayWidth * ((activeMonthEnd.getTime() - activeMonthStart.getTime()) / (24 * 60 * 60 * 1000) + 1);
+  
+        // Update the boxStyle state
+      setBoxStyle({
+        position: 'absolute',
+        left    : `${boxX}px`,
+        width   : `${boxWidth}px`,
+        top     : '0',
+        bottom  : '0',
+      });
+    }
+    // eslint-disable-next-line 
+  }, [activeDate, dimensions]);
 
-    return (
+  return (
     <div className = 'glassjar__svg-graph' ref            = {containerRef}>
+
+      {!hideMonth && <div className='glassjar__svg-graph__month-box' style={boxStyle} />}
+
       <svg 
       width        = {Math.ceil(dimensions.width)}
       height       = {Math.ceil(dimensions.height)}
       onTouchStart = {handleTouchStart}
       >
+        
+      {(activeDate && !hideToday) && (
+        <line
+          x1={activeDateX}
+          y1={0}
+          x2={activeDateX}
+          y2={dimensions.height}
+          stroke='#ffffff'  
+          strokeWidth='7'
+          // opacity     = '0.25'
+        />
+      )}
+
         {!hideTrend &&
           <polyline
             points={rollingAverage
@@ -253,25 +318,13 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
             y1              = {scaleY(0)}
             x2              = {dimensions.width}
             y2              = {scaleY(0)}
-            stroke          = '#8f8f8f'
-            strokeWidth     = '1'
+            stroke          = '#000'
+            strokeWidth     = '3'
             strokeDasharray = '10,10'
           />
         )}
-        
-        {(activeDate && !hideToday) && (
-          <line
-            x1={activeDateX}
-            y1={0}
-            x2={activeDateX}
-            y2={dimensions.height}
-            stroke='#8f8f8f'  
-            strokeWidth='5'
-            opacity     = '0.25'
-          />
-        )}
-
       </svg>
+
       {!hideRange &&
         <>
           <div className = 'glassjar__graph-range glassjar__graph-range-max'>{formattedMax}</div>
@@ -288,7 +341,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
 
       {!hideStartEnd &&
         <>
-          <div className='glassjar__SVGGraph__data'  style={firstH4Style} ref={firstH4Ref}>          
+          <div className='glassjar__svg-graph__data'  style={firstH4Style} ref={firstH4Ref}>          
             <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(startDate))}</h5>
             <h4 className='glassjar__mono-spaced glassjar__fill-back'>
               <em> 
@@ -303,7 +356,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
               </em>
             </h4>
           </div>
-          <div className='glassjar__SVGGraph__data glassjar__SVGGraph__data--end' style={lastH4Style} ref={lastH4Ref}>
+          <div className='glassjar__svg-graph__data glassjar__svg-graph__data--end' style={lastH4Style} ref={lastH4Ref}>
             <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(endDate))}</h5>
             <h4 className='glassjar__mono-spaced glassjar__fill-back'>
               <em> 

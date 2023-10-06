@@ -3,7 +3,7 @@ import React                                                      from 'react';
 import { useSelector }                                            from 'react-redux';
       
 import {                
-  accountBalanceOnDate,            
+  // accountBalanceOnDate,            
   getCashByDate,            
   getAvailableCreditByDate,            
   getSavingsByDate,            
@@ -13,10 +13,10 @@ import {
   getLoanDebtByDate,       
   getNetWorthByDate           
 }                                                                 from '../../redux/slices/projections';
-import { selectAllAccounts }                                      from '../../redux/slices/accounts';
+// import { selectAllAccounts }                                      from '../../redux/slices/accounts';
 import { RootState }                                              from '../../redux/store';
       
-import AccountListItem                                            from '../AccountListItem';
+// import AccountListItem                                            from '../AccountListItem';
 import { endOfMonth, formatISO, addMonths, startOfDay,format }    from 'date-fns';
 
 import './../../css/Panels.css';
@@ -26,7 +26,7 @@ export const DayPanel: React.FC = () => {
   const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
   const graphRange = useSelector((state: RootState) => state.views.graphRange);
   const state      = useSelector((state: RootState) => state);
-  const accounts   = useSelector(selectAllAccounts);
+  // const accounts   = useSelector(selectAllAccounts);
 
   const graphEnd   = formatISO(startOfDay(endOfMonth(addMonths(new Date(activeDate), graphRange || 6))));
 
@@ -47,7 +47,7 @@ export const DayPanel: React.FC = () => {
 
         {spendingPower !== null && (
           <>
-            <h4>Spending power:</h4>
+            <h4>Spending Power:</h4>
             <h4>
               <CountUp
                 decimals={2}
@@ -82,7 +82,7 @@ export const DayPanel: React.FC = () => {
         {cash !== null && (
           <>
             <h5>Cash On Hand:</h5>
-<h5>
+            <h5>
               <CountUp
               decimals={2}
               decimal='.'
@@ -182,7 +182,7 @@ export const DayPanel: React.FC = () => {
         )}
 
       </div>
-      <h3>Accounts</h3>
+      {/* <h3>Accounts</h3>
       <div className='glassjar__flex glassjar__flex--column'>
         {accounts.map((account) => (
           <AccountListItem
@@ -191,7 +191,7 @@ export const DayPanel: React.FC = () => {
             balance={accountBalanceOnDate(state, account.id, graphEnd)}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

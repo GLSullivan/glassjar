@@ -138,7 +138,7 @@ button.glassjar__button.glassjar__button--small {
 }
 
 
-.glassjar__svg-graph .glassjar__SVGGraph__data {
+.glassjar__svg-graph .glassjar__svg-graph__data {
   position: absolute;
   top: 0;
   left: .75rem;
@@ -149,7 +149,7 @@ button.glassjar__button.glassjar__button--small {
   align-items: flex-start;
 }
 
-.glassjar__svg-graph .glassjar__SVGGraph__data.glassjar__SVGGraph__data--end {
+.glassjar__svg-graph .glassjar__svg-graph__data.glassjar__svg-graph__data--end {
   left: unset;
   right: .75rem;
   align-items: flex-end;
@@ -159,4 +159,19 @@ button.glassjar__button.glassjar__button--small {
   display: inline-block;  
   margin: 0;
   text-align: center;
+}
+
+
+.glassjar__svg-graph__month-box {
+  pointer-events: none;
+  transition: .5s ease;
+  opacity: 0.1;
+  box-sizing: border-box;
+  padding: 0 2px;
+  background: linear-gradient(0deg, transparent, black, black, black, black, black, transparent);
+}
+
+
+.glassjar__svg-graph svg {
+  position: relative;
 }

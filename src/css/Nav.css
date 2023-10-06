@@ -215,3 +215,16 @@ button.glassjar__button.glassjar__button--span {
   white-space: nowrap;
   aspect-ratio: unset;
 }
+
+button.glassjar__nav__button > span {
+  transform: scale(0.5);
+  opacity: 0;
+  height: 0;
+  transition: .25s ease;
+}
+
+button.glassjar__nav__button.active > span {
+  height: 100%;
+  opacity: 1;
+  transform: scale(1)
+}

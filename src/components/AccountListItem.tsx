@@ -141,6 +141,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
             hideDates = {true}
             hideRange = {true}
             hideToday = {true}
+            hideMonth = {true}
             thickness = {2}
           />
         </div>
