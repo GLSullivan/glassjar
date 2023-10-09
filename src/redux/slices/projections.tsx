@@ -289,7 +289,9 @@ export const projectionsSlice = createSlice({
         [accountId: string]: { [dateKey: string]: number };
       }
 
-      function sumUpCategories(amount: number, category?: string) { // TODO: FUTURE FEATURE! This is where to do up the total spend per transaction over a year. 
+      function sumUpCategories(amount: number, category?: string) { 
+        // TODO: FUTURE FEATURE! This is where to do up the total spend per transaction over a year. 
+        // TODO: When the transaction page can be sorted by category, put the per/category/per/year value beside the name.
         if (!category) {
           category = 'Uncategorized'
         }

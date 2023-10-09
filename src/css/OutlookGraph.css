@@ -15,6 +15,19 @@
   flex-direction: column;
   min-height    : 100%;
   position      : relative;
+  --color-bright: #f4f4f4;
+  --text-stroke : -1px -1px 0 var(--color-bright),
+                1px -1px 0 var(--color-bright),
+                -1px 1px 0 var(--color-bright),
+                1px 1px 0 var(--color-bright),
+                -2px -2px 0 var(--color-bright),
+                2px -2px 0 var(--color-bright),
+                -2px 2px 0 var(--color-bright),
+                2px 2px 0 var(--color-bright),
+                -3px -3px 0 var(--color-bright),
+                 3px -3px 0 var(--color-bright),
+                -3px  3px 0 var(--color-bright),
+                 3px  3px 0 var(--color-bright);;
 }
 
 .glassjar__graph-holder__sub {
@@ -44,19 +57,19 @@
 
 .glassjar__graph-holder__sub-sub > div {
   height  : 100%;
-  width   : 100%;
   position: relative;
+  width   : 100%;
 }
 
 .glassjar__graph-range {
-  pointer-events: none;
-  width         : 100%;
-  text-align    : center;
-  position      : absolute;
-  font-weight   : 500;
-  font-size     : .8rem;
   color         : #8f8f8f;
+  font-size     : .8rem;
+  font-weight   : 500;
+  pointer-events: none;
+  position      : absolute;
+  text-align    : center;
   text-shadow: var(--text-stroke);
+  width         : 100%;
 }
 
 .glassjar__graph-range.glassjar__graph-range-max {
@@ -95,12 +108,11 @@ margin: 0;
 
 .glassjar__graph-holder__range-change {
   position: absolute;
-  top     : 0;
   right   : 1rem;
+  top     : 0;
 }
 
 .glassjar__graph-holder__range-change .glassjar__button.glassjar__button--small {
-  width       : unset;
   aspect-ratio: unset;
   height      : 2rem;
   padding     : 0.5rem;
@@ -108,25 +120,26 @@ margin: 0;
   right       : 0rem;
   top         : 0;
   white-space : nowrap;
+  width       : unset;
 }
 
 button.glassjar__button.glassjar__button--small {
+  background: #fafcfa;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  font-weight: 500;
   color: var(--color-secondary);
   font-size: 0.9rem;
-  background: #fafcfa;
+  font-weight: 500;
 }
 
 .glassjar__svg-graph h2 {
-  position   : absolute;
   bottom     : 0;
-  left       : 0rem;
-  text-align : left;
-  font-weight: 500;
   font-size  : 1rem;
-  padding    : 0.5rem;
+  font-weight: 500;
+  left       : 0rem;
   margin     : 0;
+  padding    : 0.5rem;
+  position   : absolute;
+  text-align : left;
   
   text-shadow: var(--text-stroke);
 
@@ -139,20 +152,20 @@ button.glassjar__button.glassjar__button--small {
 
 
 .glassjar__svg-graph .glassjar__svg-graph__data {
-  position: absolute;
-  top: 0;
-  left: .75rem;
-  z-index: 1;
-  transition: .5s ease;
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  left: .75rem;
+  position: absolute;
+  top: 0;
+  transition: .5s ease;
+  z-index: 1;
 }
 
 .glassjar__svg-graph .glassjar__svg-graph__data.glassjar__svg-graph__data--end {
+  align-items: flex-end;
   left: unset;
   right: .75rem;
-  align-items: flex-end;
 }
 
 .glassjar__svg-graph h5 {
@@ -163,15 +176,41 @@ button.glassjar__button.glassjar__button--small {
 
 
 .glassjar__svg-graph__month-box {
+  /* background: linear-gradient(0deg, transparent, white, white, white, white, white, transparent); */
+  box-sizing: border-box;
+  opacity: 1;
+  padding: 0 2px;
   pointer-events: none;
   transition: .5s ease;
-  opacity: 0.1;
-  box-sizing: border-box;
-  padding: 0 2px;
-  background: linear-gradient(0deg, transparent, black, black, black, black, black, transparent);
 }
 
 
 .glassjar__svg-graph svg {
   position: relative;
+}
+
+.glassjar__svg-graph__month-box > div {
+  background   : #f4f4f4;
+  border-radius: 1.5rem;
+  height       : 100%;
+  position     : absolute;
+  top          : 0;
+  width        : 100vw;
+}
+
+.glassjar__svg-graph__month-box > div:first-of-type {
+  right: 100%;
+}
+
+.glassjar__svg-graph__month-box > div:last-of-type {
+  left: 100%;
+}
+
+.glassjar__svg-graph__day-box {
+  background: #b0b0b0;
+  height    : 100%;
+  position  : absolute;
+  top       : 0;
+  transition: .5s ease;
+  width     : 2px;
 }

@@ -44,22 +44,21 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   hideMonth
 }) => {
   const state    = useSelector((state: RootState) => state);
-  const dispatch = useDispatch();    
+  const dispatch = useDispatch();
 
-  const graphRange             = useSelector((state: RootState) => state.views.graphRange);
-  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate); 
+  const graphRange = useSelector((state: RootState) => state.views.graphRange);
+  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
 
-  let yMin: number = Infinity;  // Initialize to Infinity
-  let yMax: number = -Infinity; // Initialize to -Infinity
+  let yMin: number     = Infinity;   // Initialize to Infinity
+  let yMax: number     = -Infinity;  // Initialize to -Infinity
   let colors: string[] = [];
 
   startDate = startOfDay(new Date()).toISOString();
-  endDate   = addMonths(startOfDay(new Date()),graphRange).toISOString(); 
-  // TODO: A fair bit of math is being done to find these dates and I'm overriding it here. This is a hack that needs addressing for performance.
+  endDate   = addMonths(startOfDay(new Date()),graphRange).toISOString();
+    // TODO: A fair bit of math is being done to find these dates and I'm overriding it here. This is a hack that needs addressing for performance.
 
   const containerRef                = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
 
   const updateDimensions = () => {
     if (containerRef.current) {
@@ -84,7 +83,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     return () => {
       window.removeEventListener('resize', updateDimensions);
     };
-  }, [containerRef]);
+  }, [containerRef, state]);
 
   const accountBalances: number[][] = [];
 
@@ -97,18 +96,18 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       endDate
     ) as number[];
 
-        // Invert balances if the account is a liability
+          // Invert balances if the account is a liability
     if (account.isLiability) {
       balances = balances.map((balance) => -balance);
     }
 
     accountBalances.push(balances);
 
-    // Update yMin and yMax
-    const minBalance = Math.min(...balances);
-    const maxBalance = Math.max(...balances);
-    if (minBalance < yMin) yMin = minBalance;
-    if (maxBalance > yMax) yMax = maxBalance;
+      // Update yMin and yMax
+    const minBalance               = Math.min(...balances);
+    const maxBalance               = Math.max(...balances);
+    if    (minBalance < yMin) yMin = minBalance;
+    if    (maxBalance > yMax) yMax = maxBalance;
   }
 
   const shouldDisplayZeroLine = yMin <= 0 && yMax >= 0;
@@ -118,15 +117,15 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     return (dimensions.width / (maxDataPoints - 1)) * index;
   };
 
-  const margin:number = 4;  
+  const margin:number = 4;
 
   const scaleY = (value: number) => {
 
     if (yMax === yMin) {
       return 100; 
     }
-    const graphHeight = dimensions.height - (2 * margin);  
-    const scaledY = graphHeight + margin - ((value - yMin) / (yMax - yMin)) * graphHeight;
+    const graphHeight = dimensions.height - (2 * margin);
+    const scaledY     = graphHeight + margin - ((value - yMin) / (yMax - yMin)) * graphHeight;
     
     if (isNaN(scaledY)) {
       return 100; 
@@ -152,10 +151,10 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   const formatDateOrToday = (date: Date | null) => {
     return date 
       ? (isToday(date) ? 'Today' : format(date, 'M/d/yy'))
-      :    'N/A';  // Fallback if no date is available
+      :     'N/A';  // Fallback if no date is available
   };
 
-    // Calculate 3-day rolling average
+      // Calculate 3-day rolling average
   const rollingAverage: number[] = [];
   for (let i = 0; i < maxDataPoints; i++) {
     let sum   = 0;
@@ -172,9 +171,9 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   }
 
   const handleTouchStart = (e: React.TouchEvent<SVGSVGElement>) => {
-    const touch = e.touches[0];
-    const x = touch.clientX;
-    const svgRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+    const touch          = e.touches[0];
+    const x              = touch.clientX;
+    const svgRect        = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
     const touchXRelative = x - svgRect.left;
 
     const index = Math.round(touchXRelative / (dimensions.width / (maxDataPoints - 1)));
@@ -187,10 +186,10 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   const activeDateIndex = (new Date(activeDate).getTime() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000);
   const activeDateX     = scaleX(Math.round(activeDateIndex));
 
-  const firstH4Ref = useRef<HTMLHeadingElement>(null);
-  const lastH4Ref = useRef<HTMLHeadingElement>(null);
+  const firstH4Ref                        = useRef<HTMLHeadingElement>(null);
+  const lastH4Ref                         = useRef<HTMLHeadingElement>(null);
   const [firstH4Height, setFirstH4Height] = useState(0);
-  const [lastH4Height, setLastH4Height] = useState(0);
+  const [lastH4Height, setLastH4Height]   = useState(0);
   
   useEffect(() => {
     if (firstH4Ref.current) {
@@ -201,36 +200,37 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     }
   }, [firstH4Ref, lastH4Ref]);
   
-  const firstBalance    = accountBalances[0] ? accountBalances[0][0] : 0;
-  const lastBalance     = accountBalances[0] ? accountBalances[0][accountBalances[0].length - 1] : 0;
-  let   delta           = lastBalance - firstBalance;
+  const firstBalance = accountBalances[0] ? accountBalances[0][0] : 0;
+  const lastBalance  = accountBalances[0] ? accountBalances[0][accountBalances[0].length - 1] : 0;
+  let   delta        = lastBalance - firstBalance;
 
   if (accounts[0] && accounts[0].isLiability) {
     delta *= -1;
   }
 
   const firstPointY = scaleY(firstBalance);
-  const lastPointY = scaleY(lastBalance);
+  const lastPointY  = scaleY(lastBalance);
 
   const calculateTop = (pointY: number, h4Height: number) => {
     let top = pointY - h4Height / 2;
-    top = Math.max(top, 0);
-    top = Math.min(top, dimensions.height - h4Height);
+        top = Math.max(top, 0);
+        top = Math.min(top, dimensions.height - h4Height);
     return top;
   };
   
   const firstH4Style: React.CSSProperties = {
-    top: `${calculateTop(firstPointY, firstH4Height)}px`,
+    top     : `${calculateTop(firstPointY, firstH4Height)}px`,
     position: 'absolute',
   };
   
   const lastH4Style: React.CSSProperties = {
-    top: `${calculateTop(lastPointY, lastH4Height)}px`,
+    top     : `${calculateTop(lastPointY, lastH4Height)}px`,
     position: 'absolute',
   };
   
-  // New state to hold the box dimensions and position
-  const [boxStyle, setBoxStyle] = useState<React.CSSProperties>({});
+    // New state to hold the box dimensions and position
+  const [boxStyle, setBoxStyle]   = useState<React.CSSProperties>({});
+  const [lineStyle, setLineStyle] = useState<React.CSSProperties>({});
 
   useEffect(() => {
     if (activeDate) {
@@ -238,22 +238,22 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       const startDateObj  = startOfDay(new Date(startDate));
       const endDateObj    = startOfDay(new Date(endDate));
   
-        // Use date-fns to get the start and end dates of the active month
+      // Use date-fns to get the start and end dates of the active month
       const activeMonthStart = startOfMonth(activeDateObj);
       const activeMonthEnd   = endOfMonth(activeDateObj);
   
-        // Calculate the position of the active month relative to the start and end dates
+      // Calculate the position of the active month relative to the start and end dates
       const totalDays       = (endDateObj.getTime() - startDateObj.getTime()) / (24 * 60 * 60 * 1000);
       const activeStartDays = (activeMonthStart.getTime() - startDateObj.getTime()) / (24 * 60 * 60 * 1000);
   
-        // Calculate the width of one day in the SVG
+      // Calculate the width of one day in the SVG
       const dayWidth = dimensions.width / totalDays;
   
-        // Calculate the x-position and width of the box
+      // Calculate the x-position and width of the box
       const boxX     = dayWidth * activeStartDays;
       const boxWidth = dayWidth * ((activeMonthEnd.getTime() - activeMonthStart.getTime()) / (24 * 60 * 60 * 1000) + 1);
   
-        // Update the boxStyle state
+      // Update the boxStyle state
       setBoxStyle({
         position: 'absolute',
         left    : `${boxX}px`,
@@ -261,32 +261,32 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
         top     : '0',
         bottom  : '0',
       });
+
+      // Update the boxStyle state
+      setLineStyle({
+        left    : `${activeDateX}px`,
+      });
     }
-    // eslint-disable-next-line 
+      // eslint-disable-next-line 
   }, [activeDate, dimensions]);
 
   return (
-    <div className = 'glassjar__svg-graph' ref            = {containerRef}>
+    <div className = 'glassjar__svg-graph' ref = {containerRef}>
 
-      {!hideMonth && <div className='glassjar__svg-graph__month-box' style={boxStyle} />}
+      {(activeDate && !hideToday) && (
+        <div
+        className='glassjar__svg-graph__day-box'
+        style={lineStyle}
+        />
+      )}
+
+      {!hideMonth && <div className='glassjar__svg-graph__month-box' style={boxStyle} ><div/><div/></div>}
 
       <svg 
       width        = {Math.ceil(dimensions.width)}
       height       = {Math.ceil(dimensions.height)}
       onTouchStart = {handleTouchStart}
       >
-        
-      {(activeDate && !hideToday) && (
-        <line
-          x1={activeDateX}
-          y1={0}
-          x2={activeDateX}
-          y2={dimensions.height}
-          stroke='#ffffff'  
-          strokeWidth='7'
-          // opacity     = '0.25'
-        />
-      )}
 
         {!hideTrend &&
           <polyline
@@ -307,7 +307,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
               .map((balance, i) => `${scaleX(i)},${scaleY(balance)}`)
               .join(' ')}
             stroke      = {colors[index]}
-            strokeWidth={thickness ? thickness.toString() : '1'}
+            strokeWidth = {thickness ? thickness.toString() : '2'}
             fill        = 'none'
           />
         ))}
@@ -318,8 +318,8 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
             y1              = {scaleY(0)}
             x2              = {dimensions.width}
             y2              = {scaleY(0)}
-            stroke          = '#000'
-            strokeWidth     = '3'
+            stroke          = '#202230'
+            strokeWidth     = '2'
             strokeDasharray = '10,10'
           />
         )}
@@ -341,44 +341,44 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
 
       {!hideStartEnd &&
         <>
-          <div className='glassjar__svg-graph__data'  style={firstH4Style} ref={firstH4Ref}>          
-            <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(startDate))}</h5>
-            <h4 className='glassjar__mono-spaced glassjar__fill-back'>
+          <div className = 'glassjar__svg-graph__data'  style = {firstH4Style} ref = {firstH4Ref}>
+          <h5  className = 'glassjar__fill-back'>{formatDateOrToday(new Date(startDate))}</h5>
+          <h4  className = 'glassjar__mono-spaced glassjar__fill-back'>
               <em> 
                 <CountUp
-                  decimals={2}
-                  decimal='.'
-                  prefix='$'
-                  end={firstBalance / 100}
-                  duration={2}
-                  preserveValue={true}
+                  decimals      = {2}
+                  decimal       = '.'
+                  prefix        = '$'
+                  end           = {firstBalance / 100}
+                  duration      = {2}
+                  preserveValue = {true}
                 />
               </em>
             </h4>
           </div>
-          <div className='glassjar__svg-graph__data glassjar__svg-graph__data--end' style={lastH4Style} ref={lastH4Ref}>
-            <h5 className='glassjar__fill-back'>{formatDateOrToday(new Date(endDate))}</h5>
-            <h4 className='glassjar__mono-spaced glassjar__fill-back'>
+          <div className = 'glassjar__svg-graph__data glassjar__svg-graph__data--end' style = {lastH4Style} ref = {lastH4Ref}>
+          <h5  className = 'glassjar__fill-back'>{formatDateOrToday(new Date(endDate))}</h5>
+          <h4  className = 'glassjar__mono-spaced glassjar__fill-back'>
               <em> 
                 <CountUp
-                  decimals={2}
-                  decimal='.'
-                  prefix='$'
-                  end={lastBalance / 100}
-                  duration={2}
-                  preserveValue={true}
+                  decimals      = {2}
+                  decimal       = '.'
+                  prefix        = '$'
+                  end           = {lastBalance / 100}
+                  duration      = {2}
+                  preserveValue = {true}
                 />
               </em>
             </h4>
-            <h5 className='glassjar__mono-spaced glassjar__fill-back'>
+            <h5 className = 'glassjar__mono-spaced glassjar__fill-back'>
               {delta < 0 ? <i className='fa-duotone fa-caret-down' /> : <i className='fa-duotone fa-caret-up' />}{' '}
                 <CountUp
-                  decimals={2}
-                  decimal='.'
-                  prefix='$'
-                  end={Math.abs(delta / 100)}
-                  duration={2}
-                  preserveValue={true}
+                  decimals      = {2}
+                  decimal       = '.'
+                  prefix        = '$'
+                  end           = {Math.abs(delta / 100)}
+                  duration      = {2}
+                  preserveValue = {true}
                 />
             </h5>
           </div>

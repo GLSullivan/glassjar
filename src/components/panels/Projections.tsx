@@ -17,18 +17,18 @@ import {
 import { RootState }                                              from '../../redux/store';
       
 // import AccountListItem                                            from '../AccountListItem';
-import { endOfMonth, formatISO, addMonths, startOfDay,format }    from 'date-fns';
+import { addMonths, startOfDay,format }    from 'date-fns';
 
 import './../../css/Panels.css';
 import CountUp from 'react-countup';
 
 export const DayPanel: React.FC = () => {
-  const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
   const graphRange = useSelector((state: RootState) => state.views.graphRange);
   const state      = useSelector((state: RootState) => state);
   // const accounts   = useSelector(selectAllAccounts);
 
-  const graphEnd   = formatISO(startOfDay(endOfMonth(addMonths(new Date(activeDate), graphRange || 6))));
+  //const graphEnd   = formatISO(startOfDay(endOfMonth(addMonths(new Date(activeDate), graphRange || 6))));
+  const graphEnd        = addMonths(startOfDay(new Date()),graphRange).toISOString();
 
   const spendingPower   = getSpendingPowerByDate(state, graphEnd)
   const savings         = getSavingsByDate(state, graphEnd)

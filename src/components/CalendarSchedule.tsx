@@ -1,18 +1,25 @@
-import React, { useEffect, useState, useRef }               from 'react';
-import { useDispatch, useSelector }                         from 'react-redux';
+import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector }           from 'react-redux';
 
-import { setActiveTransaction }                             from './../redux/slices/transactions';
-import { getTransactionsByDateRange }                       from './../redux/slices/projections';
-import { setActiveDate }                                    from './../redux/slices/activedates';
-import { openTransactionModal }                             from './../redux/slices/modals';
-import { RootState }                                        from './../redux/store';
+import { setActiveTransaction }               from './../redux/slices/transactions';
+import { getTransactionsByDateRange }         from './../redux/slices/projections';
+import { setActiveDate }                      from './../redux/slices/activedates';
+import { openTransactionModal }               from './../redux/slices/modals';
+import { RootState }                          from './../redux/store';
 
-import { Transaction }                                      from './../models/Transaction';
-import TransactionListItem                                  from './TransactionListItem';
+import { Transaction }                        from './../models/Transaction';
+import TransactionListItem                    from './TransactionListItem';
 
-import { addDays, endOfMonth, format, parseISO }            from 'date-fns';
+import { addDays, 
+  endOfMonth, 
+  format, 
+  parseISO, 
+  isAfter, 
+  addMonths,
+  startOfDay }                                 from 'date-fns';
 
 import './../css/TransactionList.css';
+import { increaseGraphRange } from '../redux/slices/views';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
@@ -23,6 +30,7 @@ const CalendarSchedule: React.FC = () => {
   const activeDate                                    = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                                         = useSelector((state: RootState) => state.activeDates.today);
   const state                                         = useSelector((state: RootState) => state);
+  const graphRange                                    = useSelector((state: RootState) => state.views.graphRange);
 
   const headerRefs                                    = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
   const scheduleWindow                                = useRef<HTMLDivElement | null>(null);
@@ -38,41 +46,62 @@ const CalendarSchedule: React.FC = () => {
     let startDate    = format(new Date(today), 'yyyy-MM-dd');
     let transactions = getTransactionsByDateRange(state,startDate,endDate);
 
-    setGroupedTransactions(transactions);
+    // Filter and sort transactions within each day
+    const sortedAndFilteredGroupedTransactions = transactions.map(group => ({
+      ...group,
+      transactions: group.transactions
+        .filter(({ transaction }) => transaction.showInCalendar) // Filter out transactions not to be shown
+        .sort((a, b) => b.transaction.amount - a.transaction.amount), // Sort remaining transactions by amount
+    }));
+
+    setGroupedTransactions(sortedAndFilteredGroupedTransactions); // Update the state with sorted and filtered transactions
     setLoading(false);
 
   }, [activeDate, today, state]);
 
   // Find the date closest to the top of the container
   const getClosestDataDate = () => {
-
     const container = scheduleWindow.current;
-        
-    if (!container) { return null; }
-  
-    const listChildren = Array.from(container.getElementsByClassName('glassjar__lazy-list-group'));
+
+    if (!container) {
+      return null;
+    }
+
+    const listChildren = Array.from(
+      container.getElementsByClassName("glassjar__lazy-list-group")
+    );
     if (listChildren.length === 0) {
       return null;
     }
-  
+
     const containerTop = container.getBoundingClientRect().top;
-  
+
     const closestDiv = listChildren.reduce((closest, current) => {
       const closestTop = closest.getBoundingClientRect().top - containerTop;
       const currentTop = current.getBoundingClientRect().top - containerTop;
-  
-      if (closestTop < 0) return current;  
-      if (currentTop < 0) return closest;  
-  
+
+      if (closestTop < 0) return current;
+      if (currentTop < 0) return closest;
+
       return currentTop < closestTop ? current : closest;
     });
-    
-    const closestDataDate = closestDiv.getAttribute('data-date')
-    
+
+    const closestDataDate = closestDiv.getAttribute("data-date");
+
     if (closestDataDate !== null && closestDataDate !== activeDate) {
       dispatch(setActiveDate(closestDataDate));
     }
   };
+
+  useEffect(() => {
+    if (activeDate && graphRange) {
+      const today = startOfDay(new Date());
+      if (isAfter(parseISO(activeDate), addMonths(today, graphRange))) {
+        dispatch(increaseGraphRange());
+      }
+    }
+    // eslint-disable-next-line
+  }, [activeDate, graphRange]);
   
   // Detect and react to use scrolling
   useEffect(() => {

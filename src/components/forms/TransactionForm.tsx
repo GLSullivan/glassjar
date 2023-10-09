@@ -41,15 +41,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const activeTransaction                                     = useSelector((state: RootState) => state.transactions.activeTransaction);
   const accounts                                              = useSelector((state: RootState) => state.accounts.accounts);
 
-  const [transactionName, setTransactionName]                 = useState(activeTransaction?.transactionName || '');
-  const [category, setCategory]                               = useState(activeTransaction?.category || 'None');
-  const [amount, setAmount]                                   = useState(activeTransaction?.amount || 0);
-  const [fromAccount, setFromAccount]                         = useState(activeTransaction?.fromAccount || accounts[0].id);
-  const [toAccount, setToAccount]                             = useState(activeTransaction?.toAccount || accounts[0].id);
-  const [description, setDescription]                         = useState(activeTransaction?.description || '');
-  const [isRecurring, setIsRecurring]                         = useState(activeTransaction?.isRecurring || false);
-  const [ends, setEnds]                                       = useState(activeTransaction?.ends || false);
-  const [endDate, setEndDate]                                 = useState(activeTransaction?.endDate || '');
+  const [transactionName, setTransactionName]                 = useState<string>(activeTransaction?.transactionName || '');
+  const [category, setCategory]                               = useState<string>(activeTransaction?.category || 'None');
+  const [amount, setAmount]                                   = useState<number>(activeTransaction?.amount || 0);
+  const [fromAccount, setFromAccount]                         = useState<string>(activeTransaction?.fromAccount || accounts[0].id);
+  const [toAccount, setToAccount]                             = useState<string>(activeTransaction?.toAccount || accounts[0].id);
+  const [description, setDescription]                         = useState<string>(activeTransaction?.description || '');
+  const [isRecurring, setIsRecurring]                         = useState<boolean>(activeTransaction?.isRecurring || false);
+  const [ends, setEnds]                                       = useState<boolean>(activeTransaction?.ends || false);
+  const [showInCalendar, setShowInCalendar]                   = useState<boolean>(activeTransaction?.showInCalendar || true);
+  const [endDate, setEndDate]                                 = useState<string>(activeTransaction?.endDate || '');
   const [type, setType]                                       = useState<TransactionType>(activeTransaction?.type || TransactionType.WITHDRAWAL);
   const [customIntervalType, setCustomIntervalType]           = useState<CustomIntervalType>(activeTransaction?.customIntervalType || CustomIntervalType.DAY);
   const [recurrenceFrequency, setRecurrenceFrequency]         = useState<RecurrenceFrequency>(activeTransaction?.recurrenceFrequency || RecurrenceFrequency.MONTHLY);
@@ -97,7 +98,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       }),
       customIntervalType,
       allowOverpayment: false,
-      showInCalendar: true,
+      showInCalendar,
       category,
       arbitraryDates,
       ends,
@@ -119,6 +120,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     category,
     arbitraryDates,
     ends,
+    showInCalendar,
   ]); 
 
   const [initialTransactionData, setInitialTransactionData] = useState(
@@ -153,7 +155,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     e.preventDefault();
     handleSave();
   };
-
+  
   useEffect(() => {
     if (!activeTransaction && accounts.length > 1) {
       setFromAccount(accounts[0].id);
@@ -274,7 +276,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       setSaveReady(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends,]); 
+  }, [transactionName, isoDate, type, amount, description, fromAccount, toAccount, showInCalendar, activeTransaction, isRecurring, isoEndDate, recurrenceFrequency, recurrenceInterval, customIntervalType, category, arbitraryDates, ends,]); 
   
   return (
     <>
@@ -603,6 +605,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className='glassjar__form__input-group glassjar__form__input-group--check'>
+            <input
+              type='checkbox'
+              id='showInCalendar'
+              checked={showInCalendar}
+              onChange={(e) => setShowInCalendar(!showInCalendar)}
+            />
+            <label htmlFor='showInCalendar'>Show In Schedule:</label>
           </div>
 
           <div className='glassjar__form__input-group'>

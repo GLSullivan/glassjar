@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction }             from '@reduxjs/toolkit';
-import { formatISO, addYears, isAfter, parseISO } from 'date-fns';
-import { zonedTimeToUtc }                         from 'date-fns-tz';
+import { createSlice, PayloadAction }                                     from '@reduxjs/toolkit';
+import { formatISO, addYears, isAfter, parseISO, startOfDay }             from 'date-fns';
+import { zonedTimeToUtc }                                                 from 'date-fns-tz';
 
 export interface ActiveDates {
   today     : string;
@@ -22,11 +22,13 @@ export const activeDates = createSlice({
   initialState,
   reducers: {
     setActiveDate: (state, action: PayloadAction<string>) => {
-      state.activeDate = action.payload;
-      const newFarDate = zonedTimeToUtc(addYears(parseISO(action.payload), 1), getUserTimeZone());
+      state.activeDate = formatISO(startOfDay(parseISO(action.payload)));
+      const newFarDate = zonedTimeToUtc(addYears(startOfDay(parseISO(action.payload)), 1), getUserTimeZone());
+
       if (isAfter(newFarDate, parseISO(state.farDate))) {
         state.farDate = formatISO(newFarDate);
-      }    }
+      }    
+    }
   },
 });
 

@@ -60,9 +60,9 @@ const PrimaryNav = () => {
       const left = bounds.left - parentBounds.left;
       const width = bounds.width;
       setActiveStyle({
-        left: `${left}px`,
+        left : `${left}px`,
         width: `${width}px`,
-        color: buttonDetails.color,  
+        color: interfaceColors[0],
       });
     }
   };

@@ -8,6 +8,7 @@ import { addDays,
   endOfWeek, 
   format, 
   getDay, 
+  isAfter,
   isBefore, 
   isSameDay, 
   isWithinInterval, 
@@ -20,7 +21,8 @@ import { addDays,
 
 import { setActiveDate }              from './../redux/slices/activedates';
 import { dateHasTransactions }        from './../redux/slices/projections';
-import { setCalendarView }            from './../redux/slices/views';
+import { increaseGraphRange,
+  setCalendarView }                   from './../redux/slices/views';
 import { RootState }                  from './../redux/store';
 import CalendarDay                    from './CalendarDay';
 
@@ -31,13 +33,16 @@ const dayNames       = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const startDayOfWeek = 0; // 0 for Sunday, 1 for Monday, etc.
 
 const CalendarMonth: React.FC = () => {
-  const state                           = useSelector((state: RootState) => state);
-  const dispatch                        = useDispatch();
+  const dispatch   = useDispatch();
 
   // Redux store selectors
-  const activeDate    = useSelector((state: RootState) => state.activeDates.activeDate);
-  const today         = useSelector((state: RootState) => state.activeDates.today);
-  const calendarView  = useSelector((state: RootState) => state.views.calendarView);
+  const activeDate   = useSelector((state: RootState) => state.activeDates.activeDate);
+  const today        = useSelector((state: RootState) => state.activeDates.today);
+  const calendarView = useSelector((state: RootState) => state.views.calendarView);
+  const state        = useSelector((state: RootState) => state);
+  const graphRange   = useSelector((state: RootState) => state.views.graphRange);
+  
+  const showCalendar: boolean = false; // TODO: Make this a user pref or use it to toggle.
 
   const activeDateObj = new Date(activeDate);
 
@@ -57,7 +62,7 @@ const CalendarMonth: React.FC = () => {
     let newDate: Date = new Date(activeDate);
 
     if (direction === 'next') {
-      if (calendarView === 'month') {
+      if (calendarView === 'month' || !showCalendar) {
         newDate = addMonths(newDate, 1);
         newDate = startOfMonth(newDate); 
 
@@ -65,7 +70,7 @@ const CalendarMonth: React.FC = () => {
         newDate = addWeeks(newDate, 1);
       }
     } else {
-      if (calendarView === 'month') {
+      if (calendarView === 'month' || !showCalendar) {
         newDate = subMonths(newDate, 1);
       } else if (calendarView === 'week') {
         newDate = subWeeks(newDate, 1);
@@ -80,6 +85,11 @@ const CalendarMonth: React.FC = () => {
     }
 
     dispatch(setActiveDate(newDate.toISOString()));
+
+    if (isAfter(newDate, addMonths(today, graphRange))) {
+      dispatch(increaseGraphRange());
+    }
+
   };
 
     // Swipe handlers for changing the month
@@ -141,45 +151,48 @@ const CalendarMonth: React.FC = () => {
           <i className='fa-regular fa-chevron-right' />
         </button>
       </div>
-      <div className='glassjar__calendar__calendar'>
-        <div className='glassjar__calendar__seven-row glassjar__calendar__seven-row--header'>
-          {rotatedDayNames.map((dayName, index) => (
-            <div key={index} className='glassjar__calendar__header-day'>
-              {dayName}
+      {showCalendar && 
+      <>
+        <div className='glassjar__calendar__calendar'>
+          <div className='glassjar__calendar__seven-row glassjar__calendar__seven-row--header'>
+            {rotatedDayNames.map((dayName, index) => (
+              <div key={index} className='glassjar__calendar__header-day'>
+                {dayName}
+              </div>
+            ))}
+          </div>
+          {chunk(days, 7).map((week: Date[], weekIndex: number) => (
+            <div key={weekIndex} className={`glassjar__calendar__week glassjar__auto-height${(isDateInWeek(week[0], new Date(activeDate)) || calendarView === 'month') ? ' open' : '' }`} >
+              <div key={weekIndex} className={`glassjar__calendar__seven-row${isDateInWeek(week[0], new Date(activeDate)) ? ' active' : '' }`}>
+                {week.map((day: Date, dayIndex: number) => {
+                  return (
+                    <CalendarDay
+                      key            = {day.toISOString()}
+                      day            = {day}
+                      isCurrentMonth = {day.getMonth() === activeDateObj.getMonth()}
+                      isToday        = {isSameDay(day, new Date(today))}
+                      isActive       = {isSameDay(day, new Date(activeDate))}
+                      hasTransaction = {
+                        dateHasTransactions(state, day.toISOString().slice(0, 10))
+                      }
+                    />
+                  );
+                })}
+              </div>
             </div>
           ))}
-        </div>
-        {chunk(days, 7).map((week: Date[], weekIndex: number) => (
-          <div key={weekIndex} className={`glassjar__calendar__week glassjar__auto-height${(isDateInWeek(week[0], new Date(activeDate)) || calendarView === 'month') ? ' open' : '' }`} >
-            <div key={weekIndex} className={`glassjar__calendar__seven-row${isDateInWeek(week[0], new Date(activeDate)) ? ' active' : '' }`}>
-              {week.map((day: Date, dayIndex: number) => {
-                return (
-                  <CalendarDay
-                    key            = {day.toISOString()}
-                    day            = {day}
-                    isCurrentMonth = {day.getMonth() === activeDateObj.getMonth()}
-                    isToday        = {isSameDay(day, new Date(today))}
-                    isActive       = {isSameDay(day, new Date(activeDate))}
-                    hasTransaction = {
-                      dateHasTransactions(state, day.toISOString().slice(0, 10))
-                    }
-                  />
-                );
-              })}
-            </div>
-          </div>
-        ))}
 
-        <div className='glassjar__calendar-toggle'>
-          <button
-            onClick={() => handleViewChange()}
-            className='glassjar__button glassjar__button__calendar-toggle glassjar__button--small'
-          >
-            <i className={`fa-regular fa-down-to-line ${calendarView === 'month' ? 'open' : ''}`} />
-          </button>
+          <div className='glassjar__calendar-toggle'>
+            <button
+              onClick={() => handleViewChange()}
+              className='glassjar__button glassjar__button__calendar-toggle glassjar__button--small'
+            >
+              <i className={`fa-regular fa-down-to-line ${calendarView === 'month' ? 'open' : ''}`} />
+            </button>
+          </div>
+          
         </div>
-        
-      </div>
+      </>}
       
     </div>
   );
