@@ -211,7 +211,6 @@ export const AccountForm: React.FC = () => {
       <div  className = "glassjar__padding glassjar__padding--sides">
         <div className = "glassjar__flex glassjar__flex--justify-between glassjar__flex--align-baseline">
           <h3>Account ({transactions.length})</h3>
-          {transactions.length > 3 && (
             <button
             onClick   = {() => setEditAccount(!editAccount)}
             className = "glassjar__text-button glassjar__text-button--smaller"
@@ -219,7 +218,6 @@ export const AccountForm: React.FC = () => {
           >
             {editAccount ? <>Hide Settings</> : <>Show Settings</>}
           </button>
-          )}
         </div>
         <form className = "glassjar__form" onSubmit = {handleSubmit}>
           <div  className = "glassjar__form__input-group">
