@@ -73,9 +73,9 @@ const Menu: React.FC<MenuProps> & { Button: React.FC<MenuButtonProps> } & {
     React.Children.map(children, (child) => {
       
       if (React.isValidElement<MenuBodyProps>(child) && child.type === MenuBody) {
-          return React.cloneElement(child, {
-            isMenuOpen: isOpen,
-          });
+        return isOpen && React.cloneElement(child, {
+          isMenuOpen: isOpen,
+        }); 
       }
 
       if (

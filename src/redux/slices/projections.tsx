@@ -1,11 +1,11 @@
-import { addMonths, isBefore, parseISO } from 'date-fns'; // TODO: Overhaul projections to use date-fns
+import { addMonths, isBefore, isWithinInterval, addYears, parseISO } from 'date-fns'; // TODO: Overhaul projections to use date-fns
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction }                                 from '@reduxjs/toolkit';
 
-import { Transaction }                from './../../models/Transaction';
-import { Account }                    from './../../models/Account';
-import { RootState }                  from './../store';
-import { TransactionType } from '../../utils/constants';
+import { Transaction }                                                from './../../models/Transaction';
+import { Account }                                                    from './../../models/Account';
+import { RootState }                                                  from './../store';
+import { TransactionType }                                            from './../../utils/constants';
 
 interface ProjectionsState {
   transactionsOnDate     : { [date: string]: Transaction[] };
@@ -13,6 +13,7 @@ interface ProjectionsState {
   categorySpend          : { [category: string]: number };
   accountMessages        : { [accountId: string]: { date: string, type: string, account: Account}[] };
   transactionsByAccount  : { [accountId: string]: Transaction[] };
+  spendByTransaction     : { [transactionID: string]: number }
 }
 
 const initialState: ProjectionsState = {
@@ -21,7 +22,7 @@ const initialState: ProjectionsState = {
   categorySpend          : {},
   accountMessages        : {},
   transactionsByAccount  : {},
-
+  spendByTransaction     : {},
 };
 
 let allAccounts: Account[];
@@ -55,6 +56,7 @@ export const projectionsSlice = createSlice({
       let tempTransactionsOnDate      : { [date: string]: Transaction[] }                   = {};
       let tempBalanceByDateAndAccount : { [accountId: string]: { [date: string]: number } } = {};
       let tempCategorySpend           : { [category: string]: number }                      = {};
+      let tempTransactionSpend        : { [transactionID: string]: number }                 = {};
 
       accounts.forEach((account) => {
         const currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
@@ -301,6 +303,18 @@ export const projectionsSlice = createSlice({
         }
         tempCategorySpend[category] += amount;
       }
+
+      function sumUpSpend(transactionID: number, amount: number, date: string) { 
+
+        if (!tempTransactionSpend[transactionID]) {
+          tempTransactionSpend[transactionID] = 0;
+        }
+
+        if (isWithinInterval(parseISO(date), { start: new Date(), end: addYears(new Date(), 1) }))  { // Add the amount of the spend if its with in this year.
+          tempTransactionSpend[transactionID] += Math.abs(amount);
+        }  
+
+      }
       
       function handleTransfer(
         tempBalanceByDateAndAccount : BalanceData,
@@ -314,9 +328,10 @@ export const projectionsSlice = createSlice({
 
         sumUpCategories(transaction.amount, category)
 
-        let toAccountBalance = 
-          tempBalanceByDateAndAccount[toAccount.id][dateKey];
-        let transferAmount = transaction.amount;
+        let toAccountBalance = tempBalanceByDateAndAccount[toAccount.id][dateKey];
+        let transferAmount   = transaction.amount;
+
+
         if (toAccount.isLiability) { 
           // TODO: THIS ISN'T ALLOWING OVERPAYMENT, and that's great, but it should check if overpayment is allowed. 
           if (transaction.amount > tempBalanceByDateAndAccount[toAccount.id][dateKey] && toAccount.notifyOnAccountPayoff && 
@@ -330,6 +345,7 @@ export const projectionsSlice = createSlice({
         const toAccountSign   = toAccount.isLiability ? -1 : 1;
         const fromAccountSign = fromAccount.isLiability ? 1 : -1;
 
+        sumUpSpend(transaction.id, transferAmount, dateKey);
         tempBalanceByDateAndAccount[toAccount.id][dateKey]   += transferAmount * toAccountSign;
         tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transferAmount * fromAccountSign;
       }
@@ -344,6 +360,9 @@ export const projectionsSlice = createSlice({
       ) {
 
         if (!fromAccount) return;
+
+        sumUpSpend(transaction.id, transaction.amount, dateKey);
+
           if (fromAccount.isLiability) {
             // TODO: THIS IS NOT RESPECTING ALLOW OVERDRAFT or any such. 
             if (fromAccount.creditLimit) {
@@ -382,6 +401,9 @@ export const projectionsSlice = createSlice({
         category                   ?: string,
       ) {
         if (!toAccount) return;
+
+        sumUpSpend(transaction.id, transaction.amount, dateKey);
+
         if (toAccount.isLiability) {
           if (transaction.amount > tempBalanceByDateAndAccount[toAccount.id][dateKey] && toAccount.notifyOnAccountPayoff && 
             (toAccount.type === 'mortgage' || toAccount.type === 'loan' || toAccount.type === 'credit card')) // TODO: Gotta be a better way to do this. Maybe move this to the message panel?
@@ -522,6 +544,7 @@ export const projectionsSlice = createSlice({
       state.transactionsOnDate      = tempTransactionsOnDate;
       state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
       state.categorySpend           = tempCategorySpend;
+      state.spendByTransaction      = tempTransactionSpend;
 
       const endTime = performance.now();
       console.log(`Recalculating Projections took ${(endTime - startTime).toFixed(2)} milliseconds to execute.`);
@@ -923,13 +946,19 @@ export const getTransactionsByAccount = (
   state: RootState,
   accountId?: string
 ) => {
-  const transactionsByAccount = state.projections.transactionsByAccount;
-
   if (accountId) {
-    return transactionsByAccount[accountId] || [];
+    return state.projections.transactionsByAccount[accountId] || [];
   } else {
-    return Object.values(transactionsByAccount).flat();
+    return Object.values(state.projections.transactionsByAccount).flat();
   }
+};
+
+// Get Spend By Transactions
+export const getSpendByTransaction = (
+  state: RootState,
+  transactionId: number
+) => {
+    return state.projections.spendByTransaction[transactionId] || undefined;
 };
 
 export default projectionsSlice.reducer;

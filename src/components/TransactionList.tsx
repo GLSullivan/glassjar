@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { RootState } from '../redux/store';
+import { RootState }        from '../redux/store';
 import { setSearchString } from './../redux/slices/search';
 import { TransactionType } from './../utils/constants';
 
@@ -10,6 +10,7 @@ import Menu from './Menu';
 
 import './../css/TransactionList.css';
 import { Transaction } from '../models/Transaction';
+import { getSpendByTransaction } from '../redux/slices/projections';
 
 interface TransactionListProps {
   transactions   ?: Transaction[];
@@ -34,6 +35,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     collapseControl, 
   }) => {
   const dispatch = useDispatch();
+  const state    = useSelector((state: RootState) => state);
 
   const reduxTransactions = useSelector(
     (state: RootState) => state.transactions.transactions
@@ -60,6 +62,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
     { id: 4, label: 'Account To' },
     { id: 5, label: 'Account From' },
     { id: 6, label: 'Category' },
+    { id: 7, label: 'Annual High to Low' },
+    { id: 8, label: 'Annual Low to High' },
   ];
 
   const handleCheckboxChange = (optionId: number) => {
@@ -121,6 +125,20 @@ const TransactionList: React.FC<TransactionListProps> = ({
           filteredTransactions.sort((a, b) =>
             (a.category || '').localeCompare(b.category || '')
           );
+          break;
+          case 7: // Annual Spend High to Low
+          filteredTransactions.sort((a, b) => {
+            const spendA = getSpendByTransaction(state, a.id) || 0;
+            const spendB = getSpendByTransaction(state, b.id) || 0;
+            return spendB - spendA;
+          });
+          break;
+        case 8: // Annual Spend Low to High
+          filteredTransactions.sort((a, b) => {
+            const spendA = getSpendByTransaction(state, a.id) || 0;
+            const spendB = getSpendByTransaction(state, b.id) || 0;
+            return spendA - spendB;
+          });
           break;
         default:
           break;

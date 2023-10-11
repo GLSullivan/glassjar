@@ -38,14 +38,10 @@ const OutlookGraph: React.FC = () => {
 
   return (
     <div className='glassjar__graph-holder'>
-      <div className='glassjar__graph-holder__sub'>
-        <div className='glassjar__graph-holder__sub-sub'>
           <SVGGraph
             accounts={graphingAccounts}
             hideStartEnd={true}
           />
-        </div>
-      </div>
     </div>
   );
 };

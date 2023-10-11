@@ -9,6 +9,7 @@ import { accountColors }             from '../data/AccountColors';
 import { RootState }                from './../redux/store';
 
 import './../css/ListItems.css';
+import { getSpendByTransaction } from '../redux/slices/projections';
 
 interface TransactionListItem {
   transaction: Transaction;
@@ -26,7 +27,8 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
   ({ transaction, showSearch = false }) => {
     const dispatch = useDispatch();
     const activeSearch = useSelector((state: RootState) => state.search.search);
-    const accounts = useSelector((state: RootState) => state.accounts.accounts);
+    const accounts     = useSelector((state: RootState) => state.accounts.accounts);
+    const state        = useSelector((state: RootState) => state);
 
     let accountColor;
     let toAccountIndex = accounts.findIndex(account => account.id === transaction.toAccount);
@@ -73,6 +75,8 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       );
     };
 
+    const annualSpend = getSpendByTransaction(state, transaction.id);
+
     return (
       <div className='glassjar__list-item' onClick={() => { dispatch(setActiveTransaction(transaction)); dispatch(openTransactionModal()); }} key={transaction.id}        >
         <div className='glassjar__list-item__icon'>
@@ -95,12 +99,15 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
                 // <span>ERROR</span>
                 <span>{accounts[accounts.findIndex(account => account.id === transaction.fromAccount)].name}</span>
               }
-              {transaction.type === 'transfer' && <> <i className='fa-solid fa-angle-right' /> </>}
+              {transaction.type === 'transfer' && <><br/> <i className='fa-solid fa-angle-right' /> </>}
               {(transaction.type === 'deposit' || transaction.type === 'transfer') &&
                 // <span>ERROR</span>
                 <span>{accounts[accounts.findIndex(account => account.id === transaction.toAccount)].name}</span>
               }</h5>
             {/* {(transaction.category && transaction.category !== 'None') ? <span>{transaction.category}</span> : <span></span>} */}
+            {annualSpend &&
+              <h5>{(annualSpend / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD', })}/yr</h5>
+            }
           </div>}
         </div>
         <div className='glassjar__list-item__backing' style={{ background: accountColor }} />
