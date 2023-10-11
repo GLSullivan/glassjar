@@ -1,21 +1,19 @@
 import React                          from 'react';
 import { useDispatch, useSelector }   from 'react-redux';
 
-import { getAccountMessages }         from '../redux/slices/projections';
-import { accountTypeIcons }           from '../data/AccountTypeIcons';
-import { accountColors }              from '../data/AccountColors';
-        
-import { setActiveAccount }           from '../redux/slices/accounts';
-import { openAccountForm }            from '../redux/slices/modals';
-import { Account }                    from '../models/Account';
-import { RootState }                  from '../redux/store';
+import { getAccountMessages }         from './../redux/slices/projections';
+import { accountTypeIcons }           from './../data/AccountTypeIcons';
+import { accountColors }              from './../data/AccountColors';
+import { setActiveAccount }           from './../redux/slices/accounts';
+import { openAccountForm }            from './../redux/slices/modals';
+import { Account }                    from './../models/Account';
+import { RootState }                  from './../redux/store';
 
-import messageFactory                 from './MessageFactory';
 import MessagesList                   from './MessageList';
 
+import './../css/Pages.css'
+
 const MessagesPage: React.FC = () => { 
-  // TODO: This should take an account and only display the message for the passed account.
-  // Basically break this up so it's a whole panel as is here, but there's a way to just show the messages in the Account Panel.
 
   const dispatch = useDispatch();
 
@@ -34,11 +32,9 @@ const MessagesPage: React.FC = () => {
   });
 
   return (
-    <div className='glassjar__account-list'>
-      <div className='glassjar__account-list__header glassjar__flex glassjar__flex--justify-between'>
-        <h2>Messages</h2>
-      </div>
-
+    <div  className='glassjar__page glassjar__page--messages'>
+      <h2>Messages</h2>
+<div className="glassjar__flex glassjar__flex--column">
       {Object.keys(groupedMessages).length > 0 ? (
         <>
           {Object.keys(groupedMessages).map((accountId) => (
@@ -79,10 +75,12 @@ const MessagesPage: React.FC = () => {
               />
             </div>
           ))}
+          
         </>
       ) : (
         <p>You have no messages</p>
       )}
+      </div>
     </div>
   );
 };

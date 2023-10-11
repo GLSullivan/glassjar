@@ -19,6 +19,7 @@
   overflow       : hidden;
   padding        : .5rem;
   position       : relative;
+  z-index        : 1;
 }
 
 .glassjar__list-item__backing {
@@ -194,7 +195,6 @@
 }
 
 .glassjar__list-item__message {
-  padding: 1rem;
   box-sizing: border-box;
   width: 100%;
 }

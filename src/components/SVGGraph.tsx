@@ -21,13 +21,13 @@ interface SVGGraphProps {
   // endDate      : string;
   accounts     : Account[];
   thickness   ?: number;
-  hideZero    ?: Boolean;
-  hideTrend   ?: Boolean;
-  hideDates   ?: Boolean;
-  hideRange   ?: Boolean;
-  hideToday   ?: Boolean;
-  hideStartEnd?: Boolean;
-  hideMonth   ?: Boolean;
+  hideZero    ?: boolean;
+  hideTrend   ?: boolean;
+  hideDates   ?: boolean;
+  hideRange   ?: boolean;
+  hideToday   ?: boolean;
+  hideStartEnd?: boolean;
+  hideMonth   ?: boolean;
 }
 
 const SVGGraph: React.FC<SVGGraphProps> = ({
@@ -55,7 +55,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
 
   let startDate = startOfDay(new Date()).toISOString();
   let endDate   = addMonths(startOfDay(new Date()),graphRange).toISOString();
-    // TODO: A fair bit of math is being done to find these dates and I'm overriding it here. This is a hack that needs addressing for performance.
 
   const containerRef                = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -95,7 +94,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       startDate,
       endDate
     ) as number[];
-
+    //console.log('!!!!!!! ',account.name,account.id,startDate, endDate, balances[0])
           // Invert balances if the account is a liability
     if (account.isLiability) {
       balances = balances.map((balance) => -balance);
@@ -154,20 +153,23 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       :     'N/A';  // Fallback if no date is available
   };
 
-      // Calculate 3-day rolling average
+  // Calculate 3-day rolling average
   const rollingAverage: number[] = [];
-  for (let i = 0; i < maxDataPoints; i++) {
-    let sum   = 0;
-    let count = 0;
-    for (let j = Math.max(0, i - 2); j <= i; j++) {
-      for (const balances of accountBalances) {
-        if (balances[j] !== undefined) {
-          sum += balances[j];
-          count++;
+  if (!hideTrend) {
+
+    for (let i = 0; i < maxDataPoints; i++) {
+      let sum   = 0;
+      let count = 0;
+      for (let j = Math.max(0, i - 2); j <= i; j++) {
+        for (const balances of accountBalances) {
+          if (balances[j] !== undefined) {
+            sum += balances[j];
+            count++;
+          }
         }
       }
+      rollingAverage.push(count > 0 ? sum / count : 0);
     }
-    rollingAverage.push(count > 0 ? sum / count : 0);
   }
 
   const handleTouchStart = (e: React.TouchEvent<SVGSVGElement>) => {
@@ -269,6 +271,8 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     }
       // eslint-disable-next-line 
   }, [activeDate, dimensions]);
+
+//console.log('>>>',accountBalances)
 
   return (
     <div className = 'glassjar__svg-graph' ref = {containerRef}>

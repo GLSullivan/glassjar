@@ -1,4 +1,4 @@
-          /* 
+            /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -94,22 +94,64 @@
 }
 
 .glassjar__svg-graph {
-  position: relative;
-
-  height: 100%;
-  overflow: hidden;
+  position      : relative;
+  height        : 100%;
+  overflow      : hidden;
   pointer-events: none;
-  position: absolute;
-  width: 100%;
-
-
+  position      : absolute;
+  width         : 100%;
 }
 
 .glassjar__account-panel__graph {
-  flex: 2;
-  height: 100%;
-  aspect-ratio: 2;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
+  flex         : 2 1;
+  height       : 100%;
+  aspect-ratio : 2;
+  position     : relative;
+  overflow     : hidden;
+  flex-shrink  : 0;
+  margin       : 0 1rem;
+  box-sizing   : border-box;
+  background   : var(--color-bright);
+  border-radius: .5rem;
+  border       : 1px solid var(--color-border);
+}
+
+.glassjar__panel.glassjar__panel--account {
+  display       : flex;
+  flex-direction: column;
+  gap           : .5rem;
+  padding-bottom: 1rem;
+}
+
+.glassjar__panel.glassjar__panel--account h3 {
+  font-size  : 1.2rem;
+  font-weight: 500;
+  padding    : .5rem 0;
+  margin     : 0;
+}
+
+.glassjar__panel.glassjar__panel--account .glassjar__transaction-view {
+  padding-bottom: 0;
+}
+
+.glassjar__panel.glassjar__panel--account .glassjar__form {
+  gap: 0;
+}
+
+.glassjar__list-item__message + .glassjar__list-item__message {
+  border-top: 1px solid var(--color-border);
+}
+
+.glassjar__modal__subgroup .glassjar__list-item__message {
+  padding: .5rem;
+  box-sizing: border-box;
+}
+
+.glassjar__panel.glassjar__panel--account .glassjar__form > .glassjar__form__input-group {
+  margin-bottom: 0.5rem;
+}
+
+button.glassjar__text-button.glassjar__text-button--smaller {
+  font-size: 0.8rem;
+  font-weight: 500;
 }

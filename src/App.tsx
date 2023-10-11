@@ -5,7 +5,7 @@ import TransactionHelper                    from './components/helpers/Transacti
 import TransactionForm                      from './components/forms/TransactionForm';
 import { AccountList }                      from './components/panels/AccountPanel';
 import { AccountForm }                      from './components/forms/AccountForm';
-import TransactionList                      from './components/TransactionList';
+import TransactionPage                      from './components/TransactionPage';
 import CategoryGraph                        from './components/CategoryGraph'
 import SettingsPanel                        from './components/SettingsPanel';
 import AccountDelete                        from './components/AccountDelete';
@@ -129,7 +129,7 @@ const App: React.FC = () => {
                 <CategoryGraph />
               </div>
               <div className={`glassjar__panel-group glassjar__panel-group--transactions ${activeView === 'transactions' ? 'visible' : ''}`}>
-                <TransactionList />
+                <TransactionPage />
               </div>
               <div className={`glassjar__panel-group glassjar__panel-group--messages ${activeView === 'messages' ? 'visible' : ''}`}>
                 <MessageList />

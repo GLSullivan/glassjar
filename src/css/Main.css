@@ -14,7 +14,7 @@
 
         /* --primary: #7B9F90ff; */
 
-  --color-border      : #b7c2c4;
+  --color-border      : #e3e3e3;
   --color-bright      : #ffffff;
   --color-inverse     : #f0f5f3;
   --color-secondary   : #8f8f8f;
@@ -175,6 +175,10 @@ h3 {
   align-items: center;
 }
 
+.glassjar__flex.glassjar__flex--align-baseline {
+  align-items: baseline;
+}
+
 .glassjar__flex.glassjar__flex--even > * {
   flex : 2;
   width: 100%;
@@ -218,6 +222,10 @@ h3 {
 
 .glassjar__padding {
   padding: 1rem;
+}
+
+.glassjar__padding.glassjar__padding--sides {
+  padding: 0 1rem;
 }
 
 /* Auto Height */

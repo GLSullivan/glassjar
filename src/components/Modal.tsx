@@ -43,7 +43,7 @@ const Modal: React.FC<modalProps> = React.memo(
     if (color) {
       const rgb = hexToRgb(color);
       if (rgb) {
-        style = { background: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)` };
+        style = { background: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.9)` };
       }
     }
 

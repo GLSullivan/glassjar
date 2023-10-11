@@ -69,20 +69,13 @@
   max-height    : 100%;
   min-height    : 100%;
   overflow      : hidden;
+  gap           : 1rem;
 }
 
 .glassjar__transaction-view {
   max-height    : 100%;
   overflow      : auto;
-  padding       : 0 1rem 150px 1rem;
-}
-
-.glassjar__transaction-view > div {
-  margin-bottom: .5rem;
-}
-
-.glassjar__transaction-list__header {
-  padding: 1rem;
+  padding-bottom:  150px;
 }
 
 .glassjar__sort-menu__filter {

@@ -11,16 +11,8 @@ import './../css/ListItems.css';
 
 import SVGGraph                        from './SVGGraph';
 import { RootState }                   from './../redux/store';
-import { 
-  startOfMonth, 
-  formatISO, 
-  endOfMonth, 
-  addMonths, 
-  isAfter, 
-  isToday
-}                                     from 'date-fns';
 import { getAccountMessages,
-  getTransactionsByAccount }          from '../redux/slices/projections';
+  getTransactionsByAccount }           from './../redux/slices/projections';
 
 interface AccountListItemProps {
   account : Account;
@@ -72,28 +64,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
     const dispatch = useDispatch();
     const state = useSelector((state: RootState) => state);
 
-    const graphRange = useSelector((state: RootState) => state.views.graphRange);
-    const today      = useSelector((state: RootState) => state.activeDates.today);
-    const activeDate = useSelector((state: RootState) => state.activeDates.activeDate);
-
     const messages   = getAccountMessages(state, account);
-
-    function firstOrToday(inputDate: string) {
-      const todayDate       = new Date(today);                    // gets today's date
-      const firstDayOfMonth = startOfMonth(new Date(inputDate));  // gets the first day of the month of inputDate
-
-      if (isAfter(firstDayOfMonth, todayDate) || isToday(firstDayOfMonth)) {
-            // If the first day of the inputDate month is later than today, or it is today
-        return formatISO(firstDayOfMonth);
-      } else {
-        return formatISO(todayDate);  // If today's date is later
-      }
-    }
-
-    const graphStart = firstOrToday(activeDate);
-    const graphEnd   = formatISO(
-      endOfMonth(addMonths(new Date(graphStart), graphRange || 6))
-    );
 
     function blendWithWhite(color: string, alpha: number) {
       const r = Math.floor((1 - alpha) * 255 + alpha * parseInt(color.slice(1, 3), 16));
@@ -102,7 +73,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
       
       return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
     }
-
+    
     return (
       <div
         className='glassjar__list-item glassjar__list-item--account'
