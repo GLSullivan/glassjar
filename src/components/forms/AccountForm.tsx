@@ -1,26 +1,39 @@
-import CurrencyInput                      from 'react-currency-input-field';
-import { useSelector, useDispatch }       from 'react-redux';
-import React, { useEffect, useState }     from 'react';
+import CurrencyInput from 'react-currency-input-field';
+import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 
-import { closeAccountForm,
-        openDeleteAccount }           from './../../redux/slices/modals';
-import { RootState }                      from './../../redux/store';
-import {      
-  addAccount,     
-  updateAccount,      
-  setActiveAccount      
-}                                         from './../../redux/slices/accounts';
-import { AccountType }                    from './../../utils/constants';
-import { Account }                        from './../../models/Account';
-import ColorPicker                        from './../ColorPicker';
-import PanelHeader                        from './../PanelHeader';
+import {
+  closeAccountForm,
+  openDeleteAccount,
+} from './../../redux/slices/modals';
+import { RootState } from './../../redux/store';
+import {
+  addAccount,
+  updateAccount,
+  setActiveAccount,
+} from './../../redux/slices/accounts';
+import { AccountType } from './../../utils/constants';
+import { Account } from './../../models/Account';
+import ColorPicker from './../ColorPicker';
+import PanelHeader from './../PanelHeader';
+
+import SVGGraph                        from './../SVGGraph';
+
+
+import './../../css/Panels.css'
+import { getAccountMessages } from '../../redux/slices/projections';
+import messageFactory from '../MessageFactory';
+import MessagesList from '../MessageList';
 
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state);
 
-  const accounts                    = useSelector((state: RootState) => state.accounts.accounts);
+  const accounts = useSelector((state: RootState) => state.accounts.accounts);
 
-  const [saveReady,setSaveReady]    = useState<boolean>(false);
+  const [saveReady, setSaveReady] = useState<boolean>(false);
+  const [editAccount, setEditAccount] = useState<boolean>(false);
+  
 
   const handleColorSelect = (selectedIndex: number) => {
     setAccount({ ...account, color: selectedIndex });
@@ -28,9 +41,7 @@ export const AccountForm: React.FC = () => {
 
   const handleDelete = () => {
     if (activeAccount) {
-
       dispatch(openDeleteAccount());
-
     }
   };
 
@@ -44,47 +55,50 @@ export const AccountForm: React.FC = () => {
 
   const [account, setAccount] = useState<Account>(
     activeAccount || {
-      id                       : generateUniqueId(),
-      name                     : '',
-      currentBalance           : 0,
-      type                     : AccountType.CHECKING,
-      lastUpdated              : new Date().toISOString(),
-      isLiability              : false,
-      showInGraph              : true,
-      color                    : 0,
-      creditLimit              : 0,
-      isSpendingPower          : true,
-      notifyOnAccountStale     : true,
-      notifyOnAccountOverDraft : true,
+      id: generateUniqueId(),
+      name: '',
+      currentBalance: 0,
+      type: AccountType.CHECKING,
+      lastUpdated: new Date().toISOString(),
+      isLiability: false,
+      showInGraph: true,
+      color: 0,
+      creditLimit: 0,
+      isSpendingPower: true,
+      notifyOnAccountStale: true,
+      notifyOnAccountOverDraft: true,
       notifyOnAccountOverCredit: true,
-      notifyOnAccountPayoff    : true,
+      notifyOnAccountPayoff: true,
     }
   );
 
   const [initialAccountData, setInitialAccountData] = useState(
     JSON.parse(JSON.stringify(account))
   );
-  
-  useEffect(() => { // Create initial copy for form dirt checking
+
+  useEffect(() => {
+    // Create initial copy for form dirt checking
     setInitialAccountData(JSON.parse(JSON.stringify(account)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClose = () => {
     dispatch(setActiveAccount(null));
-    dispatch(closeAccountForm())
-  }
+    dispatch(closeAccountForm());
+  };
 
   const handleSave = () => {
-    if (saveReady){
+    if (saveReady) {
       const updatedAccount = {
         ...account,
-        lastUpdated   : new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
         currentBalance: parseFloat(account.currentBalance.toFixed(2)),
-        creditLimit   : account.creditLimit ? parseFloat(account.creditLimit.toFixed(2)): 0.00,
-        color         : account.color
+        creditLimit: account.creditLimit
+          ? parseFloat(account.creditLimit.toFixed(2))
+          : 0.0,
+        color: account.color,
       };
-    
+
       if (activeAccount) {
         dispatch(updateAccount(updatedAccount));
       } else {
@@ -92,17 +106,15 @@ export const AccountForm: React.FC = () => {
       }
       handleClose();
     }
-  }
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    handleSave()  
+    handleSave();
   };
-  
+
   const handleChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement
-    >
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const target = event.target;
     if (target instanceof HTMLInputElement && target.type === 'checkbox') {
@@ -111,19 +123,21 @@ export const AccountForm: React.FC = () => {
       setAccount({ ...account, [target.name]: target.value });
     }
   };
-  
+
   const handleCurrencyChange = (
-    value : string | undefined,
-    name ?: string | undefined
+    value: string | undefined,
+    name?: string | undefined
   ) => {
     if (name && value !== undefined) {
-      setAccount({ ...account, [name]: (parseFloat(value) ? Math.round(parseFloat(value) * 100) : 0 )  });
+      setAccount({
+        ...account,
+        [name]: parseFloat(value) ? Math.round(parseFloat(value) * 100) : 0,
+      });
     } else if (name) {
       setAccount({ ...account, [name]: '' });
     }
   };
 
-  // Validation (Formik was too complex for Yup and Formik)
   interface ErrorState {
     name: string | null;
     currentBalance: string | null;
@@ -136,7 +150,7 @@ export const AccountForm: React.FC = () => {
 
   useEffect(() => {
     if (!account) {
-      return; 
+      return;
     }
 
     let newErrors: ErrorState = {
@@ -154,7 +168,7 @@ export const AccountForm: React.FC = () => {
 
     if (
       typeof account.currentBalance !== 'number' ||
-      !Number.isInteger(account.currentBalance) 
+      !Number.isInteger(account.currentBalance)
     ) {
       newErrors.currentBalance = 'Amount required.';
     }
@@ -165,241 +179,299 @@ export const AccountForm: React.FC = () => {
     setErrors({ ...newErrors });
 
     if (
-      JSON.stringify(account) !== JSON.stringify(initialAccountData) && isSaveReady
+      JSON.stringify(account) !== JSON.stringify(initialAccountData) &&
+      isSaveReady
     ) {
       setSaveReady(true);
     } else {
       setSaveReady(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account]); 
-  
+  }, [account]);
+
+  const messages   = getAccountMessages(state, account);
+
   return (
     <>
       <PanelHeader
-        title                = {activeAccount ? `Update Account` : 'New Account'}
-        onSecondaryAction    = {handleClose}
-        secondaryActionLabel = 'Cancel'
-        showSecondaryButton  = {accounts.length > 0}
-        onPrimaryAction      = {handleSave}
-        disablePrimaryButton = {!saveReady}
-        primaryActionLabel   = 'Save'
+        title={activeAccount ? activeAccount.name : "New Account"}
+        onSecondaryAction={handleClose}
+        secondaryActionLabel="Cancel"
+        showSecondaryButton={accounts.length > 0}
+        onPrimaryAction={handleSave}
+        disablePrimaryButton={!saveReady}
+        primaryActionLabel="Save"
       />
 
-      <div className='glassjar__padding'>
-        {/* <h2>{activeAccount ? `${account.name}` : 'New Account'}</h2> */}
-        {accounts.length < 1 && (
-          <h3>Welcome, let's setup your first account.</h3>
-        )}
+      {accounts.length < 1 ? (
+        <h3>Welcome, let's setup your first account.</h3>
+      ) : (
+          <>
+            <div className="glassjar__account-panel__graph">
+              <SVGGraph
+                accounts={[account]}
+                hideZero={true}
+                hideTrend={true}
+                hideDates={true}
+                hideRange={true}
+                hideToday={true}
+                hideMonth={true}
+                thickness={2}
+              />
+            </div>
+              <button
+                onClick={() => setEditAccount(!editAccount)}
+                className="glassjar__text-button"
+                type="button"
+              >
+                Edit Account
+              </button>
+            </>
+      )}
 
-        <form className='glassjar__form' onSubmit={handleSubmit}>
-          <div className='glassjar__form__input-group'>
-            {' '}
-            <input
-              required
-              placeholder='Account Name:'
-              type='text'
-              id='name'
-              name='name'
-              value={account.name}
-              onChange={handleChange}
+      <div className="glassjar__padding">
+        <form className="glassjar__form" onSubmit={handleSubmit}>
+          <div className="glassjar__form__input-group">
+            <CurrencyInput
+              id="currentBalance"
+              prefix="$"
+              name="currentBalance"
+              placeholder="Balance:"
+              defaultValue={account.currentBalance / 100}
+              decimalsLimit={0}
+              onValueChange={handleCurrencyChange}
             />
-            <label htmlFor='name'>Name:{' '}
-              <span className='glassjar__form__input-group__error'>
-                {errors.name}
+            <label htmlFor="currentBalance">
+              Current Balance:{" "}
+              <span className="glassjar__form__input-group__error">
+                {errors.currentBalance}
               </span>
             </label>
           </div>
-
-          <div className='glassjar__flex glassjar__flex--tight'>
-
-            <div className='glassjar__form__input-group'>
-              <CurrencyInput
-                id='currentBalance'
-                prefix='$'
-                name='currentBalance'
-                placeholder='Balance:'
-                defaultValue={account.currentBalance / 100}
-                decimalsLimit={0}
-                onValueChange={handleCurrencyChange}
-              />
-              <label htmlFor='currentBalance'>Current Balance:{' '}
-                <span className='glassjar__form__input-group__error'>
-                  {errors.currentBalance}
-                </span>
-              </label>
-            </div>
-
-            <div className='glassjar__form__input-group glassjar__form__input-group--drop'>
-              <label htmlFor='type'>Type:</label>
-              <select
-                id='type'
-                name='type'
-                value={account.type}
-                onChange={handleChange}
-              >
-                <option value='checking'>Checking</option>
-                <option value='savings'>Savings</option>
-                <option value='credit card'>Credit Card</option>
-                <option value='loan'>Loan</option>
-                <option value='mortgage'>Mortgage</option>
-                <option value='cash'>Cash</option>
-              </select>
-            </div>
-
-          </div>
-
           <div
-            className={`glassjar__auto-height glassjar__auto-height--top ${['loan', 'savings', 'mortgage', 'credit card'].includes(
-              account.type
-            ) ? 'open' : ''
-              }`}
+            className={`glassjar__auto-height glassjar__auto-height--top ${
+              editAccount || accounts.length < 1 ? "open" : ""
+            }`}
           >
-            <div className='glassjar__flex glassjar__flex--tight'>
-              <div className='glassjar__form__input-group'>
+            <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
+              <div className="glassjar__form__input-group">
+                {" "}
                 <input
-                  type='number'
-                  id='interestRate'
-                  name='interestRate'
-                  value={account.interestRate || '0'}
+                  required
+                  placeholder="Account Name:"
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={account.name}
                   onChange={handleChange}
                 />
-                <label htmlFor='interestRate'>Interest Rate:</label>
+                <label htmlFor="name">
+                  Name:{" "}
+                  <span className="glassjar__form__input-group__error">
+                    {errors.name}
+                  </span>
+                </label>
+              </div>
+              <div className="glassjar__form__input-group glassjar__form__input-group--drop">
+                <label htmlFor="type">Type:</label>
+                <select
+                  id="type"
+                  name="type"
+                  value={account.type}
+                  onChange={handleChange}
+                >
+                  <option value="checking">Checking</option>
+                  <option value="savings">Savings</option>
+                  <option value="credit card">Credit Card</option>
+                  <option value="loan">Loan</option>
+                  <option value="mortgage">Mortgage</option>
+                  <option value="cash">Cash</option>
+                </select>
               </div>
 
-              {['credit card'].includes(account.type) && (
-                <div className='glassjar__form__input-group'>
-                  <CurrencyInput
-                    id='creditLimit'
-                    prefix='$'
-                    name='creditLimit'
-                    placeholder='Credit Limit:'
-                    defaultValue={account.creditLimit ? account.creditLimit / 100 : 0}
-                    decimalsLimit={0}
-                    onValueChange={handleCurrencyChange}
-                  />
-                  <label htmlFor='creditLimit'>Credit Limit:</label>
+              <div
+                className={`glassjar__auto-height glassjar__auto-height--top ${
+                  ["loan", "savings", "mortgage", "credit card"].includes(
+                    account.type
+                  )
+                    ? "open"
+                    : ""
+                }`}
+              >
+                <div className="glassjar__flex glassjar__flex--tight">
+                  <div className="glassjar__form__input-group">
+                    <input
+                      type="number"
+                      id="interestRate"
+                      name="interestRate"
+                      value={account.interestRate || "0"}
+                      onChange={handleChange}
+                    />
+                    <label htmlFor="interestRate">Interest Rate:</label>
+                  </div>
+
+                  {["credit card"].includes(account.type) && (
+                    <div className="glassjar__form__input-group">
+                      <CurrencyInput
+                        id="creditLimit"
+                        prefix="$"
+                        name="creditLimit"
+                        placeholder="Credit Limit:"
+                        defaultValue={
+                          account.creditLimit ? account.creditLimit / 100 : 0
+                        }
+                        decimalsLimit={0}
+                        onValueChange={handleCurrencyChange}
+                      />
+                      <label htmlFor="creditLimit">Credit Limit:</label>
+                    </div>
+                  )}
                 </div>
+              </div>
+
+              <div className="glassjar__form__input-group">
+                <label>Account Color: </label>
+                <ColorPicker
+                  onSelect={handleColorSelect}
+                  selectedIndex={account.color}
+                />
+              </div>
+
+              <div
+                className={`glassjar__auto-height glassjar__auto-height--top ${
+                  ["loan", "mortgage", "credit card"].includes(account.type)
+                    ? "open"
+                    : ""
+                }`}
+              >
+                <div className="glassjar__form__input-group">
+                  <input
+                    type="date"
+                    id="dueDate"
+                    name="dueDate"
+                    value={account.dueDate || ""}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="dueDate">Due Date:</label>
+                </div>
+              </div>
+
+              <div className="glassjar__form__input-group glassjar__form__input-group--check">
+                <input
+                  type="checkbox"
+                  id="showInGraph"
+                  name="showInGraph"
+                  checked={account.showInGraph}
+                  onChange={handleChange}
+                />
+                <label htmlFor="showInGraph">Show In Graph:</label>
+              </div>
+
+              {(account.type === "checking" ||
+                account.type === "savings" ||
+                account.type === "credit card" ||
+                account.type === "cash") && (
+                <div className="glassjar__form__input-group glassjar__form__input-group--check">
+                  <input
+                    type="checkbox"
+                    id="isSpendingPower"
+                    name="isSpendingPower"
+                    checked={account.isSpendingPower}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="isSpendingPower">
+                    Count As Spending Power:
+                  </label>
+                </div>
+              )}
+
+              <div className="glassjar__form__input-group glassjar__form__input-group--check">
+                <input
+                  type="checkbox"
+                  id="notifyOnAccountStale"
+                  name="notifyOnAccountStale"
+                  checked={account.notifyOnAccountStale}
+                  onChange={handleChange}
+                />
+                <label htmlFor="notifyOnAccountStale">
+                  Notify When Account Is Stale:
+                </label>
+              </div>
+
+              {(account.type === "savings" || account.type === "checking") && (
+                <div className="glassjar__form__input-group glassjar__form__input-group--check">
+                  <input
+                    type="checkbox"
+                    id="notifyOnAccountOverDraft"
+                    name="notifyOnAccountOverDraft"
+                    checked={account.notifyOnAccountOverDraft}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="notifyOnAccountOverDraft">
+                    Notify When Overdrawn:
+                  </label>
+                </div>
+              )}
+
+              {account.type === "credit card" && (
+                <div className="glassjar__form__input-group glassjar__form__input-group--check">
+                  <input
+                    type="checkbox"
+                    id="notifyOnAccountOverCredit"
+                    name="notifyOnAccountOverCredit"
+                    checked={account.notifyOnAccountOverCredit}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="notifyOnAccountOverCredit">
+                    Notify When Limit Exceeded:
+                  </label>
+                </div>
+              )}
+
+              {(account.type === "credit card" ||
+                account.type === "loan" ||
+                account.type === "mortgage") && (
+                <div className="glassjar__form__input-group glassjar__form__input-group--check">
+                  <input
+                    type="checkbox"
+                    id="notifyOnAccountPayoff"
+                    name="notifyOnAccountPayoff"
+                    checked={account.notifyOnAccountPayoff}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="notifyOnAccountPayoff">
+                    Notify on Payoff:
+                  </label>
+                </div>
+              )}
+
+              {activeAccount && accounts.length > 1 && (
+                <>
+                  <br />
+                  <div className="glassjar__flex glassjar__flex--justify-center">
+                    <button
+                      className="glassjar__text-button glassjar__text-button--warn"
+                      type="button"
+                      onClick={handleDelete}
+                    >
+                      Delete Account
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
-
-          <div className='glassjar__form__input-group'>
-            <label>Account Color: </label>
-            <ColorPicker
-              onSelect={handleColorSelect}
-              selectedIndex={account.color}
-            />
-          </div>
-
-          <div
-            className={`glassjar__auto-height glassjar__auto-height--top ${['loan', 'mortgage', 'credit card'].includes(
-              account.type
-            ) ? 'open' : ''
-              }`}
-          >
-            <div className='glassjar__form__input-group'>
-              <input
-                type='date'
-                id='dueDate'
-                name='dueDate'
-                value={account.dueDate || ''}
-                onChange={handleChange}
-              />
-              <label htmlFor='dueDate'>Due Date:</label>
-            </div>
-          </div>
-
-          <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
-            <input
-              type     = 'checkbox'
-              id       = 'showInGraph'
-              name     = 'showInGraph'
-              checked  = {account.showInGraph}
-              onChange = {handleChange}
-            />
-            <label htmlFor = 'showInGraph'>Show In Graph:</label>
-          </div>
-
-          {(account.type === 'checking' || account.type === 'savings' || account.type === 'credit card' || account.type === 'cash') && 
-            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
-              <input
-                type     = 'checkbox'
-                id       = 'isSpendingPower'
-                name     = 'isSpendingPower'
-                checked  = {account.isSpendingPower}
-                onChange = {handleChange}
-              />
-              <label htmlFor = 'isSpendingPower'>Count As Spending Power:</label>
-            </div>
-          }
-
-          <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
-            <input
-              type     = 'checkbox'
-              id       = 'notifyOnAccountStale'
-              name     = 'notifyOnAccountStale'
-              checked  = {account.notifyOnAccountStale}
-              onChange = {handleChange}
-            />
-            <label htmlFor = 'notifyOnAccountStale'>Notify When Account Is Stale:</label>
-          </div>
-            
-          {(account.type === 'savings' || account.type === 'checking') && 
-            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
-              <input
-                type     = 'checkbox'
-                id       = 'notifyOnAccountOverDraft'
-                name     = 'notifyOnAccountOverDraft'
-                checked  = {account.notifyOnAccountOverDraft}
-                onChange = {handleChange}
-              />
-              <label htmlFor = 'notifyOnAccountOverDraft'>Notify When Overdrawn:</label>
-            </div>
-          }
-          
-          {(account.type === 'credit card') && 
-            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
-              <input
-                type     = 'checkbox'
-                id       = 'notifyOnAccountOverCredit'
-                name     = 'notifyOnAccountOverCredit'
-                checked  = {account.notifyOnAccountOverCredit}
-                onChange = {handleChange}
-              />
-              <label htmlFor = 'notifyOnAccountOverCredit'>Notify When Limit Exceeded:</label>
-            </div>
-          }
-
-          {(account.type === 'credit card' || account.type === 'loan' || account.type === 'mortgage') && 
-            <div className = 'glassjar__form__input-group glassjar__form__input-group--check'>
-              <input
-                type     = 'checkbox'
-                id       = 'notifyOnAccountPayoff'
-                name     = 'notifyOnAccountPayoff'
-                checked  = {account.notifyOnAccountPayoff}
-                onChange = {handleChange}
-              />
-              <label htmlFor = 'notifyOnAccountPayoff'>Notify on Payoff:</label>
-            </div>
-          }
-
-          {activeAccount && accounts.length > 1 && (
-            <>
-              <br />
-              <div className='glassjar__flex glassjar__flex--justify-center'>
-                <button
-                  className='glassjar__text-button glassjar__text-button--warn'
-                  type='button'
-                  onClick={handleDelete}
-                >
-                  Delete Account
-                </button>
-              </div>
-            </>
-          )}
         </form>
       </div>
+
+      {messages.length > 0 &&<div>
+            <h3>{messages.length}</h3>
+
+            <MessagesList account={account} isSolo={true}></MessagesList>
+
+          </div>}
+
+
     </>
   );
 };

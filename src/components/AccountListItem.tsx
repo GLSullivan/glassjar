@@ -134,8 +134,6 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
         <div className='glassjar__list-item__body'>
           <SVGGraph
             accounts  = {[account]}
-            startDate = {graphStart}
-            endDate   = {graphEnd}
             hideZero  = {true}
             hideTrend = {true}
             hideDates = {true}

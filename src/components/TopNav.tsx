@@ -43,11 +43,11 @@ const TopNav = () => {
     {!imageError && userPhoto ? (
         <img 
           src={userPhoto} 
-          alt="User" 
+          alt='User' 
           onError={() => setImageError(true)}
         />
       ) : (
-        <i className="fa-solid fa-gear" />
+        <i className='fa-solid fa-gear' />
       )}
       </div>
     </div>

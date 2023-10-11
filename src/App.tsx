@@ -10,7 +10,7 @@ import CategoryGraph                        from './components/CategoryGraph'
 import SettingsPanel                        from './components/SettingsPanel';
 import AccountDelete                        from './components/AccountDelete';
 import OutlookGraph                         from './components/OutlookGraph'
-import MessageList                          from './components/MessageList';
+import MessageList                          from './components/MessagePage';
 import PrimaryNav                           from './components/PrimaryNav';
 import Calendar                             from './components/Calendar';
 import Landing                              from './components/Landing';

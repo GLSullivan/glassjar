@@ -17,8 +17,8 @@ import { RootState }                                     from './../redux/store'
 import './../css/OutlookGraph.css'
 
 interface SVGGraphProps {
-  startDate    : string;
-  endDate      : string;
+  // startDate    : string;
+  // endDate      : string;
   accounts     : Account[];
   thickness   ?: number;
   hideZero    ?: Boolean;
@@ -31,8 +31,8 @@ interface SVGGraphProps {
 }
 
 const SVGGraph: React.FC<SVGGraphProps> = ({
-  startDate,
-  endDate,
+  // startDate,
+  // endDate,
   accounts,
   thickness,
   hideZero,
@@ -53,8 +53,8 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   let yMax: number     = -Infinity;  // Initialize to -Infinity
   let colors: string[] = [];
 
-  startDate = startOfDay(new Date()).toISOString();
-  endDate   = addMonths(startOfDay(new Date()),graphRange).toISOString();
+  let startDate = startOfDay(new Date()).toISOString();
+  let endDate   = addMonths(startOfDay(new Date()),graphRange).toISOString();
     // TODO: A fair bit of math is being done to find these dates and I'm overriding it here. This is a hack that needs addressing for performance.
 
   const containerRef                = useRef(null);

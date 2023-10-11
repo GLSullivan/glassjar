@@ -68,7 +68,7 @@ const CalendarSchedule: React.FC = () => {
     }
 
     const listChildren = Array.from(
-      container.getElementsByClassName("glassjar__lazy-list-group")
+      container.getElementsByClassName('glassjar__lazy-list-group')
     );
     if (listChildren.length === 0) {
       return null;
@@ -86,7 +86,7 @@ const CalendarSchedule: React.FC = () => {
       return currentTop < closestTop ? current : closest;
     });
 
-    const closestDataDate = closestDiv.getAttribute("data-date");
+    const closestDataDate = closestDiv.getAttribute('data-date');
 
     if (closestDataDate !== null && closestDataDate !== activeDate) {
       dispatch(setActiveDate(closestDataDate));

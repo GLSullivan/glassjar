@@ -484,6 +484,8 @@ export const projectionsSlice = createSlice({
         // Store it in the Redux state
         state.transactionsByAccount = transactionsByAccount;
 
+        console.log(state.transactionsByAccount)
+
         runTodaysInterest(dateKey);
 
         currentDay.setDate(currentDay.getDate() + 1);

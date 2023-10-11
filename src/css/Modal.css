@@ -63,7 +63,7 @@
   box-shadow   : 0 10px 10px rgb(0 0 0 / 20%);
   box-shadow   : var(--shadow-main);
   box-sizing   : border-box;
-  max-height   : 70vh;
+  max-height   : 90vh;
   max-width    : 90vw;
   min-width    : 90vw; 
   /* overflow-y: auto; */

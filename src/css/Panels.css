@@ -92,3 +92,24 @@
 .glassjar__panel-group {
   padding-bottom: 150px;
 }
+
+.glassjar__svg-graph {
+  position: relative;
+
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+
+
+}
+
+.glassjar__account-panel__graph {
+  flex: 2;
+  height: 100%;
+  aspect-ratio: 2;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
