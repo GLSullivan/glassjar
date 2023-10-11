@@ -162,7 +162,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
   return (
     <div className='glassjar__transaction-list'>
-      {transactions.length > 3 &&
+      {allTransactions.length > 3 &&
         <div className='glassjar__transaction-list__header'>
 
           <div className='glassjar__search-sort'>
