@@ -1,4 +1,4 @@
-import { addMonths, isBefore, isWithinInterval, addYears, parseISO } from 'date-fns'; // TODO: Overhaul projections to use date-fns
+import { addMonths, isBefore, isWithinInterval, addYears, parseISO, differenceInDays } from 'date-fns'; // TODO: Overhaul projections to use date-fns
 
 import { createSlice, PayloadAction }                                 from '@reduxjs/toolkit';
 
@@ -52,6 +52,7 @@ export const projectionsSlice = createSlice({
       state.transactionsOnDate      = {};
       state.balanceByDateAndAccount = {};
       state.categorySpend           = {};
+      state.accountMessages         = {};
 
       let tempTransactionsOnDate      : { [date: string]: Transaction[] }                   = {};
       let tempBalanceByDateAndAccount : { [accountId: string]: { [date: string]: number } } = {};
@@ -521,11 +522,18 @@ export const projectionsSlice = createSlice({
         // Check if this type already exists for this accountId
         const typeExists = state.accountMessages[accountId].some((item) => item.type === type);
       
-        // If this type doesn't exist, add the new type/date pair
-        if (!typeExists) {
+        // Check for snoozed messages with the same type and date within the last week
+        const isSnoozed = account.snoozedMessages?.some((snoozedMsg) => {
+          return snoozedMsg.messageType === type &&
+            differenceInDays(new Date(), parseISO(snoozedMsg.date)) < 7; // TODO: Make the snoozed range user definable!
+        });
+      
+        // If this type doesn't exist and is not snoozed, add the new type/date pair
+        if (!typeExists && !isSnoozed) {
           state.accountMessages[accountId].push({ date, type, account });
         }
       }
+      
 
       const removeOldTransactions = () => {
         let today = new Date(new Date().setDate(new Date().getDate()-1));

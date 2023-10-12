@@ -64,6 +64,18 @@ export const accountsSlice = createSlice({
         (account) => account.id !== action.payload.id
       );
     },
+    updateSnoozedMessages: (state, action: PayloadAction<{ id: string, newSnoozedMessage: { messageType: string; date: string; } }>) => {
+      const { id, newSnoozedMessage } = action.payload;
+      const index = state.accounts.findIndex((account) => account.id === id);
+      
+      if (index !== -1) {
+        if (typeof state.accounts[index].snoozedMessages === 'undefined') {
+          state.accounts[index].snoozedMessages = [];
+        }
+        state.accounts[index].snoozedMessages!.push(newSnoozedMessage);
+      }
+      console.log(state.accounts[index].snoozedMessages)
+    },
   },
 });
 
@@ -74,6 +86,7 @@ export const {
   addAccount, 
   updateAccount, 
   setActiveAccount, 
-  deleteAccount 
+  deleteAccount, 
+  updateSnoozedMessages
 } = accountsSlice.actions;
 export const selectAllAccounts = (state: RootState) => state.accounts.accounts;

@@ -1,57 +1,96 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React                               from 'react';
+import { useDispatch, useSelector }        from 'react-redux';
+import { startOfDay }                      from 'date-fns'
 
-import { getAccountMessages } from './../redux/slices/projections';
-
-import { Account } from './../models/Account';
-import { RootState } from './../redux/store';
-
-import messageFactory from './MessageFactory';
+import { getAccountMessages }              from './../redux/slices/projections';
+import { updateSnoozedMessages }           from './../redux/slices/accounts';
+import { Account }                         from './../models/Account';
+import { RootState }                       from './../redux/store';
+import { SwipeElement }                    from './SwipeElement';
+             
+import messageFactory                      from './MessageFactory';
 
 interface MessageProps {
-  account: Account;
-  isSolo?: boolean;
-  isCollapsible?: boolean;
+  account         : Account;
+  isSolo         ?: boolean;
+  isCollapsible  ?: boolean;
   collapseControl?: boolean;
+  color          ?: string;
 }
 
-const MessagesList: React.FC<MessageProps> = ({ 
-  account, 
+const MessagesList: React.FC<MessageProps> = ({
+  account,
   isSolo,
   isCollapsible,
-  collapseControl,  
+  collapseControl,
+  color,
 }) => {
-  const state = useSelector((state: RootState) => state);
+  const dispatch = useDispatch()
+
+  const state    = useSelector((state: RootState) => state);
   const messages = getAccountMessages(state, account);
 
-  return (
-    <>
-      {messages.slice(0, 3).map((message, index) => (
-        <div className='glassjar__list-item__message' key={index}>
+  type MessageType = {
+    type   : string;
+    date   : string;
+    account: Account;
+    isSolo?: boolean; 
+  };
+
+  const handleMarkRead = (message: MessageType) => {    
+    const newSnoozedMessage = { messageType: message.type, date: startOfDay(new Date()).toISOString() };
+    
+    dispatch(updateSnoozedMessages({ id: account.id, newSnoozedMessage }));
+  };
+  
+  const createSwipeElement = (
+    message: MessageType,
+    index: number,
+    handleMarkRead: (message: MessageType) => void, // <-- Update here
+    color?: string,
+    isSolo?: boolean
+  ) => {
+    return (
+      <SwipeElement key={index}>
+        <div
+          className="glassjar__list-item__message"
+          {...(color && { style: { background: color } })}
+        >
           {messageFactory({ ...message, isSolo })}
         </div>
-      ))}
-
+        <SwipeElement.Action action={() => handleMarkRead(message)}>  
+          <div className="glassjar__swipe-icon">Snooze</div>
+        </SwipeElement.Action>
+      </SwipeElement>
+    );
+  };
+  
+  return (
+    <>
+      {messages
+        .slice(0, 3)
+        .map((message, index) =>
+          createSwipeElement(message, index, handleMarkRead, color, isSolo)
+        )}
       {isCollapsible && (
         <div
           className={`glassjar__auto-height glassjar__auto-height--top ${
-            collapseControl ? 'open' : ''
+            collapseControl ? 'open': ''
           }`}
         >
-          {messages.slice(3).map((message, index) => (
-            <div className='glassjar__list-item__message' key={index + 3}>
-              {messageFactory({ ...message, isSolo })}
-            </div>
-          ))}
+          {messages
+            .slice(3)
+            .map((message, index) =>
+              createSwipeElement(message, index, handleMarkRead, color, isSolo)
+            )}
         </div>
       )}
-
       {!isCollapsible &&
-        messages.slice(3).map((message, index) => (
-          <div className='glassjar__list-item__message' key={index + 3}>
-            {messageFactory({ ...message, isSolo })}
-          </div>
-        ))}
+        messages
+          .slice(3)
+          .map((message, index) =>
+            createSwipeElement(message, index, handleMarkRead, color, isSolo)
+          )}
     </>
   );
 };

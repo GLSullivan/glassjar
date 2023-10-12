@@ -1,3 +1,22 @@
 .glassjar__page.glassjar__page--messages .glassjar__list-item__message {
   padding: 1rem;
 }
+
+.glassjar__swipe-icon {
+  box-sizing: border-box;
+  display: flex;
+  padding: 1rem;
+  background: rgb(214, 214, 214);
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  align-items: center;
+  color: white;
+  transition: .25s ease;
+  border-left: 1px solid var(--color-border);
+}
+
+.glassjar__swiper-elements__swipe-action.active .glassjar__swipe-icon {
+  color: black;
+  background: var(--color-bright);
+}

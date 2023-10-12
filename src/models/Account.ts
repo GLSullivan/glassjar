@@ -19,4 +19,6 @@ export interface Account {
   notifyOnAccountOverDraft  ?: boolean;
   notifyOnAccountOverCredit ?: boolean;
   notifyOnAccountPayoff     ?: boolean;
+
+  snoozedMessages           ?: { messageType: string; date: string; }[];
 }
