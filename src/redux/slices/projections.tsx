@@ -870,7 +870,7 @@ export const getLoanDebtByDate = (
   if (allAccounts) {
     allAccounts.forEach((account) => {
 
-      if (account && account.isSpendingPower) {
+      if (account) { // TODO: I need a new Show In Projections option. So, Show In Graph, Show In Schedule, Show In Projection
         switch (account.type) {
           case 'loan':
             hasRequiredAccount = true;

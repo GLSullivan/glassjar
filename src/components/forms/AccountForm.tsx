@@ -210,7 +210,7 @@ export const AccountForm: React.FC = () => {
 
       <div  className = "glassjar__padding glassjar__padding--sides">
         <div className = "glassjar__flex glassjar__flex--justify-between glassjar__flex--align-baseline">
-          <h3>Account ({transactions.length})</h3>
+          <h3>Account</h3>
             <button
             onClick   = {() => setEditAccount(!editAccount)}
             className = "glassjar__text-button glassjar__text-button--smaller"
@@ -438,7 +438,6 @@ export const AccountForm: React.FC = () => {
 
                 {activeAccount && accounts.length > 1 && (
                   <>
-                    .glassjar__list-item__message
                     <br />
                     <div className = "glassjar__flex glassjar__flex--justify-center">
                       <button
