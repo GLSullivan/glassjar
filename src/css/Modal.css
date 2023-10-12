@@ -117,6 +117,7 @@
   background: var(--color-bright);
   border-radius: .5rem;
   border: 1px solid var(--color-border);
+  overflow: hidden;
 }
 
 .glassjar__modal__subgroup.glassjar__modal__subgroup--no-padding {

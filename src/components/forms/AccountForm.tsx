@@ -492,6 +492,7 @@ export const AccountForm: React.FC = () => {
                 isSolo          = {true}
                 isCollapsible   = {messages.length > 3}
                 collapseControl = {showAllTransactions}
+                color           = {'var(--color-bright)'}
               ></MessagesList>
             </div>
           </div>
