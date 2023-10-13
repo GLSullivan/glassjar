@@ -31,7 +31,7 @@
 }
 
 .glassjar__nav__icon-holder {
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); */
 
   bottom         : 0;
   display        : flex;
