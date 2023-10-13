@@ -9,8 +9,7 @@ export interface Transaction {
   description         : string;
   isRecurring         : boolean;
   ends?               : boolean;
-  allowOverpayment    : boolean; // This should be an account value, not a transaction value.
-  showInCalendar      : boolean; // TODO: Future feature for omitting high-frequency events from the calendar.
+  showInCalendar      : boolean; 
   recurrenceFrequency?: RecurrenceFrequency;
   customIntervalType ?: CustomIntervalType;
   givenDays          ?: number[];
@@ -20,10 +19,12 @@ export interface Transaction {
   toAccount          ?: string;
   updatedAt          ?: number;
   category           ?: string;
-  skippedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
-  arbitraryDates     ?: string[]; 
   discretionary      ?: boolean; // Future feature for sorting, showing things that are required.
+
+  arbitraryDates     ?: string[]; 
   fromHelper         ?: string;
-  nextOccurrence     ?: string;
+  
+  autoClear          ?: boolean;
+  clearedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
   
 }

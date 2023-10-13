@@ -1,7 +1,7 @@
 import { AccountType } from './../utils/constants';
 
 export interface Account {
-  name                       : string;
+  name                       : string; // TODO: For clarity, change this to accountName everywhere.
   id                         : string;
   currentBalance             : number;
   type                       : AccountType;

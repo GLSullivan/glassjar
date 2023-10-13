@@ -18,6 +18,7 @@ import Loader                               from './components/Loader';
 import Modal                                from './components/Modal';
 
 import { accountColors }                    from './data/AccountColors';
+import TopNav                               from './components/TopNav';
 
 import { recalculateProjections }           from './redux/slices/projections';
 import {      
@@ -30,7 +31,6 @@ import { RootState }                        from './redux/store';
 
 import './css/Main.css'      
 import './css/Nav.css'  
-import TopNav from './components/TopNav';
 
 const App: React.FC = () => {
 
@@ -106,7 +106,10 @@ const App: React.FC = () => {
         <AccountDelete />
       </Modal>
 
-      <Modal isOpen={transactionOpen} onClose={closeTheTransactionModal}>
+      <Modal
+        isOpen={transactionOpen} 
+        onClose={closeTheTransactionModal}     
+        >
         <TransactionForm
           initialDate={activeDate}
           onClose={closeTheTransactionModal}

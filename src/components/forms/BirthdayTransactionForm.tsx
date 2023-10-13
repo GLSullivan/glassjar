@@ -94,7 +94,6 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
       customIntervalType,
       endDate           : endDate,
       date              : isoDate,
-      allowOverpayment  : false,
       showInCalendar    : true,
       fromAccount       : fromAccount,
       toAccount         : toAccount,

@@ -104,7 +104,6 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
           toAccount       : toAccount,
           id              : activeTransaction ? activeTransaction.id: new Date().getTime(),
           endDate         : endDate,
-          allowOverpayment: false,
           showInCalendar  : true,
           category        : initialCategory,
           arbitraryDates  : newArbitraryDates,

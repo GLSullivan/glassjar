@@ -7,7 +7,7 @@ import { updateSnoozedMessages }           from './../redux/slices/accounts';
 import { Account }                         from './../models/Account';
 import { RootState }                       from './../redux/store';
 import { SwipeElement }                    from './SwipeElement';
-             
+
 import messageFactory                      from './MessageFactory';
 
 interface MessageProps {
@@ -46,7 +46,7 @@ const MessagesList: React.FC<MessageProps> = ({
   const createSwipeElement = (
     message: MessageType,
     index: number,
-    handleMarkRead: (message: MessageType) => void, // <-- Update here
+    handleMarkRead: (message: MessageType) => void, 
     color?: string,
     isSolo?: boolean
   ) => {

@@ -11,16 +11,20 @@
 
 .glassjar__list-item {
   align-items    : center;
-  border-radius  : 1rem;
   box-sizing     : border-box;
   display        : flex;
   gap            : .5rem;
   justify-content: space-between;
-  overflow       : hidden;
   padding        : .5rem;
   position       : relative;
   z-index        : 1;
+}
+
+.glassjar__list-item__transaction {
+  border-radius  : 1rem;
+  overflow       : hidden;
   border: 1px solid var(--color-border);
+
 }
 
 .glassjar__list-item__backing {
@@ -115,6 +119,9 @@
   padding: 0;
   aspect-ratio: 1.586;
   gap: 0;
+  border-radius  : 1rem;
+  overflow       : hidden;
+  border: 1px solid var(--color-border);
 }
 
 .glassjar__list-item.glassjar__list-item--account .glassjar__list-item__header {

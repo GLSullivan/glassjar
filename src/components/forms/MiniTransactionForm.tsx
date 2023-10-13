@@ -77,7 +77,6 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
       isRecurring        : true,
       endDate            : '',
       recurrenceFrequency: RecurrenceFrequency.MONTHLY,
-      allowOverpayment   : false,
       showInCalendar     : true,
       category           : initialCategory,
     };

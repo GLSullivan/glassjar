@@ -28,8 +28,9 @@ import './../../css/Panels.css';
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();
 
-  const state    = useSelector((state: RootState) => state);
-  const accounts = useSelector((state: RootState) => state.accounts.accounts);
+  const state         = useSelector((state: RootState) => state);
+  const accounts      = useSelector((state: RootState) => state.accounts.accounts);
+  const activeAccount = useSelector((state: RootState) => state.accounts.activeAccount);
 
   const [saveReady, setSaveReady]                     = useState<boolean>(false);
   const [editAccount, setEditAccount]                 = useState<boolean>(false);
@@ -45,10 +46,6 @@ export const AccountForm: React.FC = () => {
       dispatch(openDeleteAccount());
     }
   };
-
-  const activeAccount = useSelector(
-    (state: RootState) => state.accounts.activeAccount
-  );
 
   const generateUniqueId = () => {
     return new Date().getTime().toString();

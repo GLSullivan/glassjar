@@ -28,7 +28,6 @@ const transactionsSlice = createSlice({
         date                : action.payload.date || new Date().toISOString(),
         description         : action.payload.description || '',
         isRecurring         : action.payload.isRecurring || false,
-        allowOverpayment    : action.payload.allowOverpayment || true,
         showInCalendar      : action.payload.showInCalendar || true
       }
       state.transactions.push(newTransaction);
