@@ -248,3 +248,8 @@ button.glassjar__nav__button.active > span {
   max-height: 28px;
   border-radius: 100px;
 }
+
+.glassjar__top-nav img {
+  max-width: 100%;
+  max-height: 2rem;
+}
