@@ -23,13 +23,16 @@
   bottom       : -4px;
   position     : absolute;
   width        : 100%;
-  z-index      : 9000;
+  z-index      : 9000;  
+  box-shadow: 0 -1px   2px rgba(0,0,0,0.07), 
+              0 -2px   4px rgba(0,0,0,0.07), 
+              0 -4px   8px rgba(0,0,0,0.07), 
+              0 -8px  16px rgba(0,0,0,0.07);
 }
 
 .glassjar__nav__icon-holder {
-  backdrop-filter: blur(20px);
-  background     : var(--color-bright);
-  background     : rgb(255 255 255 / 35%);
+  backdrop-filter: blur(5px);
+
   bottom         : 0;
   display        : flex;
   height         : 100%;
@@ -41,8 +44,8 @@
 }
 
 .glassjar__nav.glassjar__nav--primary .glassjar__nav__icon-holder {
-  backdrop-filter: blur(20px);
-  background     : rgb(255 255 255 / 35%);
+  /* backdrop-filter: blur(20px);
+  background     : rgb(255 255 255 / 35%); */
   padding-bottom : 1rem;
 }
 
@@ -55,7 +58,7 @@
   flex           : 2;
   flex-direction : column-reverse;
   font-size      : .9rem;
-  font-weight    : 500;
+  font-weight    : 300;
   gap            : 0.25rem;
   justify-content: center;
   transition     : .4s ease;
@@ -115,11 +118,14 @@
 }
 
 .glassjar__nav__backing-shape > div {
-  background   : var(--gradient-brand);
-  border-radius: 2rem;
-  height       : 110%;
   opacity      : 1;
-  width        : 90%;
+  background: linear-gradient(90deg, transparent 0%, #616161 35%, #616161 65%, transparent 100%);
+
+  position: absolute;
+  top: 0;
+  left: -1rem;
+  height: 100%;
+  width: calc(100% + 2rem);
 }
 
 .glassjar__nav__backing-shape:nth-child(2) {
@@ -155,7 +161,10 @@
 .glassjar__nav__group .glassjar__nav {
   box-sizing : border-box;
   flex-shrink: 0;
-  margin     : 1rem 1rem 0rem 1rem;
+  margin     : 1rem   1rem 5px 1rem;
+  box-shadow: 0 1px   2px rgba(0,0,0,0.07), 
+              0 2px   4px rgba(0,0,0,0.07), 
+              0 4px   8px rgba(0,0,0,0.07);
 }
 
 .glassjar__nav__body {
@@ -199,6 +208,11 @@
   border-radius: 0 0 0.5rem 0.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   background: var(--color-bright);
+  
+  box-shadow: 0 1px   2px rgba(0,0,0,0.07), 
+              0 2px   4px rgba(0,0,0,0.07), 
+              0 4px   8px rgba(0,0,0,0.07), 
+              0 8px  16px rgba(0,0,0,0.07);
 }
 
 .glassjar__top-nav > * {

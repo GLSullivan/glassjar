@@ -17,8 +17,6 @@ import { RootState }                                     from './../redux/store'
 import './../css/OutlookGraph.css'
 
 interface SVGGraphProps {
-  // startDate    : string;
-  // endDate      : string;
   accounts     : Account[];
   thickness   ?: number;
   hideZero    ?: boolean;
@@ -31,8 +29,6 @@ interface SVGGraphProps {
 }
 
 const SVGGraph: React.FC<SVGGraphProps> = ({
-  // startDate,
-  // endDate,
   accounts,
   thickness,
   hideZero,
@@ -94,8 +90,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       startDate,
       endDate
     ) as number[];
-    //console.log('!!!!!!! ',account.name,account.id,startDate, endDate, balances[0])
-          // Invert balances if the account is a liability
     if (account.isLiability) {
       balances = balances.map((balance) => -balance);
     }
@@ -260,7 +254,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
         position: 'absolute',
         left    : `${boxX}px`,
         width   : `${boxWidth}px`,
-        top     : '0',
         bottom  : '0',
       });
 
@@ -272,10 +265,8 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       // eslint-disable-next-line 
   }, [activeDate, dimensions]);
 
-//console.log('>>>',accountBalances)
-
   return (
-    <div className = 'glassjar__svg-graph' ref = {containerRef}>
+    <div className = 'glassjar__svg-graph'>
 
       {(activeDate && !hideToday) && (
         <div
@@ -285,6 +276,8 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       )}
 
       {!hideMonth && <div className='glassjar__svg-graph__month-box' style={boxStyle} ><div/><div/></div>}
+
+      <div className = 'glassjar__svg-graph__graph-holder' ref = {containerRef}>
 
       <svg 
       width        = {Math.ceil(dimensions.width)}
@@ -329,20 +322,6 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
         )}
       </svg>
 
-      {!hideRange &&
-        <>
-          <div className = 'glassjar__graph-range glassjar__graph-range-max'>{formattedMax}</div>
-          <div className = 'glassjar__graph-range glassjar__graph-range-min'>{formattedMin}</div>
-        </>
-      }
-
-      {!hideDates &&
-        <>
-          <h2>{formatDateOrToday(new Date(startDate))}</h2>
-          <h2>{formatDateOrToday(new Date(endDate))}</h2>
-        </>
-      }
-
       {!hideStartEnd &&
         <>
           <div className = 'glassjar__svg-graph__data'  style = {firstH4Style} ref = {firstH4Ref}>
@@ -386,6 +365,21 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
                 />
             </h5>
           </div>
+        </>
+      }
+</div>
+      
+      {!hideRange &&
+        <>
+          <div className = 'glassjar__graph-range glassjar__graph-range-max'>{formattedMax}</div>
+          <div className = 'glassjar__graph-range glassjar__graph-range-min'>{formattedMin}</div>
+        </>
+      }
+
+      {!hideDates &&
+        <>
+          <h2>{formatDateOrToday(new Date(startDate))}</h2>
+          <h2>{formatDateOrToday(new Date(endDate))}</h2>
         </>
       }
     </div>
