@@ -92,14 +92,14 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
       isRecurring,
       recurrenceFrequency,
       customIntervalType,
-      endDate           : endDate,
-      date              : isoDate,
-      showInCalendar    : true,
-      fromAccount       : fromAccount,
-      toAccount         : toAccount,
-      id                : activeTransaction ? activeTransaction.id: new Date().getTime(),
-      category          : category,
-      fromHelper        : initialFromHelper,
+      endDate       : endDate,
+      date          : isoDate,
+      showInCalendar: true,
+      fromAccount   : fromAccount,
+      toAccount     : toAccount,
+      event_id      : activeTransaction ? activeTransaction.event_id: new Date().toISOString(),
+      category      : category,
+      fromHelper    : initialFromHelper,
     };
 
     if (activeTransaction) {

@@ -2,21 +2,26 @@ import { RecurrenceFrequency, TransactionType, CustomIntervalType } from './../u
 
 export interface Transaction {
   transactionName     : string;
-  id                  : number; 
   type                : TransactionType;
   amount              : number; 
+  
+  event_id            : string; 
   date                : string;
   description         : string;
-  isRecurring         : boolean;
   ends?               : boolean;
-  showInCalendar      : boolean; 
-  recurrenceFrequency?: RecurrenceFrequency;
-  customIntervalType ?: CustomIntervalType;
-  givenDays          ?: number[];
-  recurrenceInterval ?: number;  
   endDate            ?: string;
+
+  isRecurring         : boolean;
+  recurrenceInterval ?: number;  
+  recurrenceFrequency?: RecurrenceFrequency;
+  showInCalendar      : boolean; 
+  customIntervalType ?: CustomIntervalType;
+  
+  clearedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
+
+  givenDays          ?: number[];
   fromAccount        ?: string;
-  toAccount          ?: string;
+  toAccount          ?: string; 
   updatedAt          ?: number;
   category           ?: string;
   discretionary      ?: boolean; // Future feature for sorting, showing things that are required.
@@ -25,6 +30,5 @@ export interface Transaction {
   fromHelper         ?: string;
   
   autoClear          ?: boolean;
-  clearedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
   
 }

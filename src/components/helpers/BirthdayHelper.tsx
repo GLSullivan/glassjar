@@ -43,7 +43,7 @@ const BirthdayHelper: React.FC = () => {
     );
   
     const newForms = newTransactions.map((transaction, index) => ({
-      key                     : Number(transaction.id + '' + index), 
+      key                     : Number(transaction.event_id + '' + index), 
       initialCategory         : transaction.category,
       initialName             : transaction.transactionName,
       initialArbitraryDates   : transaction.arbitraryDates,

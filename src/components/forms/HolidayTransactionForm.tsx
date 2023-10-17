@@ -102,7 +102,7 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
           date            : isoDate,
           fromAccount     : fromAccount,
           toAccount       : toAccount,
-          id              : activeTransaction ? activeTransaction.id: new Date().getTime(),
+          event_id        : activeTransaction ? activeTransaction.event_id: new Date().toISOString(),
           endDate         : endDate,
           showInCalendar  : true,
           category        : initialCategory,

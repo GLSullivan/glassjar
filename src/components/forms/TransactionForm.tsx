@@ -35,9 +35,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const dispatch = useDispatch();
 
   const accounts          = useSelector((state: RootState) => state.accounts.accounts);
-  const activeTransaction = useSelector(
-    (state: RootState) => state.transactions.activeTransaction
-  );
+  const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
 
   const [saveReady, setSaveReady] = useState<boolean>(false);
 
@@ -55,7 +53,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const initialTransaction = activeTransaction || {
     transactionName    : '',
-    id                 : new Date().getTime(),
+    event_id           : new Date().toISOString(),
     type               : TransactionType.WITHDRAWAL,
     amount             : 0,
     date               : initialDate || new Date().toISOString(),
@@ -587,7 +585,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 className = "glassjar__text-button glassjar__text-button--warn"
                 type      = "button"
                 onClick   = {() => {
-                  dispatch(deleteTransaction(activeTransaction.id));
+                  dispatch(deleteTransaction(activeTransaction.event_id));
                   onClose();
                 }}
               >

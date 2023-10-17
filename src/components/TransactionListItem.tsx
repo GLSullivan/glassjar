@@ -11,7 +11,6 @@ import { accountColors }            from './../data/AccountColors';
 import { RootState }                from './../redux/store';
 import { SwipeElement }             from './SwipeElement';
 
-
 import './../css/ListItems.css';
 
 interface TransactionListItem {
@@ -109,7 +108,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       );
     };
 
-    const annualSpend = getSpendByTransaction(state, transaction.id);
+    const annualSpend = getSpendByTransaction(state, transaction.event_id);
 
     const handleClear = () => {
         // TODO: Make this actually clear!
@@ -128,7 +127,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
                 dispatch(setActiveTransaction(transaction));
                 dispatch(openTransactionModal());
               }}
-              key   = {transaction.id}
+              key   = {transaction.event_id}
               style = {{ background: accountColorTrans }}
             >
             <div className = "glassjar__list-item__icon">

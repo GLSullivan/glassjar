@@ -14,6 +14,7 @@ import viewReducer, { setViewState }              from './slices/views';
 import authReducer, { setLoadingAuthState }       from './slices/auth';
 
 import firebase                                   from 'firebase/compat/app';
+
 import 'firebase/compat/firestore';
 import 'firebase/compat/database';
 import 'firebase/compat/auth';
@@ -49,6 +50,16 @@ firebase.auth().onAuthStateChanged((user) => {
 
     const transactionsPromise = dbRef.child('users/' + user.uid + '/transactions').once('value').then((snapshot) => {
       const transactions = snapshot.val() || [];
+
+      // Upgrade old transactions to new data structure if needed. 
+      const convertedTransactions = transactions.map((transaction:any) => {
+        if ('id' in transaction && typeof transaction.id === 'number') {
+          transaction.event_id = transaction.id.toString();
+          delete transaction.id; // Remove the old id field
+        }
+        return transaction;
+      });
+
       store.dispatch(setTransactions(transactions));
     });
 
@@ -66,7 +77,7 @@ firebase.auth().onAuthStateChanged((user) => {
       .then(() => {
         isAppLoaded = true;
         store.dispatch(setLoadingAuthState(false));
-        store.dispatch(hideLoader());
+        store.dispatch(hideLoader());        
       })
       .catch((error) => {
         console.error(error);

@@ -34,7 +34,7 @@ const transactionsSlice = createSlice({
     },
     updateTransaction: (state, action: PayloadAction<Transaction>) => {
       const index = state.transactions.findIndex(
-        (transaction) => transaction.id === action.payload.id
+        (transaction) => transaction.event_id === action.payload.event_id
       );
       if (index !== -1) {
         state.transactions[index] = { ...action.payload, updatedAt: Date.now() };
@@ -44,16 +44,16 @@ const transactionsSlice = createSlice({
     bulkUpdateTransactions: (state, action: PayloadAction<Transaction[]>) => {
       action.payload.forEach((updatedTransaction) => {
         const index = state.transactions.findIndex(
-          (transaction) => transaction.id === updatedTransaction.id
+          (transaction) => transaction.event_id === updatedTransaction.event_id
         );
         if (index !== -1) {
           state.transactions[index] = { ...updatedTransaction, updatedAt: Date.now() };
         }
       });
     },
-    deleteTransaction: (state, action: PayloadAction<number>) => {
+    deleteTransaction: (state, action: PayloadAction<string>) => {
       state.transactions = state.transactions.filter(
-        (transaction) => transaction.id !== action.payload
+        (transaction) => transaction.event_id !== action.payload
       );
     },    
     setActiveTransaction: (state, action: PayloadAction<Transaction | null>) => {

@@ -73,7 +73,7 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
       description        : '',
       fromAccount        : firstAccountId,
       toAccount          : '',
-      id                 : new Date().getTime(),
+      event_id           : new Date().toISOString(),
       isRecurring        : true,
       endDate            : '',
       recurrenceFrequency: RecurrenceFrequency.MONTHLY,

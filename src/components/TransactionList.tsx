@@ -128,15 +128,15 @@ const TransactionList: React.FC<TransactionListProps> = ({
           break;
           case 7: // Annual Spend High to Low
           filteredTransactions.sort((a, b) => {
-            const spendA = getSpendByTransaction(state, a.id) || 0;
-            const spendB = getSpendByTransaction(state, b.id) || 0;
+            const spendA = getSpendByTransaction(state, a.event_id) || 0;
+            const spendB = getSpendByTransaction(state, b.event_id) || 0;
             return spendB - spendA;
           });
           break;
         case 8: // Annual Spend Low to High
           filteredTransactions.sort((a, b) => {
-            const spendA = getSpendByTransaction(state, a.id) || 0;
-            const spendB = getSpendByTransaction(state, b.id) || 0;
+            const spendA = getSpendByTransaction(state, a.event_id) || 0;
+            const spendB = getSpendByTransaction(state, b.event_id) || 0;
             return spendA - spendB;
           });
           break;
@@ -230,7 +230,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
       <div className='glassjar__transaction-view glassjar__flex glassjar__flex--column glassjar__flex--tight'>
         {transactions.slice(0, 3).map((transaction) => (
           <TransactionListItem
-            key={transaction.id}
+            key={transaction.event_id}
             transaction={transaction}
             showSearch={true}
           />
@@ -245,7 +245,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
             <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
               {transactions.slice(3).map((transaction) => (
                 <TransactionListItem
-                  key={transaction.id}
+                  key={transaction.event_id}
                   transaction={transaction}
                   showSearch={true}
                 />
@@ -257,7 +257,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
         {!isCollapsible &&
           transactions.slice(3).map((transaction) => (
             <TransactionListItem
-              key={transaction.id}
+              key={transaction.event_id}
               transaction={transaction}
               showSearch={true}
             />

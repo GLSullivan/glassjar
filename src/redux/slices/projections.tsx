@@ -305,7 +305,7 @@ export const projectionsSlice = createSlice({
         tempCategorySpend[category] += amount;
       }
 
-      function sumUpSpend(transactionID: number, amount: number, date: string) { 
+      function sumUpSpend(transactionID: string, amount: number, date: string) { 
 
         if (!tempTransactionSpend[transactionID]) {
           tempTransactionSpend[transactionID] = 0;
@@ -346,7 +346,7 @@ export const projectionsSlice = createSlice({
         const toAccountSign   = toAccount.isLiability ? -1 : 1;
         const fromAccountSign = fromAccount.isLiability ? 1 : -1;
 
-        sumUpSpend(transaction.id, transferAmount, dateKey);
+        sumUpSpend(transaction.event_id, transferAmount, dateKey);
         tempBalanceByDateAndAccount[toAccount.id][dateKey]   += transferAmount * toAccountSign;
         tempBalanceByDateAndAccount[fromAccount.id][dateKey] += transferAmount * fromAccountSign;
       }
@@ -362,8 +362,7 @@ export const projectionsSlice = createSlice({
 
         if (!fromAccount) return;
 
-        sumUpSpend(transaction.id, transaction.amount, dateKey);
-
+        sumUpSpend(transaction.event_id, transaction.amount, dateKey);
           if (fromAccount.isLiability) {
             // TODO: THIS IS NOT RESPECTING ALLOW OVERDRAFT or any such. 
             if (fromAccount.creditLimit) {
@@ -403,7 +402,7 @@ export const projectionsSlice = createSlice({
       ) {
         if (!toAccount) return;
 
-        sumUpSpend(transaction.id, transaction.amount, dateKey);
+        sumUpSpend(transaction.event_id, transaction.amount, dateKey);
 
         if (toAccount.isLiability) {
           if (transaction.amount > tempBalanceByDateAndAccount[toAccount.id][dateKey] && toAccount.notifyOnAccountPayoff && 
@@ -964,7 +963,7 @@ export const getTransactionsByAccount = (
 // Get Spend By Transactions
 export const getSpendByTransaction = (
   state: RootState,
-  transactionId: number
+  transactionId: string
 ) => {
     return state.projections.spendByTransaction[transactionId] || undefined;
 };
