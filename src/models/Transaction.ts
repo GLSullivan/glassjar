@@ -8,25 +8,32 @@ export interface Transaction {
   event_id            : string; 
   date                : string;
   description         : string;
-  ends?               : boolean;
+  ends               ?: boolean;
   endDate            ?: string;
 
   isRecurring         : boolean;
   recurrenceInterval ?: number;  
   recurrenceFrequency?: RecurrenceFrequency;
-  showInCalendar      : boolean; 
   customIntervalType ?: CustomIntervalType;
-  
-  clearedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
 
+// New Values
+start_date?: string;    // TODO: These are most certainly NOT optional, take this out after the transition to rrule
+end_date  ?: string;
+rrule      : string;
+exdates   ?: string[];
+
+  clearedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
   givenDays          ?: number[];
+  arbitraryDates     ?: string[]; 
+  
+  showInCalendar      : boolean; 
+
   fromAccount        ?: string;
   toAccount          ?: string; 
   updatedAt          ?: number;
   category           ?: string;
   discretionary      ?: boolean; // Future feature for sorting, showing things that are required.
 
-  arbitraryDates     ?: string[]; 
   fromHelper         ?: string;
   
   autoClear          ?: boolean;

@@ -73,6 +73,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     fromHelper         : '',
     autoClear          : true,
     clearedDates       : [],
+    rrule              : ''
   };
 
   const [transaction, setTransaction] = useState<Transaction>(initialTransaction);
@@ -104,6 +105,32 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
+  const handleArbitraryDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const value = event.target.value;
+  
+    // Update the arbitraryDates state
+    setArbitraryDates((prevDates) => {
+      // Create a new array with the updated date
+      const updatedArbitraryDates = prevDates.map((date, i) =>
+        i === index ? value : date
+      );
+  
+      // Sort the array in ascending order
+      const sortedArbitraryDates = [...updatedArbitraryDates].sort();
+  
+      // Update the transaction state with the new sorted arbitraryDates
+      setTransaction({
+        ...transaction,
+        arbitraryDates: sortedArbitraryDates,
+      });
+  
+      return sortedArbitraryDates;
+    });
+  };
+  
   const toggleDay = (dayNumber: number) => {
     let newGivenDays = transaction.givenDays ? [...transaction.givenDays] : [];
 
@@ -458,7 +485,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 >
                   <div className="glassjar__flex glassjar__flex--column glassjar__flex--tight">
 
-                    {arbitraryDates.sort().map((date, index) => (
+                  {[...arbitraryDates].sort().map((date, index) => (
                       <div
                         className="glassjar__flex glassjar__flex--tight glassjar__flex--align-center"
                         key={index}
@@ -468,13 +495,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                             type="date"
                             name="date"
                             value={date}
-                            onChange={(e) =>
-                              setArbitraryDates(
-                                arbitraryDates.map((d, i) =>
-                                  i === index ? e.target.value : d
-                                )
-                              )
-                            }
+                            onChange={(e) => handleArbitraryDateChange(e, index)}
                           />
                           <label>Arbitrary Date: </label>
                         </div>
@@ -490,7 +511,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     <button type="button" onClick={addArbitraryDate}>
                       Add Date
                     </button>
-                </div>
+                  </div>
                 </div>
                 <div>
                   <div className = "glassjar__form__input-group glassjar__form__input-group--check">
