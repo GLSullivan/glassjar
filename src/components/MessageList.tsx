@@ -27,8 +27,8 @@ const MessagesList: React.FC<MessageProps> = ({
 }) => {
   const dispatch = useDispatch()
 
-  const state    = useSelector((state: RootState) => state);
-  const messages = getAccountMessages(state, account);
+  const projections = useSelector((state: RootState) => state.projections);
+  const messages    = getAccountMessages(projections, account);
 
   type MessageType = {
     type   : string;

@@ -17,8 +17,8 @@ import './../css/Pages.css';
 const MessagesPage: React.FC = () => {
   const dispatch = useDispatch();
 
-  const state = useSelector((state: RootState) => state);
-  const messages = getAccountMessages(state);
+  const projections = useSelector((state: RootState) => state.projections);
+  const messages = getAccountMessages(projections);
 
   // Group messages by account
   const groupedMessages: {

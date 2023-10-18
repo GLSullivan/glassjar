@@ -21,7 +21,8 @@ interface CalendarDayProps {
 const CalendarDay: React.FC<CalendarDayProps> = React.memo(
   ({ day, isCurrentMonth, isToday, isActive, hasTransaction }) => {
     const dispatch  = useDispatch();
-    const state = useSelector((state: RootState) => state);
+    const projections = useSelector((state: RootState) => state.projections);
+    const userPrefs = useSelector((state: RootState) => state.userPrefs);
 
     function calculateRelativeBalance(
       healthRangeBottom: number,
@@ -38,9 +39,9 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
       return relativeBalance;
     }
     
-    const todaysBalance: number = aggregateBalanceOnDate(state, day.toISOString().slice(0, 10));
+    const todaysBalance: number = aggregateBalanceOnDate(projections, day.toISOString().slice(0, 10));
     
-    let dayHealth: number = calculateRelativeBalance(state.userPrefs.healthRangeBottom, state.userPrefs.healthRangeTop,todaysBalance); 
+    let dayHealth: number = calculateRelativeBalance(userPrefs.healthRangeBottom, userPrefs.healthRangeTop,todaysBalance); 
     
     // TODO: Put this in the right place. Either color pallette data or user prefs. 
     let colors = ['#e53935', '#d1d1d1', '#43a047'];

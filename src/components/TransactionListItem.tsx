@@ -30,7 +30,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     const dispatch     = useDispatch();
     const activeSearch = useSelector((state: RootState) => state.search.search);
     const accounts     = useSelector((state: RootState) => state.accounts.accounts);
-    const state        = useSelector((state: RootState) => state);
+    const projections        = useSelector((state: RootState) => state.projections);
 
     let accountColor;
     let accountColorTrans;
@@ -108,7 +108,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
       );
     };
 
-    const annualSpend = getSpendByTransaction(state, transaction.event_id);
+    const annualSpend = getSpendByTransaction(projections, transaction.event_id);
 
     const handleClear = () => {
         // TODO: Make this actually clear!

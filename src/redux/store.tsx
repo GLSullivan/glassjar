@@ -31,7 +31,6 @@ const firebaseConfig = {
   measurementId    : process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-
 firebase.initializeApp(firebaseConfig);
 const dbRef = firebase.database().ref();
 
@@ -50,16 +49,6 @@ firebase.auth().onAuthStateChanged((user) => {
 
     const transactionsPromise = dbRef.child('users/' + user.uid + '/transactions').once('value').then((snapshot) => {
       const transactions = snapshot.val() || [];
-
-      // Upgrade old transactions to new data structure if needed. 
-      const convertedTransactions = transactions.map((transaction:any) => {
-        if ('id' in transaction && typeof transaction.id === 'number') {
-          transaction.event_id = transaction.id.toString();
-          delete transaction.id; // Remove the old id field
-        }
-        return transaction;
-      });
-
       store.dispatch(setTransactions(transactions));
     });
 

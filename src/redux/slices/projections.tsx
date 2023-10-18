@@ -1,4 +1,4 @@
-import { addMonths, isBefore, isWithinInterval, addYears, parseISO, differenceInDays } from 'date-fns'; // TODO: Overhaul projections to use date-fns
+import { addMonths, isBefore, isWithinInterval, addYears, parseISO, differenceInDays } from 'date-fns'; 
 
 import { createSlice, PayloadAction }                                 from '@reduxjs/toolkit';
 
@@ -6,6 +6,10 @@ import { Transaction }                                                from './..
 import { Account }                                                    from './../../models/Account';
 import { RootState }                                                  from './../store';
 import { TransactionType }                                            from './../../utils/constants';
+
+import { RRule, RRuleSet, Frequency } from 'rrule';
+
+import { startOfDay, sub, addDays, format } from 'date-fns'
 
 interface ProjectionsState {
   transactionsOnDate     : { [date: string]: Transaction[] };
@@ -71,158 +75,84 @@ export const projectionsSlice = createSlice({
         }
         tempBalanceByDateAndAccount[account.id][dateKey] = account.currentBalance;
       });
+      
+      // Helper to add a transaction to tempTransactionsOnDate
+      const addTransactionToTemp = (tempTransactionsOnDate: Record<string, Transaction[]>, date: Date, transaction: Transaction) => {
+        const dateString = date.toISOString().split('T')[0];
+        if (!tempTransactionsOnDate[dateString]) {
+          tempTransactionsOnDate[dateString] = [];
+        }
+      
+        const existingEventIds = new Set(tempTransactionsOnDate[dateString].map(t => t.event_id));
+        
+        if (!existingEventIds.has(transaction.event_id)) {
+          tempTransactionsOnDate[dateString].push(transaction);
+        }
+      };
+      
+      // Helper to initialize RRuleSet from transaction
+      const initializeRRuleSet = (transaction: Transaction) => {
+        const rruleSet = new RRuleSet();
+        const serializedSet = JSON.parse(transaction.rrule);
+        const { rrule: rruleString, rdates } = serializedSet;
+      
+        if (rruleString) {
+          let rrule = RRule.fromString(rruleString);
+      
+          const isTrickyDate = [29, 30, 31].includes(new Date(transaction.start_date).getDate());
+      
+          // Only apply 'tricky date' logic if the frequency is either MONTHLY or YEARLY
 
-      // Populate the arrays for transactionsOnDay and dayHasTransaction;
-      const populateTransactionsOnDate = () => {
+          if (isTrickyDate && (rrule.options.freq === Frequency.MONTHLY || rrule.options.freq === Frequency.YEARLY)) {
 
-        transactions.forEach((transaction) => {
-          let count: number = 0;
-          let transactionDate    = new Date(transaction.date);
-          const transactionEndDate = transaction.isRecurring
-            ? transaction.endDate
-              ? new Date(
-                  Math.min(
-                    calculateThruDate.getTime(),
-                    new Date(transaction.endDate).getTime()
-                  )
-                )
-              : calculateThruDate
-            : transactionDate;
-
-            let arrayPosition: number = 0;
-
-          while (
-            transactionDate <= transactionEndDate && count < maxIterations
-          ) {
-            count++;
-            const dateString = transactionDate.toISOString().split('T')[0];
-            if (!tempTransactionsOnDate[dateString]) {
-              tempTransactionsOnDate[dateString] = [];
-            }
             
-            tempTransactionsOnDate[dateString].push(transaction);
-      
-            if (transaction.isRecurring) {
-      
-              let caseFound = false; // Add a flag to check if a switch case was met
-      
-              // Increase date based on recurrence interval
-              switch (transaction.recurrenceFrequency) {
-                case 'daily':
-                  transactionDate.setDate(transactionDate.getDate() + 1);
-                  caseFound = true;
-                  break;
-                case 'weekly':
-                  transactionDate.setDate(transactionDate.getDate() + 7);
-                  caseFound = true;
-                  break;
-                case 'monthly':
-                  transactionDate.setMonth(transactionDate.getMonth() + 1);
-                  caseFound = true;
-                  break;
-                case 'yearly':
-                  transactionDate.setFullYear(
-                    transactionDate.getFullYear() + 1
-                  );
-                  caseFound = true;
-                  break;
-                case 'given days':
-                  if (transaction.givenDays && transaction.givenDays.length > 0) {
-                    const currentDayOfWeek = transactionDate.getDay();
-                    let   closestDayOfWeek = null;
-                    let   minDaysUntilNext = Infinity;
-                
-                    for (const dayOfWeek of transaction.givenDays) {
-                      const daysUntilNext = (dayOfWeek - currentDayOfWeek + 7) % 7 || 7;
-                      if (daysUntilNext < minDaysUntilNext) {
-                        minDaysUntilNext = daysUntilNext;
-                        closestDayOfWeek = dayOfWeek;
-                      }
-                    }
-                
-                    if (closestDayOfWeek !== null) {
-                      transactionDate.setDate(transactionDate.getDate() + minDaysUntilNext);
-                      caseFound = true;
-                    }
-                  }
-                  break;
-                case 'twice monthly':
-                  const initialDate = new Date(transaction.date).getDate();
-
-                  const currentDay = transactionDate.getDate();
-                  const currentMonth = transactionDate.getMonth();
-                  const currentYear = transactionDate.getFullYear();
-                  const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-                  const daysAway = Math.abs(currentDay - initialDate);
-
-                  if (currentDay < 15) {
-                    transactionDate.setDate(currentDay + 14);
-                  } else {
-                    transactionDate.setDate(currentDay - 14);
-                    transactionDate.setMonth(currentMonth + 1);
-                  }
-
-                  if (daysAway > 10 && daysAway < 18) {
-                    if (transactionDate.getDate() < initialDate) {
-                      transactionDate.setMonth(currentMonth);
-                      transactionDate.setFullYear(currentYear);
-                      if (initialDate > daysInCurrentMonth) {
-                        transactionDate.setDate(daysInCurrentMonth);
-                      } else {
-                        transactionDate.setDate(initialDate);
-                      }
-                    }
-                  }
-                  caseFound = true;
-                  break;
-                case 'custom':
-                  if (transaction.recurrenceInterval) {
-                    switch (transaction.customIntervalType) {
-                      case 'day':
-                        transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval);
-                        caseFound = true;
-                        break;
-                      case 'week':
-                        transactionDate.setDate(transactionDate.getDate() + transaction.recurrenceInterval * 7);
-                        caseFound = true;
-                        break;
-                      case 'month':
-                        transactionDate.setMonth(transactionDate.getMonth() + transaction.recurrenceInterval);
-                        caseFound = true;
-                        break;
-                      case 'year':
-                        transactionDate.setFullYear(transactionDate.getFullYear() + transaction.recurrenceInterval);
-                        caseFound = true;
-                        break;
-                      default:
-                        break;
-                    }
-                  }
-                  break;
-                  case 'arbitrary':  
-                  if (transaction.arbitraryDates && transaction.arbitraryDates.length > 0) {
-                    if (arrayPosition < transaction.arbitraryDates.length) {
-                      transactionDate = new Date(transaction.arbitraryDates[arrayPosition]);
-                      caseFound = true;
-                      arrayPosition ++;
-                    }
-                  }
-                  break;
-                default:
-                  break;
-              }
-      
-              if (!caseFound) {
-                break;
-              }
-      
-            } else {
-              break;
-            }
+            rrule = new RRule({
+              ...rrule.options,
+              bymonthday: [28, 29, 30, 31], // Potential month days
+              bysetpos: -1 // Take the last valid one
+            });
           }
-            
+      
+          rruleSet.rrule(rrule);
+        }
+      
+        if (rdates && rdates.length > 0) {
+          rdates.forEach((dateStr: string) => rruleSet.rdate(new Date(dateStr)));
+        }
+      
+        if (transaction.exdates) {
+          transaction.exdates.forEach((exdateStr: string) => rruleSet.exdate(new Date(exdateStr)));
+        }
+
+        return rruleSet;
+      };
+      
+      const populateTransactionsOnDate = () => {
+        const today = sub(startOfDay(new Date()), { hours: 1 });
+        const farDateStartOfDay = startOfDay(new Date(farDate));
+      
+        transactions.forEach((transaction) => {
+          // Handle recurring transactions
+          let dateArray: Date[] = [];
+          if (transaction.rrule) {
+            const rruleSet = initializeRRuleSet(transaction);
+            dateArray = rruleSet.between(today, farDateStartOfDay);
+          } 
+
+          // Handle non-recurring events or bunk RRules. 
+          if ((transaction.rrule.includes('"rrule":null') 
+            && transaction.rrule.includes('"rdates":[]'))
+            || transaction.rrule === null
+            ) {
+            const startDate = startOfDay(new Date(transaction.start_date));
+              if (startDate >= today && startDate <= farDateStartOfDay) {
+                dateArray.push(startDate);
+              }
+          }
+          
+          dateArray.forEach((date) => addTransactionToTemp(tempTransactionsOnDate, date, transaction));
         });
+      
       };
 
       // Calculate interest for the current day's balance
@@ -325,6 +255,7 @@ export const projectionsSlice = createSlice({
         fromAccount                ?: Account,
         category                   ?: string,
       ) {
+
         if (!toAccount || !fromAccount) return;
 
         sumUpCategories(transaction.amount, category)
@@ -363,9 +294,9 @@ export const projectionsSlice = createSlice({
         if (!fromAccount) return;
 
         sumUpSpend(transaction.event_id, transaction.amount, dateKey);
+        
           if (fromAccount.isLiability) {
-            // TODO: THIS IS NOT RESPECTING ALLOW OVERDRAFT or any such. 
-            if (fromAccount.creditLimit) {
+            if (fromAccount.creditLimit) { // TODO: THIS IS NOT RESPECTING ALLOW OVERDRAFT or any such. 
               if (transaction.amount > fromAccount.creditLimit - tempBalanceByDateAndAccount[fromAccount.id][dateKey] && fromAccount.notifyOnAccountOverCredit && 
                 (fromAccount.type === 'credit card')) 
               {
@@ -400,18 +331,11 @@ export const projectionsSlice = createSlice({
         fromAccount                ?: Account,
         category                   ?: string,
       ) {
-        if (!toAccount) return;
 
+        if (!toAccount) return;
         sumUpSpend(transaction.event_id, transaction.amount, dateKey);
 
         if (toAccount.isLiability) {
-          if (transaction.amount > tempBalanceByDateAndAccount[toAccount.id][dateKey] && toAccount.notifyOnAccountPayoff && 
-            (toAccount.type === 'mortgage' || toAccount.type === 'loan' || toAccount.type === 'credit card')) // TODO: Gotta be a better way to do this. Maybe move this to the message panel?
-          {
-            updateAccountMessages(toAccount.id,dateKey,'accountPayoff',toAccount);
-
-          }
-          // THIS IS CORRECT. Also where I need to look into allowOverPayment and adjust accordingly. 
           tempBalanceByDateAndAccount[toAccount.id][dateKey] -= transaction.amount;
         } else {
           tempBalanceByDateAndAccount[toAccount.id][dateKey] += transaction.amount;
@@ -436,16 +360,12 @@ export const projectionsSlice = createSlice({
       let iterations = 0;
 
       while (currentDay <= calculateThruDate && iterations < maxIterations) {
-        const dateKey = currentDay.toISOString().split('T')[0];
-
-        var tempDate = new Date(dateKey);
-        tempDate.setDate(tempDate.getDate() - 1);
-        const prevDateKey = tempDate.toISOString().split('T')[0];
+        const dateKey = format(currentDay, 'yyyy-MM-dd');
+        const prevDateKey = format(addDays(currentDay, -1), 'yyyy-MM-dd');
 
         // Set start balance for each account on this date
         accounts.forEach((account) => {
-          tempBalanceByDateAndAccount[account.id][dateKey]       = 
-          tempBalanceByDateAndAccount[account.id][prevDateKey] !== undefined
+          tempBalanceByDateAndAccount[account.id][dateKey] = tempBalanceByDateAndAccount[account.id][prevDateKey] !== undefined
               ? tempBalanceByDateAndAccount[account.id][prevDateKey]
               :  account.currentBalance;
         });
@@ -573,8 +493,10 @@ export const getTransactionsByDate = (state: RootState, activeDate: string) => {
 };
 
 // Check if a date has transactions
-export const dateHasTransactions = (state: RootState, date: string) => {
-  return state.projections.transactionsOnDate[date] !== undefined || false;
+export const dateHasTransactions = (
+  projections: ProjectionsState,
+  date: string) => {
+  return projections.transactionsOnDate[date] !== undefined || false;
 };
 
 // Get categorized spend amounts
@@ -584,14 +506,14 @@ export const getCategorySpend = (state: RootState) => {
 
 // Get account balance on a specific date
 export const accountBalanceOnDate = (
-  state: RootState,
+  projections: ProjectionsState,
   accountID: string,
-  date: string
+  date     : string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const balanceByDateAndAccount = projections.balanceByDateAndAccount || {};
   const accountBalance          = balanceByDateAndAccount[accountID] || {};
 
-  const today                   = new Date(state.activeDates.today);
+  const today                   = new Date();
   const todayISOString          = today.toISOString().split('T')[0];
   const inputDate               = new Date(date);
 
@@ -605,12 +527,12 @@ export const accountBalanceOnDate = (
 
 // Get account balance on a specific date
 export const aggregateBalanceOnDate = (
-  state: RootState,
+  projections: ProjectionsState,
   date: string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const balanceByDateAndAccount = projections.balanceByDateAndAccount || {};
   
-  const today                   = new Date(state.activeDates.today);
+  const today                   = new Date();
   const todayISOString          = today.toISOString().split('T')[0];
   const inputDate               = new Date(date);
 
@@ -639,14 +561,14 @@ if (allAccounts) {
 
 // Get transactions in range.
 export const getTransactionsByRange = (
-  state     : RootState,
+  projections: ProjectionsState,
   startIndex: number,
   endIndex  : number
 ) => {
   const allTransactions: { transaction: Transaction; date: string }[] = [];
 
   // Flatten the transactionsOnDate object into a single array
-  Object.entries(state.projections.transactionsOnDate).forEach(
+  Object.entries(projections.transactionsOnDate).forEach(
     ([date, transactions]) => {
       transactions.forEach((transaction) => {
         allTransactions.push({ transaction, date });
@@ -665,7 +587,7 @@ export const getTransactionsByRange = (
 
 // Get transactions in date range.
 export const getTransactionsByDateRange = (
-  state: RootState,
+  projections: ProjectionsState,
   startDate: string,
   endDate: string
 ) => {
@@ -678,7 +600,7 @@ export const getTransactionsByDateRange = (
 
   while (currentDate <= new Date(endDate)) {
     const dateString = currentDate.toISOString().split('T')[0]; // Extract the date part of the ISO string
-    const transactionsOnDate = state.projections.transactionsOnDate[dateString];
+    const transactionsOnDate = projections.transactionsOnDate[dateString];
 
     if (transactionsOnDate) {
       const transactions: { transaction: Transaction; date: string }[] = [];
@@ -696,13 +618,13 @@ export const getTransactionsByDateRange = (
 
 // Get account balances for a date range
 export const accountBalancesByDateRange = (
-  state    : RootState,
-  accountID: string,
+  projections: ProjectionsState,
+  account  : Account,
   startDate: string,
   endDate  : string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
-  const accountBalance          = balanceByDateAndAccount[accountID] || {};
+  const balanceByDateAndAccount = projections.balanceByDateAndAccount || {};
+  const accountBalance          = balanceByDateAndAccount[account.id] || {};
   const start                   = new Date(startDate);
   const end                     = new Date(endDate);
   const balances: number[]      = [];
@@ -712,12 +634,13 @@ export const accountBalancesByDateRange = (
     balances.push(accountBalance[dateKey] || 0);
     start.setDate(start.getDate() + 1);
   }
+
   return balances;
 };
 
 // Get Spending Power for a date
 export const getSpendingPowerByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -728,11 +651,11 @@ export const getSpendingPowerByDate = (
           case 'checking':
           case 'savings':
           case 'cash':
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           case 'credit card':
             if(account.creditLimit) {
-            const availableCredit = account.creditLimit - accountBalanceOnDate(state, account.id, date);
+            const availableCredit = account.creditLimit - accountBalanceOnDate(projections, account.id, date);
             if (availableCredit > 0) {
               workingValue += availableCredit;
             }
@@ -750,7 +673,7 @@ export const getSpendingPowerByDate = (
 
 // Get Savings for a date
 export const getSavingsByDate = (
-  state: RootState,
+  projections: ProjectionsState,
   date: string
 ): number | null => {
   let workingValue = 0;
@@ -760,7 +683,7 @@ export const getSavingsByDate = (
     allAccounts.forEach((account) => {
       if (account && account.type === 'savings' && account.isSpendingPower) {
         hasRequiredAccount = true;
-        workingValue += accountBalanceOnDate(state, account.id, date);
+        workingValue += accountBalanceOnDate(projections, account.id, date);
       }
     });
   }
@@ -771,7 +694,7 @@ export const getSavingsByDate = (
 
 // Get Cash for a date
 export const getCashByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -781,7 +704,7 @@ export const getCashByDate = (
     allAccounts.forEach((account) => {
       if (account && (account.type === 'checking' || account.type === 'cash' ) && account.isSpendingPower) {
         hasRequiredAccount = true;
-        workingValue += accountBalanceOnDate(state, account.id, date);   
+        workingValue += accountBalanceOnDate(projections, account.id, date);   
       }
     })
   }
@@ -791,7 +714,7 @@ export const getCashByDate = (
 
 // Get Available Credit for a date
 export const getAvailableCreditByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -801,7 +724,7 @@ export const getAvailableCreditByDate = (
     allAccounts.forEach((account) => {
       if (account && account.type === 'credit card' && account.creditLimit) {
         hasRequiredAccount = true;
-        const availableCredit = account.creditLimit - accountBalanceOnDate(state, account.id, date);
+        const availableCredit = account.creditLimit - accountBalanceOnDate(projections, account.id, date);
         if (availableCredit > 0) {
           workingValue += availableCredit;
         }
@@ -814,7 +737,7 @@ export const getAvailableCreditByDate = (
 
 // Get Debt for a date
 export const getDebtByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -828,7 +751,7 @@ export const getDebtByDate = (
           case 'loan':
           case 'credit card':
             hasRequiredAccount = true;
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           default:
             break;
@@ -842,7 +765,7 @@ export const getDebtByDate = (
 
 // Get Credit Card Debt for a date
 export const getCreditCardDebtByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -854,7 +777,7 @@ export const getCreditCardDebtByDate = (
         switch (account.type) {
           case 'credit card':
             hasRequiredAccount = true;
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           default:
             break;
@@ -868,7 +791,7 @@ export const getCreditCardDebtByDate = (
 
 // Get Loan Debt for a date
 export const getLoanDebtByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -881,7 +804,7 @@ export const getLoanDebtByDate = (
         switch (account.type) {
           case 'loan':
             hasRequiredAccount = true;
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           default:
             break;
@@ -895,15 +818,16 @@ export const getLoanDebtByDate = (
 
 // Get Net Worth for a date
 export const getNetWorthByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
+
   date     : string
   ) => {
   let workingValue = 0;
   let hasRequiredAccount = false;
 
-  let theSavings = getSavingsByDate(state, date)
-  let theCash    = getCashByDate(state, date)
-  let theDebt    = getDebtByDate(state, date)
+  let theSavings = getSavingsByDate(projections, date)
+  let theCash    = getCashByDate(projections, date)
+  let theDebt    = getDebtByDate(projections, date)
 
   if (theSavings !== null && theCash !== null && theDebt !== null) {
     hasRequiredAccount = true;
@@ -921,24 +845,27 @@ interface Message {
   account: Account;
 }
 
-export const getAccountMessages = (state: RootState, account?: Account): Message[] => {
+export const getAccountMessages = (
+  projections: ProjectionsState,
+  account?: Account
+): Message[] => {
   const messages: Message[] = [];
 
-  if (!state.projections.accountMessages || Object.keys(state.projections.accountMessages).length === 0) {
+  if (!projections.accountMessages || Object.keys(projections.accountMessages).length === 0) {
     return messages;
   }
 
   if (account) {
     const accountId = account.id;
-    const accountMessages = state.projections.accountMessages[accountId];
+    const accountMessages = projections.accountMessages[accountId];
     if (accountMessages) {
       accountMessages.forEach((message) => {
         messages.push({ accountId, type: message.type, date: message.date, account: message.account });
       });
     }
   } else {
-    for (const accId in state.projections.accountMessages) {
-      const accountMessages = state.projections.accountMessages[accId];
+    for (const accId in projections.accountMessages) {
+      const accountMessages = projections.accountMessages[accId];
       accountMessages.forEach((message) => {
         messages.push({ accountId: accId, type: message.type, date: message.date, account: message.account });
       });
@@ -950,23 +877,22 @@ export const getAccountMessages = (state: RootState, account?: Account): Message
 
 // Get Transactions By Account
 export const getTransactionsByAccount = (
-  state: RootState,
+  projections: ProjectionsState,
   accountId?: string
 ) => {
   if (accountId) {
-    return state.projections.transactionsByAccount[accountId] || [];
+    return projections.transactionsByAccount[accountId] || [];
   } else {
-    return Object.values(state.projections.transactionsByAccount).flat();
+    return Object.values(projections.transactionsByAccount).flat();
   }
 };
 
 // Get Spend By Transactions
 export const getSpendByTransaction = (
-  state: RootState,
+  projections: ProjectionsState,
   transactionId: string
 ) => {
-    return state.projections.spendByTransaction[transactionId] || undefined;
+    return projections.spendByTransaction[transactionId] || undefined;
 };
 
 export default projectionsSlice.reducer;
-

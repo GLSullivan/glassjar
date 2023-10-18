@@ -62,9 +62,9 @@ function getNextOccurrence(dateString: string | undefined) {
 const AccountListItem: React.FC<AccountListItemProps> = React.memo(
   ({ account }) => {
     const dispatch = useDispatch();
-    const state = useSelector((state: RootState) => state);
+    const projections = useSelector((state: RootState) => state.projections);
 
-    const messages   = getAccountMessages(state, account);
+    const messages   = getAccountMessages(projections, account);
 
     function blendWithWhite(color: string, alpha: number) {
       const r = Math.floor((1 - alpha) * 255 + alpha * parseInt(color.slice(1, 3), 16));
@@ -115,7 +115,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
           />
         </div>
         <div className='glassjar__list-item__footer'>
-          <h5 className='glassjar__fill-back'><span>{getTransactionsByAccount(state, account.id).length} transaction{getTransactionsByAccount(state, account.id).length !== 1 && <>s</>}</span></h5>
+          <h5 className='glassjar__fill-back'><span>{getTransactionsByAccount(projections, account.id).length} transaction{getTransactionsByAccount(projections, account.id).length !== 1 && <>s</>}</span></h5>
         </div>
         <div
           className='glassjar__list-item__backing'

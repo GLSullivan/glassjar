@@ -24,19 +24,19 @@ import CountUp from 'react-countup';
 
 export const DayPanel: React.FC = () => {
   const graphRange = useSelector((state: RootState) => state.views.graphRange);
-  const state      = useSelector((state: RootState) => state);
+  const projections      = useSelector((state: RootState) => state.projections);
   const accounts   = useSelector(selectAllAccounts);
 
   const graphEnd        = addMonths(startOfDay(new Date()),graphRange).toISOString();
 
-  const spendingPower   = getSpendingPowerByDate(state, graphEnd)
-  const savings         = getSavingsByDate(state, graphEnd)
-  const cash            = getCashByDate(state, graphEnd)
-  const availableCredit = getAvailableCreditByDate(state, graphEnd)
-  const debt            = getDebtByDate(state, graphEnd)
-  const creditCardDebt  = getCreditCardDebtByDate(state, graphEnd)
-  const loan            = getLoanDebtByDate(state, graphEnd)
-  const netWorth        = getNetWorthByDate(state, graphEnd)
+  const spendingPower   = getSpendingPowerByDate(projections, graphEnd)
+  const savings         = getSavingsByDate(projections, graphEnd)
+  const cash            = getCashByDate(projections, graphEnd)
+  const availableCredit = getAvailableCreditByDate(projections, graphEnd)
+  const debt            = getDebtByDate(projections, graphEnd)
+  const creditCardDebt  = getCreditCardDebtByDate(projections, graphEnd)
+  const loan            = getLoanDebtByDate(projections, graphEnd)
+  const netWorth        = getNetWorthByDate(projections, graphEnd)
 
   return (
     <div className='glassjar__list glassjar__list--projections'>
@@ -69,7 +69,7 @@ export const DayPanel: React.FC = () => {
               decimals={2}
               decimal='.'
               prefix='$'
-              end={getSavingsByDate(state, graphEnd)! / 100}
+              end={getSavingsByDate(projections, graphEnd)! / 100}
               duration={2}
               preserveValue={true}
               className='glassjar__mono-spaced'
@@ -187,7 +187,7 @@ export const DayPanel: React.FC = () => {
           <AccountListItem
             key={account.id}
             account={account}
-            balance={accountBalanceOnDate(state, account.id, graphEnd)}
+            balance={accountBalanceOnDate(projections, account.id, graphEnd)}
           />
         ))}
       </div>

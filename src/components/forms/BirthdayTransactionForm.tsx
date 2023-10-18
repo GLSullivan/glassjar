@@ -100,6 +100,10 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
       event_id      : activeTransaction ? activeTransaction.event_id: new Date().toISOString(),
       category      : category,
       fromHelper    : initialFromHelper,
+      rrule              : '',
+      recurrenceInterval : 1,
+      start_date         : '',
+      givenDays          : []
     };
 
     if (activeTransaction) {

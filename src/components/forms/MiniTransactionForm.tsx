@@ -79,6 +79,10 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
       recurrenceFrequency: RecurrenceFrequency.MONTHLY,
       showInCalendar     : true,
       category           : initialCategory,
+      rrule              : '',
+      recurrenceInterval : 1,
+      start_date         : '',
+      givenDays          : []
     };
 
     dispatch(addTransaction(transactionData));

@@ -70,7 +70,7 @@ export const AccountForm: React.FC = () => {
     }
   );
 
-  const transactions = getTransactionsByAccount(state, account.id);
+  const transactions = getTransactionsByAccount(state.projections, account.id);
 
   const [initialAccountData, setInitialAccountData] = useState(
     JSON.parse(JSON.stringify(account))
@@ -189,7 +189,7 @@ export const AccountForm: React.FC = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
-  const messages = getAccountMessages(state, account);
+  const messages = getAccountMessages(state.projections, account);
 
   return (
     <div className = "glassjar__panel glassjar__panel--account">
