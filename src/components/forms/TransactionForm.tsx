@@ -103,6 +103,7 @@ console.log(target.name,target.value)
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const target = event.target;
+    console.log([target.name], target.value)
       setTransaction({ ...transaction, [target.name]: target.value });
       createRRule();
   };

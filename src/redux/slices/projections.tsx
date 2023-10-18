@@ -98,18 +98,20 @@ export const projectionsSlice = createSlice({
       
         if (rruleString) {
           let rrule = RRule.fromString(rruleString);
-          const transactionDate = new Date(transaction.start_date);
       
-          const isTrickyDate = [29, 30, 31].includes(transactionDate.getDate());
+          const isTrickyDate = [29, 30, 31].includes(new Date(transaction.start_date).getDate());
       
           // Only apply 'tricky date' logic if the frequency is either MONTHLY or YEARLY
 
           if (isTrickyDate && (rrule.options.freq === Frequency.MONTHLY || rrule.options.freq === Frequency.YEARLY)) {
+
+            
             rrule = new RRule({
               ...rrule.options,
               bymonthday: [28, 29, 30, 31], // Potential month days
               bysetpos: -1 // Take the last valid one
             });
+            console.log(">>>",transaction.transactionName,rrule,transaction)
           }
       
           rruleSet.rrule(rrule);
@@ -121,10 +123,6 @@ export const projectionsSlice = createSlice({
       
         if (transaction.exdates) {
           transaction.exdates.forEach((exdateStr: string) => rruleSet.exdate(new Date(exdateStr)));
-        }
-        if (transaction.transactionName === "Pay Apple Card") {
-
-          console.log('RRuleSet', rruleSet.toString());
         }
 
         return rruleSet;
@@ -140,36 +138,19 @@ export const projectionsSlice = createSlice({
           if (transaction.rrule) {
             const rruleSet = initializeRRuleSet(transaction);
             dateArray = rruleSet.between(today, farDateStartOfDay);
-            
-            const isEndOfMonth = rruleSet.valueOf().some(opt => opt.includes('BYMONTHDAY=31'));
-            
-            if (isEndOfMonth) {
-              // clear dateArray and manually add corrected dates
-              dateArray = [];
-              let tempDate = new Date(transaction.start_date);
-              while (tempDate <= farDateStartOfDay) {
-                const lastDayOfMonth = new Date(tempDate.getFullYear(), tempDate.getMonth() + 1, 0).getDate();
-                tempDate.setDate(lastDayOfMonth);
-                if (tempDate >= today && tempDate <= farDateStartOfDay) {
-                  dateArray.push(new Date(tempDate));
-                }
-                tempDate.setMonth(tempDate.getMonth() + 1);
-              }
-            }
-          }
-      
-          // Handle non-recurring transactions
-          if (transaction.start_date) {
-            const startDate = startOfDay(new Date(transaction.start_date));
-            if (startDate >= today && startDate <= farDateStartOfDay) {
-              dateArray.push(startDate);
-            }
-          }
+          } 
 
-          // if (transaction.transactionName === "Pay Apple Card") {
-          //   dateArray.forEach((date) => console.log(date, transaction, tempTransactionsOnDate));
-          // }
-      
+          // Handle non-recurring events or bunk RRules. 
+          if ((transaction.rrule.includes('"rrule":null') 
+            && transaction.rrule.includes('"rdates":[]'))
+            || transaction.rrule === null
+            ) {
+            const startDate = startOfDay(new Date(transaction.start_date));
+              if (startDate >= today && startDate <= farDateStartOfDay) {
+                dateArray.push(startDate);
+              }
+          }
+          
           dateArray.forEach((date) => addTransactionToTemp(tempTransactionsOnDate, date, transaction));
         });
       
