@@ -171,8 +171,8 @@ console.log(target.name,target.value)
 
   const createRRule = () => {
 
-    setTransaction({ ...transaction, ["start_date"]: transaction.date });
-    setTransaction({ ...transaction, ["end_date"]: transaction.endDate });
+    setTransaction({ ...transaction, start_date: transaction.date });
+    setTransaction({ ...transaction, end_date: transaction.endDate });
     
     let dtstartDate = new Date(transaction.start_date);
     let dtendDate = transaction.end_date ? new Date(transaction.end_date) : undefined;
