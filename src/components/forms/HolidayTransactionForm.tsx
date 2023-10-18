@@ -108,7 +108,10 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
           category      : initialCategory,
           arbitraryDates: newArbitraryDates,
           fromHelper    : initialFromHelper,
-          rrule         : ''
+          rrule         : '',
+          recurrenceInterval : 1,
+          start_date         : '',
+          givenDays          : []
         };
     
         if (activeTransaction) {

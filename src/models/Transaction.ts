@@ -12,18 +12,18 @@ export interface Transaction {
   endDate            ?: string;
 
   isRecurring         : boolean;
-  recurrenceInterval ?: number;  
+  recurrenceInterval  : number;  
   recurrenceFrequency?: RecurrenceFrequency;
   customIntervalType ?: CustomIntervalType;
 
 // New Values
-start_date?: string;    // TODO: These are most certainly NOT optional, take this out after the transition to rrule
+start_date : string;    // TODO: These are most certainly NOT optional, take this out after the transition to rrule
 end_date  ?: string;
 rrule      : string;
 exdates   ?: string[];
 
   clearedDates       ?: string[]; // TODO: Future feature for skipping instances of an event.
-  givenDays          ?: number[];
+  givenDays           : number[];
   arbitraryDates     ?: string[]; 
   
   showInCalendar      : boolean; 

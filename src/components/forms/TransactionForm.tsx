@@ -22,6 +22,9 @@ import {
 
 import './../../css/Forms.css';
 
+import { RRule, RRuleSet, Options } from 'rrule';
+
+
 interface TransactionFormProps {
   onClose               : () => void;
   initialDate          ?: string;
@@ -33,7 +36,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   initialDate,
 }) => {
   const dispatch = useDispatch();
-
   const accounts          = useSelector((state: RootState) => state.accounts.accounts);
   const activeTransaction = useSelector((state: RootState) => state.transactions.activeTransaction);
 
@@ -57,6 +59,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     type               : TransactionType.WITHDRAWAL,
     amount             : 0,
     date               : initialDate || new Date().toISOString(),
+    start_date         : initialDate || new Date().toISOString(),
     description        : '',
     isRecurring        : false,
     ends               : false,
@@ -66,6 +69,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     givenDays          : [],
     recurrenceInterval : 1,
     endDate            : '',
+    end_date           : '',
     fromAccount        : accounts[0].id,
     toAccount          : accounts[0].id,
     category           : '',
@@ -73,7 +77,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     fromHelper         : '',
     autoClear          : true,
     clearedDates       : [],
-    rrule              : ''
+    rrule              : '',
+
   };
 
   const [transaction, setTransaction] = useState<Transaction>(initialTransaction);
@@ -84,11 +89,22 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const target = event.target;
+console.log(target.name,target.value)
+
     if (target instanceof HTMLInputElement && target.type === 'checkbox') {
       setTransaction({ ...transaction, [target.name]: target.checked });
     } else {
       setTransaction({ ...transaction, [target.name]: target.value });
     }
+    // createRRule();
+  };
+
+  const handleDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const target = event.target;
+      setTransaction({ ...transaction, [target.name]: target.value });
+      createRRule();
   };
 
   const handleCurrencyChange = (
@@ -127,6 +143,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         arbitraryDates: sortedArbitraryDates,
       });
   
+      createRRule();
       return sortedArbitraryDates;
     });
   };
@@ -149,6 +166,106 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       givenDays: newGivenDays,
     });
   };
+
+
+  const createRRule = () => {
+
+    setTransaction({ ...transaction, ["start_date"]: transaction.date });
+    setTransaction({ ...transaction, ["end_date"]: transaction.endDate });
+    
+    let dtstartDate = new Date(transaction.start_date);
+    let dtendDate = transaction.end_date ? new Date(transaction.end_date) : undefined;
+
+    let options: Options = {
+      dtstart: dtstartDate,
+      until: dtendDate,
+    } as Options;
+  
+    const rruleSet = new RRuleSet();
+    let rruleString: string | null = null;
+  
+    if (transaction.recurrenceFrequency && transaction.isRecurring) {
+      switch (transaction.recurrenceFrequency) {
+        case RecurrenceFrequency.DAILY:
+          options.freq = RRule.DAILY;
+          break;
+        case RecurrenceFrequency.WEEKLY:
+          options.freq = RRule.WEEKLY;
+          break;
+        case RecurrenceFrequency.MONTHLY:
+          options.freq = RRule.MONTHLY;
+          break;
+        case RecurrenceFrequency.YEARLY:
+          options.freq = RRule.YEARLY;
+          break;
+        case RecurrenceFrequency.GIVEN_DAYS:
+          options.freq = RRule.WEEKLY;
+          options.byweekday = transaction.givenDays || undefined;
+          break;
+        case RecurrenceFrequency.TWICE_MONTHLY:
+          options.freq = RRule.MONTHLY;
+          const initialDate = dtstartDate.getDate();
+          if (initialDate <= 14) {
+            options.bymonthday = [initialDate, initialDate + 14];
+          } else {
+            options.bymonthday = [initialDate, initialDate - 14];
+          }
+          break;
+        case RecurrenceFrequency.CUSTOM:
+          options.interval=  transaction.recurrenceInterval;
+          switch (transaction.customIntervalType) {
+            case CustomIntervalType.DAY:
+              options.freq = RRule.DAILY;
+              break;
+            case CustomIntervalType.WEEK:
+              options.freq = RRule.WEEKLY;
+              break;
+            case CustomIntervalType.MONTH:
+              options.freq = RRule.MONTHLY;
+              break;
+            case CustomIntervalType.YEAR:
+              options.freq = RRule.YEARLY;
+              break;
+            default:
+              return null;
+            }
+          break;
+        case RecurrenceFrequency.ARBITRARY:
+          if (transaction.arbitraryDates) {
+            rruleSet.rdate(new Date(transaction.start_date));
+            transaction.arbitraryDates.forEach((date: string) => {
+              rruleSet.rdate(new Date(date));
+            });
+          }
+          break;
+        default:
+          return null;
+      } 
+      
+      // If end_date exists, include it in the RRULE options
+      if (dtendDate) {
+        options.until = dtendDate;
+      }
+  
+      if (transaction.recurrenceFrequency !== RecurrenceFrequency.ARBITRARY) {
+        const rrule = new RRule(options);
+        rruleString = rrule.toString();
+        rruleSet.rrule(rrule);
+      }
+
+    }
+  
+    // Serialize to JSON-compatible structure
+    const serializedSet = {
+      rrule: rruleString,
+      rdates: rruleSet.rdates().map(date => date.toISOString()),
+    };
+  
+    
+    setTransaction({ ...transaction, rrule: JSON.stringify(serializedSet) });
+  }
+
+
   
   // Error Checking
 
@@ -286,7 +403,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 id       = "date"
                 name     = "date"
                 value    = {stripTime(transaction.date)}
-                onChange = {handleChange}
+                onChange = {handleDateChange}
               />
               <label htmlFor = "date">Date:</label>
             </div>
@@ -334,6 +451,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               <label htmlFor   = "fromAccount">From Account:</label>
                 <select
                   id        = "fromAccount"
+                  name      = "fromAccount"
                   className = {errors.transfer ? 'error' : ''}
                   value     = {transaction.fromAccount}
                   onChange  = {handleChange}
@@ -353,6 +471,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               <label htmlFor   = "toAccount">To Account:</label>
                 <select
                   id        = "toAccount"
+                  name      = "toAccount"
                   className = {errors.transfer ? 'error' : ''}
                   value     = {transaction.toAccount}
                   onChange  = {handleChange}
@@ -463,7 +582,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     <div className = "glassjar__form__input-group glassjar__form__input-group--drop">
                       <select
                         id       = "customIntervalType"
-                        name       = "customIntervalType"
+                        name     = "customIntervalType"
                         value    = {transaction.customIntervalType}
                         onChange = {handleChange}
                       >
@@ -540,7 +659,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                             ? stripTime(transaction.endDate)
                             :  ''
                         }
-                        onChange = {handleChange}
+                        onChange = {handleDateChange}
                       />
                       <label htmlFor = "endDate">Transaction Ends:</label>
                     </div>

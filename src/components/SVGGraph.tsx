@@ -86,7 +86,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     colors.push(accountColors[account.color]);
     let balances = accountBalancesByDateRange(
       state,
-      account.id,
+      account,
       startDate,
       endDate
     ) as number[];
