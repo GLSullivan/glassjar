@@ -29,7 +29,7 @@ const CalendarSchedule: React.FC = () => {
 
   const activeDate                                    = useSelector((state: RootState) => state.activeDates.activeDate);
   const today                                         = useSelector((state: RootState) => state.activeDates.today);
-  const state                                         = useSelector((state: RootState) => state);
+  const projections                                   = useSelector((state: RootState) => state.projections);
   const graphRange                                    = useSelector((state: RootState) => state.views.graphRange);
 
   const headerRefs                                    = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
@@ -44,7 +44,7 @@ const CalendarSchedule: React.FC = () => {
 
     let endDate      = format(addDays(endOfMonth(parseISO(activeDate)), 10), 'yyyy-MM-dd');
     let startDate    = format(new Date(today), 'yyyy-MM-dd');
-    let transactions = getTransactionsByDateRange(state,startDate,endDate);
+    let transactions = getTransactionsByDateRange(projections,startDate,endDate);
 
     // Filter and sort transactions within each day
     const sortedAndFilteredGroupedTransactions = transactions.map(group => ({
@@ -57,7 +57,7 @@ const CalendarSchedule: React.FC = () => {
     setGroupedTransactions(sortedAndFilteredGroupedTransactions); // Update the state with sorted and filtered transactions
     setLoading(false);
 
-  }, [activeDate, today, state]);
+  }, [activeDate, today, projections]);
 
   // Find the date closest to the top of the container
   const getClosestDataDate = () => {

@@ -111,7 +111,6 @@ export const projectionsSlice = createSlice({
               bymonthday: [28, 29, 30, 31], // Potential month days
               bysetpos: -1 // Take the last valid one
             });
-            console.log(">>>",transaction.transactionName,rrule,transaction)
           }
       
           rruleSet.rrule(rrule);
@@ -494,8 +493,10 @@ export const getTransactionsByDate = (state: RootState, activeDate: string) => {
 };
 
 // Check if a date has transactions
-export const dateHasTransactions = (state: RootState, date: string) => {
-  return state.projections.transactionsOnDate[date] !== undefined || false;
+export const dateHasTransactions = (
+  projections: ProjectionsState,
+  date: string) => {
+  return projections.transactionsOnDate[date] !== undefined || false;
 };
 
 // Get categorized spend amounts
@@ -505,14 +506,14 @@ export const getCategorySpend = (state: RootState) => {
 
 // Get account balance on a specific date
 export const accountBalanceOnDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   accountID: string,
   date     : string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const balanceByDateAndAccount = projections.balanceByDateAndAccount || {};
   const accountBalance          = balanceByDateAndAccount[accountID] || {};
 
-  const today                   = new Date(state.activeDates.today);
+  const today                   = new Date();
   const todayISOString          = today.toISOString().split('T')[0];
   const inputDate               = new Date(date);
 
@@ -526,12 +527,12 @@ export const accountBalanceOnDate = (
 
 // Get account balance on a specific date
 export const aggregateBalanceOnDate = (
-  state: RootState,
+  projections: ProjectionsState,
   date: string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const balanceByDateAndAccount = projections.balanceByDateAndAccount || {};
   
-  const today                   = new Date(state.activeDates.today);
+  const today                   = new Date();
   const todayISOString          = today.toISOString().split('T')[0];
   const inputDate               = new Date(date);
 
@@ -560,14 +561,14 @@ if (allAccounts) {
 
 // Get transactions in range.
 export const getTransactionsByRange = (
-  state     : RootState,
+  projections: ProjectionsState,
   startIndex: number,
   endIndex  : number
 ) => {
   const allTransactions: { transaction: Transaction; date: string }[] = [];
 
   // Flatten the transactionsOnDate object into a single array
-  Object.entries(state.projections.transactionsOnDate).forEach(
+  Object.entries(projections.transactionsOnDate).forEach(
     ([date, transactions]) => {
       transactions.forEach((transaction) => {
         allTransactions.push({ transaction, date });
@@ -586,7 +587,7 @@ export const getTransactionsByRange = (
 
 // Get transactions in date range.
 export const getTransactionsByDateRange = (
-  state: RootState,
+  projections: ProjectionsState,
   startDate: string,
   endDate: string
 ) => {
@@ -599,7 +600,7 @@ export const getTransactionsByDateRange = (
 
   while (currentDate <= new Date(endDate)) {
     const dateString = currentDate.toISOString().split('T')[0]; // Extract the date part of the ISO string
-    const transactionsOnDate = state.projections.transactionsOnDate[dateString];
+    const transactionsOnDate = projections.transactionsOnDate[dateString];
 
     if (transactionsOnDate) {
       const transactions: { transaction: Transaction; date: string }[] = [];
@@ -617,12 +618,12 @@ export const getTransactionsByDateRange = (
 
 // Get account balances for a date range
 export const accountBalancesByDateRange = (
-  state    : RootState,
+  projections: ProjectionsState,
   account  : Account,
   startDate: string,
   endDate  : string
 ) => {
-  const balanceByDateAndAccount = state.projections.balanceByDateAndAccount || {};
+  const balanceByDateAndAccount = projections.balanceByDateAndAccount || {};
   const accountBalance          = balanceByDateAndAccount[account.id] || {};
   const start                   = new Date(startDate);
   const end                     = new Date(endDate);
@@ -639,7 +640,7 @@ export const accountBalancesByDateRange = (
 
 // Get Spending Power for a date
 export const getSpendingPowerByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -650,11 +651,11 @@ export const getSpendingPowerByDate = (
           case 'checking':
           case 'savings':
           case 'cash':
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           case 'credit card':
             if(account.creditLimit) {
-            const availableCredit = account.creditLimit - accountBalanceOnDate(state, account.id, date);
+            const availableCredit = account.creditLimit - accountBalanceOnDate(projections, account.id, date);
             if (availableCredit > 0) {
               workingValue += availableCredit;
             }
@@ -672,7 +673,7 @@ export const getSpendingPowerByDate = (
 
 // Get Savings for a date
 export const getSavingsByDate = (
-  state: RootState,
+  projections: ProjectionsState,
   date: string
 ): number | null => {
   let workingValue = 0;
@@ -682,7 +683,7 @@ export const getSavingsByDate = (
     allAccounts.forEach((account) => {
       if (account && account.type === 'savings' && account.isSpendingPower) {
         hasRequiredAccount = true;
-        workingValue += accountBalanceOnDate(state, account.id, date);
+        workingValue += accountBalanceOnDate(projections, account.id, date);
       }
     });
   }
@@ -693,7 +694,7 @@ export const getSavingsByDate = (
 
 // Get Cash for a date
 export const getCashByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -703,7 +704,7 @@ export const getCashByDate = (
     allAccounts.forEach((account) => {
       if (account && (account.type === 'checking' || account.type === 'cash' ) && account.isSpendingPower) {
         hasRequiredAccount = true;
-        workingValue += accountBalanceOnDate(state, account.id, date);   
+        workingValue += accountBalanceOnDate(projections, account.id, date);   
       }
     })
   }
@@ -713,7 +714,7 @@ export const getCashByDate = (
 
 // Get Available Credit for a date
 export const getAvailableCreditByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -723,7 +724,7 @@ export const getAvailableCreditByDate = (
     allAccounts.forEach((account) => {
       if (account && account.type === 'credit card' && account.creditLimit) {
         hasRequiredAccount = true;
-        const availableCredit = account.creditLimit - accountBalanceOnDate(state, account.id, date);
+        const availableCredit = account.creditLimit - accountBalanceOnDate(projections, account.id, date);
         if (availableCredit > 0) {
           workingValue += availableCredit;
         }
@@ -736,7 +737,7 @@ export const getAvailableCreditByDate = (
 
 // Get Debt for a date
 export const getDebtByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -750,7 +751,7 @@ export const getDebtByDate = (
           case 'loan':
           case 'credit card':
             hasRequiredAccount = true;
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           default:
             break;
@@ -764,7 +765,7 @@ export const getDebtByDate = (
 
 // Get Credit Card Debt for a date
 export const getCreditCardDebtByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -776,7 +777,7 @@ export const getCreditCardDebtByDate = (
         switch (account.type) {
           case 'credit card':
             hasRequiredAccount = true;
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           default:
             break;
@@ -790,7 +791,7 @@ export const getCreditCardDebtByDate = (
 
 // Get Loan Debt for a date
 export const getLoanDebtByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
   date     : string
   ) => {
   let workingValue = 0;
@@ -803,7 +804,7 @@ export const getLoanDebtByDate = (
         switch (account.type) {
           case 'loan':
             hasRequiredAccount = true;
-            workingValue += accountBalanceOnDate(state, account.id, date);
+            workingValue += accountBalanceOnDate(projections, account.id, date);
             break;
           default:
             break;
@@ -817,15 +818,16 @@ export const getLoanDebtByDate = (
 
 // Get Net Worth for a date
 export const getNetWorthByDate = (
-  state    : RootState,
+  projections: ProjectionsState,
+
   date     : string
   ) => {
   let workingValue = 0;
   let hasRequiredAccount = false;
 
-  let theSavings = getSavingsByDate(state, date)
-  let theCash    = getCashByDate(state, date)
-  let theDebt    = getDebtByDate(state, date)
+  let theSavings = getSavingsByDate(projections, date)
+  let theCash    = getCashByDate(projections, date)
+  let theDebt    = getDebtByDate(projections, date)
 
   if (theSavings !== null && theCash !== null && theDebt !== null) {
     hasRequiredAccount = true;
@@ -843,24 +845,27 @@ interface Message {
   account: Account;
 }
 
-export const getAccountMessages = (state: RootState, account?: Account): Message[] => {
+export const getAccountMessages = (
+  projections: ProjectionsState,
+  account?: Account
+): Message[] => {
   const messages: Message[] = [];
 
-  if (!state.projections.accountMessages || Object.keys(state.projections.accountMessages).length === 0) {
+  if (!projections.accountMessages || Object.keys(projections.accountMessages).length === 0) {
     return messages;
   }
 
   if (account) {
     const accountId = account.id;
-    const accountMessages = state.projections.accountMessages[accountId];
+    const accountMessages = projections.accountMessages[accountId];
     if (accountMessages) {
       accountMessages.forEach((message) => {
         messages.push({ accountId, type: message.type, date: message.date, account: message.account });
       });
     }
   } else {
-    for (const accId in state.projections.accountMessages) {
-      const accountMessages = state.projections.accountMessages[accId];
+    for (const accId in projections.accountMessages) {
+      const accountMessages = projections.accountMessages[accId];
       accountMessages.forEach((message) => {
         messages.push({ accountId: accId, type: message.type, date: message.date, account: message.account });
       });
@@ -872,22 +877,22 @@ export const getAccountMessages = (state: RootState, account?: Account): Message
 
 // Get Transactions By Account
 export const getTransactionsByAccount = (
-  state: RootState,
+  projections: ProjectionsState,
   accountId?: string
 ) => {
   if (accountId) {
-    return state.projections.transactionsByAccount[accountId] || [];
+    return projections.transactionsByAccount[accountId] || [];
   } else {
-    return Object.values(state.projections.transactionsByAccount).flat();
+    return Object.values(projections.transactionsByAccount).flat();
   }
 };
 
 // Get Spend By Transactions
 export const getSpendByTransaction = (
-  state: RootState,
+  projections: ProjectionsState,
   transactionId: string
 ) => {
-    return state.projections.spendByTransaction[transactionId] || undefined;
+    return projections.spendByTransaction[transactionId] || undefined;
 };
 
 export default projectionsSlice.reducer;

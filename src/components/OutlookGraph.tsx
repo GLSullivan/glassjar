@@ -13,7 +13,6 @@ const OutlookGraph: React.FC = () => {
   const accounts   = useSelector((state: RootState) => state.accounts.accounts);
   const today      = useSelector((state: RootState) => state.activeDates.today);
   const graphRange = useSelector((state: RootState) => state.views.graphRange);
-  const state      = useSelector((state: RootState) => state);
 
   const [graphingAccounts, setGraphingAccounts] = useState<Account[]>([]);
 
@@ -28,7 +27,7 @@ const OutlookGraph: React.FC = () => {
 
     setGraphingAccounts(tempGraphingAccounts);
       // eslint-disable-next-line
-  }, [activeDate, accounts, state, graphRange, today]);
+  }, [activeDate, accounts, graphRange, today]);
 
   if (accounts.length === 0) {
     return (

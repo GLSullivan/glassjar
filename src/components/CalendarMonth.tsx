@@ -39,7 +39,7 @@ const CalendarMonth: React.FC = () => {
   const activeDate   = useSelector((state: RootState) => state.activeDates.activeDate);
   const today        = useSelector((state: RootState) => state.activeDates.today);
   const calendarView = useSelector((state: RootState) => state.views.calendarView);
-  const state        = useSelector((state: RootState) => state);
+  const projections  = useSelector((state: RootState) => state.projections);
   const graphRange   = useSelector((state: RootState) => state.views.graphRange);
   
   const showCalendar: boolean = false; // TODO: Make this a user pref or use it to toggle.
@@ -173,7 +173,7 @@ const CalendarMonth: React.FC = () => {
                       isToday        = {isSameDay(day, new Date(today))}
                       isActive       = {isSameDay(day, new Date(activeDate))}
                       hasTransaction = {
-                        dateHasTransactions(state, day.toISOString().slice(0, 10))
+                        dateHasTransactions(projections, day.toISOString().slice(0, 10))
                       }
                     />
                   );

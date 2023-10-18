@@ -39,7 +39,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
   hideStartEnd,
   hideMonth
 }) => {
-  const state    = useSelector((state: RootState) => state);
+  const projections    = useSelector((state: RootState) => state.projections);
   const dispatch = useDispatch();
 
   const graphRange = useSelector((state: RootState) => state.views.graphRange);
@@ -78,14 +78,14 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
     return () => {
       window.removeEventListener('resize', updateDimensions);
     };
-  }, [containerRef, state]);
+  }, [containerRef, projections]);
 
   const accountBalances: number[][] = [];
 
   for (const account of accounts) {
     colors.push(accountColors[account.color]);
     let balances = accountBalancesByDateRange(
-      state,
+      projections,
       account,
       startDate,
       endDate

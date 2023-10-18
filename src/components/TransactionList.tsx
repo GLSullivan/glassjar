@@ -35,7 +35,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     collapseControl, 
   }) => {
   const dispatch = useDispatch();
-  const state    = useSelector((state: RootState) => state);
+  const projections    = useSelector((state: RootState) => state.projections);
 
   const reduxTransactions = useSelector(
     (state: RootState) => state.transactions.transactions
@@ -128,15 +128,15 @@ const TransactionList: React.FC<TransactionListProps> = ({
           break;
           case 7: // Annual Spend High to Low
           filteredTransactions.sort((a, b) => {
-            const spendA = getSpendByTransaction(state, a.event_id) || 0;
-            const spendB = getSpendByTransaction(state, b.event_id) || 0;
+            const spendA = getSpendByTransaction(projections, a.event_id) || 0;
+            const spendB = getSpendByTransaction(projections, b.event_id) || 0;
             return spendB - spendA;
           });
           break;
         case 8: // Annual Spend Low to High
           filteredTransactions.sort((a, b) => {
-            const spendA = getSpendByTransaction(state, a.event_id) || 0;
-            const spendB = getSpendByTransaction(state, b.event_id) || 0;
+            const spendA = getSpendByTransaction(projections, a.event_id) || 0;
+            const spendB = getSpendByTransaction(projections, b.event_id) || 0;
             return spendA - spendB;
           });
           break;
