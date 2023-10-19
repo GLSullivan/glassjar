@@ -22,7 +22,9 @@ import {
 
 import './../../css/Forms.css';
 
-import { RRule, RRuleSet, Options } from 'rrule';
+import { createRRule } from '../../utils/createRRule';
+
+import { format, parseISO } from 'date-fns'
 
 
 interface TransactionFormProps {
@@ -58,8 +60,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     event_id           : new Date().toISOString(),
     type               : TransactionType.WITHDRAWAL,
     amount             : 0,
-    date               : initialDate || new Date().toISOString(),
-    start_date         : initialDate || new Date().toISOString(),
+    start_date               : initialDate || new Date().toISOString(),
     description        : '',
     isRecurring        : false,
     ends               : false,
@@ -68,7 +69,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     customIntervalType : CustomIntervalType.DAY,
     givenDays          : [],
     recurrenceInterval : 1,
-    endDate            : '',
     end_date           : '',
     fromAccount        : accounts[0].id,
     toAccount          : accounts[0].id,
@@ -78,7 +78,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     autoClear          : true,
     clearedDates       : [],
     rrule              : '',
-
   };
 
   const [transaction, setTransaction] = useState<Transaction>(initialTransaction);
@@ -89,23 +88,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const target = event.target;
-console.log(target.name,target.value)
 
     if (target instanceof HTMLInputElement && target.type === 'checkbox') {
       setTransaction({ ...transaction, [target.name]: target.checked });
     } else {
       setTransaction({ ...transaction, [target.name]: target.value });
     }
-    // createRRule();
   };
 
   const handleDateChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const target = event.target;
-    console.log([target.name], target.value)
       setTransaction({ ...transaction, [target.name]: target.value });
-      createRRule();
   };
 
   const handleCurrencyChange = (
@@ -144,7 +139,6 @@ console.log(target.name,target.value)
         arbitraryDates: sortedArbitraryDates,
       });
   
-      createRRule();
       return sortedArbitraryDates;
     });
   };
@@ -167,106 +161,6 @@ console.log(target.name,target.value)
       givenDays: newGivenDays,
     });
   };
-
-
-  const createRRule = () => {
-
-    setTransaction({ ...transaction, start_date: transaction.date });
-    setTransaction({ ...transaction, end_date: transaction.endDate });
-    
-    let dtstartDate = new Date(transaction.start_date);
-    let dtendDate = transaction.end_date ? new Date(transaction.end_date) : undefined;
-
-    let options: Options = {
-      dtstart: dtstartDate,
-      until: dtendDate,
-    } as Options;
-  
-    const rruleSet = new RRuleSet();
-    let rruleString: string | null = null;
-  
-    if (transaction.recurrenceFrequency && transaction.isRecurring) {
-      switch (transaction.recurrenceFrequency) {
-        case RecurrenceFrequency.DAILY:
-          options.freq = RRule.DAILY;
-          break;
-        case RecurrenceFrequency.WEEKLY:
-          options.freq = RRule.WEEKLY;
-          break;
-        case RecurrenceFrequency.MONTHLY:
-          options.freq = RRule.MONTHLY;
-          break;
-        case RecurrenceFrequency.YEARLY:
-          options.freq = RRule.YEARLY;
-          break;
-        case RecurrenceFrequency.GIVEN_DAYS:
-          options.freq = RRule.WEEKLY;
-          options.byweekday = transaction.givenDays || undefined;
-          break;
-        case RecurrenceFrequency.TWICE_MONTHLY:
-          options.freq = RRule.MONTHLY;
-          const initialDate = dtstartDate.getDate();
-          if (initialDate <= 14) {
-            options.bymonthday = [initialDate, initialDate + 14];
-          } else {
-            options.bymonthday = [initialDate, initialDate - 14];
-          }
-          break;
-        case RecurrenceFrequency.CUSTOM:
-          options.interval=  transaction.recurrenceInterval;
-          switch (transaction.customIntervalType) {
-            case CustomIntervalType.DAY:
-              options.freq = RRule.DAILY;
-              break;
-            case CustomIntervalType.WEEK:
-              options.freq = RRule.WEEKLY;
-              break;
-            case CustomIntervalType.MONTH:
-              options.freq = RRule.MONTHLY;
-              break;
-            case CustomIntervalType.YEAR:
-              options.freq = RRule.YEARLY;
-              break;
-            default:
-              return null;
-            }
-          break;
-        case RecurrenceFrequency.ARBITRARY:
-          if (transaction.arbitraryDates) {
-            rruleSet.rdate(new Date(transaction.start_date));
-            transaction.arbitraryDates.forEach((date: string) => {
-              rruleSet.rdate(new Date(date));
-            });
-          }
-          break;
-        default:
-          return null;
-      } 
-      
-      // If end_date exists, include it in the RRULE options
-      if (dtendDate) {
-        options.until = dtendDate;
-      }
-  
-      if (transaction.recurrenceFrequency !== RecurrenceFrequency.ARBITRARY) {
-        const rrule = new RRule(options);
-        rruleString = rrule.toString();
-        rruleSet.rrule(rrule);
-      }
-
-    }
-  
-    // Serialize to JSON-compatible structure
-    const serializedSet = {
-      rrule: rruleString,
-      rdates: rruleSet.rdates().map(date => date.toISOString()),
-    };
-  
-    
-    setTransaction({ ...transaction, rrule: JSON.stringify(serializedSet) });
-  }
-
-
   
   // Error Checking
 
@@ -335,14 +229,22 @@ console.log(target.name,target.value)
 
   const handleSave = () => {
     if (saveReady) {
-      if (activeTransaction) {
-        dispatch(updateTransaction(transaction));
-      } else {
-        dispatch(addTransaction(transaction));
-      }
-      onClose();
+      createRRule(transaction, (newRule) => {
+        const updatedTransaction = { ...transaction, rrule: newRule };
+        setTransaction(updatedTransaction);
+  
+        if (activeTransaction) {
+          dispatch(updateTransaction(updatedTransaction));
+        } else {
+          dispatch(addTransaction(updatedTransaction));
+        }
+  
+        onClose();
+      });
     }
   };
+  
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -401,9 +303,9 @@ console.log(target.name,target.value)
             <div className = "glassjar__form__input-group glassjar__form__input-group--date">
               <input
                 type     = "date"
-                id       = "date"
-                name     = "date"
-                value    = {stripTime(transaction.date)}
+                id       = "start_date"
+                name     = "start_date"
+                value    = {format(parseISO(transaction.start_date), 'yyyy-MM-dd')}
                 onChange = {handleDateChange}
               />
               <label htmlFor = "date">Date:</label>
@@ -653,16 +555,16 @@ console.log(target.name,target.value)
                     <div className = "glassjar__form__input-group">
                       <input
                         type  = "date"
-                        id    = "endDate"
-                        name  = "endDate"
+                        id    = "end_date"
+                        name  = "end_date"
                         value = {
-                          transaction.endDate
-                            ? stripTime(transaction.endDate)
+                          transaction.end_date
+                            ? stripTime(transaction.end_date)
                             :  ''
                         }
                         onChange = {handleDateChange}
                       />
-                      <label htmlFor = "endDate">Transaction Ends:</label>
+                      <label htmlFor = "end_date">Transaction Ends:</label>
                     </div>
                   </div>
                 </div>

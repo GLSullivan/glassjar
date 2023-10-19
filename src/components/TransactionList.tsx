@@ -19,13 +19,13 @@ interface TransactionListProps {
 }
 
 type FilterOption = {
-  id: number;
+  id   : number;
   label: string;
-  type: TransactionType;
+  type : TransactionType;
 };
 
 type SortOption = {
-  id: number;
+  id   : number;
   label: string;
 };
 
@@ -34,8 +34,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
     isCollapsible,
     collapseControl, 
   }) => {
-  const dispatch = useDispatch();
-  const projections    = useSelector((state: RootState) => state.projections);
+  const dispatch    = useDispatch();
+  const projections = useSelector((state: RootState) => state.projections);
 
   const reduxTransactions = useSelector(
     (state: RootState) => state.transactions.transactions
@@ -69,7 +69,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
   const handleCheckboxChange = (optionId: number) => {
     const updatedFilter = filter.includes(optionId)
       ? filter.filter((id) => id !== optionId)
-      : [...filter, optionId];
+      :  [...filter, optionId];
 
     setFilter(updatedFilter);
   };
@@ -87,65 +87,65 @@ const TransactionList: React.FC<TransactionListProps> = ({
   const applyFilterAndSort = () => {
     let filteredTransactions = allTransactions;
 
-    // Apply filter
+      // Apply filter
     if (filter.length > 0) {
       filteredTransactions = filteredTransactions.filter((t) => {
         const option = options.find((o) => o.type === t.type);
-        return option ? filter.includes(option.id) : false;
+        return option ? filter.includes(option.id): false;
       });
     }
 
-    // Apply sort
+      // Apply sort
     if (sort) {
       filteredTransactions = filteredTransactions.slice();
 
       switch (sort) {
-        case 1: // Alphabetically
+        case 1:   // Alphabetically
           filteredTransactions.sort((a, b) =>
             a.transactionName.localeCompare(b.transactionName)
           );
           break;
-        case 2: // Amount High to Low
+        case 2:   // Amount High to Low
           filteredTransactions.sort((a, b) => b.amount - a.amount);
           break;
-        case 3: // Amount Low to High
+        case 3:   // Amount Low to High
           filteredTransactions.sort((a, b) => a.amount - b.amount);
           break;
-        case 4: // Account To
+        case 4:   // Account To
           filteredTransactions.sort((a, b) =>
             (a.toAccount || '').localeCompare(b.toAccount || '')
           );
           break;
-        case 5: // Account From
+        case 5:   // Account From
           filteredTransactions.sort((a, b) =>
             (a.fromAccount || '').localeCompare(b.fromAccount || '')
           );
           break;
-        case 6: // Category
+        case 6:   // Category
           filteredTransactions.sort((a, b) =>
             (a.category || '').localeCompare(b.category || '')
           );
           break;
-          case 7: // Annual Spend High to Low
+          case 7:   // Annual Spend High to Low
           filteredTransactions.sort((a, b) => {
             const spendA = getSpendByTransaction(projections, a.event_id) || 0;
             const spendB = getSpendByTransaction(projections, b.event_id) || 0;
             return spendB - spendA;
           });
           break;
-        case 8: // Annual Spend Low to High
+        case 8:   // Annual Spend Low to High
           filteredTransactions.sort((a, b) => {
             const spendA = getSpendByTransaction(projections, a.event_id) || 0;
             const spendB = getSpendByTransaction(projections, b.event_id) || 0;
             return spendA - spendB;
           });
           break;
-        default:
+        default: 
           break;
       }
     }
 
-    // Apply search
+      // Apply search
     if (search) {
       filteredTransactions = filteredTransactions.filter((t) =>
         t.transactionName.toLowerCase().includes(search.toLowerCase())
@@ -157,67 +157,67 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
   useEffect(() => {
     applyFilterAndSort();
-    // eslint-disable-next-line
+      // eslint-disable-next-line
   }, [filter, sort, search, allTransactions]);
 
   return (
-    <div className='glassjar__transaction-list'>
+    <div className = 'glassjar__transaction-list'>
       {allTransactions.length > 3 &&
-        <div className='glassjar__transaction-list__header'>
+        <div className = 'glassjar__transaction-list__header'>
 
-          <div className='glassjar__search-sort'>
-            <div className='glassjar__search-sort__field  glassjar__form__input-group'>
+          <div className = 'glassjar__search-sort'>
+          <div className = 'glassjar__search-sort__field  glassjar__form__input-group'>
               <input
-                type='text'
-                id='searchTerm'
-                placeholder='Search...'
-                value={search || ''}
-                onChange={(event) => handleSearchChange(event.target.value)}
+                type        = 'text'
+                id          = 'searchTerm'
+                placeholder = 'Search...'
+                value       = {search || ''}
+                onChange    = {(event) => handleSearchChange(event.target.value)}
               />
-              <label htmlFor='searchTerm'>Search...</label>
+              <label htmlFor = 'searchTerm'>Search...</label>
               {search !== '' && (
                 <div
-                  className='glassjar__search-sort__field-clear'
-                  onClick={() => handleSearchChange('')}
+                  className = 'glassjar__search-sort__field-clear'
+                  onClick   = {() => handleSearchChange('')}
                 >
-                  <i className='fa-solid fa-circle-x' />
+                  <i className = 'fa-solid fa-circle-x' />
                 </div>
               )}
             </div>
-            <Menu className='glassjar__sort-menu'>
+            <Menu className = 'glassjar__sort-menu'>
               <Menu.Button>
-                <i className='fa-regular fa-bars-filter' />
+                <i className = 'fa-regular fa-bars-filter' />
               </Menu.Button>
               <Menu.Body>
                 <p>Sort Transactions</p>
-                <div className='glassjar__form__input-group glassjar__form__input-group--drop'>
-                  <select value={sort || ''} onChange={handleSortChange} id='sort'>
-                    <option value=''>None</option>
+                <div    className = 'glassjar__form__input-group glassjar__form__input-group--drop'>
+                <select value     = {sort || ''} onChange = {handleSortChange} id = 'sort'>
+                <option value     = ''>None</option>
                     {sortOptions.map((option) => (
-                      <option key={option.id} value={option.id}>
+                      <option key = {option.id} value = {option.id}>
                         {option.label}
                       </option>
                     ))}
                   </select>
-                    <label htmlFor='sort'>Sort:</label>
+                    <label htmlFor = 'sort'>Sort:</label>
                 </div>
                 <br />
                 <p>Show Only</p>
-                <div className='glassjar__sort-menu__filter'>
+                <div className = 'glassjar__sort-menu__filter'>
                   {options.map((option) => (
-                    <div key={option.id} className='glassjar__form__input-group glassjar__form__input-group--check'>
+                    <div key = {option.id} className = 'glassjar__form__input-group glassjar__form__input-group--check'>
                       <input
-                        type='checkbox'
-                        className='glassjar__checkbox'
-                        value={option.id}
-                        checked={filter.includes(option.id)}
-                        // defaultChecked
-                        id={'filter' + option.id}
-                        onChange={() =>
+                        type      = 'checkbox'
+                        className = 'glassjar__checkbox'
+                        value     = {option.id}
+                        checked   = {filter.includes(option.id)}
+                          // defaultChecked
+                        id       = {'filter' + option.id}
+                        onChange = {() =>
                           option.id && handleCheckboxChange(option.id)
                         }
                       />
-                      <label htmlFor={'filter' + option.id}>{option.label}</label>
+                      <label htmlFor = {'filter' + option.id}>{option.label}</label>
                     </div>
                   ))}
                 </div>
@@ -227,27 +227,27 @@ const TransactionList: React.FC<TransactionListProps> = ({
         </div>
       }
 
-      <div className='glassjar__transaction-view glassjar__flex glassjar__flex--column glassjar__flex--tight'>
+      <div className = 'glassjar__transaction-view glassjar__flex glassjar__flex--column glassjar__flex--tight'>
         {transactions.slice(0, 3).map((transaction) => (
           <TransactionListItem
-            key={transaction.event_id}
-            transaction={transaction}
-            showSearch={true}
+            key          = {transaction.event_id}
+            transaction  = {transaction}
+            showSearch   = {true}
           />
         ))}
 
         {isCollapsible && (
           <div
             className={`glassjar__auto-height glassjar__auto-height--top ${
-              collapseControl ? 'open' : ''
+              collapseControl ? 'open': ''
             }`}
           >
-            <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
+            <div className = 'glassjar__flex glassjar__flex--column glassjar__flex--tight'>
               {transactions.slice(3).map((transaction) => (
                 <TransactionListItem
-                  key={transaction.event_id}
-                  transaction={transaction}
-                  showSearch={true}
+                  key         = {transaction.event_id}
+                  transaction = {transaction}
+                  showSearch  = {true}
                 />
               ))}
               </div>
@@ -257,9 +257,9 @@ const TransactionList: React.FC<TransactionListProps> = ({
         {!isCollapsible &&
           transactions.slice(3).map((transaction) => (
             <TransactionListItem
-              key={transaction.event_id}
-              transaction={transaction}
-              showSearch={true}
+              key         = {transaction.event_id}
+              transaction = {transaction}
+              showSearch  = {true}
             />
           ))}
       </div>

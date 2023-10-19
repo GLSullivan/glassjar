@@ -210,8 +210,9 @@ const CalendarSchedule: React.FC = () => {
                 <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                   {group.transactions.map(({ transaction }, transactionIndex) => (
                     <TransactionListItem
-                      key={`${groupIndex}-${transactionIndex}`}
-                      transaction={transaction}
+                      key          = {`${groupIndex}-${transactionIndex}`}
+                      transaction  = {transaction}
+                      instanceDate = {group.date}
                     />
                   ))}
                 </div>
