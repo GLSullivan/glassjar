@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React                        from 'react';
 
-import { setActiveTransaction }     from './../redux/slices/transactions';
+import { setActiveTransaction, updateTransaction }     from './../redux/slices/transactions';
 import { openTransactionModal }     from './../redux/slices/modals';
 
 import { solidTransparentColor }    from './../utils/solidTransparentColor';
@@ -14,8 +14,9 @@ import { SwipeElement }             from './SwipeElement';
 import './../css/ListItems.css';
 
 interface TransactionListItem {
-  transaction : Transaction;
-  showSearch ?: boolean;
+  transaction  : Transaction;
+  showSearch  ?: boolean;
+  instanceDate?: string;
 }
 
 const transactionTypeIcons = {
@@ -26,7 +27,7 @@ const transactionTypeIcons = {
 };
 
 const CalendarDay: React.FC<TransactionListItem> = React.memo(
-  ({ transaction, showSearch = false }) => {
+  ({ transaction, showSearch = false, instanceDate = undefined }) => {
     const dispatch     = useDispatch();
     const activeSearch = useSelector((state: RootState) => state.search.search);
     const accounts     = useSelector((state: RootState) => state.accounts.accounts);
@@ -111,16 +112,33 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     const annualSpend = getSpendByTransaction(projections, transaction.event_id);
 
     const handleClear = () => {
-        // TODO: Make this actually clear!
-      console.log('Cleared!');
-        // const newSnoozedMessage = { messageType: message.type, date: startOfDay(new Date()).toISOString() };
-
-        // dispatch(updateSnoozedMessages({ id: account.id, newSnoozedMessage }));
+      // Assuming instanceDate is already in scope (and is not undefined)
+      // Assuming transaction is obtained from some state or prop
+      const existingExdates = transaction.exdates || []; // Fallback to an empty array if exdates is not defined
+    
+      // Add instanceDate to existing exdates and filter out undefined values
+      const updatedExdates = Array.from(
+        new Set([
+          ...existingExdates,
+          instanceDate,
+        ].filter((date): date is string => date !== undefined))
+      );
+    
+      // Update the transaction with new exdates
+      const updatedTransaction: Transaction = {
+        ...transaction,
+        exdates: updatedExdates,
+      };
+    
+      // Dispatch the action to update the transaction
+      dispatch(updateTransaction(updatedTransaction));
+    
+      console.log('Cleared!', updatedTransaction);
     };
 
     return (
       <div className='glassjar__list-item__transaction'>
-        <SwipeElement>
+        <SwipeElement disabled={instanceDate === undefined}>
           <div
               className = "glassjar__list-item"
               onClick   = {() => {
@@ -205,6 +223,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
                       /yr
                     </h5>
                   )}
+                  {instanceDate && <h5>{instanceDate}</h5>}
                 </div>
               )}
             </div>

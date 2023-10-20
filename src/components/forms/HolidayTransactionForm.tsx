@@ -60,7 +60,7 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
     const [amount, setAmount]                                   = useState(activeTransaction?.amount || initialAmount);
 
     const transactionName     = activeTransaction?.transactionName || initialName;
-    const date                = activeTransaction?.date ? new Date(activeTransaction.date).toISOString() :
+    const date                = activeTransaction?.start_date ? new Date(activeTransaction.start_date).toISOString() :
                                     initialDate                  ? new Date(initialDate).toISOString()                 : 
                                     initialArbitraryDates.length > 0 ? new Date(initialArbitraryDates[0]).toISOString(): 
                                     '';
@@ -69,7 +69,7 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
     const toAccount           = activeTransaction?.toAccount || accounts[0].id;
     const description         = activeTransaction?.description || '';
     const isRecurring         = activeTransaction?.isRecurring || true;
-    const endDate             = activeTransaction?.endDate || '';
+    const endDate             = activeTransaction?.end_date || '';
     let   recurrenceFrequency = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
     const customIntervalType  = activeTransaction?.customIntervalType || CustomIntervalType.WEEK;
     let   arbitraryDates      = activeTransaction?.arbitraryDates || initialArbitraryDates;
@@ -99,18 +99,17 @@ const HolidayTransactionForm: React.FC<HolidayTransactionFormProps> = ({
           isRecurring,
           recurrenceFrequency,
           customIntervalType,
-          date          : isoDate,
+          start_date    : isoDate,
           fromAccount   : fromAccount,
           toAccount     : toAccount,
           event_id      : activeTransaction ? activeTransaction.event_id: new Date().toISOString(),
-          endDate       : endDate,
+          end_date      : endDate,
           showInCalendar: true,
           category      : initialCategory,
           arbitraryDates: newArbitraryDates,
           fromHelper    : initialFromHelper,
           rrule         : '',
           recurrenceInterval : 1,
-          start_date         : '',
           givenDays          : []
         };
     

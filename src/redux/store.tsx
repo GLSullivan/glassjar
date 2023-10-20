@@ -19,6 +19,9 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/database';
 import 'firebase/compat/auth';
 
+import { createRRule } from '../utils/createRRule';
+import { format, parseISO } from 'date-fns'
+
 let isAppLoaded = false;
 
 const firebaseConfig = {
@@ -49,6 +52,27 @@ firebase.auth().onAuthStateChanged((user) => {
 
     const transactionsPromise = dbRef.child('users/' + user.uid + '/transactions').once('value').then((snapshot) => {
       const transactions = snapshot.val() || [];
+
+      // Upgrade old transactions to new data structure if needed.
+      
+      transactions.forEach((transaction: any) => {
+        if (transaction.date) {
+          transaction.start_date = format(parseISO(transaction.date), 'yyyy-MM-dd');
+        }
+      
+        if (!transaction.end_date && transaction.endDate) {
+          transaction.end_date = format(parseISO(transaction.endDate), 'yyyy-MM-dd');
+        }
+      
+        delete transaction.date;
+        delete transaction.endDate;
+        delete transaction.rruleSet;
+        delete transaction.allowOverpayment;
+      
+        createRRule(transaction, (newRule) => {
+          transaction.rrule = newRule;
+        });
+      });
       store.dispatch(setTransactions(transactions));
     });
 

@@ -8,9 +8,10 @@ import { openTransactionModal }               from './../redux/slices/modals';
 import { RootState }                          from './../redux/store';
 
 import { Transaction }                        from './../models/Transaction';
+import { increaseGraphRange }                 from './../redux/slices/views';
 import TransactionListItem                    from './TransactionListItem';
 
-import { addDays, 
+import { 
   endOfMonth, 
   format, 
   parseISO, 
@@ -19,7 +20,6 @@ import { addDays,
   startOfDay }                                 from 'date-fns';
 
 import './../css/TransactionList.css';
-import { increaseGraphRange } from '../redux/slices/views';
 
 const CalendarSchedule: React.FC = () => {
   const dispatch                                      = useDispatch();
@@ -42,8 +42,8 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     setLoading(true);
 
-    let endDate      = format(addDays(endOfMonth(parseISO(activeDate)), 10), 'yyyy-MM-dd');
     let startDate    = format(new Date(today), 'yyyy-MM-dd');
+    let endDate      = format(addMonths(endOfMonth(parseISO(startDate)), graphRange), 'yyyy-MM-dd');
     let transactions = getTransactionsByDateRange(projections,startDate,endDate);
 
     // Filter and sort transactions within each day
@@ -56,8 +56,7 @@ const CalendarSchedule: React.FC = () => {
 
     setGroupedTransactions(sortedAndFilteredGroupedTransactions); // Update the state with sorted and filtered transactions
     setLoading(false);
-
-  }, [activeDate, today, projections]);
+  }, [today, graphRange, projections]);
 
   // Find the date closest to the top of the container
   const getClosestDataDate = () => {
@@ -199,6 +198,7 @@ const CalendarSchedule: React.FC = () => {
                   </h3>
                   <button
                     onClick={() => {
+                      dispatch(setActiveDate(group.date))
                       dispatch(setActiveTransaction(null));
                       dispatch(openTransactionModal());
                     }}
@@ -210,8 +210,9 @@ const CalendarSchedule: React.FC = () => {
                 <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
                   {group.transactions.map(({ transaction }, transactionIndex) => (
                     <TransactionListItem
-                      key={`${groupIndex}-${transactionIndex}`}
-                      transaction={transaction}
+                      key          = {`${groupIndex}-${transactionIndex}`}
+                      transaction  = {transaction}
+                      instanceDate = {group.date}
                     />
                   ))}
                 </div>

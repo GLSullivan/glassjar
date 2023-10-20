@@ -68,20 +68,19 @@ const MiniTransactionForm: React.FC<MiniTransactionFormProps> = ({
     const transactionData: Transaction = {
       transactionName,
       amount,
-      date               : isoDate,
+      start_date               : isoDate,
       type               : TransactionType.WITHDRAWAL,
       description        : '',
       fromAccount        : firstAccountId,
       toAccount          : '',
       event_id           : new Date().toISOString(),
       isRecurring        : true,
-      endDate            : '',
+      end_date            : '',
       recurrenceFrequency: RecurrenceFrequency.MONTHLY,
       showInCalendar     : true,
       category           : initialCategory,
       rrule              : '',
       recurrenceInterval : 1,
-      start_date         : '',
       givenDays          : []
     };
 

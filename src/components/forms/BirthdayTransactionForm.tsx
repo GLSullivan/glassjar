@@ -6,7 +6,7 @@ import { addTransaction, updateTransaction, } from '../../redux/slices/transacti
 import { RootState } from '../../redux/store';
 import { Transaction } from '../../models/Transaction';
 import { CustomIntervalType, RecurrenceFrequency, TransactionType } from '../../utils/constants';
-import { addZoneOffset, stripTime } from '../../utils/dateUtils';
+import { format } from 'date-fns'; 
 
 import './../../css/MiniForms.css';
 
@@ -55,8 +55,8 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   );
 
   const [date, setDate] = useState(() => {
-    if (activeTransaction?.date) {
-      return new Date(activeTransaction.date).toISOString();
+    if (activeTransaction?.start_date) {
+      return new Date(activeTransaction.start_date).toISOString();
     }
     if (initialDate) {
       return new Date(initialDate).toISOString();
@@ -74,7 +74,7 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
   const toAccount   = activeTransaction?.toAccount || accounts[0].id;
   const description = activeTransaction?.description || '';
   const isRecurring = activeTransaction?.isRecurring || true;
-  const endDate     = activeTransaction?.endDate || '';
+  const endDate     = activeTransaction?.end_date || '';
 
   let   recurrenceFrequency = activeTransaction?.recurrenceFrequency || initialRecurrenceFrequency;
   const customIntervalType  = activeTransaction?.customIntervalType || CustomIntervalType.WEEK;
@@ -92,18 +92,17 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
       isRecurring,
       recurrenceFrequency,
       customIntervalType,
-      endDate       : endDate,
-      date          : isoDate,
-      showInCalendar: true,
-      fromAccount   : fromAccount,
-      toAccount     : toAccount,
-      event_id      : activeTransaction ? activeTransaction.event_id: new Date().toISOString(),
-      category      : category,
-      fromHelper    : initialFromHelper,
-      rrule              : '',
-      recurrenceInterval : 1,
-      start_date         : '',
-      givenDays          : []
+      end_date          : endDate,
+      start_date        : isoDate,
+      showInCalendar    : true,
+      fromAccount       : fromAccount,
+      toAccount         : toAccount,
+      event_id          : activeTransaction ? activeTransaction.event_id: new Date().toISOString(),
+      category          : category,
+      fromHelper        : initialFromHelper,
+      rrule             : '',
+      recurrenceInterval: 1,
+      givenDays         : []
     };
 
     if (activeTransaction) {
@@ -139,8 +138,9 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
           <input
             type     = 'date'
             id       = 'date'
-            value    = {stripTime(date)}
-            onChange = {(e) => setDate(addZoneOffset(e.target.value))}
+            value    = {format(new Date(date), 'yyyy-MM-dd')}
+
+            onChange = {(e) => setDate(e.target.value)}
           />
         </div>
 

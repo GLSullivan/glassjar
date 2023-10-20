@@ -11,6 +11,7 @@ import './../css/SwipeElement.css';
 
 interface SwipeElementProps {
   children: ReactNode;
+  disabled?: boolean;
 }
 
 interface SwipeActionProps {
@@ -52,6 +53,7 @@ const SwipeAction: FC<SwipeActionProps> = memo(({ action, children }) => {
 
 const SwipeElement: FC<SwipeElementProps> & { Action: typeof SwipeAction } = ({
   children,
+  disabled = false
 }) => {
   const [state, dispatch] = useReducer(reducer, {
     offset: 0,
@@ -77,11 +79,14 @@ const SwipeElement: FC<SwipeElementProps> & { Action: typeof SwipeAction } = ({
   }, [children]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (disabled) return;
     touchStartX.current = e.touches[0].clientX;
   }, []);
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
+      if (disabled) return;
+
       const touchMoveX = e.touches[0].clientX;
       const diff = touchStartX.current - touchMoveX;
       dispatch({ type: 'SET_OFFSET', payload: diff });
@@ -103,6 +108,8 @@ const SwipeElement: FC<SwipeElementProps> & { Action: typeof SwipeAction } = ({
   );
 
   const handleTouchEnd = useCallback(() => {
+    if (disabled) return;
+
     // Determine the active index based on the offset and action widths
     const activeIndex = actionWidths.findIndex((width) => offset < width);
     const adjustedIndex =

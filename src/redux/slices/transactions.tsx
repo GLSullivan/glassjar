@@ -25,7 +25,7 @@ const transactionsSlice = createSlice({
         transactionName     : action.payload.transactionName || 'New Transaction',
         type                : action.payload.type || 'withdrawal',
         amount              : action.payload.amount || 0,
-        date                : action.payload.date || new Date().toISOString(),
+        start_date          : action.payload.start_date || new Date().toISOString(),
         description         : action.payload.description || '',
         isRecurring         : action.payload.isRecurring || false,
         showInCalendar      : action.payload.showInCalendar || true
