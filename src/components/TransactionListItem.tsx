@@ -223,6 +223,7 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
                       /yr
                     </h5>
                   )}
+                  {instanceDate && <h5>{instanceDate}</h5>}
                 </div>
               )}
             </div>

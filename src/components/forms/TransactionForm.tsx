@@ -9,7 +9,6 @@ import {
   deleteTransaction,
 }                                              from './../../redux/slices/transactions';
 import { RecurringExpenses }                   from './../../data/RecurringExpenses';
-import { stripTime }                           from './../../utils/dateUtils'; // TODO: This is in Date-fns, use that!
 import { Account }                             from './../../models/Account';
 import { RootState }                           from './../../redux/store';
 import PanelHeader                             from './../PanelHeader';
@@ -559,7 +558,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                         name  = "end_date"
                         value = {
                           transaction.end_date
-                            ? stripTime(transaction.end_date)
+                            ? format(new Date(transaction.end_date), 'yyyy-MM-dd')
                             :  ''
                         }
                         onChange = {handleDateChange}

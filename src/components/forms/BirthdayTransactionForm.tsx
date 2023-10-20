@@ -6,7 +6,7 @@ import { addTransaction, updateTransaction, } from '../../redux/slices/transacti
 import { RootState } from '../../redux/store';
 import { Transaction } from '../../models/Transaction';
 import { CustomIntervalType, RecurrenceFrequency, TransactionType } from '../../utils/constants';
-import { addZoneOffset, stripTime } from '../../utils/dateUtils';
+import { format } from 'date-fns'; 
 
 import './../../css/MiniForms.css';
 
@@ -138,8 +138,9 @@ const HolidayTransactionForm: React.FC<BirthdayTransactionFormProps> = ({
           <input
             type     = 'date'
             id       = 'date'
-            value    = {stripTime(date)}
-            onChange = {(e) => setDate(addZoneOffset(e.target.value))}
+            value    = {format(new Date(date), 'yyyy-MM-dd')}
+
+            onChange = {(e) => setDate(e.target.value)}
           />
         </div>
 

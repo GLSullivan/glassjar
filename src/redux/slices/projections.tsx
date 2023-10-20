@@ -9,7 +9,8 @@ import { TransactionType }                                            from './..
 
 import { RRule, RRuleSet } from 'rrule';
 
-import { startOfDay, sub, addDays, format } from 'date-fns'
+import { startOfDay, addDays, format } from 'date-fns'
+import { createDateInLocalTimeZone } from '../../utils/dateUtils';
 
 interface ProjectionsState {
   transactionsOnDate     : { [date: string]: Transaction[] };
@@ -87,8 +88,9 @@ export const projectionsSlice = createSlice({
         tempTransactionsOnDate: Record<string, Transaction[]>,
         date: Date,
         transaction: Transaction
-      ) => {
-        const dateString = date.toISOString().split('T')[0];
+      ) => {          
+
+        const dateString = format(createDateInLocalTimeZone(date), 'yyyy-MM-dd');
         if (!tempTransactionsOnDate[dateString]) {
           tempTransactionsOnDate[dateString] = [];
         }
@@ -103,9 +105,14 @@ export const projectionsSlice = createSlice({
       };
 
       const populateTransactionsOnDate = () => {
-        const today = sub(startOfDay(new Date()), { hours: 1 });
-        const farDateStartOfDay = startOfDay(new Date(farDate));
-
+        // const today = sub(startOfDay(new Date()), { hours: 1 });
+        // const farDateStartOfDay = startOfDay(new Date(farDate));
+        const today = new Date();
+        today.setHours(today.getHours() - 1, 0, 0, 0);
+        
+        const farDateObj = new Date(farDate);
+        farDateObj.setHours(0, 0, 0, 0);        
+        
         transactions.forEach((transaction) => {
           // Handle recurring transactions
           let dateArray: Date[] = [];
@@ -132,13 +139,18 @@ export const projectionsSlice = createSlice({
           // Add any EXDATEs to the set from transaction.exdates
           if (Array.isArray(transaction.exdates)) {
             transaction.exdates.forEach((dateStr: string) => {
-              console.log(transaction.transactionName,dateStr)
               const date = new Date(dateStr);
               rruleSet.exdate(date);
+              console.log(transaction.transactionName,dateStr,rruleSet)
             });
           }
 
-          dateArray = rruleSet.between(today, farDateStartOfDay);
+          dateArray = rruleSet.between(today, farDateObj);
+          dateArray = dateArray.map(date => {
+              const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+              return localDate;
+          });
+          
           // Handle non-recurring events or bunk RRules.
           if (
             (transaction.rrule.includes('"rrule":null') &&
@@ -146,7 +158,7 @@ export const projectionsSlice = createSlice({
             transaction.rrule === null
           ) {
             const startDate = startOfDay(new Date(transaction.start_date));
-            if (startDate >= today && startDate <= farDateStartOfDay) {
+            if (startDate >= today && startDate <= farDateObj) {
               dateArray.push(startDate);
             }
           }
@@ -156,7 +168,7 @@ export const projectionsSlice = createSlice({
           );
 
           if (Array.isArray(transaction.exdates)) {
-            console.log(transaction.transactionName,dateArray)
+            console.log(transaction.transactionName,dateArray[0])
           }
 
         });
@@ -174,9 +186,9 @@ export const projectionsSlice = createSlice({
           if (interestRate) {
             // eslint-disable-next-line eqeqeq
             if (
-              accountType == 'credit card' ||
-              accountType == 'loan' ||
-              accountType == 'savings'
+              accountType === 'credit card' ||
+              accountType === 'loan' ||
+              accountType === 'savings'
             ) {
               // Calculate interest on daily compounding accounts.
               interest = balance * ((interestRate * 0.01) / 365);
@@ -239,23 +251,7 @@ export const projectionsSlice = createSlice({
         [accountId: string]: { [dateKey: string]: number };
       }
 
-      function sumUpCategories(amount: number, category?: string) {
-        // TODO: FUTURE FEATURE! This is where to do up the total spend per transaction over a year.
-        // TODO: When the transaction page can be sorted by category, put the per/category/per/year value beside the name.
-        if (!category) {
-          category = 'Uncategorized';
-        }
-
-        if (!tempCategorySpend[category]) {
-          tempCategorySpend[category] = 0;
-        }
-        tempCategorySpend[category] += amount;
-      }
-
-      function sumUpSpend(transactionID: string, amount: number, date: string) {
-        if (!tempTransactionSpend[transactionID]) {
-          tempTransactionSpend[transactionID] = 0;
-        }
+      function sumUpSpend(transaction: Transaction, date: string) {
 
         if (
           isWithinInterval(parseISO(date), {
@@ -264,7 +260,21 @@ export const projectionsSlice = createSlice({
           })
         ) {
           // Add the amount of the spend if its with in this year.
-          tempTransactionSpend[transactionID] += Math.abs(amount);
+          tempTransactionSpend[transaction.event_id] += Math.abs(transaction.amount);
+
+          // Run the annual category math
+          const tempCategory: string = transaction.category || 'Uncategorized'
+  
+          if (!tempCategorySpend[tempCategory]) {
+            tempCategorySpend[transaction.category || 'Uncategorized'] = 0;
+          }
+          tempCategorySpend[tempCategory] += transaction.amount;
+  
+  
+          if (!tempTransactionSpend[transaction.event_id]) {
+            tempTransactionSpend[transaction.event_id] = 0;
+          }
+  
         }
       }
 
@@ -277,8 +287,6 @@ export const projectionsSlice = createSlice({
         category?: string
       ) {
         if (!toAccount || !fromAccount) return;
-
-        sumUpCategories(transaction.amount, category);
 
         let toAccountBalance =
           tempBalanceByDateAndAccount[toAccount.id][dateKey];
@@ -307,7 +315,7 @@ export const projectionsSlice = createSlice({
         const toAccountSign = toAccount.isLiability ? -1 : 1;
         const fromAccountSign = fromAccount.isLiability ? 1 : -1;
 
-        sumUpSpend(transaction.event_id, transferAmount, dateKey);
+        sumUpSpend(transaction, dateKey);
         tempBalanceByDateAndAccount[toAccount.id][dateKey] +=
           transferAmount * toAccountSign;
         tempBalanceByDateAndAccount[fromAccount.id][dateKey] +=
@@ -324,7 +332,7 @@ export const projectionsSlice = createSlice({
       ) {
         if (!fromAccount) return;
 
-        sumUpSpend(transaction.event_id, transaction.amount, dateKey);
+        sumUpSpend(transaction, dateKey);
 
         if (fromAccount.isLiability) {
           if (fromAccount.creditLimit) {
@@ -370,7 +378,6 @@ export const projectionsSlice = createSlice({
             transaction.amount;
         }
 
-        sumUpCategories(transaction.amount, category);
       }
 
       function handleDeposit(
@@ -382,7 +389,7 @@ export const projectionsSlice = createSlice({
         category?: string
       ) {
         if (!toAccount) return;
-        sumUpSpend(transaction.event_id, transaction.amount, dateKey);
+        sumUpSpend(transaction, dateKey);
 
         if (toAccount.isLiability) {
           tempBalanceByDateAndAccount[toAccount.id][dateKey] -=
@@ -536,6 +543,7 @@ export const projectionsSlice = createSlice({
       removeOldTransactions();
 
       state.transactionsOnDate = tempTransactionsOnDate;
+      console.log(state.transactionsOnDate)
       state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
       state.categorySpend = tempCategorySpend;
       state.spendByTransaction = tempTransactionSpend;
@@ -657,36 +665,31 @@ export const getTransactionsByRange = (
 };
 
 // Get transactions in date range.
+
 export const getTransactionsByDateRange = (
   projections: ProjectionsState,
   startDate: string,
   endDate: string
 ) => {
-  const groupedTransactions: {
-    date: string;
-    transactions: { transaction: Transaction; date: string }[];
-  }[] = [];
+  let theStart: Date = new Date(startDate);
+  let theEnd: Date = new Date(endDate);
 
-  let currentDate = new Date(startDate);
+  const groupedTransactions: { date: string; transactions: { transaction: Transaction; date: string }[] }[] = [];
 
-  while (currentDate <= new Date(endDate)) {
-    const dateString = currentDate.toISOString().split('T')[0]; // Extract the date part of the ISO string
-    const transactionsOnDate = projections.transactionsOnDate[dateString];
+  // Sort the keys (dates) before processing
+  const sortedDates = Object.keys(projections.transactionsOnDate).sort();
 
-    if (transactionsOnDate) {
-      const transactions: { transaction: Transaction; date: string }[] = [];
-      transactionsOnDate.forEach((transaction) => {
-        transactions.push({ transaction, date: dateString });
-      });
-      groupedTransactions.push({ date: dateString, transactions });
+  sortedDates.forEach((date) => {
+    const transactionsOnDate: Transaction[] = projections.transactionsOnDate[date] || [];
+    if (new Date(date) >= theStart && new Date(date) <= theEnd) {
+      const transactionsForDate = transactionsOnDate.map(transaction => ({ transaction, date: date }));
+      groupedTransactions.push({ date: date, transactions: transactionsForDate });
     }
-
-    currentDate.setDate(currentDate.getDate() + 1); // Move to the next date
-  }
-
+  });
+  
+  console.log(groupedTransactions);
   return groupedTransactions;
 };
-
 // Get account balances for a date range
 export const accountBalancesByDateRange = (
   projections: ProjectionsState,
