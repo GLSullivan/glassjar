@@ -263,7 +263,7 @@ const SVGGraph: React.FC<SVGGraphProps> = ({
       });
     }
       // eslint-disable-next-line 
-  }, [activeDate, dimensions]);
+    }, [activeDate, dimensions, graphRange ]);
 
   return (
     <div className = 'glassjar__svg-graph'>
