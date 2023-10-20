@@ -141,7 +141,6 @@ export const projectionsSlice = createSlice({
             transaction.exdates.forEach((dateStr: string) => {
               const date = new Date(dateStr);
               rruleSet.exdate(date);
-              console.log(transaction.transactionName,dateStr,rruleSet)
             });
           }
 
@@ -166,10 +165,6 @@ export const projectionsSlice = createSlice({
           dateArray.forEach((date) =>
             addTransactionToTemp(tempTransactionsOnDate, date, transaction)
           );
-
-          if (Array.isArray(transaction.exdates)) {
-            console.log(transaction.transactionName,dateArray[0])
-          }
 
         });
       };
@@ -543,7 +538,6 @@ export const projectionsSlice = createSlice({
       removeOldTransactions();
 
       state.transactionsOnDate = tempTransactionsOnDate;
-      console.log(state.transactionsOnDate)
       state.balanceByDateAndAccount = tempBalanceByDateAndAccount;
       state.categorySpend = tempCategorySpend;
       state.spendByTransaction = tempTransactionSpend;
@@ -687,7 +681,6 @@ export const getTransactionsByDateRange = (
     }
   });
   
-  console.log(groupedTransactions);
   return groupedTransactions;
 };
 // Get account balances for a date range
