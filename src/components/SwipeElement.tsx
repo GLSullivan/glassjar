@@ -81,7 +81,7 @@ const SwipeElement: FC<SwipeElementProps> & { Action: typeof SwipeAction } = ({
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (disabled) return;
     touchStartX.current = e.touches[0].clientX;
-  }, []);
+  }, [disabled]);
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
@@ -104,7 +104,7 @@ const SwipeElement: FC<SwipeElementProps> & { Action: typeof SwipeAction } = ({
         });
       }
     },
-    [actionWidths]
+    [actionWidths, disabled]
   );
 
   const handleTouchEnd = useCallback(() => {
@@ -145,7 +145,7 @@ const SwipeElement: FC<SwipeElementProps> & { Action: typeof SwipeAction } = ({
 
     dispatch({ type: 'SET_ACTIVE_INDEX', payload: null });
     // eslint-disable-next-line
-  }, [offset]);
+  }, [disabled, offset]);
 
   useEffect(() => {
     if (actionsRef.current) {
