@@ -1,4 +1,4 @@
-              /* 
+                /* 
   ____ _                   _            
  / ___| | __ _ ___ ___    | | __ _ _ __ 
 | |  _| |/ _` / __/ __|_  | |/ _` | '__|
@@ -10,8 +10,8 @@
 */
 
 .glassjar__nav {
-  /* overflow     : hidden; */
-  position     : relative;
+    /* overflow     : hidden; */
+  position: relative;
 }
 
 .glassjar__nav.glassjar__nav--primary {
@@ -20,37 +20,28 @@
   bottom       : -4px;
   position     : absolute;
   width        : 100%;
-  z-index      : 9000;  
+  z-index      : 9000;
 }
 
 .glassjar__nav__icon-holder {
-  /* backdrop-filter: blur(5px); */
-  bottom         : 0;
-  display        : flex;
-  height         : 100%;
-  overflow       : hidden;
-  padding-top    : .2rem;
-  position       : relative;
-  width          : 100%;
-  z-index        : 1;
   background   : rgb(252, 252, 252);
   border       : 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
-  box-shadow: 0 -1px   2px rgba(0,0,0,0.07), 
-              0 -2px   4px rgba(0,0,0,0.07), 
-              0 -4px   8px rgba(0,0,0,0.07), 
-              0 -8px  16px rgba(0,0,0,0.07);
-
-              
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.05);
+  bottom       : 0;
+  box-shadow   : 0 1px 3px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.05);
+  display      : flex;
+  height       : 100%;
+  overflow     : hidden;
+  padding-top  : .2rem;
+  position     : relative;
+  width        : 100%;
+  z-index      : 1;
 }
 
 .glassjar__nav.glassjar__nav--primary .glassjar__nav__icon-holder {
-  /* backdrop-filter: blur(20px);
-  background     : rgb(255 255 255 / 35%); */
-  padding-bottom : 1rem;
-  border-radius: 0;
-  border: none;
+  border        : none;
+  border-radius : 0;
+  padding-bottom: 1rem;
 
 }
 
@@ -98,15 +89,15 @@
                   width 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                   color .5s,
                   opacity 0.5s;
-  z-index        : 1;
+  z-index: 1;
 }
 
 .glassjar__nav__underline > div {
   background   : var(--color-bright);
+  border       : 1px solid rgba(255, 255, 255);
   border-radius: 4rem;
   height       : 150%;
   width        : 50%;
-  border: 1px solid rgba(255, 255, 255);
 }
 
 .glassjar__nav__backing-shape {
@@ -132,30 +123,13 @@
 }
 
 .glassjar__nav__backing-shape > div {
-  opacity      : 1;
   background: linear-gradient(90deg, transparent 0%, #ffffff 20%, #ffffff 80%, transparent 100%);
-
-  position: absolute;
-  top: 0;
-  left: -3rem;
-  height: 100%;
-  width: calc(100% + 6rem);
-}
-
-.glassjar__nav__backing-shape:nth-child(2) {
-  transition-delay: 0.05s;
-}
-
-.glassjar__nav__backing-shape:nth-child(3) {
-  transition-delay: 0.1s;
-}
-
-.glassjar__nav__backing-shape:nth-child(4) {
-  transition-delay: 0.15s;
-}
-
-.glassjar__nav__backing-shape:nth-child(5) {
-  transition-delay: 0.2s;
+  height    : 100%;
+  left      : -3rem;
+  opacity   : 1;
+  position  : absolute;
+  top       : 0;
+  width     : calc(100% + 6rem);
 }
 
 .glassjar__nav__group .glassjar__nav__body {
@@ -205,58 +179,58 @@
   position   : relative;
 }
 
-/* Header */
+  /* Header */
 
 .glassjar__top-nav {
-  position: relative;
-  box-sizing: border-box;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  padding: .5rem;
-  z-index: 9000;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  background: var(--color-bright);
+  align-items    : center;
+  background     : var(--color-bright);
+  border-bottom  : 1px solid rgba(0, 0, 0, 0.15);
   
   box-shadow: 0 0px 3px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.25);
+  box-sizing     : border-box;
+  display        : flex;
+  justify-content: space-between;
+  padding        : .5rem;
+  position       : relative;
+  width          : 100%;
+  z-index        : 9000;
 }
 
 .glassjar__top-nav > * {
+  flex : 2;
   width: 100%;
-  flex: 2;
 }
 
 .glassjar__top-nav > div:last-of-type {
-  text-align : right;
   align-items: flex-end;
+  text-align : right;
 }
 
 button.glassjar__button.glassjar__button--span {
-  white-space: nowrap;
   aspect-ratio: unset;
+  white-space : nowrap;
 }
 
 button.glassjar__nav__button > span {
+  opacity  : 0;
   transform: translateY(50%);
-  opacity: 0;
-  /* height: 0; */
+    /* height: 0; */
   transition: .25s ease;
 }
 
 button.glassjar__nav__button.active > span {
-  height: 100%;
-  opacity: 1;
+  height   : 100%;
+  opacity  : 1;
   transform: scale(1)
 }
 
 .glassjar__nav__button img {
-  max-width : 28px;
-  max-height: 28px;
   border-radius: 100px;
+  max-height   : 28px;
+  max-width    : 28px;
 }
 
 .glassjar__top-nav img {
-  max-width: 100%;
   max-height: 2rem;
+  max-width : 100%;
 }
