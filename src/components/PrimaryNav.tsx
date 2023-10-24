@@ -73,9 +73,6 @@ const PrimaryNav = () => {
       ref       = {navRef}
       className={`glassjar__nav glassjar__nav--primary${isActiveView ? '' : ' inactive'}`}
     >
-      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-        <div></div>
-      </div>
       {/* <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
         <div style     = {{ background: activeStyle.color }}></div>
       </div>
@@ -91,6 +88,9 @@ const PrimaryNav = () => {
       <div
         className='glassjar__nav__icon-holder'
       >
+      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
+        <div></div>
+      </div>
         {buttons.map((button) => (
           <button
             key         = {button.view}
