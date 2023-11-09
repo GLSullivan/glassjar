@@ -99,8 +99,10 @@ export const createRRule = (transaction: Transaction, callback: (newRule: string
     } 
     
     // If end_date exists, include it in the RRULE options
-    if (dtendDate) {
+    if (dtendDate && transaction.ends) {
       options.until = dtendDate;
+    } else {
+      options.until = null;
     }
 
     if (transaction.recurrenceFrequency !== RecurrenceFrequency.ARBITRARY) {

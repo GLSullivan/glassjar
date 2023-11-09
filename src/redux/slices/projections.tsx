@@ -91,6 +91,7 @@ export const projectionsSlice = createSlice({
       ) => {          
 
         const dateString = format(createDateInLocalTimeZone(date), 'yyyy-MM-dd');
+
         if (!tempTransactionsOnDate[dateString]) {
           tempTransactionsOnDate[dateString] = [];
         }
@@ -100,15 +101,18 @@ export const projectionsSlice = createSlice({
         );
 
         if (!existingEventIds.has(transaction.event_id)) {
-          tempTransactionsOnDate[dateString].push(transaction);
+
+          if (!new Set(transaction.exdates).has(dateString)) {
+            // Your logic here for when the dateString is in the exdates array
+            tempTransactionsOnDate[dateString].push(transaction);
+          }
+          
         }
       };
 
       const populateTransactionsOnDate = () => {
-        // const today = sub(startOfDay(new Date()), { hours: 1 });
-        // const farDateStartOfDay = startOfDay(new Date(farDate));
         const today = new Date();
-        today.setHours(today.getHours() - 1, 0, 0, 0);
+        // today.setHours(today.getHours() - 1, 0, 0, 0);
         
         const farDateObj = new Date(farDate);
         farDateObj.setHours(0, 0, 0, 0);        
@@ -137,7 +141,8 @@ export const projectionsSlice = createSlice({
           }
 
           // Add any EXDATEs to the set from transaction.exdates
-          if (Array.isArray(transaction.exdates)) {
+          if (Array.isArray(transaction.exdates)) { 
+            // TODO: This isn't actually working. There's a safety catch in the addTransactionToTemp function for now. Fix it! 
             transaction.exdates.forEach((dateStr: string) => {
               const date = new Date(dateStr);
               rruleSet.exdate(date);
@@ -535,6 +540,7 @@ export const projectionsSlice = createSlice({
           }
         });
       };
+      
       removeOldTransactions();
 
       state.transactionsOnDate = tempTransactionsOnDate;
