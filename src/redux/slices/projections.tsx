@@ -254,6 +254,11 @@ export const projectionsSlice = createSlice({
             end: addYears(new Date(), 1),
           })
         ) {
+  
+          if (!tempTransactionSpend[transaction.event_id]) {
+            tempTransactionSpend[transaction.event_id] = 0;
+          }
+
           // Add the amount of the spend if its with in this year.
           tempTransactionSpend[transaction.event_id] += Math.abs(transaction.amount);
 
@@ -264,12 +269,7 @@ export const projectionsSlice = createSlice({
             tempCategorySpend[transaction.category || 'Uncategorized'] = 0;
           }
           tempCategorySpend[tempCategory] += transaction.amount;
-  
-  
-          if (!tempTransactionSpend[transaction.event_id]) {
-            tempTransactionSpend[transaction.event_id] = 0;
-          }
-  
+
         }
       }
 
