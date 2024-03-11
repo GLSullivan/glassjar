@@ -5,7 +5,7 @@ import CalendarMonth     from './CalendarMonth';
 import OutlookGraph      from './OutlookGraph';
 import Tabs              from './Tabs';
 
-import { DayPanel } from './panels/Projections';
+import { DayPanel as ProjectionPanel } from './panels/Projections';
 
 const CalendarSelector: React.FC = () => {
   return (
@@ -20,8 +20,11 @@ const CalendarSelector: React.FC = () => {
           <Tabs.Item heading='Schedule'>
             <CalendarSchedule />
           </Tabs.Item>
-          <Tabs.Item heading='Projections'>
-            <DayPanel/>
+          <Tabs.Item heading='Date'>
+            <ProjectionPanel showActiveDate={true}/>
+          </Tabs.Item>          
+          <Tabs.Item heading='Projection'>
+            <ProjectionPanel/>
           </Tabs.Item>
         </Tabs>
 

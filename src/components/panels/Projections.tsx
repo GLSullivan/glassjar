@@ -1,6 +1,6 @@
 
-import React                                                      from 'react';
-import { useSelector }                                            from 'react-redux';
+import React                            from 'react';
+import { useSelector }                  from 'react-redux';
       
 import {                
   accountBalanceOnDate,            
@@ -12,36 +12,49 @@ import {
   getCreditCardDebtByDate,           
   getLoanDebtByDate,       
   getNetWorthByDate           
-}                                                                 from '../../redux/slices/projections';
-import { selectAllAccounts }                                      from '../../redux/slices/accounts';
-import { RootState }                                              from '../../redux/store';
+}                                       from '../../redux/slices/projections';
+import { selectAllAccounts }            from '../../redux/slices/accounts';
+import { RootState }                    from '../../redux/store';
       
-import AccountListItem                                            from '../AccountListItem';
-import { addMonths, startOfDay,format }    from 'date-fns';
+import AccountListItem                  from '../AccountListItem';
+import { addMonths, startOfDay,format } from 'date-fns';
+
+import CountUp                          from 'react-countup';
 
 import './../../css/Panels.css';
-import CountUp from 'react-countup';
 
-export const DayPanel: React.FC = () => {
-  const graphRange = useSelector((state: RootState) => state.views.graphRange);
-  const projections      = useSelector((state: RootState) => state.projections);
-  const accounts   = useSelector(selectAllAccounts);
+interface DayPanelProps {
+  showActiveDate?: boolean;
+}
 
-  const graphEnd        = addMonths(startOfDay(new Date()),graphRange).toISOString();
+export const DayPanel: React.FC<DayPanelProps> = ({ showActiveDate = false }) => {
+  
+  
+  const graphRange      = useSelector((state: RootState) => state.views.graphRange);
 
-  const spendingPower   = getSpendingPowerByDate(projections, graphEnd)
-  const savings         = getSavingsByDate(projections, graphEnd)
-  const cash            = getCashByDate(projections, graphEnd)
-  const availableCredit = getAvailableCreditByDate(projections, graphEnd)
-  const debt            = getDebtByDate(projections, graphEnd)
-  const creditCardDebt  = getCreditCardDebtByDate(projections, graphEnd)
-  const loan            = getLoanDebtByDate(projections, graphEnd)
-  const netWorth        = getNetWorthByDate(projections, graphEnd)
+
+  const activeDate      = useSelector((state: RootState) => state.activeDates.activeDate);
+
+  const projections     = useSelector((state: RootState) => state.projections);
+  const accounts        = useSelector(selectAllAccounts);
+
+  const displayDate = showActiveDate && activeDate 
+    ? new Date(activeDate).toISOString() 
+    : addMonths(startOfDay(new Date()), graphRange).toISOString();
+
+  const spendingPower   = getSpendingPowerByDate(projections, displayDate)
+  const savings         = getSavingsByDate(projections, displayDate)
+  const cash            = getCashByDate(projections, displayDate)
+  const availableCredit = getAvailableCreditByDate(projections, displayDate)
+  const debt            = getDebtByDate(projections, displayDate)
+  const creditCardDebt  = getCreditCardDebtByDate(projections, displayDate)
+  const loan            = getLoanDebtByDate(projections, displayDate)
+  const netWorth        = getNetWorthByDate(projections, displayDate)
 
   return (
     <div className='glassjar__list glassjar__list--projections'>
       {/* <h3>{graphRange} Month Projection</h3> */}
-      <h3>{format(new Date(graphEnd), 'M/d/yy')}</h3>
+      <h3>{format(new Date(displayDate), 'M/d/yy')}</h3>
       <div className='glassjar__grid glassjar__grid--projected-info'>
 
         {spendingPower !== null && (
@@ -69,7 +82,7 @@ export const DayPanel: React.FC = () => {
               decimals={2}
               decimal='.'
               prefix='$'
-              end={getSavingsByDate(projections, graphEnd)! / 100}
+              end={getSavingsByDate(projections, displayDate)! / 100}
               duration={2}
               preserveValue={true}
               className='glassjar__mono-spaced'
@@ -185,9 +198,10 @@ export const DayPanel: React.FC = () => {
       <div className='glassjar__flex glassjar__flex--column'>
         {accounts.map((account) => (
           <AccountListItem
+            hideDateLine={!showActiveDate}
             key={account.id}
             account={account}
-            balance={accountBalanceOnDate(projections, account.id, graphEnd)}
+            balance={showActiveDate ? accountBalanceOnDate(projections, account.id, displayDate) : undefined}
           />
         ))}
       </div>

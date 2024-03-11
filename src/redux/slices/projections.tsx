@@ -112,13 +112,14 @@ export const projectionsSlice = createSlice({
 
       const populateTransactionsOnDate = () => {
         const today = new Date();
-        // today.setHours(today.getHours() - 1, 0, 0, 0);
+        today.setHours(today.getHours() + 12, 0, 0, 0);
         
         const farDateObj = new Date(farDate);
         farDateObj.setHours(0, 0, 0, 0);        
         
         transactions.forEach((transaction) => {
           // Handle recurring transactions
+          
           let dateArray: Date[] = [];
 
           const rruleSet = new RRuleSet();
@@ -414,7 +415,7 @@ export const projectionsSlice = createSlice({
 
       populateTransactionsOnDate();
 
-      let currentDay = new Date(new Date(today).setHours(0, 0, 0, 0));
+      let currentDay = new Date(new Date(today).setHours(12, 0, 0, 0));
       let iterations = 0;
 
       while (currentDay <= calculateThruDate && iterations < maxIterations) {

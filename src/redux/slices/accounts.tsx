@@ -74,7 +74,6 @@ export const accountsSlice = createSlice({
         }
         state.accounts[index].snoozedMessages!.push(newSnoozedMessage);
       }
-      console.log(state.accounts[index].snoozedMessages)
     },
   },
 });

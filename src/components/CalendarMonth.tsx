@@ -42,7 +42,7 @@ const CalendarMonth: React.FC = () => {
   const projections  = useSelector((state: RootState) => state.projections);
   const graphRange   = useSelector((state: RootState) => state.views.graphRange);
   
-  const showCalendar: boolean = false; // TODO: Make this a user pref or use it to toggle.
+  const showCalendar: boolean = true; // TODO: Make this a user pref or use it to toggle.
 
   const activeDateObj = new Date(activeDate);
 

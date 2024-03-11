@@ -20,7 +20,7 @@ export default function messageFactory({
     case 'accountPayoff': 
       return `${accountName} will be paid off on ${new Date(date).toLocaleDateString()}`;
     case 'accountOverCredit': 
-      return `${accountName} will exceed its credit limit of $${account.creditLimit} on ${new Date(date).toLocaleDateString()}`;
+      return `${accountName} will exceed its credit limit of ${account.creditLimit && (account.creditLimit / 100).toLocaleString('en-US', {style   : 'currency',currency: 'USD',})} on ${new Date(date).toLocaleDateString()}`;
     case 'accountOverdraft': 
       return `${accountName} will be overdrawn on ${new Date(date).toLocaleDateString()}`
     case 'accountStale': 

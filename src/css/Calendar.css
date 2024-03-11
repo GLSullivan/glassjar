@@ -22,9 +22,9 @@
 
 .glassjar__calendar__calendar {
   box-sizing: border-box;
-  margin    : 0 0 1rem 0;
+  margin    : 0 0 .5rem 0;
   min-height: 90px;
-  padding   : 0.5rem 1rem 1.5rem 1rem;
+  padding   : 0.5rem 1rem 1.3rem 1rem;
   position  : relative;
 
   /* display: none; */
@@ -174,7 +174,7 @@
 
 .glassjar__calendar__day-panel--graph {
   box-sizing: border-box;
-  height: 30vh;
+  height: 20vh;
 }
 
 .glassjar__calendar__month {

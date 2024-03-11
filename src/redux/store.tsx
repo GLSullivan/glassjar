@@ -54,7 +54,6 @@ firebase.auth().onAuthStateChanged((user) => {
       const transactions = snapshot.val() || [];
 
       // Upgrade old transactions to new data structure if needed.
-      
       transactions.forEach((transaction: any) => {
         if (transaction.date) {
           transaction.start_date = format(parseISO(transaction.date), 'yyyy-MM-dd');

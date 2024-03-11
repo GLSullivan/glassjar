@@ -6,7 +6,9 @@ import { accountTypeIcons }            from './../data/AccountTypeIcons';
 import { openAccountForm }             from './../redux/slices/modals'; // TODO: Rewrite the modals to use HTML modals and maybe not require state.
 import { accountColors }               from './../data/AccountColors';
 import { Account }                     from './../models/Account';
- 
+
+import { format }                      from 'date-fns';
+
 import './../css/ListItems.css'; 
 
 import SVGGraph                        from './SVGGraph';
@@ -15,8 +17,9 @@ import { getAccountMessages,
   getTransactionsByAccount }           from './../redux/slices/projections';
 
 interface AccountListItemProps {
-  account : Account;
-  balance?: number;
+  account      : Account;
+  balance?     : number;
+  hideDateLine?:boolean;
 }
 
 function getNextOccurrence(dateString: string | undefined) {
@@ -60,11 +63,12 @@ function getNextOccurrence(dateString: string | undefined) {
 }
   
 const AccountListItem: React.FC<AccountListItemProps> = React.memo(
-  ({ account }) => {
-    const dispatch = useDispatch();
+  ({ account, balance = null, hideDateLine = false }) => {
+    const dispatch    = useDispatch();
     const projections = useSelector((state: RootState) => state.projections);
+    const activeDate  = useSelector((state: RootState) => state.activeDates.activeDate);
 
-    const messages   = getAccountMessages(projections, account);
+    const messages = getAccountMessages(projections, account);
 
     function blendWithWhite(color: string, alpha: number) {
       const r = Math.floor((1 - alpha) * 255 + alpha * parseInt(color.slice(1, 3), 16));
@@ -93,8 +97,15 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
               <h4>{account.name}</h4>
               {account.interestRate && <h5>{account.interestRate}%</h5>}
             </div>
+            <h5>{balance && 
+            
+            
+            (balance / 100).toLocaleString('en-US', {style   : 'currency',currency: 'USD',})} on {format(new Date(activeDate), 'M/d/yy')}
+            
+            
+            </h5>
             <div className='glassjar__list-item__details'>
-              {account.dueDate && (<h5>Due Next: {getNextOccurrence(account.dueDate)}</h5>)}
+              {account.dueDate && (<h5>Due Next: {getNextOccurrence(account.dueDate)}</h5>)} 
               
             </div>
           </div>
@@ -109,7 +120,7 @@ const AccountListItem: React.FC<AccountListItemProps> = React.memo(
             hideTrend = {true}
             hideDates = {true}
             hideRange = {true}
-            hideToday = {true}
+            hideToday = {hideDateLine}
             hideMonth = {true}
             thickness = {2}
           />
