@@ -66,24 +66,12 @@ const Tabs: React.FC<TabsProps> & { Item: React.FC<TabsItemProps> } = ({
   const renderHeaders = () => {
     return (
       <div ref       = {navRef} className = {`glassjar__nav`}>
-        {/* <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-          <div style     = {{ background: activeStyle.color }}></div>
-          </div>
-          <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-          <div style     = {{ background: activeStyle.color }}></div>
-          </div>
-          <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-          <div style     = {{ background: activeStyle.color }}></div>
-          </div>
-          <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-          <div style     = {{ background: activeStyle.color }}></div>
-        </div> */}
         <div className = 'glassjar__nav__icon-holder'>
           <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
             <div></div>
           </div>
-          {React.Children.map(children, (child: any, index) => {
-            if (child.props.heading) {
+          {React.Children.map(children, (child, index) => {
+            if (React.isValidElement(child) && child.props.heading) {
               return (
                 <button
                   key         = {child.props.heading}

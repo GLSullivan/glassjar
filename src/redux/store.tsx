@@ -25,13 +25,14 @@ import { format, parseISO } from 'date-fns'
 let isAppLoaded = false;
 
 const firebaseConfig = {
-  apiKey           : process.env.REACT_APP_API_KEY,
-  authDomain       : process.env.REACT_APP_AUTH_DOMAIN,
-  projectId        : process.env.REACT_APP_PROJECT_ID,
-  storageBucket    : process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId            : process.env.REACT_APP_APP_ID,
-  measurementId    : process.env.REACT_APP_MEASUREMENT_ID,
+  apiKey           : import.meta.env.VITE_API_KEY             || 'AIzaSyBfL7YupxiVmLYpsKoFdbT5_6edB-kUVr8',
+  authDomain       : import.meta.env.VITE_AUTH_DOMAIN         || 'glassjar-jarstore.firebaseapp.com',
+  databaseURL      : import.meta.env.VITE_DATABASE_URL        || 'https://glassjar-jarstore-default-rtdb.firebaseio.com',
+  projectId        : import.meta.env.VITE_PROJECT_ID          || 'glassjar-jarstore',
+  storageBucket    : import.meta.env.VITE_STORAGE_BUCKET      || 'glassjar-jarstore.appspot.com',
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID || '485993136920',
+  appId            : import.meta.env.VITE_APP_ID              || '1:485993136920:web:cf2c6312a276293ca2946d',
+  measurementId    : import.meta.env.VITE_MEASUREMENT_ID      || 'G-MWSVVY6GTK',
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -42,6 +43,16 @@ firebase.auth().onAuthStateChanged((user) => {
     store.dispatch(showLoader());
     const accountsPromise = dbRef.child('users/' + user.uid + '/accounts').once('value').then((snapshot) => {
       const accounts = snapshot.val() || [];
+
+      // Idempotent migration: older clients stored interestRate as the raw
+      // <input> string; the model (and the interest math) wants a number.
+      accounts.forEach((account: any) => {
+        if (account && account.interestRate !== undefined && account.interestRate !== null) {
+          const parsed = Number(account.interestRate);
+          account.interestRate = isNaN(parsed) ? null : parsed;
+        }
+      });
+
       store.dispatch(setAccounts(accounts));
 
       if (accounts.length < 1) { // Placeholder new user experience. 
@@ -136,41 +147,89 @@ function replaceUndefinedWithNull(value: any): any {
   return value;
 }
 
-function saveStateToDatabase() {
-  const state = store.getState();
-  const user  = firebase.auth().currentUser;
-  if (user) {
-    dbRef.child('users/' + user.uid + '/accounts').set(replaceUndefinedWithNull(state.accounts.accounts));
-    dbRef.child('users/' + user.uid + '/transactions').set(replaceUndefinedWithNull(state.transactions.transactions));
-    dbRef.child('users/' + user.uid + '/views').set(replaceUndefinedWithNull(state.views));
-    dbRef.child('users/' + user.uid + '/prefs').set(replaceUndefinedWithNull(state.userPrefs));
-  }
-}
+// Dev safety valve: VITE_DISABLE_SYNC=true (e.g. in .env.development.local)
+// runs the app against live data without ever writing back to Firebase.
+const syncDisabled = import.meta.env.VITE_DISABLE_SYNC === 'true';
 
-let prevState = {
-  accounts    : store.getState().accounts,
-  transactions: store.getState().transactions,
+const SAVE_DEBOUNCE_MS = 1000;
+
+// Only the slices below are persisted. Changes are detected by reference
+// (Redux Toolkit state is immutable, so !== is exact and free — the old
+// JSON.stringify comparison serialized the whole state on every action), and
+// only the slices that actually changed are written, in one debounced
+// update() per burst. A multi-path update() can't wipe sibling slices the
+// way four whole-slice set() calls could.
+let dirty = { accounts: false, transactions: false, views: false, prefs: false };
+let pendingSave: ReturnType<typeof setTimeout> | null = null;
+
+let prevPersisted = {
+  accounts    : store.getState().accounts.accounts,
+  transactions: store.getState().transactions.transactions,
   views       : store.getState().views,
   userPrefs   : store.getState().userPrefs,
 };
 
-store.subscribe(() => {
-  const user     = firebase.auth().currentUser;
-  const newState = {
-    accounts    : store.getState().accounts,
-    transactions: store.getState().transactions,
-    views       : store.getState().views,
-    userPrefs   : store.getState().userPrefs,
-  };
-  
-  if (user && isAppLoaded) {
-    if (JSON.stringify(newState.accounts) !== JSON.stringify(prevState.accounts)
-      || JSON.stringify(newState.transactions) !== JSON.stringify(prevState.transactions)
-      || JSON.stringify(newState.views)        !== JSON.stringify(prevState.views)
-      || JSON.stringify(newState.userPrefs)    !== JSON.stringify(prevState.userPrefs)) {
-
-      saveStateToDatabase();
-      prevState = newState;
-    }
+function savePendingToDatabase() {
+  pendingSave = null;
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  if (syncDisabled) {
+    console.warn('Glassjar: Firebase sync DISABLED (REACT_APP_DISABLE_SYNC) — changes are NOT being saved.');
+    dirty = { accounts: false, transactions: false, views: false, prefs: false };
+    return;
   }
+
+  const state = store.getState();
+  const update: { [path: string]: any } = {};
+  if (dirty.accounts)     update['accounts']     = replaceUndefinedWithNull(state.accounts.accounts);
+  if (dirty.transactions) update['transactions'] = replaceUndefinedWithNull(state.transactions.transactions);
+  if (dirty.views)        update['views']        = replaceUndefinedWithNull(state.views);
+  if (dirty.prefs)        update['prefs']        = replaceUndefinedWithNull(state.userPrefs);
+  dirty = { accounts: false, transactions: false, views: false, prefs: false };
+
+  if (Object.keys(update).length > 0) {
+    dbRef.child('users/' + user.uid).update(update).catch((error) => {
+      console.error('Glassjar: saving to Firebase failed', error);
+    });
+  }
+}
+
+function scheduleSave() {
+  if (pendingSave) clearTimeout(pendingSave);
+  pendingSave = setTimeout(savePendingToDatabase, SAVE_DEBOUNCE_MS);
+}
+
+// Don't lose the tail of the debounce window on tab close.
+window.addEventListener('beforeunload', () => {
+  if (pendingSave) savePendingToDatabase();
+});
+
+store.subscribe(() => {
+  if (!isAppLoaded || !firebase.auth().currentUser) return;
+
+  const state = store.getState();
+  let changed = false;
+
+  if (state.accounts.accounts !== prevPersisted.accounts) {
+    dirty.accounts = true;
+    prevPersisted.accounts = state.accounts.accounts;
+    changed = true;
+  }
+  if (state.transactions.transactions !== prevPersisted.transactions) {
+    dirty.transactions = true;
+    prevPersisted.transactions = state.transactions.transactions;
+    changed = true;
+  }
+  if (state.views !== prevPersisted.views) {
+    dirty.views = true;
+    prevPersisted.views = state.views;
+    changed = true;
+  }
+  if (state.userPrefs !== prevPersisted.userPrefs) {
+    dirty.prefs = true;
+    prevPersisted.userPrefs = state.userPrefs;
+    changed = true;
+  }
+
+  if (changed) scheduleSave();
 });

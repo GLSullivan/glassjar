@@ -73,18 +73,6 @@ const PrimaryNav = () => {
       ref       = {navRef}
       className={`glassjar__nav glassjar__nav--primary${isActiveView ? '' : ' inactive'}`}
     >
-      {/* <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-        <div style     = {{ background: activeStyle.color }}></div>
-      </div>
-      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-        <div style     = {{ background: activeStyle.color }}></div>
-      </div>
-      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-        <div style     = {{ background: activeStyle.color }}></div>
-      </div>
-      <div className = 'glassjar__nav__backing-shape' style = {activeStyle}>
-        <div style     = {{ background: activeStyle.color }}></div>
-      </div> */}
       <div
         className='glassjar__nav__icon-holder'
       >

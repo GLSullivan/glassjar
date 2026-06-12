@@ -1,11 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React                        from 'react';
+import { format }                   from 'date-fns';
 
-import { setActiveTransaction, updateTransaction }     from './../redux/slices/transactions';
+import {
+  setActiveTransaction,
+  updateTransaction,
+  clearOccurrences,
+}                                   from './../redux/slices/transactions';
 import { openTransactionModal }     from './../redux/slices/modals';
 
 import { solidTransparentColor }    from './../utils/solidTransparentColor';
 import { getSpendByTransaction }    from './../redux/slices/projections';
+import { fromDateKey }              from './../utils/dateKey';
 import { Transaction }              from './../models/Transaction';
 import { accountColors }            from './../data/AccountColors';
 import { RootState }                from './../redux/store';
@@ -13,10 +19,13 @@ import { SwipeElement }             from './SwipeElement';
 
 import './../css/ListItems.css';
 
-interface TransactionListItem {
+interface TransactionListItemProps {
   transaction  : Transaction;
   showSearch  ?: boolean;
+  /** A recurring occurrence date; swipe-clear adds it to exdates (skip it). */
   instanceDate?: string;
+  /** A past-due floating occurrence date; swipe-clear marks it settled. */
+  floatingDate?: string;
 }
 
 const transactionTypeIcons = {
@@ -26,8 +35,8 @@ const transactionTypeIcons = {
   'event'     : 'glassjar__list-icon fa-solid fa-fw fa-fw fa-calendar'
 };
 
-const CalendarDay: React.FC<TransactionListItem> = React.memo(
-  ({ transaction, showSearch = false, instanceDate = undefined }) => {
+const TransactionListItem: React.FC<TransactionListItemProps> = React.memo(
+  ({ transaction, showSearch = false, instanceDate = undefined, floatingDate = undefined }) => {
     const dispatch     = useDispatch();
     const activeSearch = useSelector((state: RootState) => state.search.search);
     const accounts     = useSelector((state: RootState) => state.accounts.accounts);
@@ -112,10 +121,14 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
     const annualSpend = getSpendByTransaction(projections, transaction.event_id);
 
     const handleClear = () => {
-      // Assuming instanceDate is already in scope (and is not undefined)
-      // Assuming transaction is obtained from some state or prop
-      const existingExdates = transaction.exdates || []; // Fallback to an empty array if exdates is not defined
-    
+      if (floatingDate) {
+        // Past-due occurrence: mark it settled (clearedDates), not skipped.
+        dispatch(clearOccurrences([{ event_id: transaction.event_id, dates: [floatingDate] }]));
+        return;
+      }
+
+      const existingExdates = transaction.exdates || [];
+
       // Add instanceDate to existing exdates and filter out undefined values
       const updatedExdates = Array.from(
         new Set([
@@ -123,22 +136,13 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
           instanceDate,
         ].filter((date): date is string => date !== undefined))
       );
-    
-      // Update the transaction with new exdates
-      const updatedTransaction: Transaction = {
-        ...transaction,
-        exdates: updatedExdates,
-      };
-    
-      // Dispatch the action to update the transaction
-      dispatch(updateTransaction(updatedTransaction));
-    
-      console.log('Cleared!', updatedTransaction);
+
+      dispatch(updateTransaction({ ...transaction, exdates: updatedExdates }));
     };
 
     return (
       <div className='glassjar__list-item__transaction'>
-        <SwipeElement disabled={instanceDate === undefined}>
+        <SwipeElement disabled={instanceDate === undefined && floatingDate === undefined}>
           <div
               className = "glassjar__list-item"
               onClick   = {() => {
@@ -214,16 +218,21 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
                       </span>
                     )}
                   </h5>
-                  {annualSpend && (
-                    <h5>
-                      {(annualSpend / 100).toLocaleString('en-US', {
-                        style   : 'currency',
-                        currency: 'USD',
-                      })}
-                      /yr
+                  {floatingDate ? (
+                    <h5 className = "glassjar__list-item__due">
+                      due {format(fromDateKey(floatingDate), 'M/d/yy')}
                     </h5>
+                  ) : (
+                    annualSpend && (
+                      <h5>
+                        {(annualSpend / 100).toLocaleString('en-US', {
+                          style   : 'currency',
+                          currency: 'USD',
+                        })}
+                        /yr
+                      </h5>
+                    )
                   )}
-                  {/* {instanceDate && <h5>{instanceDate}</h5>} */}
                 </div>
               )}
             </div>
@@ -242,4 +251,4 @@ const CalendarDay: React.FC<TransactionListItem> = React.memo(
   }
 );
 
-export default CalendarDay;
+export default TransactionListItem;

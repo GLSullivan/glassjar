@@ -27,6 +27,13 @@
 
 }
 
+/* Original date on a floating (past-due) occurrence */
+.glassjar__list-item__due {
+  font-style : italic;
+  opacity    : 0.75;
+  white-space: nowrap;
+}
+
 .glassjar__list-item__backing {
   height       : 100%;
   left         : 0;
@@ -54,7 +61,7 @@
 }
 
 .glassjar__list-icon__backing {
-  border-radius: 1.1rem;
+  border-radius: .7rem;
   height       : 100%;
   left         : 0;
   position     : absolute;

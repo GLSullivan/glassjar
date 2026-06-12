@@ -1,6 +1,6 @@
 import CurrencyInput                  from 'react-currency-input-field';
 import { useSelector, useDispatch }   from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   closeAccountForm,
@@ -28,7 +28,7 @@ import './../../css/Panels.css';
 export const AccountForm: React.FC = () => {
   const dispatch = useDispatch();
 
-  const state         = useSelector((state: RootState) => state);
+  const projections   = useSelector((state: RootState) => state.projections);
   const accounts      = useSelector((state: RootState) => state.accounts.accounts);
   const activeAccount = useSelector((state: RootState) => state.accounts.activeAccount);
 
@@ -70,7 +70,10 @@ export const AccountForm: React.FC = () => {
     }
   );
 
-  const transactions = getTransactionsByAccount(state.projections, account.id);
+  const transactions = useMemo(
+    () => getTransactionsByAccount(projections, account.id),
+    [projections, account.id]
+  );
 
   const [initialAccountData, setInitialAccountData] = useState(
     JSON.parse(JSON.stringify(account))
@@ -119,6 +122,11 @@ export const AccountForm: React.FC = () => {
     const target = event.target;
     if (target instanceof HTMLInputElement && target.type === 'checkbox') {
       setAccount({ ...account, [target.name]: target.checked });
+    } else if (target.name === 'interestRate') {
+      // interestRate is a number on the model; storing the raw input string
+      // only worked through implicit coercion in the interest math.
+      const parsed = parseFloat(target.value);
+      setAccount({ ...account, interestRate: isNaN(parsed) ? undefined : parsed });
     } else {
       setAccount({ ...account, [target.name]: target.value });
     }
@@ -189,7 +197,10 @@ export const AccountForm: React.FC = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
-  const messages = getAccountMessages(state.projections, account);
+  const messages = useMemo(
+    () => getAccountMessages(projections, account),
+    [projections, account]
+  );
 
   return (
     <div className = "glassjar__panel glassjar__panel--account">

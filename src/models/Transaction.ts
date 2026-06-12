@@ -37,5 +37,21 @@ export interface Transaction {
 
   fromHelper?: string;
 
+  /**
+   * true/undefined: past occurrences are assumed settled (baked into account
+   * balances) and drop out of the projection — the original behavior.
+   * false: past occurrences FLOAT — they stack as "past due", keep affecting
+   * the projection from today forward, and must be cleared by hand.
+   */
   autoClear?: boolean;
+
+  /** Occurrence DateKeys the user has cleared (settled at the bank). */
+  clearedDates?: string[];
+
+  /**
+   * Occurrence DateKeys that have been seen floating at least once. Once
+   * recorded here an occurrence never expires out of the past-due list —
+   * it floats until explicitly cleared.
+   */
+  pendingDates?: string[];
 }

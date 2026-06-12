@@ -12,7 +12,7 @@ const initialState: ViewState = {
   graphRange  : 3 // TODO: Make this a value saved with the view. 
 }
 
-const rangeChoices: number[] = [1,3,6,12];
+const rangeChoices: number[] = [1,3,6,12,36];
 
 export const views = createSlice({
   name: 'views',

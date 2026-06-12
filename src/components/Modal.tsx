@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import './../css/Modal.css';
 
 interface modalProps {
-  onClose   : any,
+  onClose   : () => void,
   isOpen    : boolean,
-  children ?: any,
+  children ?: React.ReactNode,
   hideClose?: boolean,
   color    ?: string,
 }

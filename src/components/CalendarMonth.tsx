@@ -173,7 +173,7 @@ const CalendarMonth: React.FC = () => {
                       isToday        = {isSameDay(day, new Date(today))}
                       isActive       = {isSameDay(day, new Date(activeDate))}
                       hasTransaction = {
-                        dateHasTransactions(projections, day.toISOString().slice(0, 10))
+                        dateHasTransactions(projections, day)
                       }
                     />
                   );

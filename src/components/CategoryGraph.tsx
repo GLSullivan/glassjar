@@ -15,9 +15,9 @@ const CategorySpendPieChart = () => {
   const categorySpendData = useSelector(getCategorySpend);
   const COLORS = accountColors;
 
-  const getCategoryPercentage = (categoryName: any) => {
+  const getCategoryPercentage = (categoryName: string) => {
     const [beforeColon] = categoryName.split(':');
-    const category = RecurringExpenses.find((item: { category: any; }) => item.category === beforeColon);
+    const category = RecurringExpenses.find((item) => item.category === beforeColon);
     if (category) {
       return category.percentage;
     }
@@ -40,7 +40,11 @@ const CategorySpendPieChart = () => {
 
 
   
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  interface TooltipEntry {
+    name: string;
+    payload: { fill: string };
+  }
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: TooltipEntry[]; label?: string }) => {
     if (active && payload && payload.length) {
       const fill             = payload[0]?.payload?.fill;
       const targetPercentage = getCategoryPercentage(payload[0].name)

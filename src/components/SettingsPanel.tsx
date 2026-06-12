@@ -86,7 +86,7 @@ const SettingsPanel: React.FC = () => {
       </div>
       <button className='glassjar__button glassjar__button--warn' onClick={() => signOut()}>Sign Out</button>
       
-      <p>Version: {process.env.REACT_APP_VERSION}</p>
+      <p>Version: {import.meta.env.VITE_VERSION}</p>
     </div>
   );
 };

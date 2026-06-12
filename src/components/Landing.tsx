@@ -1,5 +1,5 @@
 import firebase                                                    from 'firebase/compat/app';
-import { Formik, Field, Form, ErrorMessage }                       from 'formik';
+import { Formik, Field, Form, ErrorMessage, FormikHelpers }         from 'formik';
 import * as Yup                                                    from 'yup';
 import 'firebase/compat/auth';                     
 
@@ -56,7 +56,7 @@ function Landing() {
       setTimeout(() => {
         setEmailHasBeenSent(false);
       }, 3000);
-    } catch (error) {
+    } catch {
       setError('Error resetting password');
     }
   };
@@ -81,20 +81,21 @@ function Landing() {
 
   const signIn = async (
     values: { email: string; password: string },
-    { setSubmitting }: any
+    { setSubmitting }: FormikHelpers<{ email: string; password: string }>
   ) => {
     try {
       await firebase
         .auth()
         .signInWithEmailAndPassword(values.email, values.password);
-    } catch (error: any) {
+    } catch (error) {
+      const firebaseError = error as { code: string };
       const friendlyErrors: { [key: string]: string } = {
         'auth/user-not-found': 'No user with this email found.',
         'auth/wrong-password': 'Wrong password.',
       };
 
       setFirebaseSignInError(
-        friendlyErrors[error.code] || 'An error occurred.'
+        friendlyErrors[firebaseError.code] || 'An error occurred.'
       );
     }
     setSubmitting(false);
@@ -104,15 +105,16 @@ function Landing() {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       await firebase.auth().signInWithPopup(provider);
-    } catch (error: any) {
+    } catch (error) {
       // An error happened.
+      const firebaseError = error as { code: string };
       const friendlyErrors: { [key: string]: string } = {
         'auth/account-exists-with-different-credential': 'An account already exists with the same email address but different sign-in credentials.',
         'auth/popup-closed-by-user'                    : 'The popup has been closed before authentication could complete.',
       };
 
       setFirebaseSignUPError(
-        friendlyErrors[error.code] || 'An error occurred.'
+        friendlyErrors[firebaseError.code] || 'An error occurred.'
       );
     }
   };
@@ -122,14 +124,15 @@ function Landing() {
       await firebase
         .auth()
         .createUserWithEmailAndPassword(values.email, values.password);
-    } catch (error: any) {
+    } catch (error) {
+      const firebaseError = error as { code: string };
       const friendlyErrors: { [key: string]: string } = {
         'auth/email-already-in-use': 'The email address is already in use by another account.',
         'auth/weak-password'       : 'The password is too weak.',
       };
 
       setFirebaseSignUPError(
-        friendlyErrors[error.code] || 'An error occurred.'
+        friendlyErrors[firebaseError.code] || 'An error occurred.'
       );
     }
   };

@@ -607,6 +607,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             <label htmlFor = "showInCalendar">Show In Schedule:</label>
           </div>
 
+          {/* Off = a check/invoice that might not clear on time: past
+              occurrences stack as "Past Due" and keep affecting the
+              projection until swiped clear. */}
+          <div className = "glassjar__form__input-group glassjar__form__input-group--check">
+            <input
+              type     = "checkbox"
+              id       = "autoClear"
+              name     = "autoClear"
+              checked  = {transaction.autoClear !== false}
+              onChange = {handleChange}
+            />
+            <label htmlFor = "autoClear">Clears Automatically:</label>
+          </div>
+
           <div className = "glassjar__form__input-group">
             <textarea
               placeholder           = "Description (optional)"

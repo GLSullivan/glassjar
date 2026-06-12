@@ -1,5 +1,6 @@
 import { useSelector, useDispatch }         from 'react-redux';
-import React, { useEffect }                 from 'react';
+import React, { useEffect, useMemo }        from 'react';
+import { addMonths, parseISO }              from 'date-fns';
 
 import TransactionHelper                    from './components/helpers/TransactionHelper';
 import TransactionForm                      from './components/forms/TransactionForm';
@@ -21,6 +22,8 @@ import { accountColors }                    from './data/AccountColors';
 import TopNav                               from './components/TopNav';
 
 import { recalculateProjections }           from './redux/slices/projections';
+import { recordPendingOccurrences }         from './redux/slices/transactions';
+import { findUnrecordedPending }            from './utils/projectionEngine';
 import {      
   closeTransactionModal,      
   closeAccountForm,     
@@ -42,6 +45,7 @@ const App: React.FC = () => {
   const activeDate            = useSelector((state: RootState) => state.activeDates.activeDate);
   const activeAccount         = useSelector((state: RootState) => state.accounts.activeAccount);
   const farDate               = useSelector((state: RootState) => state.activeDates.farDate);
+  const graphRange            = useSelector((state: RootState) => state.views.graphRange);
   const accounts              = useSelector((state: RootState) => state.accounts.accounts);
   const activeView            = useSelector((state: RootState) => state.views.activeView);
 
@@ -49,8 +53,21 @@ const App: React.FC = () => {
 
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
 
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  useEffect(() => {
+    const updateVh = () => {
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
+    };
+    updateVh();
+    window.visualViewport?.addEventListener('resize', updateVh);
+    window.addEventListener('resize', updateVh);
+    window.addEventListener('orientationchange', updateVh);
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateVh);
+      window.removeEventListener('resize', updateVh);
+      window.removeEventListener('orientationchange', updateVh);
+    };
+  }, []);
 
   const closeTheTransactionModal = () => {
     dispatch(closeTransactionModal())
@@ -68,11 +85,31 @@ const App: React.FC = () => {
     dispatch(closeTransactionHelper())
   }
 
+  // Projections must always cover the selected graph range, even when it
+  // reaches past activeDates.farDate (e.g. the 36-month view against the
+  // default 2-year farDate). The engine clamps the window at ~30 years.
+  const effectiveFarDate = useMemo(() => {
+    const rangeEnd = addMonths(new Date(), graphRange);
+    const far      = parseISO(farDate);
+    return (rangeEnd > far ? rangeEnd : far).toISOString();
+  }, [farDate, graphRange]);
+
   useEffect(() => {
     if (accounts.length > 0) {
-      dispatch(recalculateProjections({ transactions, accounts, farDate }));
+      dispatch(recalculateProjections({ transactions, accounts, farDate: effectiveFarDate }));
     }
-  }, [transactions, accounts, farDate, dispatch]);
+  }, [transactions, accounts, effectiveFarDate, dispatch]);
+
+  // Pin newly seen floating occurrences onto their transactions so they never
+  // expire out of the discovery window. Converges after one pass: recording
+  // updates transactions → recalc → nothing new to record.
+  const floatingTransactions = useSelector((state: RootState) => state.projections.floatingTransactions);
+  useEffect(() => {
+    const unrecorded = findUnrecordedPending(floatingTransactions);
+    if (unrecorded.length > 0) {
+      dispatch(recordPendingOccurrences(unrecorded));
+    }
+  }, [floatingTransactions, dispatch]);
 
   return (
     <div className='glassjar__root'>

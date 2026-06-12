@@ -22,6 +22,7 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
   ({ day, isCurrentMonth, isToday, isActive, hasTransaction }) => {
     const dispatch  = useDispatch();
     const projections = useSelector((state: RootState) => state.projections);
+    const accounts  = useSelector((state: RootState) => state.accounts.accounts);
     const userPrefs = useSelector((state: RootState) => state.userPrefs);
 
     function calculateRelativeBalance(
@@ -39,7 +40,7 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(
       return relativeBalance;
     }
     
-    const todaysBalance: number = aggregateBalanceOnDate(projections, day.toISOString().slice(0, 10));
+    const todaysBalance: number = aggregateBalanceOnDate(projections, accounts, day);
     
     let dayHealth: number = calculateRelativeBalance(userPrefs.healthRangeBottom, userPrefs.healthRangeTop,todaysBalance); 
     

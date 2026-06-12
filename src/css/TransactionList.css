@@ -26,6 +26,17 @@
   padding: .2rem 0 .2rem 0;
 }
 
+/* Floating (past-due, uncleared) transactions stacked above the schedule */
+.glassjar__past-due-group {
+  border-bottom : 1px solid var(--color-border);
+  margin-bottom : 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.glassjar__past-due__title {
+  color: #b6806c;
+}
+
 .glassjar__search-sort {
   align-items    : center;
   box-sizing     : border-box;
@@ -75,7 +86,7 @@
 .glassjar__transaction-view {
   max-height    : 100%;
   overflow      : auto;
-  padding-bottom:  150px;
+  padding-bottom: 2rem;
 }
 
 .glassjar__sort-menu__filter {

@@ -55,20 +55,56 @@ const transactionsSlice = createSlice({
       state.transactions = state.transactions.filter(
         (transaction) => transaction.event_id !== action.payload
       );
-    },    
+    },
+    // Pin floating occurrences so they never expire out of the discovery
+    // window — they keep floating until explicitly cleared.
+    recordPendingOccurrences: (
+      state,
+      action: PayloadAction<{ event_id: string; dates: string[] }[]>
+    ) => {
+      action.payload.forEach(({ event_id, dates }) => {
+        const transaction = state.transactions.find((t) => t.event_id === event_id);
+        if (!transaction) return;
+        const pending = new Set(transaction.pendingDates ?? []);
+        dates.forEach((date) => pending.add(date));
+        transaction.pendingDates = Array.from(pending).sort();
+        transaction.updatedAt = Date.now();
+      });
+    },
+    // Mark floating occurrences as settled at the bank: out of pendingDates,
+    // into clearedDates. Used by both swipe-to-clear and Clear All.
+    clearOccurrences: (
+      state,
+      action: PayloadAction<{ event_id: string; dates: string[] }[]>
+    ) => {
+      action.payload.forEach(({ event_id, dates }) => {
+        const transaction = state.transactions.find((t) => t.event_id === event_id);
+        if (!transaction) return;
+        const toClear = new Set(dates);
+        transaction.pendingDates = (transaction.pendingDates ?? []).filter(
+          (date) => !toClear.has(date)
+        );
+        const cleared = new Set(transaction.clearedDates ?? []);
+        dates.forEach((date) => cleared.add(date));
+        transaction.clearedDates = Array.from(cleared).sort();
+        transaction.updatedAt = Date.now();
+      });
+    },
     setActiveTransaction: (state, action: PayloadAction<Transaction | null>) => {
       state.activeTransaction = action.payload;
     },    
   },
 });
 
-export const { 
+export const {
   setTransactions,
-  addTransaction, 
-  updateTransaction, 
+  addTransaction,
+  updateTransaction,
   deleteTransaction,
   setActiveTransaction,
-  bulkUpdateTransactions
+  bulkUpdateTransactions,
+  recordPendingOccurrences,
+  clearOccurrences
 } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

@@ -61,7 +61,8 @@
 }
 
 .glassjar__grid.glassjar__grid--projected-info h4:nth-child(even),
-.glassjar__grid.glassjar__grid--projected-info h5:nth-child(even) {
+.glassjar__grid.glassjar__grid--projected-info h5:nth-child(even),
+.glassjar__grid.glassjar__grid--projected-info div {
   text-align: right;
 }
 
@@ -90,7 +91,7 @@
 }
 
 .glassjar__panel-group {
-  padding-bottom: 150px;
+  padding-bottom: 2rem;
 }
 
 .glassjar__svg-graph {

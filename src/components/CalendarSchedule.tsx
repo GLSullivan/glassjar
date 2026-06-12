@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector }           from 'react-redux';
 
-import { setActiveTransaction }               from './../redux/slices/transactions';
-import { getTransactionsByDateRange }         from './../redux/slices/projections';
+import {
+  setActiveTransaction,
+  clearOccurrences,
+}                                             from './../redux/slices/transactions';
+import {
+  getTransactionsByDateRange,
+  getFloatingTransactions,
+}                                             from './../redux/slices/projections';
 import { setActiveDate }                      from './../redux/slices/activedates';
 import { openTransactionModal }               from './../redux/slices/modals';
 import { RootState }                          from './../redux/store';
@@ -32,10 +38,27 @@ const CalendarSchedule: React.FC = () => {
   const projections                                   = useSelector((state: RootState) => state.projections);
   const graphRange                                    = useSelector((state: RootState) => state.views.graphRange);
 
+  const floatingTransactions                          = getFloatingTransactions(projections);
+
+  const handleClearAllPastDue = () => {
+    if (!window.confirm('Clear all past-due transactions? They will be treated as settled and stop affecting the projection.')) {
+      return;
+    }
+    const datesByEvent = new Map<string, string[]>();
+    floatingTransactions.forEach(({ transaction, date }) => {
+      const dates = datesByEvent.get(transaction.event_id) ?? [];
+      dates.push(date);
+      datesByEvent.set(transaction.event_id, dates);
+    });
+    dispatch(clearOccurrences(
+      Array.from(datesByEvent, ([event_id, dates]) => ({ event_id, dates }))
+    ));
+  };
+
   const headerRefs                                    = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
   const scheduleWindow                                = useRef<HTMLDivElement | null>(null);
-  const scrollTimeout                                 = useRef<NodeJS.Timeout | null>(null);
-  const scrollInterval                                = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeout                                 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollInterval                                = useRef<ReturnType<typeof setInterval> | null>(null);
   const userInitiatedScroll                           = useRef<boolean>(false);
 
   // Fetch transactions on mount and when activeDate changes.
@@ -182,6 +205,30 @@ const CalendarSchedule: React.FC = () => {
 
   return (
     <div ref = {scheduleWindow} className = 'glassjar__schedule'>
+      {floatingTransactions.length > 0 && (
+        <div className='glassjar__past-due-group'>
+          <div className='glassjar__lazy-list__header glassjar__flex glassjar__flex--justify-between'>
+            <h3 className='glassjar__calendar__month glassjar__past-due__title'>
+              Past Due ({floatingTransactions.length})
+            </h3>
+            <button
+              onClick={handleClearAllPastDue}
+              className='glassjar__button glassjar__button--small'
+            >
+              Clear All
+            </button>
+          </div>
+          <div className='glassjar__flex glassjar__flex--column glassjar__flex--tight'>
+            {floatingTransactions.map(({ transaction, date }) => (
+              <TransactionListItem
+                key          = {`floating-${transaction.event_id}-${date}`}
+                transaction  = {transaction}
+                floatingDate = {date}
+              />
+            ))}
+          </div>
+        </div>
+      )}
       {groupedTransactions.length > 0 ?
         <>
           {groupedTransactions.map((group, groupIndex) => {

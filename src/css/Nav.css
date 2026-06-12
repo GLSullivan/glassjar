@@ -15,12 +15,13 @@
 }
 
 .glassjar__nav.glassjar__nav--primary {
-  border-radius: 0;
-  border-top   : 1px solid rgba(0, 0, 0, 0.15);
-  bottom       : -4px;
-  position     : absolute;
-  width        : 100%;
-  z-index      : 9000;
+  border-radius    : 0;
+  border-top       : 1px solid rgba(0, 0, 0, 0.15);
+  flex-shrink      : 0;
+  margin-bottom    : -4px;
+  padding-bottom   : env(safe-area-inset-bottom, 0);
+  width            : 100%;
+  z-index          : 9000;
 }
 
 .glassjar__nav__icon-holder {
@@ -192,7 +193,7 @@
   padding        : .5rem;
   position       : relative;
   width          : 100%;
-  z-index        : 9000;
+  z-index        : 8000;
 }
 
 .glassjar__top-nav > * {
