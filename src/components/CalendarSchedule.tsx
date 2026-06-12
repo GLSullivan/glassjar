@@ -214,6 +214,7 @@ const CalendarSchedule: React.FC = () => {
             <button
               onClick={handleClearAllPastDue}
               className='glassjar__button glassjar__button--small'
+              style={{ whiteSpace: 'nowrap' }}
             >
               Clear All
             </button>
