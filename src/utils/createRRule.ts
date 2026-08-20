@@ -75,10 +75,22 @@ export const createRRule = (transaction: Transaction, callback: (newRule: string
       case RecurrenceFrequency.YEARLY:
         options.freq = RRule.YEARLY;
         options.interval = 1;
+        if (startDay === 29 && dtstartDate.getUTCMonth() === 1) {
+          // A yearly rule anchored to Feb 29 silently skips non-leap years
+          // (RFC 5545 drops invalid dates). Give it the same last-day
+          // fallback as monthly: Feb 29 in leap years, Feb 28 otherwise.
+          options.bymonth = 2;
+          options.bymonthday = [28, 29];
+          options.bysetpos = -1;
+        }
         break;
       case RecurrenceFrequency.GIVEN_DAYS:
         options.freq = RRule.WEEKLY;
-        options.byweekday = transaction.givenDays || undefined;
+        // The day buttons are Sunday-first (0=Sun..6=Sat); rrule weekday
+        // numbers are Monday-first (0=Mon..6=Sun).
+        options.byweekday = transaction.givenDays
+          ? transaction.givenDays.map((day) => (day + 6) % 7)
+          : null;
         options.interval = 1;
         break;
       case RecurrenceFrequency.TWICE_MONTHLY:
@@ -99,7 +111,10 @@ export const createRRule = (transaction: Transaction, callback: (newRule: string
         }
         break;
       case RecurrenceFrequency.CUSTOM:
-        options.interval = transaction.recurrenceInterval;
+        // Coerced because the form's number input stores strings; a string
+        // interval survives the serialize→parse round trip but breaks any
+        // direct in-memory expansion of this rule.
+        options.interval = Math.max(1, Math.round(Number(transaction.recurrenceInterval)) || 1);
         switch (transaction.customIntervalType) {
           case CustomIntervalType.DAY:
             options.freq = RRule.DAILY;

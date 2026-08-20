@@ -1,6 +1,39 @@
 import { createSlice }          from '@reduxjs/toolkit'
 import type { PayloadAction }   from '@reduxjs/toolkit'
 import { Transaction }          from './../../models/Transaction'
+import { prepareTransaction }   from './../../utils/prepareTransaction'
+import { expandTransactionOccurrences } from './../../utils/projectionEngine'
+import { addDaysToKey, toDateKey }      from './../../utils/dateKey'
+
+/**
+ * Flipping a transaction from auto-clear to hand-clear must not turn its
+ * history into "past due": those occurrences already happened and are baked
+ * into the account balance. On the true/undefined -> false TRANSITION, seed
+ * clearedDates with every past occurrence so only occurrences from the flip
+ * forward float. A transaction CREATED with autoClear:false keeps floating
+ * history — backdating an uncleared check is the feature's point.
+ */
+function withAutoClearTransition(previous: Transaction, prepared: Transaction): Transaction {
+  if (prepared.autoClear !== false || previous.autoClear === false) return prepared;
+
+  const yesterdayKey = addDaysToKey(toDateKey(new Date()), -1);
+  const startKey = String(prepared.start_date).slice(0, 10);
+  if (startKey > yesterdayKey) return prepared;
+
+  const todayKey = toDateKey(new Date());
+  const past = expandTransactionOccurrences(prepared, startKey, yesterdayKey);
+  const cleared = new Set(prepared.clearedDates ?? []);
+  past.forEach((date) => cleared.add(date));
+  // Past pendingDates are settled too, even ones recorded under an earlier
+  // schedule that no longer match the rule's occurrence dates.
+  const pendingDates: string[] = [];
+  for (const date of prepared.pendingDates ?? []) {
+    if (date < todayKey) cleared.add(date);
+    else pendingDates.push(date);
+  }
+  const clearedDates = Array.from(cleared).sort();
+  return { ...prepared, clearedDates, pendingDates };
+}
 
 export interface Transactions {
   transactions: Transaction[];
@@ -19,8 +52,12 @@ const transactionsSlice = createSlice({
     setTransactions: (state, action: PayloadAction<Transaction[]>) => {
       state.transactions = action.payload;
     },
+    // add/update/bulkUpdate all pass through prepareTransaction: the rrule
+    // envelope is regenerated from the structured fields at the moment of
+    // save, so no form can persist a transaction whose recurrence metadata
+    // disagrees with what the projection will actually do.
     addTransaction: (state, action: PayloadAction<Transaction>) => {
-      const newTransaction = {
+      const newTransaction = prepareTransaction({
         ...action.payload,
         transactionName     : action.payload.transactionName || 'New Transaction',
         type                : action.payload.type || 'withdrawal',
@@ -29,7 +66,7 @@ const transactionsSlice = createSlice({
         description         : action.payload.description || '',
         isRecurring         : action.payload.isRecurring || false,
         showInCalendar      : action.payload.showInCalendar || true
-      }
+      });
       state.transactions.push(newTransaction);
     },
     updateTransaction: (state, action: PayloadAction<Transaction>) => {
@@ -37,8 +74,11 @@ const transactionsSlice = createSlice({
         (transaction) => transaction.event_id === action.payload.event_id
       );
       if (index !== -1) {
-        state.transactions[index] = { ...action.payload, updatedAt: Date.now() };
-        state.transactions[index] = action.payload;
+        const prepared = withAutoClearTransition(
+          state.transactions[index],
+          prepareTransaction(action.payload)
+        );
+        state.transactions[index] = { ...prepared, updatedAt: Date.now() };
       }
     },
     bulkUpdateTransactions: (state, action: PayloadAction<Transaction[]>) => {
@@ -47,7 +87,11 @@ const transactionsSlice = createSlice({
           (transaction) => transaction.event_id === updatedTransaction.event_id
         );
         if (index !== -1) {
-          state.transactions[index] = { ...updatedTransaction, updatedAt: Date.now() };
+          const prepared = withAutoClearTransition(
+            state.transactions[index],
+            prepareTransaction(updatedTransaction)
+          );
+          state.transactions[index] = { ...prepared, updatedAt: Date.now() };
         }
       });
     },

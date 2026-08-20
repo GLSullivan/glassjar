@@ -21,8 +21,6 @@ import {
 
 import './../../css/Forms.css';
 
-import { createRRule } from '../../utils/createRRule';
-
 import { format, parseISO } from 'date-fns'
 
 
@@ -226,24 +224,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transaction]);
 
+  // The transactions slice regenerates the rrule envelope on save
+  // (prepareTransaction), so the form just dispatches its fields.
   const handleSave = () => {
     if (saveReady) {
-      createRRule(transaction, (newRule) => {
-        const updatedTransaction = { ...transaction, rrule: newRule };
-        setTransaction(updatedTransaction);
-  
-        if (activeTransaction) {
-          dispatch(updateTransaction(updatedTransaction));
-        } else {
-          dispatch(addTransaction(updatedTransaction));
-        }
-  
-        onClose();
-      });
+      if (activeTransaction) {
+        dispatch(updateTransaction(transaction));
+      } else {
+        dispatch(addTransaction(transaction));
+      }
+      onClose();
     }
   };
-  
-  
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

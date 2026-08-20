@@ -1,6 +1,6 @@
 import { expandTransactionOccurrences } from './projectionEngine';
 import { makeRecurring, makeTransaction } from './testFixtures';
-import { RecurrenceFrequency } from './constants';
+import { RecurrenceFrequency, CustomIntervalType } from './constants';
 
 /**
  * createRRule is tested through expandTransactionOccurrences so the assertions
@@ -101,5 +101,70 @@ describe('other frequencies', () => {
     const transaction = makeRecurring('nonsense' as RecurrenceFrequency, { start_date: '2026-01-10' });
     expect(typeof transaction.rrule).toBe('string');
     expect(expand(transaction, '2026-01-01', '2026-12-31')).toEqual(['2026-01-10']);
+  });
+
+  test('yearly anchored to Feb 29 fires every year (Feb 28 in non-leap years)', () => {
+    const transaction = makeRecurring(RecurrenceFrequency.YEARLY, { start_date: '2024-02-29' });
+    expect(expand(transaction, '2024-01-01', '2028-12-31')).toEqual([
+      '2024-02-29', '2025-02-28', '2026-02-28', '2027-02-28', '2028-02-29',
+    ]);
+  });
+
+  test('custom missing customIntervalType degrades to one-time (not a crash)', () => {
+    const transaction = makeRecurring(RecurrenceFrequency.CUSTOM, {
+      start_date: '2026-01-15', recurrenceInterval: 2, customIntervalType: undefined,
+    });
+    expect(expand(transaction, '2026-01-01', '2026-12-31')).toEqual(['2026-01-15']);
+  });
+});
+
+describe('given days weekday mapping', () => {
+  // The form's day buttons are Sunday-first: index 0 = Sunday … 6 = Saturday.
+  test('selecting Sunday fires on Sundays', () => {
+    const transaction = makeRecurring(RecurrenceFrequency.GIVEN_DAYS, {
+      start_date: '2026-01-05', givenDays: [0],
+    });
+    const keys = expand(transaction, '2026-01-05', '2026-01-18');
+    expect(keys).toEqual(['2026-01-11', '2026-01-18']);
+    keys.forEach((k) => expect(new Date(k + 'T00:00:00Z').getUTCDay()).toBe(0));
+  });
+
+  test('selecting Monday and Saturday fires on Mondays and Saturdays', () => {
+    const transaction = makeRecurring(RecurrenceFrequency.GIVEN_DAYS, {
+      start_date: '2026-01-05', givenDays: [1, 6],
+    });
+    const days = expand(transaction, '2026-01-05', '2026-01-11')
+      .map((k) => new Date(k + 'T00:00:00Z').getUTCDay())
+      .sort();
+    expect(days).toEqual([1, 6]);
+  });
+});
+
+describe('interval semantics (characterization — intentional behavior)', () => {
+  test('non-custom frequencies ignore recurrenceInterval; save-path resets it to 1', () => {
+    // If a future change makes base frequencies honor the interval, this
+    // must be a conscious decision: production data holds confirmed-stale
+    // intervals (audit 2026-08) that would silently change real projections.
+    const transaction = makeRecurring(RecurrenceFrequency.MONTHLY, {
+      start_date: '2026-01-15', recurrenceInterval: 3,
+    });
+    expect(transaction.recurrenceInterval).toBe(1);
+    expect(expand(transaction, '2026-01-01', '2026-06-30')).toEqual([
+      '2026-01-15', '2026-02-15', '2026-03-15', '2026-04-15', '2026-05-15', '2026-06-15',
+    ]);
+  });
+
+  test('custom honors the interval for every unit', () => {
+    const cases: Array<[CustomIntervalType, number, string[]]> = [
+      [CustomIntervalType.WEEK, 2, ['2026-01-15', '2026-01-29', '2026-02-12', '2026-02-26', '2026-03-12', '2026-03-26']],
+      [CustomIntervalType.MONTH, 2, ['2026-01-15', '2026-03-15']],
+      [CustomIntervalType.DAY, 10, ['2026-01-15', '2026-01-25', '2026-02-04', '2026-02-14', '2026-02-24', '2026-03-06', '2026-03-16', '2026-03-26']],
+    ];
+    for (const [unit, interval, expected] of cases) {
+      const transaction = makeRecurring(RecurrenceFrequency.CUSTOM, {
+        start_date: '2026-01-15', recurrenceInterval: interval, customIntervalType: unit,
+      });
+      expect(expand(transaction, '2026-01-01', '2026-03-31')).toEqual(expected);
+    }
   });
 });

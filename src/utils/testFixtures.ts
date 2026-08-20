@@ -1,7 +1,7 @@
 import { Account } from '../models/Account';
 import { Transaction } from '../models/Transaction';
 import { AccountType, RecurrenceFrequency, TransactionType } from './constants';
-import { createRRule } from './createRRule';
+import { prepareTransaction } from './prepareTransaction';
 
 /**
  * Synthetic test data builders. Never put real financial data here.
@@ -45,12 +45,8 @@ export function makeTransaction(overrides: Partial<Transaction> = {}): Transacti
     showInCalendar    : true,
     ...overrides,
   };
-  // Serialize the recurrence exactly the way the app does.
-  let rrule = base.rrule;
-  createRRule(base, (serialized) => {
-    rrule = serialized;
-  });
-  return { ...base, rrule };
+  // Run the same save-path normalization + serialization the reducers use.
+  return prepareTransaction(base);
 }
 
 /** Shorthand for a recurring transaction with a given frequency. */

@@ -16,10 +16,12 @@ import {
 } from './dateKey';
 
 /**
- * Pure projection engine. No wall clock, no module state: callers supply the
- * window (`startKey`..`endKey`, both inclusive local DateKeys) and get back a
+ * Pure projection engine. No wall clock: callers supply the window
+ * (`startKey`..`endKey`, both inclusive local DateKeys) and get back a
  * complete result. The Redux slice is a thin wrapper around `runProjection`;
- * tests drive these functions directly with a frozen "today".
+ * tests drive these functions directly with a frozen "today". The only
+ * module state is a result memo (occurrenceCache) that never changes what a
+ * call returns, only how fast.
  *
  * All money values are integer cents.
  */
@@ -95,6 +97,15 @@ export function parseSerializedRRule(raw: unknown): SerializedRRuleSet | null {
 }
 
 /**
+ * Occurrence memo. Keyed on the transaction OBJECT: Redux Toolkit state is
+ * immutable, so an unchanged transaction keeps its identity across recalcs
+ * and an edited one arrives as a new object — natural invalidation, and the
+ * WeakMap lets replaced objects be collected. Entry values are per-window.
+ * Cached arrays are shared; callers must not mutate them.
+ */
+const occurrenceCache = new WeakMap<Transaction, Map<string, DateKey[]>>();
+
+/**
  * Every DateKey on which a transaction occurs within [startKey, endKey],
  * exdates removed, deduplicated.
  *
@@ -104,8 +115,30 @@ export function parseSerializedRRule(raw: unknown): SerializedRRuleSet | null {
  * today belongs to today's projection regardless of the time of day the
  * projection runs (the old `now + 12h` window dropped today always and
  * tomorrow for most of the day).
+ *
+ * Results are memoized (see occurrenceCache): recalculating a projection
+ * after editing one transaction re-expands only that transaction.
  */
 export function expandTransactionOccurrences(
+  transaction: Transaction,
+  startKey: DateKey,
+  endKey: DateKey
+): DateKey[] {
+  const windowKey = `${startKey}..${endKey}`;
+  const cachedWindows = occurrenceCache.get(transaction);
+  const cached = cachedWindows?.get(windowKey);
+  if (cached) return cached;
+
+  const result = computeTransactionOccurrences(transaction, startKey, endKey);
+  if (cachedWindows) {
+    cachedWindows.set(windowKey, result);
+  } else {
+    occurrenceCache.set(transaction, new Map([[windowKey, result]]));
+  }
+  return result;
+}
+
+function computeTransactionOccurrences(
   transaction: Transaction,
   startKey: DateKey,
   endKey: DateKey
