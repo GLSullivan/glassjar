@@ -318,7 +318,7 @@ describe('spend tallies', () => {
     expect(result.spendByTransaction[paycheck.event_id]).toBe(200_000);
   });
 
-  test('spend window stops at three years out', () => {
+  test('spend tallies cover one year even when the projection runs further', () => {
     const checking = makeAccount({ type: AccountType.CHECKING, currentBalance: 100_000 });
     const yearly = makeRecurring(RecurrenceFrequency.YEARLY, {
       type: TransactionType.WITHDRAWAL, amount: 1_000, start_date: '2026-06-01',
@@ -328,8 +328,46 @@ describe('spend tallies', () => {
       accounts: [checking], transactions: [yearly],
       startKey: '2026-01-15', endKey: '2030-06-15',
     });
-    // Occurrences 2026/2027/2028 are inside [start, start+3y]; 2029/2030 are not.
-    expect(result.categorySpend['Annual']).toBe(3_000);
+    // Only the 2026-06-01 occurrence is inside [start, start+1y).
+    expect(result.categorySpend['Annual']).toBe(1_000);
+    expect(result.spendByTransaction[yearly.event_id]).toBe(1_000);
+  });
+
+  test('a monthly bill over a 2-year projection tallies 12 occurrences, not 24', () => {
+    const checking = makeAccount({ type: AccountType.CHECKING, currentBalance: 1_000_000 });
+    const rent = makeRecurring(RecurrenceFrequency.MONTHLY, {
+      type: TransactionType.WITHDRAWAL, amount: 10_000, start_date: '2026-01-15',
+      fromAccount: checking.id, category: 'Housing',
+    });
+    const result = runProjection({
+      accounts: [checking], transactions: [rent],
+      startKey: '2026-01-15', endKey: '2028-01-15',
+    });
+    expect(result.spendByTransaction[rent.event_id]).toBe(120_000);
+  });
+
+  test('spend window includes today but excludes the anniversary day', () => {
+    const checking = makeAccount({ type: AccountType.CHECKING, currentBalance: 100_000 });
+    const onToday = makeTransaction({
+      type: TransactionType.WITHDRAWAL, amount: 1_000, start_date: '2026-01-15',
+      fromAccount: checking.id,
+    });
+    const dayBeforeAnniversary = makeTransaction({
+      type: TransactionType.WITHDRAWAL, amount: 2_000, start_date: '2027-01-14',
+      fromAccount: checking.id,
+    });
+    const onAnniversary = makeTransaction({
+      type: TransactionType.WITHDRAWAL, amount: 4_000, start_date: '2027-01-15',
+      fromAccount: checking.id,
+    });
+    const result = runProjection({
+      accounts: [checking],
+      transactions: [onToday, dayBeforeAnniversary, onAnniversary],
+      startKey: '2026-01-15', endKey: '2027-06-15',
+    });
+    expect(result.spendByTransaction[onToday.event_id]).toBe(1_000);
+    expect(result.spendByTransaction[dayBeforeAnniversary.event_id]).toBe(2_000);
+    expect(result.spendByTransaction[onAnniversary.event_id]).toBeUndefined();
   });
 });
 

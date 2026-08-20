@@ -61,8 +61,12 @@ export interface ProjectionInput {
 /** Hard ceiling (~30 years) so a malformed farDate can't run away. */
 export const MAX_PROJECTION_DAYS = 11000;
 
-/** How far out spend totals (categorySpend / spendByTransaction) accumulate. */
-const SPEND_WINDOW_YEARS = 3;
+/**
+ * Spend totals (categorySpend / spendByTransaction) accumulate over
+ * [startKey, startKey + 1 year) — the UI presents them as annual ("/yr"),
+ * so this must stay a true year regardless of how far the projection runs.
+ */
+const SPEND_WINDOW_YEARS = 1;
 
 /**
  * Discovery window for floating occurrences (~6 months). Occurrences already
@@ -390,7 +394,8 @@ export function runProjection(input: ProjectionInput): ProjectionResult {
   }
 
   const tallySpend = (transaction: Transaction, dateKey: DateKey) => {
-    if (dateKey > spendEndKey) return;
+    // Exclusive end: the anniversary day belongs to the next year.
+    if (dateKey >= spendEndKey) return;
     const amount = Math.abs(transaction.amount);
     spendByTransaction[transaction.event_id] =
       (spendByTransaction[transaction.event_id] || 0) + amount;
